@@ -39,7 +39,7 @@ namespace DominoesProperties.Controllers
 
             if (customerRepository.CreateCustomer(ClassConverter.ConvertCustomerToEntity(customer)))
             {
-                //TODO send registration email to customer
+                //TODO send registration email to customer after register
                 response.Code = HttpStatusCode.Created;
                 response.Message = localizer["201"]; //"Customer registered successfully";
                 logger.LogInformation(response.Message);
