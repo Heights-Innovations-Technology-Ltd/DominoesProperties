@@ -1,8 +1,1110 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Home";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<!-- Start Banner Area -->
+		<div class="banner-area bg-2">
+			<div class="container">
+				<div class="row align-items-center">
+					<div class="col-lg-7">
+						<div class="banner-content style-two">
+							<span class="top-title wow animate__animated animate__fadeInUp delay-0-2s">Start Your Journey</span>
+							<h1 class="wow animate__animated animate__fadeInUp delay-0-4s">Dominoes Properties</h1>
+							<p class="wow animate__animated animate__fadeInUp delay-0-6s">We are a great agency for buying and selling your property with confidence. So you can easily buy and sell through our company</p>
+						</div>
+					</div>
+
+					<div class="col-lg-5">
+						<div class="banner-rent-sale-form style-two wow animate__animated animate__fadeInUp delay-0-6s">
+							<form class="rent-sale-form wow animate__animated animate__fadeInUp delay-0-8s">
+								<ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+									<li class="nav-item style-two">
+										<span>Property Status:</span>
+									</li>
+									<li class="nav-item" role="presentation">
+									  	<button class="nav-link active" id="for-rent-tab" data-bs-toggle="pill" data-bs-target="#for-rent" type="button" role="tab" aria-controls="for-rent" aria-selected="false">For Rent</button>
+									</li>
+									<li class="nav-item" role="presentation">
+									  	<button class="nav-link" id="for-sall-tab" data-bs-toggle="pill" data-bs-target="#for-sall" type="button" role="tab" aria-controls="for-sall" aria-selected="false">For Sale</button>
+									</li>
+								</ul>
+								<div class="tab-content" id="pills-tabContent">
+									<div class="tab-pane fade show active" id="for-rent" role="tabpanel" aria-labelledby="for-rent-tab">
+										<div class="row">
+											<div class="col-lg-12">
+												<div class="form-group">
+													<input type="text" class="form-control" placeholder="What are you looking for?">
+												</div>
+											</div>
+											<div class="col-lg-12">
+												<div class="form-group">
+													<select class="form-select form-control" aria-label="Default select example">
+														<option selected>All location</option>
+														<option value="1">United Kingdom</option>
+														<option value="2">United States</option>
+														<option value="3">Canada</option>
+													</select>
+												</div>
+											</div>
+											<div class="col-lg-12">
+												<div class="form-group mb-0">
+													<a href="#" class="default-btn btn-radius">
+														Search
+													</a>
+												</div>
+											</div>
+										</div>
+									</div>
+
+									<div class="tab-pane fade" id="for-sall" role="tabpanel" aria-labelledby="for-sall-tab">
+										<div class="row">
+											<div class="col-lg-12">
+												<div class="form-group">
+													<input type="text" class="form-control" placeholder="What are you looking for?">
+												</div>
+											</div>
+											<div class="col-lg-12">
+												<div class="form-group">
+													<select class="form-select form-control" aria-label="Default select example">
+														<option selected>All location</option>
+														<option value="1">United Kingdom</option>
+														<option value="2">United States</option>
+														<option value="3">Canada</option>
+													</select>
+												</div>
+											</div>
+											<div class="col-lg-12">
+												<div class="form-group mb-0">
+													<a href="#" class="default-btn btn-radius">
+														Search
+													</a>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</form>
+
+							@*<ul class="agents-list wow animate__animated animate__fadeInUp delay-0-8s">
+								<li>
+									<a href="agents.html">
+										<img src="~/images/agents/agent-1.jpg" alt="Image">
+									</a>
+								</li>
+								<li>
+									<a href="agents.html">
+										<img src="~/images/agents/agent-2.jpg" alt="Image">
+									</a>
+								</li>
+								<li>
+									<a href="agents.html">
+										<img src="~/images/agents/agent-3.jpg" alt="Image">
+									</a>
+								</li>
+								<li>
+									<a href="agents.html">
+										<img src="~/images/agents/agent-4.jpg" alt="Image">
+									</a>
+								</li>
+							</ul>*@
+
+							<p class="all-agents wow animate__animated animate__fadeInUp delay-0-8s"><a href="#">See All Listings</a></p>
+
+							<ul class="social-link">
+								<li class="call">
+									<a href="tel:+1-719-504-1984">
+										<i class="ri-phone-fill"></i>
+									</a>
+								</li>
+								<li class="wow animate__animated animate__fadeInUp delay-0-2s">
+									<a href="https://facebook.com/" target="_blank">
+										<i class="ri-facebook-fill"></i>
+									</a>
+								</li>
+								<li class="wow animate__animated animate__fadeInUp delay-0-4s">
+									<a href="https://twitter.com/" target="_blank">
+										<i class="ri-twitter-fill"></i>
+									</a>
+								</li>
+								<li class="wow animate__animated animate__fadeInUp delay-0-6s">
+									<a href="https://linkedin.com/" target="_blank">
+										<i class="ri-linkedin-fill"></i>
+									</a>
+								</li>
+								<li class="wow animate__animated animate__fadeInUp delay-0-8s">
+									<a href="https://instagram.com/" target="_blank">
+										<i class="ri-instagram-fill"></i>
+									</a>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- End Banner Area -->
+
+		<!-- Start Can Help Area -->
+		<div class="can-help-area pt-100 pb-70">
+			<div class="container">
+				<div class="section-title">
+					<h2>See How Dominoes Properties Can Help</h2>
+				</div>
+				
+				<div class="row justify-content-center">
+					<div class="col-lg-3 col-sm-6">
+						<div class="single-can-help wow animate__animated animate__fadeInUp delay-0-2s">
+							<img src="~/images/can-help/can-help-1.png" alt="Image">
+							<h3>Rent a Home</h3>
+							<p>Curabitur non nulla sit amet nisl tempus convallis quis ac lectus. Donec rutrum congue leo eget malesuada.</p>
+						</div>
+					</div>
+
+					<div class="col-lg-3 col-sm-6">
+						<div class="single-can-help wow animate__animated animate__fadeInUp delay-0-4s">
+							<img src="~/images/can-help/can-help-2.png" alt="Image">
+							<h3>Sale a Home</h3>
+							<p>Curabitur non nulla sit amet nisl tempus convallis quis ac lectus. Donec rutrum congue leo eget malesuada.</p>
+						</div>
+					</div>
+
+					<div class="col-lg-3 col-sm-6">
+						<div class="single-can-help wow animate__animated animate__fadeInUp delay-0-6s">
+							<img src="~/images/can-help/can-help-3.png" alt="Image">
+							<h3>Experience Agent</h3>
+							<p>Curabitur non nulla sit amet nisl tempus convallis quis ac lectus. Donec rutrum congue leo eget malesuada.</p>
+						</div>
+					</div>
+
+					<div class="col-lg-3 col-sm-6">
+						<div class="single-can-help wow animate__animated animate__fadeInUp delay-0-8s">
+							<img src="~/images/can-help/can-help-4.png" alt="Image">
+							<h3>Member Support</h3>
+							<p>Curabitur non nulla sit amet nisl tempus convallis quis ac lectus. Donec rutrum congue leo eget malesuada.</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- End Can Help Area -->
+
+		<!-- Start Properties Area -->
+		<div class="properties-area bg-color-f8fafb ptb-100">
+			<div class="container">
+				<div class="properties-filter">
+					<div class="section-title left-title">
+						<h2>Recent Properties</h2>
+					</div>
+					<div class="shorting-menu">
+						<button class="filter" data-filter="all">
+							All Properties
+						</button>
+			
+						<button class="filter" data-filter=".for-sale">
+							For Sale
+						</button>
+			
+						<button class="filter" data-filter=".for-rent">
+							For Rent
+						</button>
+					</div>
+				</div>
+
+				<div class="shorting">
+					<div class="row justify-content-center">
+						<div class="col-xl-3 col-md-6 mix for-rent">
+							<div class="single-properties-item wow animate__animated animate__fadeInUp delay-0-2s">
+								<div class="properties-img">
+									<a href="single-listing.html">
+										<img src="~/images/properties/properties-1.jpg" alt="Image">
+									</a>
+									<span>Rent</span>
+								</div>
+								<div class="properties-content">
+									<div class="d-flex justify-content-between">
+										<a href="single-listing.html">
+											<h3>House For Rent</h3>
+										</a>
+										<h3 class="price">&#8358; 240,000</h3>
+									</div>
+									<p>
+										<i class="ri-map-pin-fill"></i>
+										666 E. Hilldale Court Salem, MA 09990
+									</p>
+									<ul class="feature-list">
+										<li>
+											<i class="ri-hotel-bed-fill"></i>
+											3 Bed
+										</li>
+										<li>
+											<i class="ri-wheelchair-fill"></i>
+											3 Bath
+										</li>
+										<li>
+											<i class="ri-ruler-2-line"></i>
+											950 Sqft
+										</li>
+									</ul>
+								</div>
+							</div>
+						</div>
+	
+						<div class="col-xl-3 col-md-6 mix for-sale">
+							<div class="single-properties-item wow animate__animated animate__fadeInUp delay-0-4s">
+								<div class="properties-img">
+									<a href="single-listing.html">
+										<img src="~/images/properties/properties-2.jpg" alt="Image">
+									</a>
+									<span>Sale</span>
+								</div>
+								<div class="properties-content">
+									<div class="d-flex justify-content-between">
+										<a href="single-listing.html">
+											<h3>House For Sale</h3>
+										</a>
+										<h3 class="price">&#8358; 300,000</h3>
+									</div>
+									<p>
+										<i class="ri-map-pin-fill"></i>
+										7755 West White Drive Carmel, NY 10555
+									</p>
+									<ul class="feature-list">
+										<li>
+											<i class="ri-hotel-bed-fill"></i>
+											4 Bed
+										</li>
+										<li>
+											<i class="ri-wheelchair-fill"></i>
+											4 Bath
+										</li>
+										<li>
+											<i class="ri-ruler-2-line"></i>
+											1050 Sqft
+										</li>
+									</ul>
+								</div>
+							</div>
+						</div>
+	
+						<div class="col-xl-3 col-md-6 mix for-rent">
+							<div class="single-properties-item wow animate__animated animate__fadeInUp delay-0-6s">
+								<div class="properties-img">
+									<a href="single-listing.html">
+										<img src="~/images/properties/properties-3.jpg" alt="Image">
+									</a>
+									<span>Rent</span>
+								</div>
+								<div class="properties-content">
+									<div class="d-flex justify-content-between">
+										<a href="single-listing.html">
+											<h3>House For Rent</h3>
+										</a>
+										<h3 class="price">&#8358; 450,000</h3>
+									</div>
+									<p>
+										<i class="ri-map-pin-fill"></i>
+										991 Hill St. Clemmons, NC 77711
+									</p>
+									<ul class="feature-list">
+										<li>
+											<i class="ri-hotel-bed-fill"></i>
+											5 Bed
+										</li>
+										<li>
+											<i class="ri-wheelchair-fill"></i>
+											5 Bath
+										</li>
+										<li>
+											<i class="ri-ruler-2-line"></i>
+											1000 Sqft
+										</li>
+									</ul>
+								</div>
+							</div>
+						</div>
+	
+						<div class="col-xl-3 col-md-6 mix for-sale">
+							<div class="single-properties-item wow animate__animated animate__fadeInUp delay-0-8s">
+								<div class="properties-img">
+									<a href="single-listing.html">
+										<img src="~/images/properties/properties-4.jpg" alt="Image">
+									</a>
+									<span>Sale</span>
+								</div>
+								<div class="properties-content">
+									<div class="d-flex justify-content-between">
+										<a href="single-listing.html">
+											<h3>House For Sale</h3>
+										</a>
+										<h3 class="price">&#8358; 750,000</h3>
+									</div>
+									<p>
+										<i class="ri-map-pin-fill"></i>
+										33 Winding Way Ave. New Bern, NC 2888
+									</p>
+									<ul class="feature-list">
+										<li>
+											<i class="ri-hotel-bed-fill"></i>
+											5 Bed
+										</li>
+										<li>
+											<i class="ri-wheelchair-fill"></i>
+											5 Bath
+										</li>
+										<li>
+											<i class="ri-ruler-2-line"></i>
+											1500 Sqft
+										</li>
+									</ul>
+								</div>
+							</div>
+						</div>
+	
+						<div class="col-xl-3 col-md-6 mix for-rent">
+							<div class="single-properties-item wow animate__animated animate__fadeInUp delay-0-2s">
+								<div class="properties-img">
+									<a href="single-listing.html">
+										<img src="~/images/properties/properties-5.jpg" alt="Image">
+									</a>
+									<span>Rent</span>
+								</div>
+								<div class="properties-content">
+									<div class="d-flex justify-content-between">
+										<a href="single-listing.html">
+											<h3>House For Rent</h3>
+										</a>
+										<h3 class="price">&#8358; 200,000</h3>
+									</div>
+									<p>
+										<i class="ri-map-pin-fill"></i>
+										66 River Street Plainfield, NJ 07000
+									</p>
+									<ul class="feature-list">
+										<li>
+											<i class="ri-hotel-bed-fill"></i>
+											2 Bed
+										</li>
+										<li>
+											<i class="ri-wheelchair-fill"></i>
+											2 Bath
+										</li>
+										<li>
+											<i class="ri-ruler-2-line"></i>
+											750 Sqft
+										</li>
+									</ul>
+								</div>
+							</div>
+						</div>
+	
+						<div class="col-xl-3 col-md-6 mix for-sale">
+							<div class="single-properties-item wow animate__animated animate__fadeInUp delay-0-4s">
+								<div class="properties-img">
+									<a href="single-listing.html">
+										<img src="~/images/properties/properties-6.jpg" alt="Image">
+									</a>
+									<span>Sale</span>
+								</div>
+								<div class="properties-content">
+									<div class="d-flex justify-content-between">
+										<a href="single-listing.html">
+											<h3>House For Sale</h3>
+										</a>
+										<h3 class="price">&#8358; 950,000</h3>
+									</div>
+									<p>
+										<i class="ri-map-pin-fill"></i>
+										4477 Kingston Lane Mokena, IL 66448
+									</p>
+									<ul class="feature-list">
+										<li>
+											<i class="ri-hotel-bed-fill"></i>
+											6 Bed
+										</li>
+										<li>
+											<i class="ri-wheelchair-fill"></i>
+											6 Bath
+										</li>
+										<li>
+											<i class="ri-ruler-2-line"></i>
+											1750 Sqft
+										</li>
+									</ul>
+								</div>
+							</div>
+						</div>
+	
+						<div class="col-xl-3 col-md-6 mix for-rent">
+							<div class="single-properties-item wow animate__animated animate__fadeInUp delay-0-6s">
+								<div class="properties-img">
+									<a href="single-listing.html">
+										<img src="~/images/properties/properties-7.jpg" alt="Image">
+									</a>
+									<span>Rent</span>
+								</div>
+								<div class="properties-content">
+									<div class="d-flex justify-content-between">
+										<a href="single-listing.html">
+											<h3>House For Rent</h3>
+										</a>
+										<h3 class="price">&#8358; 350,000</h3>
+									</div>
+									<p>
+										<i class="ri-map-pin-fill"></i>
+										166 Mill Lane Riverview, FL 33366
+									</p>
+									<ul class="feature-list">
+										<li>
+											<i class="ri-hotel-bed-fill"></i>
+											3 Bed
+										</li>
+										<li>
+											<i class="ri-wheelchair-fill"></i>
+											3 Bath
+										</li>
+										<li>
+											<i class="ri-ruler-2-line"></i>
+											1000 Sqft
+										</li>
+									</ul>
+								</div>
+							</div>
+						</div>
+	
+						<div class="col-xl-3 col-md-6 mix for-sale">
+							<div class="single-properties-item wow animate__animated animate__fadeInUp delay-0-8s">
+								<div class="properties-img">
+									<a href="single-listing.html">
+										<img src="~/images/properties/properties-8.jpg" alt="Image">
+									</a>
+									<span>Sale</span>
+								</div>
+								<div class="properties-content">
+									<div class="d-flex justify-content-between">
+										<a href="single-listing.html">
+											<h3>House For Sale</h3>
+										</a>
+										<h3 class="price">&#8358; 900,000</h3>
+									</div>
+									<p>
+										<i class="ri-map-pin-fill"></i>
+										444 King St. Coachella, CA 22233
+									</p>
+									<ul class="feature-list">
+										<li>
+											<i class="ri-hotel-bed-fill"></i>
+											5 Bed
+										</li>
+										<li>
+											<i class="ri-wheelchair-fill"></i>
+											5 Bath
+										</li>
+										<li>
+											<i class="ri-ruler-2-line"></i>
+											1600 Sqft
+										</li>
+									</ul>
+								</div>
+							</div>
+						</div>
+
+						<div class="col-lg-12 text-center">
+							<a href="listing.html" class="default-btn">
+								View All Listing
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- End Properties Area -->
+
+		<!-- Start Why Choose Area -->
+		<div class="why-choose-area ptb-100">
+			<div class="container">
+				<div class="row align-items-center">
+					<div class="col-xl-6">
+						<div class="why-chooses-content">
+							<div class="wow animate__animated animate__fadeInUp delay-0-2s">
+								<h2>Why Choose Our Properties</h2>
+								<p>Vestibulum ac diam sit amet quam vehicula elementum sed sit amet dui. Sed porttitor lectus nibh. Praesent sapien massa, convallis a pellentesque nec, egestas non nisi curabitur non nulla sit amet.</p>
+							</div>
+								
+							<ul>
+								<li class="wow animate__animated animate__fadeInUp delay-0-4s">
+									<i class="flaticon-insurance"></i>
+									<h3>Property Insurance</h3>
+									<p>Vestibulum ac diam sit amet quam vehicula elementum sed sit amet dui. Sed porttitor lectus nibh. Praesent sapien massa, convallis a pellentesque nec diam sit amet quam vehicula elementum sed diam sit amet.</p>
+								</li>
+								<li class="active wow animate__animated animate__fadeInUp delay-0-6s">
+									<i class="flaticon-interest-rate"></i>
+									<h3>Best Interest Rates</h3>
+									<p>Vestibulum ac diam sit amet quam vehicula elementum sed sit amet dui. Sed porttitor lectus nibh. Praesent sapien massa, convallis a pellentesque nec diam sit amet quam vehicula.</p>
+								</li>
+								<li class="wow animate__animated animate__fadeInUp delay-0-8s">
+									<i class="flaticon-commission"></i>
+									<h3>Lowest Commission</h3>
+									<p>Vestibulum ac diam sit amet quam vehicula elementum sed sit amet dui. Sed porttitor lectus nibh. Praesent sapien massa, convallis a pellentesque nec diam sit amet quam vehicula elementum sed diam sit amet.</p>
+								</li>
+							</ul>
+						</div>
+					</div>
+
+					<div class="col-xl-6">
+						<div class="single-why-choose-item wow animate__animated animate__fadeInUp delay-0-6s">
+							<div class="why-choose-img">
+								<a href="single-listing.html">
+									<img src="~/images/why-choose-img.jpg" alt="Image">
+								</a>
+								<span>Featured</span>
+								<button type="submit" class="wishlist">
+									<i class="ri-heart-line"></i>
+								</button>
+							</div>
+							<div class="why-choose-content">
+								<div class="d-flex justify-content-between">
+									<a href="single-listing.html">
+										<h3>House For Sale</h3>
+									</a>
+									<h3 class="price">&#8358; 300,000</h3>
+								</div>
+								<p>
+									<i class="ri-map-pin-fill"></i>
+									7755 West White Drive Carmel, NY 10555
+								</p>
+								<ul class="feature-list">
+									<li>
+										<i class="ri-hotel-bed-fill"></i>
+										4 Bed
+									</li>
+									<li>
+										<i class="ri-wheelchair-fill"></i>
+										4 Bath
+									</li>
+									<li>
+										<i class="ri-ruler-2-line"></i>
+										1050 Sqft
+									</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- End Why Choose Area -->
+
+		<!-- Start Discover Area -->
+		<div class="discover-area bg-color-f2f7fd pt-100 pb-70">
+			<div class="container">
+				<div class="section-title left-title">
+					<h2>Discover The Neighborhoods</h2>
+				</div>
+				
+				<div class="discover-slide owl-carousel owl-theme">
+					<div class="single-discover wow animate__animated animate__fadeInUp delay-0-2s">
+						<a href="listing.html">
+							<img src="~/images/discover/discover-1.jpg" alt="Image">
+							<h3>Los Angeles</h3>
+							<span>185 Properties</span>
+						</a>
+					</div>
+
+					<div class="single-discover wow animate__animated animate__fadeInUp delay-0-4s">
+						<a href="listing.html">
+							<img src="~/images/discover/discover-2.jpg" alt="Image">
+							<h3>Chicago</h3>
+							<span>245 Properties</span>
+						</a>
+					</div>
+
+					<div class="single-discover wow animate__animated animate__fadeInUp delay-0-6s">
+						<a href="listing.html">
+							<img src="~/images/discover/discover-3.jpg" alt="Image">
+							<h3>Houston</h3>
+							<span>105 Properties</span>
+						</a>
+					</div>
+
+					<div class="single-discover wow animate__animated animate__fadeInUp delay-0-8s">
+						<a href="listing.html">
+							<img src="~/images/discover/discover-4.jpg" alt="Image">
+							<h3>New York</h3>
+							<span>325 Properties</span>
+						</a>
+					</div>
+
+					<div class="single-discover wow animate__animated animate__fadeInUp delay-0-2s">
+						<a href="listing.html">
+							<img src="~/images/discover/discover-5.jpg" alt="Image">
+							<h3>Austin</h3>
+							<span>230 Properties</span>
+						</a>
+					</div>
+
+					<div class="single-discover wow animate__animated animate__fadeInUp delay-0-4s">
+						<a href="listing.html">
+							<img src="~/images/discover/discover-6.jpg" alt="Image">
+							<h3>Boston</h3>
+							<span>145 Properties</span>
+						</a>
+					</div>
+
+					<div class="single-discover wow animate__animated animate__fadeInUp delay-0-8s">
+						<a href="listing.html">
+							<img src="~/images/discover/discover-7.jpg" alt="Image">
+							<h3>Los Angeles</h3>
+							<span>185 Properties</span>
+						</a>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- End Discover Area -->
+
+		<!-- Start Meet Our Agents Area -->
+		@*<div class="meet-our-agents-area pt-100 pb-70">
+			<div class="container">
+				<div class="section-title left-title">
+					<h2>Meet Our Agents</h2>
+				</div>
+
+				<div class="agents-slide owl-carousel owl-theme">
+					<div class="single-agents wow animate__animated animate__fadeInUp delay-0-2s">
+						<div class="agents-img">
+							<img src="~/images/agents/agent-9.jpg" alt="Image">
+							<span>8 Listing</span>
+							<p>Rello RealEstate Agency</p>
+						</div>
+
+						<div class="agents-content">
+							<div class="d-flex justify-content-between align-items-center align-items-center">
+								<h3>
+									<a href="single-agents.html">Edward Mccoy</a>
+								</h3>
+
+								<div class="team-social">
+									<a href="#" class="control">
+										<i class="ri-share-fill"></i>
+									</a>
+
+									<ul>
+										<li>
+											<a href="https://www.facebook.com/" target="_blank">
+												<i class="ri-facebook-fill"></i>
+											</a>
+										</li>
+										<li>
+											<a href="https://www.instagram.com/" target="_blank">
+												<i class="ri-instagram-line"></i>
+											</a>
+										</li>
+										<li>
+											<a href="https://www.linkedin.com/" target="_blank">
+												<i class="ri-linkedin-fill"></i>
+											</a>
+										</li>
+										<li>
+											<a href="https://twitter.com/" target="_blank">
+												<i class="ri-twitter-fill"></i>
+											</a>
+										</li>
+									</ul>
+								</div>
+							</div>
+
+							<ul class="info">
+								<li>
+									<a href="tel:+1-719-504-1984">
+										<i class="ri-phone-fill"></i>
+										+1 719-504-1984
+									</a>
+								</li>
+								<li>
+									<a href="https://templates.envytheme.com/cdn-cgi/l/email-protection#84edeae2ebc4e3e9e5ede8aae7ebe9">
+										<i class="ri-mail-line"></i>
+										<span class="__cf_email__" data-cfemail="4e272028210e29232f2722602d2123">[email&#160;protected]</span>
+									</a>
+								</li>
+							</ul>
+
+							<a href="single-agents.html" class="read-more">
+								Read More
+								<i class="ri-arrow-right-line"></i>
+							</a>
+						</div>
+					</div>
+
+					<div class="single-agents wow animate__animated animate__fadeInUp delay-0-4s">
+						<div class="agents-img">
+							<img src="~/images/agents/agent-10.jpg" alt="Image">
+							<span>5 Listing</span>
+							<p>Pelody RealEstate Agency</p>
+						</div>
+
+						<div class="agents-content">
+							<div class="d-flex justify-content-between align-items-center align-items-center">
+								<h3>
+									<a href="single-agents.html">Edward Mccoy</a>
+								</h3>
+
+								<div class="team-social">
+									<a href="#" class="control">
+										<i class="ri-share-fill"></i>
+									</a>
+
+									<ul>
+										<li>
+											<a href="https://www.facebook.com/" target="_blank">
+												<i class="ri-facebook-fill"></i>
+											</a>
+										</li>
+										<li>
+											<a href="https://www.instagram.com/" target="_blank">
+												<i class="ri-instagram-line"></i>
+											</a>
+										</li>
+										<li>
+											<a href="https://www.linkedin.com/" target="_blank">
+												<i class="ri-linkedin-fill"></i>
+											</a>
+										</li>
+										<li>
+											<a href="https://twitter.com/" target="_blank">
+												<i class="ri-twitter-fill"></i>
+											</a>
+										</li>
+									</ul>
+								</div>
+							</div>
+
+							<ul class="info">
+								<li>
+									<a href="tel:+1-719-504-1984">
+										<i class="ri-phone-fill"></i>
+										+1 719-504-1985
+									</a>
+								</li>
+								<li>
+									<a href="https://templates.envytheme.com/cdn-cgi/l/email-protection#8ae3e4ece5caede7ebe3e6a4e9e5e7">
+										<i class="ri-mail-line"></i>
+										<span class="__cf_email__" data-cfemail="90f9fef6ffd0e2f5fcfcffbef3fffd">[email&#160;protected]</span>
+									</a>
+								</li>
+							</ul>
+
+							<a href="single-agents.html" class="read-more">
+								Read More
+								<i class="ri-arrow-right-line"></i>
+							</a>
+						</div>
+					</div>
+
+					<div class="single-agents wow animate__animated animate__fadeInUp delay-0-6s">
+						<div class="agents-img">
+							<img src="~/images/agents/agent-11.jpg" alt="Image">
+							<span>3 Listing</span>
+							<p>Ripeco RealEstate Agency</p>
+						</div>
+
+						<div class="agents-content">
+							<div class="d-flex justify-content-between align-items-center align-items-center">
+								<h3>
+									<a href="single-agents.html">Edward Mccoy</a>
+								</h3>
+
+								<div class="team-social">
+									<a href="#" class="control">
+										<i class="ri-share-fill"></i>
+									</a>
+
+									<ul>
+										<li>
+											<a href="https://www.facebook.com/" target="_blank">
+												<i class="ri-facebook-fill"></i>
+											</a>
+										</li>
+										<li>
+											<a href="https://www.instagram.com/" target="_blank">
+												<i class="ri-instagram-line"></i>
+											</a>
+										</li>
+										<li>
+											<a href="https://www.linkedin.com/" target="_blank">
+												<i class="ri-linkedin-fill"></i>
+											</a>
+										</li>
+										<li>
+											<a href="https://twitter.com/" target="_blank">
+												<i class="ri-twitter-fill"></i>
+											</a>
+										</li>
+									</ul>
+								</div>
+							</div>
+
+							<ul class="info">
+								<li>
+									<a href="tel:+1-719-504-1984">
+										<i class="ri-phone-fill"></i>
+										+1 719-504-1986
+									</a>
+								</li>
+								<li>
+									<a href="https://templates.envytheme.com/cdn-cgi/l/email-protection#a6cfc8c0c9e6d4c3cacac988c5c9cb">
+										<i class="ri-mail-line"></i>
+										<span class="__cf_email__" data-cfemail="98f1f6fef7d8eafdf4f4f7b6fbf7f5">[email&#160;protected]</span>
+									</a>
+								</li>
+							</ul>
+
+							<a href="single-agents.html" class="read-more">
+								Read More
+								<i class="ri-arrow-right-line"></i>
+							</a>
+						</div>
+					</div>
+
+					<div class="single-agents wow animate__animated animate__fadeInUp delay-0-8s">
+						<div class="agents-img">
+							<img src="~/images/agents/agent-12.jpg" alt="Image">
+							<span>9 Listing</span>
+							<p>Centura RealEstate Agency</p>
+						</div>
+
+						<div class="agents-content">
+							<div class="d-flex justify-content-between align-items-center align-items-center">
+								<h3>
+									<a href="single-agents.html">Edward Mccoy</a>
+								</h3>
+
+								<div class="team-social">
+									<a href="#" class="control">
+										<i class="ri-share-fill"></i>
+									</a>
+
+									<ul>
+										<li>
+											<a href="https://www.facebook.com/" target="_blank">
+												<i class="ri-facebook-fill"></i>
+											</a>
+										</li>
+										<li>
+											<a href="https://www.instagram.com/" target="_blank">
+												<i class="ri-instagram-line"></i>
+											</a>
+										</li>
+										<li>
+											<a href="https://www.linkedin.com/" target="_blank">
+												<i class="ri-linkedin-fill"></i>
+											</a>
+										</li>
+										<li>
+											<a href="https://twitter.com/" target="_blank">
+												<i class="ri-twitter-fill"></i>
+											</a>
+										</li>
+									</ul>
+								</div>
+							</div>
+
+							<ul class="info">
+								<li>
+									<a href="tel:+1-719-504-1987">
+										<i class="ri-phone-fill"></i>
+										+1 719-504-1987
+									</a>
+								</li>
+								<li>
+									<a href="https://templates.envytheme.com/cdn-cgi/l/email-protection#b1d8dfd7def1c3d4ddddde9fd2dedc">
+										<i class="ri-mail-line"></i>
+										<span class="__cf_email__" data-cfemail="4821262e27083a2d242427662b2725">[email&#160;protected]</span>
+									</a>
+								</li>
+							</ul>
+
+							<a href="single-agents.html" class="read-more">
+								Read More
+								<i class="ri-arrow-right-line"></i>
+							</a>
+						</div>
+					</div>
+
+					<div class="single-agents wow animate__animated animate__fadeInUp delay-0-2s">
+						<div class="agents-img">
+							<img src="~/images/agents/agent-13.jpg" alt="Image">
+							<span>9 Listing</span>
+							<p>Centura RealEstate Agency</p>
+						</div>
+
+						<div class="agents-content">
+							<div class="d-flex justify-content-between align-items-center align-items-center">
+								<h3>
+									<a href="single-agents.html">Edward Mccoy</a>
+								</h3>
+
+								<div class="team-social">
+									<a href="#" class="control">
+										<i class="ri-share-fill"></i>
+									</a>
+
+									<ul>
+										<li>
+											<a href="https://www.facebook.com/" target="_blank">
+												<i class="ri-facebook-fill"></i>
+											</a>
+										</li>
+										<li>
+											<a href="https://www.instagram.com/" target="_blank">
+												<i class="ri-instagram-line"></i>
+											</a>
+										</li>
+										<li>
+											<a href="https://www.linkedin.com/" target="_blank">
+												<i class="ri-linkedin-fill"></i>
+											</a>
+										</li>
+										<li>
+											<a href="https://twitter.com/" target="_blank">
+												<i class="ri-twitter-fill"></i>
+											</a>
+										</li>
+									</ul>
+								</div>
+							</div>
+
+							<ul class="info">
+								<li>
+									<a href="tel:+1-719-504-1987">
+										<i class="ri-phone-fill"></i>
+										+1 719-504-1987
+									</a>
+								</li>
+								<li>
+									<a href="https://templates.envytheme.com/cdn-cgi/l/email-protection#1a73747c755a687f76767534797577">
+										<i class="ri-mail-line"></i>
+										<span class="__cf_email__" data-cfemail="7a13141c153a081f16161554191517">[email&#160;protected]</span>
+									</a>
+								</li>
+							</ul>
+
+							<a href="single-agents.html" class="read-more">
+								Read More
+								<i class="ri-arrow-right-line"></i>
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>*@
+		<!-- End Meet Our Agents Area -->
+
+		<!-- Start Clients Say Area -->
+		<div class="client-say-area bg-color-fbf3f3 ptb-100">
+			<div class="container">
+				<div class="section-title">
+					<h2>What Our Clients Say</h2>
+				</div>
+
+				<div class="client-say-slide-two owl-carousel owl-theme">
+					<div class="single-client-say">
+						<div class="client-img">
+							<img src="~/images/client-say/client-2.jpg" alt="Image">
+							<h3>Laverne Hewitt</h3>
+							<span>Happy Customer</span>
+						</div>
+
+						<p>“Vivamus suscipit tortor eget felis porttitor volutpat. Cras ultricies ligula sed magna dictum porta. Cras ultricies ligula magna dictum porta.”</p>
+						
+						<ul class="d-flex justify-content-between align-items-center">
+							@*<li>
+								<i class="ri-star-fill"></i>
+								<i class="ri-star-fill"></i>
+								<i class="ri-star-fill"></i>
+								<i class="ri-star-fill"></i>
+								<i class="ri-star-fill"></i>
+							</li>*@
+							<li>
+								<i class="ri-double-quotes-r quotes"></i>
+							</li>
+						</ul>
+					</div>
+
+					<div class="single-client-say">
+						<div class="client-img">
+							<img src="~/images/client-say/client-3.jpg" alt="Image">
+							<h3>John Kimes</h3>
+							<span>Happy Customer</span>
+						</div>
+
+						<p>“Vivamus suscipit tortor eget felis porttitor volutpat. Cras ultricies ligula sed magna dictum porta. Cras ultricies ligula magna dictum porta.”</p>
+
+						<ul class="d-flex justify-content-between align-items-center">
+							
+							<li>
+								<i class="ri-double-quotes-r quotes"></i>
+							</li>
+						</ul>
+					</div>
+
+					<div class="single-client-say">
+						<div class="client-img">
+							<img src="~/images/client-say/client-4.jpg" alt="Image">
+							<h3>Karla Carbone</h3>
+							<span>Happy Customer</span>
+						</div>
+
+						<p>“Vivamus suscipit tortor eget felis porttitor volutpat. Cras ultricies ligula sed magna dictum porta. Cras ultricies ligula magna dictum porta.”</p>
+
+						<ul class="d-flex justify-content-between align-items-center">
+							
+							<li>
+								<i class="ri-double-quotes-r quotes"></i>
+							</li>
+						</ul>
+					</div>
+
+					<div class="single-client-say">
+						<div class="client-img">
+							<img src="~/images/client-say/client-5.jpg" alt="Image">
+							<h3>Juhon Hewitt</h3>
+							<span>Happy Customer</span>
+						</div>
+
+						<p>“Vivamus suscipit tortor eget felis porttitor volutpat. Cras ultricies ligula sed magna dictum porta. Cras ultricies ligula magna dictum porta.”</p>
+
+						<ul class="d-flex justify-content-between align-items-center">
+							
+							<li>
+								<i class="ri-double-quotes-r quotes"></i>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- End Clients Say Area -->
+
+		
+
+		<!-- Start Network Area -->
+		<div class="net-work-area ptb-100">
+			<div class="container">
+				<div class="row align-items-center">
+					<div class="col-lg-6">
+						<div class="net-work-content wow animate__animated animate__fadeInLeft delay-0-2s">
+							<h2>List your properties on our network</h2>
+							<p>Donec rutrum congue leo eget malesuada. Pellentesque in ipsum id orci porta dapibus. Proin eget tortor risus. Nulla porttitor accumsan tincidunt.</p>
+						</div>
+					</div>
+					<div class="col-lg-6">
+						<div class="network-btn wow animate__animated animate__fadeInRight delay-0-2s">
+							<a href="listing.html" class="default-btn btn-radius">Add Your Listing</a>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<img src="~/images/network-shape.png" class="shape" alt="Image">
+		</div>
+		<!-- End Network Area -->
