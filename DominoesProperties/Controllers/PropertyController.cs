@@ -24,7 +24,6 @@ namespace DominoesProperties.Controllers
             logger = _logger;
         }
 
-        // GET: api/values
         [HttpGet]
         public ApiResponse Get([FromQuery] QueryParams queryParams)
         {
@@ -46,7 +45,6 @@ namespace DominoesProperties.Controllers
             return response;
         }
 
-        // GET api/values/5
         [HttpGet("{uniqueId}")]
         public ApiResponse Get(string uniqueId)
         {
