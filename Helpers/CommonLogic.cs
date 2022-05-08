@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Mail;
 using System.Security.Cryptography;
 using Models;
+using Models.Models;
 using Newtonsoft.Json;
 using SelectPdf;
 using Twilio;
@@ -30,19 +31,19 @@ public static class CommonLogic
     /// <summary>
     /// The local email 2
     /// </summary>
-    public const string LocalEmail_2 = "utsav.cmarix@gmail.com";
+    public const string LocalEmail_2 = "cse080123@gmail.com";
     /// <summary>
     /// The local email 3
     /// </summary>
-    public const string LocalEmail_3 = "sohan.cmarix@gmail.com";
+    public const string LocalEmail_3 = "";
     /// <summary>
     /// The production email 1
     /// </summary>
-    public const string ProductionEmail_1 = "seyio@nestbank.ng";
+    public const string ProductionEmail_1 = "jcobsmofe@gmail.com";
     /// <summary>
     /// The production email 2
     /// </summary>
-    public const string ProductionEmail_2 = "dolaposo@nestbank.ng";
+    public const string ProductionEmail_2 = "jcobsmofe@gmail.com";
     private static readonly DateTime Epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
     /// <summary>
     /// The userid
@@ -75,7 +76,7 @@ public static class CommonLogic
         {
                 18,52,86,120,144,171,205,239
             };
-        byKey = System.Text.Encoding.UTF8.GetBytes("NestBank");
+        byKey = System.Text.Encoding.UTF8.GetBytes("DominoesProperties");
         DESCryptoServiceProvider des = new DESCryptoServiceProvider();
         byte[] inputByteArray = System.Text.Encoding.UTF8.GetBytes(strText);
         MemoryStream ms = new MemoryStream();
@@ -136,7 +137,7 @@ public static class CommonLogic
 
         var messageResponse = MessageResource.Create(
             body: message,
-            from: new Twilio.Types.PhoneNumber("+18472609769"),
+            from: new Twilio.Types.PhoneNumber("+18472609769"), //+15005550006 -test phone number
             to: new Twilio.Types.PhoneNumber(toPhone)
         );
 
@@ -413,21 +414,21 @@ public static class CommonLogic
     /// <param name="toEmail">To email.</param>
     /// <param name="attachedfile">The attachedfile.</param>
     /// <returns></returns>
-    public static string SendEmail(string subject, string body, string toEmail, string attachedfile, ApplicationSetting  settings = null)
+    public static string SendEmail(EmailRequest emailRequest)
     {
         try
         {
-            string devEmail = "dev.nestbank.ng@gmail.com";
+            string devEmail = "jcobsmofe@gmail.com";
             MailMessage mail;
-            if (settings != null)
+            if (emailRequest.Settings != null)
             {
-                if (settings.TestingMode)
+                if (emailRequest.Settings.TestingMode)
                 {
-                    mail = new MailMessage(null, settings.TestingEmail);
+                    mail = new MailMessage(null, emailRequest.Settings.TestingEmail);
                 }
                 else
                 {
-                    mail = new MailMessage(devEmail, toEmail);
+                    mail = new MailMessage(devEmail, emailRequest.ToEmail);
                 }
             }
             else
@@ -439,20 +440,20 @@ public static class CommonLogic
             mail.Bcc.Add(LocalEmail_2);
             SmtpClient client = new SmtpClient();
             client.UseDefaultCredentials = false;
-            client.Credentials = new NetworkCredential("dev.nestbank.ng@gmail.com", "PASSWORDDEV+77");
+            client.Credentials = new NetworkCredential("jcobsmofe@gmail.com", "Problematic2&");
             client.Port = 587;
             client.EnableSsl = true;
             client.DeliveryMethod = SmtpDeliveryMethod.Network;
             client.Host = "smtp.gmail.com";
 
-            if (!string.IsNullOrEmpty(attachedfile))
+            if (!string.IsNullOrEmpty(emailRequest.Attachedfile))
             {
                 System.Net.Mail.Attachment attachment;
-                attachment = new System.Net.Mail.Attachment(attachedfile);
+                attachment = new System.Net.Mail.Attachment(emailRequest.Attachedfile);
                 mail.Attachments.Add(attachment);
             }
-            mail.Subject = subject;
-            mail.Body = body;
+            mail.Subject = emailRequest.Subject;
+            mail.Body = emailRequest.Body;
             mail.IsBodyHtml = true;
             client.Send(mail);
 
@@ -461,9 +462,9 @@ public static class CommonLogic
         {
             string errorData = JsonConvert.SerializeObject(new
             {
-                _subject = subject,
-                _body = body,
-                _toEmail = toEmail
+                _subject = emailRequest.Subject,
+                _body = emailRequest.Body,
+                _toEmail = emailRequest.ToEmail
             });
             writeLog(ex.Message, errorData);
             return ex.Message;
@@ -475,13 +476,13 @@ public static class CommonLogic
     {
         try
         {
-            string devEmail = "dev.nestbank.ng@gmail.com";
+            string devEmail = "jcobsmofe@gmail.com";
             MailMessage mail;
-            mail = new MailMessage(devEmail, "parthm.cmarix@gmail.com");
+            mail = new MailMessage(devEmail, "ce080123@gmail.com");
             mail.CC.Add("dev.nestbank.ng@gmail.com");
             SmtpClient client = new SmtpClient();
             client.UseDefaultCredentials = false;
-            client.Credentials = new NetworkCredential("dev.nestbank.ng@gmail.com", "PASSWORDDEV+77");
+            client.Credentials = new NetworkCredential("jcobsmofe@gmail.com", "Problematic2&");
             client.Port = 587;
             client.EnableSsl = true;
             client.DeliveryMethod = SmtpDeliveryMethod.Network;

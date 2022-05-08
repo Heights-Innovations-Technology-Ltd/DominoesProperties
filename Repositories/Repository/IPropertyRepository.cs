@@ -13,5 +13,6 @@ namespace Repositories.Repository
         bool DeleteProperty(string uniqueId);
         Property GetProperty(string uniqueId);
         List<Property> GetProperties();
+        PagedList<Property> GetProperties(QueryParams ownerParameters);
     }
 }

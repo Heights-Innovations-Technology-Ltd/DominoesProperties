@@ -9,10 +9,12 @@ namespace DominoesProperties.Models
 
         [Required(ErrorMessage = "Firstname is required")]
         [MaxLength(50, ErrorMessage = "Firstname cannot be more than 50 characters")]
+        [RegularExpression(@"^[a-zA-Z''-'\s]{1,40}$", ErrorMessage = "Characters are not allowed.")]
         public string FirstName { get; set; }
 
         [Required(ErrorMessage = "Lastname is required")]
         [MaxLength(50, ErrorMessage = "Lastname cannot be more than 50 characters")]
+        [RegularExpression(@"^[a-zA-Z''-'\s]{1,40}$", ErrorMessage = "Characters are not allowed.")]
         public string LastName { get; set; }
 
         [Required(ErrorMessage = "Email is required")]

@@ -31,6 +31,7 @@
     <None Remove="Localize\Resources %28copy%29.en-GB" />
     <None Remove="Localize\Resources.en-US" />
     <None Remove="Microsoft.EntityFrameworkCore.Design" />
+    <None Remove="Microsoft.Extensions.Caching.StackExchangeRedis" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.16" />
@@ -48,6 +49,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="5.0.1" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\" />
@@ -73,9 +75,6 @@
     <None Include="nlog.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Update="Localize\Resources.en-US.Designer.cs">
-      <DependentUpon>Resources.en-US.resx</DependentUpon>
-    </Compile>
     <Compile Update="Localize\Resources.en-GB.Designer.cs">
       <DependentUpon>Resources.en-GB.resx</DependentUpon>
     </Compile>

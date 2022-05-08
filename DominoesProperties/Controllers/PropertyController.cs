@@ -1,28 +1,60 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
+using DominoesProperties.Models;
 using Microsoft.AspNetCore.Mvc;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+using Models.Models;
+using Newtonsoft.Json;
+using Repositories.Repository;
 
 namespace DominoesProperties.Controllers
 {
     [Route("api/[controller]")]
     public class PropertyController : Controller
     {
+        private readonly IPropertyRepository propertyRepository;
+        private readonly ILoggerManager logger;
+        private ApiResponse response = new ApiResponse(HttpStatusCode.BadRequest, "Error performing request, contact admin");
+
+        public PropertyController(IPropertyRepository _propertyRepository, ILoggerManager _logger)
+        {
+            propertyRepository = _propertyRepository;
+            logger = _logger;
+        }
+
         // GET: api/values
         [HttpGet]
-        public IEnumerable<string> Get()
+        public ApiResponse Get([FromQuery] QueryParams queryParams)
         {
-            return new string[] { "value1", "value2" };
+            var property = propertyRepository.GetProperties(queryParams);
+            var metadata = new
+            {
+                property.TotalCount,
+                property.PageSize,
+                property.CurrentPage,
+                property.TotalPages,
+                property.HasNext,
+                property.HasPrevious
+            };
+            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
+            logger.LogInfo($"Returned {property.TotalCount} queryParams from database.");
+            response.Code = HttpStatusCode.OK;
+            response.Message = "Successfull";
+            response.Data = property;
+            return response;
         }
 
         // GET api/values/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+        [HttpGet("{uniqueId}")]
+        public ApiResponse Get(string uniqueId)
         {
-            return "value";
+            var property = propertyRepository.GetProperty(uniqueId);
+            response.Code = HttpStatusCode.OK;
+            response.Message = "Successfull";
+            response.Data = property;
+            return response;
         }
 
         // POST api/values

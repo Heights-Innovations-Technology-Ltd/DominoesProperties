@@ -46,5 +46,35 @@ namespace DominoesProperties.Localize {
                 resourceCulture = value;
             }
         }
+        
+        internal static string Customer_Registration_Subject {
+            get {
+                return ResourceManager.GetString("Customer.Registration.Subject", resourceCulture);
+            }
+        }
+        
+        internal static string Auth_Token_Expired {
+            get {
+                return ResourceManager.GetString("Auth.Token.Expired", resourceCulture);
+            }
+        }
+        
+        internal static string Auth_Link_Generated {
+            get {
+                return ResourceManager.GetString("Auth.Link.Generated", resourceCulture);
+            }
+        }
+        
+        internal static string Password_Error {
+            get {
+                return ResourceManager.GetString("Password.Error", resourceCulture);
+            }
+        }
+        
+        internal static string Username_Error {
+            get {
+                return ResourceManager.GetString("Username.Error", resourceCulture);
+            }
+        }
     }
 }

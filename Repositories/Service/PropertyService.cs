@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Models.Models;
 using Repositories.Repository;
 
@@ -13,37 +14,69 @@ namespace Repositories.Service
 
         public bool AddNewProperty(Property property)
         {
-            throw new NotImplementedException();
+            _context.Properties.Add(property);
+            _context.SaveChanges();
+            return true;
         }
 
         public Property AddPropertyDescription(Description description)
         {
-            throw new NotImplementedException();
+            _context.Descriptions.Add(description);
+            _context.SaveChanges();
+
+            return description.Property;
         }
 
         public bool DeleteProperty(string uniqueId)
         {
-            throw new NotImplementedException();
+            var property = _context.Properties.Where(x => x.UniqueId.Equals(uniqueId)).SingleOrDefault();
+            property.IsDeleted = true;
+            _context.SaveChanges();
+
+            return true;
         }
 
         public List<Property> GetProperties()
         {
-            throw new NotImplementedException();
+            var properties = _context.Properties.Local.ToList();
+            if(properties.Count < 1)
+            {
+                properties = _context.Properties.ToList();
+            }
+            return properties;
         }
 
         public Property GetProperty(string uniqueId)
         {
-            throw new NotImplementedException();
+            var property = _context.Properties.Local.SingleOrDefault();
+            if (property == null)
+            {
+                property = _context.Properties.SingleOrDefault();
+            }
+            return property;
         }
 
         public Property UpdateProperty(Property property)
         {
-            throw new NotImplementedException();
+            _context.Properties.Update(property);
+            _context.SaveChanges();
+
+            return property;
         }
 
         public Property UpdatePropertyDescription(Description description)
         {
-            throw new NotImplementedException();
+            _context.Descriptions.Update(description);
+            _context.SaveChanges();
+
+            return description.Property;
+        }
+
+        public PagedList<Property> GetProperties(QueryParams pageParams)
+        {
+            return PagedList<Property>.ToPagedList(_context.Properties.OrderBy(on => on.Id),
+                pageParams.PageNumber,
+                pageParams.PageSize);
         }
     }
 }
