@@ -68,7 +68,6 @@ namespace DominoesProperties.Helper
 
         public static Description DescriptionToEntity(Models.PropertyDescription description){
             return new Description{
-                PropertyId = description.PropertyId,
                 Bathroom = description.Bathroom,
                 Toilet = description.Toilet,
                 AirConditioned = description.AirConditioned,

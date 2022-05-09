@@ -1,6 +1,8 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace DominoesProperties.Models{
-    public class PropertyDescription{
-        public long PropertyId { get; set; }
+    public class PropertyDescription
+    {
         public int? Bathroom { get; set; }
         public int? Toilet { get; set; }
         public int? FloorLevel { get; set; }

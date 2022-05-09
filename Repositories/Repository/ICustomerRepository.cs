@@ -5,7 +5,7 @@ namespace Repositories.Repository
 {
     public interface ICustomerRepository
     {
-        bool CreateCustomer(Customer user);
+        Customer CreateCustomer(Customer user);
         Customer GetCustomer(string email);
         List<Customer> GetCustomers();
         void DeleteCustomer(string uniqueReference);

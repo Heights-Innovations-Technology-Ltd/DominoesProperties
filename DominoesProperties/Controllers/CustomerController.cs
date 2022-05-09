@@ -50,12 +50,13 @@ namespace DominoesProperties.Controllers
                 return new ApiResponse(HttpStatusCode.BadRequest, "Password does not match");
             }
 
-            if (customerRepository.CreateCustomer(ClassConverter.ConvertCustomerToEntity(customer)))
+            var customerReg = customerRepository.CreateCustomer(ClassConverter.ConvertCustomerToEntity(customer));
+            if (customerReg != null)
             {
                 string token = CommonLogic.GetUniqueRefNumber("AUTH");
                 Dictionary<string, object> authData = new();
                 authData.Add("expire", DateTime.Now);
-                authData.Add("user", customer.UniqueReference);
+                authData.Add("user", customerReg.UniqueRef);
                 authData.Add("token", token);
 
                 var cachedAuth = JsonSerializer.Serialize(authData);

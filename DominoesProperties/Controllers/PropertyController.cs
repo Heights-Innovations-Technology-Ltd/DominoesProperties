@@ -66,7 +66,7 @@ namespace DominoesProperties.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Admin")]
+        // [Authorize(Roles = "Admin")]
         public ApiResponse Property([FromBody] Properties properties, [Required(ErrorMessage ="Only admin users can create property")] [FromHeader] string admin)
         {
             var property = ClassConverter.PropertyToEntity(properties);
@@ -115,6 +115,37 @@ namespace DominoesProperties.Controllers
             response.Code = HttpStatusCode.OK;
             response.Message = localizer["Property.Id.Error"];
             return response;
+        }
+
+        [HttpPut("propertyId")]
+        [Authorize]
+        public ApiResponse UpdateDescription(string propertyId, [FromBody] PropertyDescription description){
+            var propDescription = propertyRepository.GetProperty(propertyId).DescriptionNavigation;
+            if(propDescription != null){
+                propDescription.AirConditioned = description.AirConditioned;
+                propDescription.Basement = description.Basement;
+                propDescription.Bathroom = description.Bathroom;
+                propDescription.Bedroom = description.Bedroom;
+                propDescription.Fireplace = description.Fireplace;
+                propDescription.FloorLevel = description.FloorLevel;
+                propDescription.Gym = description.Gym;
+                propDescription.LandSize = description.LandSize;
+                propDescription.Laundry = description.Laundry;
+                propDescription.Parking = description.Parking;
+                propDescription.Refrigerator = description.Refrigerator;
+                propDescription.SecurityGuard = description.SecurityGuard;
+                propDescription.SwimmingPool = description.SwimmingPool;
+                propDescription.Toilet = description.Toilet;
+
+                response.Data = propertyRepository.UpdatePropertyDescription(propDescription);
+                response.Code = HttpStatusCode.OK;
+                response.Message = localizer["200"];
+                return response;
+            }
+            else{
+                response.Message = localizer["Property.Id.Error"];
+                return response;
+            }
         }
     }
 }

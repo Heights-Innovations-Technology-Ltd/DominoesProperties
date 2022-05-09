@@ -13,7 +13,7 @@ namespace Repositories.Service
         {
         }
 
-        public bool CreateCustomer(Customer customer)
+        public Customer CreateCustomer(Customer customer)
         {
             _context.Customers.Add(customer);
             _context.SaveChanges();
@@ -27,7 +27,7 @@ namespace Repositories.Service
             _context.Wallets.Add(customerWallet);
             _context.SaveChanges();
 
-            return true;
+            return customer;
         }
 
         public void DeleteCustomer(string uniqueReference)

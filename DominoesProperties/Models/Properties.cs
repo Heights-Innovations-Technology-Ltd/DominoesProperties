@@ -1,12 +1,13 @@
 
 using System;
 using System.ComponentModel.DataAnnotations;
-using Models.Models;
+using System.Text.Json.Serialization;
 
 namespace DominoesProperties.Models
 {
     public class Properties
     {
+        [JsonIgnore]
         public string UniqueId { get; set; }
         [Required(ErrorMessage ="Property name is required")]
         [MaxLength(250)]
@@ -32,7 +33,8 @@ namespace DominoesProperties.Models
         public DateTime? DateCreated { get; set; }
         public string Longitude { get; set; }
         public string Latitude { get; set; }
-        [Required(ErrorMessage ="Supply creating admin user email")]
+        
+        [JsonIgnore]
         public string CreatedBy { get; set; }
         public bool? IsDeleted { get; set; }
     }
