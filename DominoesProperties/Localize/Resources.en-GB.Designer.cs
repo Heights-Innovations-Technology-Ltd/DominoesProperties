@@ -76,5 +76,11 @@ namespace DominoesProperties.Localize {
                 return ResourceManager.GetString("Username.Error", resourceCulture);
             }
         }
+        
+        internal static string Property_Id_Error {
+            get {
+                return ResourceManager.GetString("Property.Id.Error", resourceCulture);
+            }
+        }
     }
 }

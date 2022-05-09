@@ -22,7 +22,7 @@ namespace DominoesProperties.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UserController : Controller
+    public class CustomerController : Controller
     {
         private readonly ILoggerManager logger;
         private readonly ICustomerRepository customerRepository;
@@ -31,7 +31,7 @@ namespace DominoesProperties.Controllers
         private readonly IConfiguration configuration;
         private ApiResponse response = new ApiResponse(HttpStatusCode.BadRequest, "Error performing request, contact admin");
 
-        public UserController(ILoggerManager _logger, ICustomerRepository _customerRepository, IStringLocalizer<Resource> _stringLocalizer,
+        public CustomerController(ILoggerManager _logger, ICustomerRepository _customerRepository, IStringLocalizer<Resource> _stringLocalizer,
             IDistributedCache _distributedCache, IConfiguration _configuration)
         {
             logger = _logger;
@@ -59,7 +59,13 @@ namespace DominoesProperties.Controllers
                 authData.Add("token", token);
 
                 var cachedAuth = JsonSerializer.Serialize(authData);
-                await distributedCache.SetStringAsync(token, cachedAuth);
+
+                var expiryOptions = new DistributedCacheEntryOptions()
+                {
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(60),
+                    SlidingExpiration = TimeSpan.FromMinutes(30)
+                };
+                await distributedCache.SetStringAsync(token, cachedAuth, expiryOptions);
 
                 string url = string.Format("{0}/activate/{1}", configuration["app_settings:WebEndpoint"], token);
 
@@ -136,7 +142,7 @@ namespace DominoesProperties.Controllers
         }
 
         [HttpPut]
-        [Route("/activate/{token}")]
+        [Route("activate/{token}")]
         public async Task<ApiResponse> Activate(string token)
         {
             var cachedAuth = await distributedCache.GetStringAsync(token);
@@ -155,6 +161,8 @@ namespace DominoesProperties.Controllers
                 customer.IsVerified = true;
                 customerRepository.UpdateCustomer(customer);
 
+                distributedCache.Remove(token);
+
                 response.Message = localizer["200"];
                 response.Code = HttpStatusCode.OK;
                 response.Data = ClassConverter.ConvertCustomerToProfile(customer);
@@ -164,7 +172,7 @@ namespace DominoesProperties.Controllers
         }
 
         [HttpGet]
-        [Route("/activate/{uniqueRef}")]
+        [Route("activate/{uniqueRef}")]
         public async Task<ApiResponse> SendActivationLink(string uniqueRef)
         {
             var customer = customerRepository.GetCustomer(uniqueRef);

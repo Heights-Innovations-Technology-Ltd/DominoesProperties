@@ -32,6 +32,7 @@
     <None Remove="Localize\Resources.en-US" />
     <None Remove="Microsoft.EntityFrameworkCore.Design" />
     <None Remove="Microsoft.Extensions.Caching.StackExchangeRedis" />
+    <None Remove="Enums\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.16" />
@@ -56,6 +57,7 @@
     <Folder Include="Helper\" />
     <Folder Include="Extensions\" />
     <Folder Include="Localize\" />
+    <Folder Include="Enums\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Models\Models.csproj">

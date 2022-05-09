@@ -58,7 +58,6 @@ public static class CommonLogic
     /// </summary>
     private static readonly string LiveKey = "sk_live_a9fe9b10e0e5d007d7872f5e2cda23ec740213b6";
 
-
     #endregion
 
     #region Encrption/Decryption functions
@@ -495,7 +494,7 @@ public static class CommonLogic
         }
         catch (Exception ex)
         {
-
+            Console.WriteLine(ex);
         }
     }
 

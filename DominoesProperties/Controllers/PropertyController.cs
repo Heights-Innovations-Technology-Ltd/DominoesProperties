@@ -1,12 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using DominoesProperties.Helper;
+using DominoesProperties.Localize;
 using DominoesProperties.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using Models.Models;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Repositories.Repository;
 
 namespace DominoesProperties.Controllers
@@ -16,16 +22,20 @@ namespace DominoesProperties.Controllers
     {
         private readonly IPropertyRepository propertyRepository;
         private readonly ILoggerManager logger;
+        private readonly IStringLocalizer<Resource> localizer;
+        private readonly ICustomerRepository customerRepository;
         private ApiResponse response = new ApiResponse(HttpStatusCode.BadRequest, "Error performing request, contact admin");
 
-        public PropertyController(IPropertyRepository _propertyRepository, ILoggerManager _logger)
+        public PropertyController(IPropertyRepository _propertyRepository, ILoggerManager _logger, IStringLocalizer<Resource> _localizer, ICustomerRepository _customerRepository)
         {
             propertyRepository = _propertyRepository;
             logger = _logger;
+            localizer = _localizer;
+            customerRepository = _customerRepository;
         }
 
         [HttpGet]
-        public ApiResponse Get([FromQuery] QueryParams queryParams)
+        public ApiResponse Property([FromQuery] QueryParams queryParams)
         {
             var property = propertyRepository.GetProperties(queryParams);
             var metadata = new
@@ -46,7 +56,7 @@ namespace DominoesProperties.Controllers
         }
 
         [HttpGet("{uniqueId}")]
-        public ApiResponse Get(string uniqueId)
+        public ApiResponse Property(string uniqueId)
         {
             var property = propertyRepository.GetProperty(uniqueId);
             response.Code = HttpStatusCode.OK;
@@ -55,22 +65,56 @@ namespace DominoesProperties.Controllers
             return response;
         }
 
-        // POST api/values
         [HttpPost]
-        public void Post([FromBody] string value)
+        [Authorize(Roles = "Admin")]
+        public ApiResponse Property([FromBody] Properties properties, [Required(ErrorMessage ="Only admin users can create property")] [FromHeader] string admin)
         {
+            var property = ClassConverter.PropertyToEntity(properties);
+            propertyRepository.AddNewProperty(property);
+            response.Code = HttpStatusCode.OK;
+            response.Message = localizer["201"].ToString().Replace("{params}", $"Property {property.Name}");
+            return response;
         }
 
-        // PUT api/values/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpPut("{uniqueId}")]
+        [Authorize(Roles = "Admin")]
+        public ApiResponse Property(string uniqueId, [FromBody] UpdateProperty updateProperty)
         {
+            var property = propertyRepository.GetProperty(uniqueId);
+            if(property == null){
+                response.Message = localizer["Username.Error"];
+                return response;
+            }
+            property.Location = string.IsNullOrEmpty(updateProperty.Location) ? property.Location : updateProperty.Location;
+            property.Type = updateProperty.Type == null ? property.Type : updateProperty.Type;
+            property.TotalUnits = updateProperty.TotalUnits > 0 ? updateProperty.TotalUnits : property.TotalUnits;
+            property.UnitPrice = updateProperty.UnitPrice > 0 ? updateProperty.UnitPrice : property.UnitPrice;
+            property.ClosingDate = updateProperty.ClosingDate == null ? property.ClosingDate : updateProperty.ClosingDate;
+            property.TargetYield = updateProperty.TargetYield > 0 ? updateProperty.TargetYield : property.TargetYield;
+            property.ProjectedGrowth = updateProperty.ProjectedGrowth > 0 ? updateProperty.ProjectedGrowth : property.ProjectedGrowth;
+            property.InterestRate = updateProperty.InterestRate> 0 ? updateProperty.InterestRate : property.InterestRate;
+            property.Longitude = string.IsNullOrEmpty(updateProperty.Longitude) ? property.Longitude : updateProperty.Longitude;
+            property.Latitude = string.IsNullOrEmpty(updateProperty.Latitude) ? property.Latitude : updateProperty.Latitude;
+
+            response.Data = propertyRepository.UpdateProperty(property);
+            response.Code = HttpStatusCode.OK;
+            response.Message = localizer["200"];
+            return response;
         }
 
-        // DELETE api/values/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        [HttpDelete("{uniqueId}")]
+        [Authorize(Roles = "Admin")]
+        public ApiResponse Delete(string uniqueId)
         {
+            var property = propertyRepository.GetProperty(uniqueId);
+            if(property == null){
+                response.Message = localizer["Property.Id.Error"];
+                return response;
+            }
+            property.IsDeleted = true;
+            response.Code = HttpStatusCode.OK;
+            response.Message = localizer["Property.Id.Error"];
+            return response;
         }
     }
 }

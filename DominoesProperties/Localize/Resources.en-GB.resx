@@ -145,4 +145,8 @@
     <value>Invalid or wrong user</value>
     <comment/>
   </data>
+  <data name="Property.Id.Error" xml:space="preserve">
+    <value>No property with the given name found</value>
+    <comment/>
+  </data>
 </root>
