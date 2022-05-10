@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace DominoesProperties.Models
+namespace DominoesPropertiesWeb.Models
 {
     public class Profile
     {

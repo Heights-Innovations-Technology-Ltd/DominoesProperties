@@ -12,12 +12,10 @@ using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Localization;
-using Microsoft.AspNetCore.Localization.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -90,11 +88,39 @@ namespace DominoesProperties
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Dominoes Properties", Version = "v1" });
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    In = ParameterLocation.Header,
+                    Description = "Please enter token",
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.Http,
+                    BearerFormat = "JWT",
+                    Scheme = "bearer"
+                });
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type=ReferenceType.SecurityScheme,
+                                Id="Bearer"
+                            }
+                        },
+                        Array.Empty<string>()
+                    }
+                });
+                //c.OperationFilter<AddRequiredHeaderParameter>();
             });
 
             #region Connection String
             services.AddDbContext<dominoespropertiesContext>(opts => opts.UseMySQL(Configuration.GetConnectionString("DominoProps_String")));
             #endregion
+
+            services.AddStackExchangeRedisCache(options => {
+                options.Configuration = Configuration.GetConnectionString("RedisCacheUrl");
+            });
 
             services.ConfigureNLogService();
 
@@ -130,11 +156,14 @@ namespace DominoesProperties
             }));
 
             var localizeOptions = app.ApplicationServices.GetService<IOptions<RequestLocalizationOptions>>();
+            
             app.UseRequestLocalization(localizeOptions.Value);
 
             app.UseCors("AllowAllHeaders");
 
             //app.ConfigureExceptionHandler(logger);
+
+            app.UseAuthentication();
 
             app.ConfigureCustomExceptionMiddleware();
 

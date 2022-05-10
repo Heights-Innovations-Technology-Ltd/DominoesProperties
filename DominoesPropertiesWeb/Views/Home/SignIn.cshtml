@@ -25,13 +25,21 @@
 
 		<!-- Start User Area -->
 		<section class="user-area ptb-100">
+
 			<div class="container">
+				
 				<div class="row">
+					<div class="col-md-12" id="msg">
+						
+					</div>
+				</div>
+				<div class="row">
+					
 					<div class="col-lg-6">
 						<div class="user-form-content log-in">
 							<h3>Sign in</h3>
-						
-							<form class="user-form">
+							
+							<form class="user-form" id="login-form">
 								<div class="row">
 									<div class="col-12">
 										<div class="form-group">
@@ -64,33 +72,61 @@
 					<div class="col-lg-6">
 						<div class="user-form-content sign-up">
 							<h3>Sign Up</h3>
-
-							<form class="user-form">
+							
+							
+							<form class="user-form" id="user-form">
 								<div class="row">
 									<div class="col-12">
 										<div class="form-group">
-											<label>Name</label>
-											<input class="form-control" type="text" name="name">
+											<label>First Name</label>
+											<input class="form-control" type="text" name="firstName" id="firstName" requeired>
+										</div>
+									</div>
+									<div class="col-12">
+										<div class="form-group">
+											<label>Last Name</label>
+											<input class="form-control" type="text" name="lastName" id="lastName" requeired>
 										</div>
 									</div>
 
 									<div class="col-12">
 										<div class="form-group">
 											<label>Email</label>
-											<input class="form-control" type="email" name="email">
+											<input class="form-control" type="email" name="email" id="email" requeired>
+										</div>
+									</div>
+									
+									<div class="col-12">
+										<div class="form-group">
+											<label>Phone Number</label>
+											<input class="form-control" type="tel" name="phone" id="phone" requeired>
+										</div>
+									</div>
+									
+									<div class="col-12">
+										<div class="form-group">
+											<label>Address</label>
+											<input class="form-control" type="text" name="address" id="address">
 										</div>
 									</div>
 
 									<div class="col-12">
 										<div class="form-group">
 											<label>Password</label>
-											<input class="form-control" type="password" name="password">
+											<input class="form-control" type="password" name="password" id="password" required>
+										</div>
+									</div>
+									
+									<div class="col-12">
+										<div class="form-group">
+											<label>Confirm Password</label>
+											<input class="form-control" type="password" name="confirm_password" id="confirm_password">
 										</div>
 									</div>
 		
 									<div class="col-12">
-										<button class="default-btn register" type="submit">
-											Sign Up
+										<button class="default-btn register btn-register" type="button">
+											Register
 										</button>
 									</div>
 								</div>

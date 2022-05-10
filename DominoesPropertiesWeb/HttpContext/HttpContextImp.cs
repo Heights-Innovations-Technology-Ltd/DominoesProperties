@@ -22,6 +22,7 @@ namespace DominoesPropertiesWeb.HttpContext
         public HttpContextImp(IConfiguration config, IHttpContextAccessor httpContextAccessor)
         {
             _config = config;
+            url = _config["Base_URL"];
             session = httpContextAccessor.HttpContext.Session;
         }
         public async Task<dynamic> Get(string endpointURL)
@@ -55,8 +56,6 @@ namespace DominoesPropertiesWeb.HttpContext
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, url))
             {
-                client.DefaultRequestHeaders.Add("channel", "1");
-
                 var token = this.session.GetString("Token");
                 client.DefaultRequestHeaders.Add("Authorization",
                     "Bearer " + token);
