@@ -58,7 +58,6 @@ public static class CommonLogic
     /// </summary>
     private static readonly string LiveKey = "sk_live_a9fe9b10e0e5d007d7872f5e2cda23ec740213b6";
 
-
     #endregion
 
     #region Encrption/Decryption functions
@@ -71,12 +70,12 @@ public static class CommonLogic
     /// </returns>
     public static string Encrypt(string strText)
     {
-        byte[] byKey = { };
+        byte[] byKey = Array.Empty<byte>();
         byte[] IV =
         {
-                18,52,86,120,144,171,205,239
-            };
-        byKey = System.Text.Encoding.UTF8.GetBytes("DominoesProperties");
+            18,52,86,120,144,171,205,239
+        };
+        byKey = System.Text.Encoding.UTF8.GetBytes("Dominoes");
         DESCryptoServiceProvider des = new DESCryptoServiceProvider();
         byte[] inputByteArray = System.Text.Encoding.UTF8.GetBytes(strText);
         MemoryStream ms = new MemoryStream();
@@ -111,7 +110,7 @@ public static class CommonLogic
         {
             18,52,86,120,144,171,205,239
             };
-        byKey = System.Text.Encoding.UTF8.GetBytes("NestBank");
+        byKey = System.Text.Encoding.UTF8.GetBytes("Dominoes");
         DESCryptoServiceProvider des = new DESCryptoServiceProvider();
         inputByteArray = Convert.FromBase64String(stringToDecrypt);
         MemoryStream ms = new MemoryStream();
@@ -448,8 +447,8 @@ public static class CommonLogic
 
             if (!string.IsNullOrEmpty(emailRequest.Attachedfile))
             {
-                System.Net.Mail.Attachment attachment;
-                attachment = new System.Net.Mail.Attachment(emailRequest.Attachedfile);
+                Attachment attachment;
+                attachment = new Attachment(emailRequest.Attachedfile);
                 mail.Attachments.Add(attachment);
             }
             mail.Subject = emailRequest.Subject;
@@ -495,7 +494,7 @@ public static class CommonLogic
         }
         catch (Exception ex)
         {
-
+            Console.WriteLine(ex);
         }
     }
 

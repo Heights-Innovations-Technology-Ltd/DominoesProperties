@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Net;
+using System.Net.Mail;
 using System.Reflection;
 using System.Text;
 using DominoesProperties.Extensions;
@@ -66,8 +68,12 @@ namespace DominoesProperties
 
             services.AddScoped<ICustomerRepository, CustomerService>();
             services.AddScoped<IWalletRepository, WalletService>();
+            services.AddScoped<IPropertyRepository, PropertyService>();
+            services.AddScoped<IUtilRepository, UtilServices>();
 
             services.AddLocalization(opt => opt.ResourcesPath = "Resources");
+            services.AddMvc().AddViewLocalization(Microsoft.AspNetCore.Mvc.Razor.LanguageViewLocationExpanderFormat.Suffix).AddDataAnnotationsLocalization();
+
             services.Configure<RequestLocalizationOptions>(opt =>
             {
                 var supportedCultures = new List<CultureInfo>
@@ -78,12 +84,19 @@ namespace DominoesProperties
                 opt.DefaultRequestCulture = new RequestCulture(culture: "en-GB", uiCulture: "en-US");
                 opt.SupportedCultures = supportedCultures;
                 opt.SupportedUICultures = supportedCultures;
-                //opt.RequestCultureProviders = new[] { new RouteDataRequestCultureProvider { IndexOfCulture: 1, IndexOfUICulture: 1 } };
             });
 
             services.AddControllers().AddNewtonsoftJson(options =>
                 options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore
             );
+
+            services.AddFluentEmail("jcobsmofe@gmail.com").AddSmtpSender(new SmtpClient("smtp.gmail.com")
+            {
+                UseDefaultCredentials = false,
+                Port = Configuration.GetSection("smtp").GetValue<int>("port"),
+                Credentials = new NetworkCredential(Configuration.GetSection("smtp").GetValue<string>("sender"), Configuration.GetSection("smtp").GetValue<string>("password")),
+                EnableSsl = true,
+            });
 
             services.AddSwaggerGen(c =>
             {
@@ -111,15 +124,16 @@ namespace DominoesProperties
                         Array.Empty<string>()
                     }
                 });
-                //c.OperationFilter<AddRequiredHeaderParameter>();
             });
 
             #region Connection String
             services.AddDbContext<dominoespropertiesContext>(opts => opts.UseMySQL(Configuration.GetConnectionString("DominoProps_String")));
             #endregion
 
-            services.AddStackExchangeRedisCache(options => {
-                options.Configuration = Configuration.GetConnectionString("RedisCacheUrl");
+            services.AddStackExchangeRedisCache(options =>
+            {
+                options.Configuration = Configuration.GetSection("Redis").GetValue<String>("Host");
+                options.InstanceName = Configuration.GetSection("Redis").GetValue<String>("InstanceName");
             });
 
             services.ConfigureNLogService();
@@ -154,14 +168,10 @@ namespace DominoesProperties
                 CommonLogic.SendExceptionEmail("Exception Occurred", "Error On Method :  " + MethodBase.GetCurrentMethod().DeclaringType.Name + " and Message : " + exception.Message + "<br> StackTrace : " + exception.StackTrace);
                 await context.Response.WriteAsync(result);
             }));
-
-            var localizeOptions = app.ApplicationServices.GetService<IOptions<RequestLocalizationOptions>>();
             
-            app.UseRequestLocalization(localizeOptions.Value);
+            app.UseRequestLocalization(app.ApplicationServices.GetRequiredService<IOptions<RequestLocalizationOptions>>().Value);
 
             app.UseCors("AllowAllHeaders");
-
-            //app.ConfigureExceptionHandler(logger);
 
             app.UseAuthentication();
 

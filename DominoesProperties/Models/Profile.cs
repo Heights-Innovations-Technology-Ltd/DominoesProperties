@@ -19,6 +19,7 @@ namespace DominoesProperties.Models
 
         [Required(ErrorMessage = "Email is required")]
         [MaxLength(100)]
+        [EmailAddress(ErrorMessage ="Not a valid email address")]
         public string Email { get; set; }
 
         [Required(ErrorMessage = "Phone number is required")]

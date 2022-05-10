@@ -17,6 +17,7 @@ namespace DominoesProperties.Extensions
             _logger = logger;
             _next = next;
         }
+
         public async Task InvokeAsync(HttpContext httpContext)
         {
             try
@@ -39,7 +40,7 @@ namespace DominoesProperties.Extensions
             {
                 BadHttpRequestException => "Invalid request payload supplied",
                 NotImplementedException => "Method not implemented in logic",
-                _ => "Internal Server Error from the application logic."
+                _ => exception.Message
             };
 
             await context.Response.WriteAsync(new ErrorDetails()

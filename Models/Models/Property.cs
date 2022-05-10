@@ -19,12 +19,20 @@ namespace Models.Models
         public int? Type { get; set; }
         public int TotalUnits { get; set; }
         public decimal UnitPrice { get; set; }
-        public decimal? TotalPrice { get; set; }
+        public decimal? TotalPrice { 
+            get{
+                return this.TotalPrice;
+            }
+            set
+            {
+                value = this.TotalUnits * this.UnitPrice;
+            } 
+        }
         public string Status { get; set; }
         public int? UnitSold { get; set; }
         public int? UnitAvailable { get; set; }
         public DateTime? ClosingDate { get; set; }
-        public int? Description { get; set; }
+        public long? Description { get; set; }
         public decimal? TargetYield { get; set; }
         public decimal? ProjectedGrowth { get; set; }
         public decimal? InterestRate { get; set; }

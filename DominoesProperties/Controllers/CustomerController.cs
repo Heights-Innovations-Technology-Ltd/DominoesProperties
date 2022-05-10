@@ -1,6 +1,6 @@
 ﻿using DominoesProperties.Helper;
-using DominoesProperties.Localize;
 using DominoesProperties.Models;
+using FluentEmail.Core;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Distributed;
@@ -22,23 +22,25 @@ namespace DominoesProperties.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UserController : Controller
+    public class CustomerController : Controller
     {
         private readonly ILoggerManager logger;
         private readonly ICustomerRepository customerRepository;
-        private readonly IStringLocalizer<Resource> localizer;
+        private readonly IStringLocalizer<CustomerController> localizer;
         private readonly IDistributedCache distributedCache;
         private readonly IConfiguration configuration;
+        private readonly IFluentEmail singleEmail;
         private ApiResponse response = new ApiResponse(HttpStatusCode.BadRequest, "Error performing request, contact admin");
 
-        public UserController(ILoggerManager _logger, ICustomerRepository _customerRepository, IStringLocalizer<Resource> _stringLocalizer,
-            IDistributedCache _distributedCache, IConfiguration _configuration)
+        public CustomerController(ILoggerManager _logger, ICustomerRepository _customerRepository, IStringLocalizer<CustomerController> _stringLocalizer,
+            IDistributedCache _distributedCache, IConfiguration _configuration, IFluentEmail _singleEmail)
         {
             logger = _logger;
             customerRepository = _customerRepository;
             localizer = _stringLocalizer;
             distributedCache = _distributedCache;
             configuration = _configuration;
+            singleEmail = _singleEmail;
         }
 
         [HttpPost]
@@ -52,26 +54,40 @@ namespace DominoesProperties.Controllers
                 return new ApiResponse(HttpStatusCode.BadRequest, "Password does not match");
             }
 
-            if (customerRepository.CreateCustomer(ClassConverter.ConvertCustomerToEntity(customer)))
+            var customerReg = customerRepository.CreateCustomer(ClassConverter.ConvertCustomerToEntity(customer));
+            if (customerReg != null)
             {
                 string token = CommonLogic.GetUniqueRefNumber("AUTH");
                 Dictionary<string, object> authData = new();
                 authData.Add("expire", DateTime.Now);
-                authData.Add("user", customer.UniqueReference);
+                authData.Add("user", customerReg.UniqueRef);
                 authData.Add("token", token);
 
                 var cachedAuth = JsonSerializer.Serialize(authData);
-                await distributedCache.SetStringAsync(token, cachedAuth);
 
-                string url = string.Format("{0}/activate/{1}", configuration["app_settings:WebEndpoint"], token);
+                var expiryOptions = new DistributedCacheEntryOptions()
+                {
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(60),
+                    SlidingExpiration = TimeSpan.FromMinutes(30)
+                };
+
+                await distributedCache.SetStringAsync(token, cachedAuth, expiryOptions);
+
+                string url = string.Format("{0}activate/{1}", configuration["app_settings:WebEndpoint"], token);
 
                 //TODO create Html template for registration with url embedded
 
-                EmailRequest emailRequest = new EmailRequest(localizer["Customer.Registration.Subject"], "Click on the below link to activate your account", customer.Email);
-                CommonLogic.SendEmail(emailRequest);
+                _ = singleEmail
+                    .To(customer.Email)
+                    .Body($"Click the link to activate {url}")
+                    .Subject("Dominoes Society - Welcome")
+                    .SendAsync();
+
+                //EmailRequest emailRequest = new EmailRequest(localizer["Customer.Registration.Subject"], "Click on the below link to activate your account", customer.Email);
+                //CommonLogic.SendEmail(emailRequest);
 
                 response.Code = HttpStatusCode.Created;
-                response.Message = localizer["201"].Value.Replace("{params}", "Customer");
+                response.Message = localizer["Response.Created"].Name.Replace("{params}", "Customer");
                 logger.LogInfo(response.Message);
                 return response;
             }
@@ -83,18 +99,18 @@ namespace DominoesProperties.Controllers
         public ApiResponse Login([FromBody] Login login)
         {
             var customer = customerRepository.GetCustomer(login.Email);
-            if (customer == null)
+            if (customer == null || !customer.IsActive.Value || customer.IsDeleted.Value)
             {
                 response.Code = HttpStatusCode.BadRequest;
                 response.Message = localizer["Username.Error"];
                 return response;
             }
 
-            if (customer.Password.Equals(CommonLogic.Encrypt(customer.Password)))
+            if (customer.Password.Equals(CommonLogic.Encrypt(login.Password)))
             {
                 response.Data = ClassConverter.ConvertCustomerToProfile(customer);
                 response.Code = HttpStatusCode.OK;
-                response.Message = response.Message = localizer["200"];
+                response.Message = response.Message = localizer["Response.Success"];
                 Response.Headers.Add("access_token", GenerateJwtToken(customer.UniqueRef));
                 return response;
             }
@@ -112,7 +128,7 @@ namespace DominoesProperties.Controllers
         {
             customerRepository.DeleteCustomer(uniqueRef);
             response.Code = HttpStatusCode.OK;
-            response.Message = response.Message = localizer["200"];
+            response.Message = response.Message = localizer["Response.Success"];
             return response;
         }
 
@@ -131,14 +147,14 @@ namespace DominoesProperties.Controllers
             existingCustomer.AccountNumber = customer.AccountNumber;
             existingCustomer.Phone = customer.Phone;
 
-            response.Message = localizer["200"];
+            response.Message = localizer["Response.Success"];
             response.Code = HttpStatusCode.OK;
             response.Data = customerRepository.UpdateCustomer(existingCustomer);
             return response;
         }
 
         [HttpPut]
-        [Route("/activate/{token}")]
+        [Route("activate/{token}")]
         public async Task<ApiResponse> Activate(string token)
         {
             var cachedAuth = await distributedCache.GetStringAsync(token);
@@ -157,7 +173,9 @@ namespace DominoesProperties.Controllers
                 customer.IsVerified = true;
                 customerRepository.UpdateCustomer(customer);
 
-                response.Message = localizer["200"];
+                distributedCache.Remove(token);
+
+                response.Message = localizer["Response.Success"];
                 response.Code = HttpStatusCode.OK;
                 response.Data = ClassConverter.ConvertCustomerToProfile(customer);
                 return response;
@@ -166,7 +184,7 @@ namespace DominoesProperties.Controllers
         }
 
         [HttpGet]
-        [Route("/activate/{uniqueRef}")]
+        [Route("activate/{uniqueRef}")]
         public async Task<ApiResponse> SendActivationLink(string uniqueRef)
         {
             var customer = customerRepository.GetCustomer(uniqueRef);

@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace DominoesProperties.Localize {
+namespace DominoesProperties.Resources.Controllers.API {
     using System;
     using System.Reflection;
     
@@ -16,21 +16,21 @@ namespace DominoesProperties.Localize {
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Resources_en_GB {
+    internal class CustomerController_en_GB {
         
         private static System.Resources.ResourceManager resourceMan;
         
         private static System.Globalization.CultureInfo resourceCulture;
         
         [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal Resources_en_GB() {
+        internal CustomerController_en_GB() {
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
         internal static System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.Equals(null, resourceMan)) {
-                    System.Resources.ResourceManager temp = new System.Resources.ResourceManager("DominoesProperties.Localize.Resources.en-GB", typeof(Resources_en_GB).Assembly);
+                    System.Resources.ResourceManager temp = new System.Resources.ResourceManager("DominoesProperties.Resources.Controllers.API.CustomerController.en-GB", typeof(CustomerController_en_GB).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -44,6 +44,18 @@ namespace DominoesProperties.Localize {
             }
             set {
                 resourceCulture = value;
+            }
+        }
+        
+        internal static string Response_Success {
+            get {
+                return ResourceManager.GetString("Response.Success", resourceCulture);
+            }
+        }
+        
+        internal static string Response_Created {
+            get {
+                return ResourceManager.GetString("Response.Created", resourceCulture);
             }
         }
         
@@ -74,6 +86,12 @@ namespace DominoesProperties.Localize {
         internal static string Username_Error {
             get {
                 return ResourceManager.GetString("Username.Error", resourceCulture);
+            }
+        }
+        
+        internal static string Property_Id_Error {
+            get {
+                return ResourceManager.GetString("Property.Id.Error", resourceCulture);
             }
         }
     }
