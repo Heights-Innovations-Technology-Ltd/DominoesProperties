@@ -14,6 +14,7 @@ namespace DominoesProperties.Helper
         {
             return new Customer
             {
+                UniqueRef = Guid.NewGuid().ToString(),
                 FirstName = customer.FirstName,
                 LastName = customer.LastName,
                 Email = customer.Email,

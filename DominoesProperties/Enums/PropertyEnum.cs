@@ -3,14 +3,13 @@ namespace DominoesProperties
 {
     public enum PropertyEnum
     {
-
     }
 
     public enum PropertyStatus
     {
-        CONSTRUCTION_ONGOING,
-        RENTED_OUT,
+        ONGOING_CONSTRUCTION,
+        OPEN_FOR_INVESTMENT,
         CLOSED_FOR_INVESTMENT,
-        OPEN_FOR_INVESTMENT
+        RENTED_OUT
     }
 }

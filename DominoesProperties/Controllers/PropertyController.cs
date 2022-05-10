@@ -5,7 +5,6 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using DominoesProperties.Helper;
-using DominoesProperties.Localize;
 using DominoesProperties.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -22,11 +21,11 @@ namespace DominoesProperties.Controllers
     {
         private readonly IPropertyRepository propertyRepository;
         private readonly ILoggerManager logger;
-        private readonly IStringLocalizer<Resource> localizer;
+        private readonly IStringLocalizer<PropertyController> localizer;
         private readonly ICustomerRepository customerRepository;
         private ApiResponse response = new ApiResponse(HttpStatusCode.BadRequest, "Error performing request, contact admin");
 
-        public PropertyController(IPropertyRepository _propertyRepository, ILoggerManager _logger, IStringLocalizer<Resource> _localizer, ICustomerRepository _customerRepository)
+        public PropertyController(IPropertyRepository _propertyRepository, ILoggerManager _logger, IStringLocalizer<PropertyController> _localizer, ICustomerRepository _customerRepository)
         {
             propertyRepository = _propertyRepository;
             logger = _logger;
@@ -72,7 +71,7 @@ namespace DominoesProperties.Controllers
             var property = ClassConverter.PropertyToEntity(properties);
             propertyRepository.AddNewProperty(property);
             response.Code = HttpStatusCode.OK;
-            response.Message = localizer["201"].ToString().Replace("{params}", $"Property {property.Name}");
+            response.Message = localizer["Response.Created"].ToString().Replace("{params}", $"Property {property.Name}");
             return response;
         }
 
@@ -98,7 +97,7 @@ namespace DominoesProperties.Controllers
 
             response.Data = propertyRepository.UpdateProperty(property);
             response.Code = HttpStatusCode.OK;
-            response.Message = localizer["200"];
+            response.Message = localizer["Response.Success"];
             return response;
         }
 
@@ -139,7 +138,7 @@ namespace DominoesProperties.Controllers
 
                 response.Data = propertyRepository.UpdatePropertyDescription(propDescription);
                 response.Code = HttpStatusCode.OK;
-                response.Message = localizer["200"];
+                response.Message = localizer["Response.Success"];
                 return response;
             }
             else{

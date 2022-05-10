@@ -305,11 +305,6 @@ namespace Models.Models
                     .HasForeignKey(d => d.CreatedBy)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("Property_Admin_Email_fk");
-
-                entity.HasOne(d => d.TypeNavigation)
-                    .WithMany(p => p.Properties)
-                    .HasForeignKey(d => d.Type)
-                    .HasConstraintName("Property_Property_Type_Id_fk");
             });
 
             modelBuilder.Entity<PropertyType>(entity =>
@@ -403,11 +398,6 @@ namespace Models.Models
                 entity.Property(e => e.WalletNo)
                     .IsRequired()
                     .HasMaxLength(15);
-
-                entity.HasOne(d => d.Customer)
-                    .WithOne(p => p.Wallet)
-                    .HasForeignKey<Wallet>(d => d.CustomerId)
-                    .HasConstraintName("Wallet_Customer_Id_fk");
             });
 
             OnModelCreatingPartial(modelBuilder);

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using Models.Models;
 using Repositories.Repository;
 
@@ -21,7 +22,7 @@ namespace Repositories.Service
             Wallet customerWallet = new Wallet
             {
                 CustomerId = customer.Id,
-                WalletNo = CommonLogic.GetUniqueNumber(customer.Email),
+                WalletNo = CommonLogic.GetUniqueNumber("WALL"),
             };
 
             _context.Wallets.Add(customerWallet);
@@ -43,7 +44,7 @@ namespace Repositories.Service
             var customer = _context.Customers.Local.Where(x => x.Email.Equals(email)).SingleOrDefault();
             if(customer == null)
             {
-                customer = _context.Customers.Where(x => x.Email.Equals(email)).SingleOrDefault();
+                customer = _context.Customers.Include(x => x.Wallet).Where(x => x.Email.Equals(email)).SingleOrDefault();
             }
             return customer;
         }
