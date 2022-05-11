@@ -147,7 +147,7 @@ namespace Helpers
                 }
                 return response;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return "{}";
             }
