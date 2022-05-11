@@ -11,10 +11,16 @@
     <None Remove="Twilio" />
     <None Remove="Select.HtmlToPdf" />
     <None Remove="Select.HtmlToPdf.NetCore" />
+    <None Remove="PayStack.Net" />
+    <None Remove="Enum\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Twilio" Version="5.74.0" />
     <PackageReference Include="Select.HtmlToPdf" Version="22.1.0" />
     <PackageReference Include="Select.HtmlToPdf.NetCore" Version="22.1.0" />
+    <PackageReference Include="PayStack.Net" Version="0.7.7" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Enum\" />
   </ItemGroup>
 </Project>

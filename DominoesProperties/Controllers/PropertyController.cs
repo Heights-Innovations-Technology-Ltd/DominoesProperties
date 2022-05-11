@@ -22,15 +22,18 @@ namespace DominoesProperties.Controllers
         private readonly IPropertyRepository propertyRepository;
         private readonly ILoggerManager logger;
         private readonly IStringLocalizer<PropertyController> localizer;
+        public readonly IUtilRepository utilRepository;
         private readonly ICustomerRepository customerRepository;
         private ApiResponse response = new ApiResponse(HttpStatusCode.BadRequest, "Error performing request, contact admin");
 
-        public PropertyController(IPropertyRepository _propertyRepository, ILoggerManager _logger, IStringLocalizer<PropertyController> _localizer, ICustomerRepository _customerRepository)
+        public PropertyController(IPropertyRepository _propertyRepository, ILoggerManager _logger, IStringLocalizer<PropertyController> _localizer,
+            ICustomerRepository _customerRepository, IUtilRepository _utilRepository)
         {
             propertyRepository = _propertyRepository;
             logger = _logger;
             localizer = _localizer;
             customerRepository = _customerRepository;
+            utilRepository = _utilRepository;
         }
 
         [HttpGet]
@@ -116,7 +119,7 @@ namespace DominoesProperties.Controllers
             return response;
         }
 
-        [HttpPut("propertyId")]
+        [HttpPut("description/{propertyId}")]
         [Authorize]
         public ApiResponse UpdateDescription(string propertyId, [FromBody] PropertyDescription description){
             var propDescription = propertyRepository.GetProperty(propertyId).DescriptionNavigation;
@@ -145,6 +148,15 @@ namespace DominoesProperties.Controllers
                 response.Message = localizer["Property.Id.Error"];
                 return response;
             }
+        }
+
+        [HttpGet("types")]
+        public ApiResponse GetPropertyTypes()
+        {
+            response.Data = utilRepository.GetPropertyTypes();
+            response.Code = HttpStatusCode.OK;
+            response.Message = localizer["Response.Success"];
+            return response;
         }
     }
 }

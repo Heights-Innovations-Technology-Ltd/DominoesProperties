@@ -134,7 +134,7 @@
     <comment/>
   </data>
   <data name="Auth.Link.Generated" xml:space="preserve">
-    <value>Validation link has been sent to your email</value>
+    <value>Validation link sent successfully, kindly check your email to activate account</value>
     <comment/>
   </data>
   <data name="Password.Error" xml:space="preserve">
@@ -147,6 +147,26 @@
   </data>
   <data name="Property.Id.Error" xml:space="preserve">
     <value>No property with the given name found</value>
+    <comment/>
+  </data>
+  <data name="Customer.NotVerified" xml:space="preserve">
+    <value>Customer account not verified</value>
+    <comment/>
+  </data>
+  <data name="Response.Customer.Activated" xml:space="preserve">
+    <value>Customer account {0} has been successfully verified and activated</value>
+    <comment/>
+  </data>
+  <data name="Response.Customer.Password.Link" xml:space="preserve">
+    <value>Password reset link successfully sent to your email</value>
+    <comment/>
+  </data>
+  <data name="Response.Customer.Password.Reset" xml:space="preserve">
+    <value>Password reset successfully</value>
+    <comment/>
+  </data>
+  <data name="Response.Customer.Password.Invalid" xml:space="preserve">
+    <value>Invalid old password supplied, kindly check and try again.</value>
     <comment/>
   </data>
 </root>
