@@ -1,5 +1,6 @@
 ﻿using System;
 using Models.Models;
+using Helpers;
 
 namespace DominoesProperties.Helper
 {
@@ -83,6 +84,26 @@ namespace DominoesProperties.Helper
                 Refrigerator = description.Refrigerator,
                 SecurityGuard = description.SecurityGuard,
                 SwimmingPool = description.SwimmingPool
+            };
+        }
+
+        public static Models.Profile ConvertCustomerToFullProfile(Customer customer)
+        {
+            return new Models.Profile
+            {
+                UniqueReference = customer.UniqueRef,
+                FirstName = customer.FirstName,
+                LastName = customer.LastName,
+                Address = customer.Address,
+                Email = customer.Email,
+                IsAccountVerified = customer.IsAccountVerified,
+                AccountNumber = customer.AccountNumber,
+                IsActive = customer.IsActive,
+                IsSubscribed = customer.IsSubscribed,
+                IsVerified = customer.IsVerified,
+                Phone = customer.Phone,
+                WalletId = customer.Wallet.WalletNo,
+                WalletBalance = customer.Wallet.Balance.Value
             };
         }
     }

@@ -10,13 +10,12 @@ using Microsoft.IdentityModel.Tokens;
 using Models.Models;
 using Repositories.Repository;
 using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Security.Claims;
 using System.Text;
-using System.Text.Json;
 using System.Threading.Tasks;
+using Helpers;
 
 namespace DominoesProperties.Controllers
 {
@@ -30,7 +29,8 @@ namespace DominoesProperties.Controllers
         private readonly IDistributedCache distributedCache;
         private readonly IConfiguration configuration;
         private readonly IFluentEmail singleEmail;
-        private ApiResponse response = new ApiResponse(HttpStatusCode.BadRequest, "Error performing request, contact admin");
+        private readonly ApiResponse response = new ApiResponse(HttpStatusCode.BadRequest, "Error performing request, contact admin");
+        private readonly DistributedCacheEntryOptions expiryOptions;
 
         public CustomerController(ILoggerManager _logger, ICustomerRepository _customerRepository, IStringLocalizer<CustomerController> _stringLocalizer,
             IDistributedCache _distributedCache, IConfiguration _configuration, IFluentEmail _singleEmail)
@@ -41,50 +41,22 @@ namespace DominoesProperties.Controllers
             distributedCache = _distributedCache;
             configuration = _configuration;
             singleEmail = _singleEmail;
+
+            expiryOptions = new DistributedCacheEntryOptions()
+            {
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(20),
+                SlidingExpiration = TimeSpan.FromMinutes(15)
+            };
         }
 
         [HttpPost]
         [Route("register")]
-        public async Task<ApiResponse> RegisterAsync([FromBody] Models.Customer customer)
+        public ApiResponse RegisterAsync([FromBody] Models.Customer customer)
         {
-
-            
-            if (!customer.Password.Equals(customer.ConfirmPassword))
-            {
-                return new ApiResponse(HttpStatusCode.BadRequest, "Password does not match");
-            }
-
             var customerReg = customerRepository.CreateCustomer(ClassConverter.ConvertCustomerToEntity(customer));
             if (customerReg != null)
             {
-                string token = CommonLogic.GetUniqueRefNumber("AUTH");
-                Dictionary<string, object> authData = new();
-                authData.Add("expire", DateTime.Now);
-                authData.Add("user", customerReg.UniqueRef);
-                authData.Add("token", token);
-
-                var cachedAuth = JsonSerializer.Serialize(authData);
-
-                var expiryOptions = new DistributedCacheEntryOptions()
-                {
-                    AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(60),
-                    SlidingExpiration = TimeSpan.FromMinutes(30)
-                };
-
-                await distributedCache.SetStringAsync(token, cachedAuth, expiryOptions);
-
-                string url = string.Format("{0}activate/{1}", configuration["app_settings:WebEndpoint"], token);
-
-                //TODO create Html template for registration with url embedded
-
-                _ = singleEmail
-                    .To(customer.Email)
-                    .Body($"Click the link to activate {url}")
-                    .Subject("Dominoes Society - Welcome")
-                    .SendAsync();
-
-                //EmailRequest emailRequest = new EmailRequest(localizer["Customer.Registration.Subject"], "Click on the below link to activate your account", customer.Email);
-                //CommonLogic.SendEmail(emailRequest);
+                _ = ActivationLink(customer.Email, ValidationModule.ACTIVATE_ACCOUNT);
 
                 response.Code = HttpStatusCode.Created;
                 response.Message = localizer["Response.Created"].Name.Replace("{params}", "Customer");
@@ -99,6 +71,12 @@ namespace DominoesProperties.Controllers
         public ApiResponse Login([FromBody] Login login)
         {
             var customer = customerRepository.GetCustomer(login.Email);
+            if (!customer.IsVerified.Value)
+            {
+                response.Code = HttpStatusCode.PartialContent;
+                response.Message = localizer["Customer.NotVerified"];
+                return response;
+            }
             if (customer == null || !customer.IsActive.Value || customer.IsDeleted.Value)
             {
                 response.Code = HttpStatusCode.BadRequest;
@@ -122,7 +100,7 @@ namespace DominoesProperties.Controllers
             }
         }
 
-        [HttpDelete("uniqueRef")]
+        [HttpDelete("{uniqueRef}")]
         [Authorize]
         public ApiResponse Delete(string uniqueRef)
         {
@@ -132,7 +110,7 @@ namespace DominoesProperties.Controllers
             return response;
         }
 
-        [HttpPut("uniqueRef")]
+        [HttpPut("{uniqueRef}")]
         [Authorize]
         public ApiResponse Update(string uniqueRef, [FromBody] Models.Customer customer)
         {
@@ -153,29 +131,38 @@ namespace DominoesProperties.Controllers
             return response;
         }
 
+        [HttpGet]
+        [Route("activate/{uniqueRef}")]
+        [AllowAnonymous]
+        public ApiResponse SendActivationLink(string uniqueRef)
+        {
+            if (ActivationLink(uniqueRef, ValidationModule.ACTIVATE_ACCOUNT).IsCompleted)
+            {
+                response.Message = localizer["Auth.Link.Generated"];
+                response.Code = HttpStatusCode.OK;
+                return response;
+            }
+            else
+            {
+                response.Message = localizer["Username.Error"];
+                return response;
+            }
+        }
+
         [HttpPut]
         [Route("activate/{token}")]
+        [AllowAnonymous]
         public async Task<ApiResponse> Activate(string token)
         {
-            var cachedAuth = await distributedCache.GetStringAsync(token);
-            if (!string.IsNullOrEmpty(cachedAuth))
+            var uniqueRef = await distributedCache.GetStringAsync(token);
+            if (!string.IsNullOrEmpty(uniqueRef))
             {
-                // loaded data from the redis cache.
-                var auth = JsonSerializer.Deserialize<Dictionary<string, object>>(cachedAuth);
-                DateTime expire = (DateTime)auth["expire"];
-                if(DateTime.Now > expire.AddMinutes(30)){
-                    response.Message = localizer["Auth.Token.Expired"];
-                    return response;
-                }
-
-                var customer = customerRepository.GetCustomer(auth["user"].ToString());
-                customer.IsActive = true;
+                var customer = customerRepository.GetCustomer(uniqueRef);
                 customer.IsVerified = true;
+                customer.IsActive = true;
                 customerRepository.UpdateCustomer(customer);
 
-                distributedCache.Remove(token);
-
-                response.Message = localizer["Response.Success"];
+                response.Message = string.Format(localizer["Response.Customer.Activated"], customer.Email);
                 response.Code = HttpStatusCode.OK;
                 response.Data = ClassConverter.ConvertCustomerToProfile(customer);
                 return response;
@@ -183,35 +170,128 @@ namespace DominoesProperties.Controllers
             return response;
         }
 
-        [HttpGet]
-        [Route("activate/{uniqueRef}")]
-        public async Task<ApiResponse> SendActivationLink(string uniqueRef)
+        [HttpGet("{uniqueRef}")]
+        [Authorize]
+        public ApiResponse Customer(string uniqueRef)
         {
             var customer = customerRepository.GetCustomer(uniqueRef);
-            if(customer != null){
-                string token = CommonLogic.GetUniqueRefNumber("AUTH");
-                Dictionary<string, object> authData = new();
-                authData.Add("expire", DateTime.Now);
-                authData.Add("user", customer.UniqueRef);
-                authData.Add("token", token);
-
-                var cachedAuth = JsonSerializer.Serialize(authData);
-                await distributedCache.SetStringAsync(token, cachedAuth);
-
-                string url = string.Format("{0}/activate/{1}", configuration["app_settings:WebEndpoint"], token);
-
-                //TODO create Html template for registration with url embedded
-
-                EmailRequest emailRequest = new EmailRequest(localizer["Customer.Registration.Subject"], "Click on the below link to activate your account", customer.Email);
-                CommonLogic.SendEmail(emailRequest);
-
-                response.Message = localizer["Auth.Link.Generated"];
+            if (customer != null) {
+                response.Data = ClassConverter.ConvertCustomerToFullProfile(customer);
+                response.Message = localizer["Response.Success"];
                 response.Code = HttpStatusCode.OK;
                 return response;
-            }else{
+            }
+            else
+            {
+                response.Message = localizer["Username.Error"];
+            }
+            return response;
+        }
+
+
+
+        [HttpGet("reset-password/{email}")]
+        [AllowAnonymous]
+        public ApiResponse ResetPassword(string email)
+        {
+            if (ActivationLink(email, ValidationModule.RESET_PASSWORD).IsCompleted)
+            {
+                response.Message = string.Format(localizer["Response.Customer.Password.Link"], email);
+                response.Code = HttpStatusCode.OK;
+                return response;
+            }
+            else
+            {
+                response.Message = localizer["Username.Error"];
+            }
+            return response;
+        }
+
+        [HttpPost("reset-password")]
+        [AllowAnonymous]
+        public async Task<ApiResponse> ResetPasswordConfirm([FromBody]PasswordReset password)
+        {
+            var uniqueRef = await distributedCache.GetStringAsync(password.Token);
+            if (!string.IsNullOrEmpty(uniqueRef))
+            {
+                var customer = customerRepository.GetCustomer(uniqueRef);
+                customer.Password = password.Password;
+                customer.IsActive = true;
+                customer.IsVerified = true;
+                customerRepository.UpdateCustomer(customer);
+
+                response.Message = string.Format(localizer["Response.Customer.Password.Reset"], customer.Email);
+                response.Code = HttpStatusCode.OK;
+                response.Data = ClassConverter.ConvertCustomerToProfile(customer);
+                return response;
+            }
+            else
+            {
                 response.Message = localizer["Username.Error"];
                 return response;
             }
+        }
+
+        [HttpPost("change-password/{email}")]
+        [Authorize]
+        public ApiResponse ResetPasswordConfirm(string email, [FromBody] PasswordReset password)
+        {
+            var customer = customerRepository.GetCustomer(email);
+            if(customer == null)
+            {
+                response.Message = localizer["Username.Error"];
+                return response;
+            }
+
+            if (!customer.Password.Equals(CommonLogic.Encrypt(password.Token)))
+            {
+                response.Message = localizer["Response.Customer.Password.Invalid"];
+                return response;
+            }
+            customer.Password = password.Password;
+            customerRepository.UpdateCustomer(customer);
+
+            response.Message = string.Format(localizer["Response.Customer.Password.Reset"], customer.Email);
+            response.Code = HttpStatusCode.OK;
+            return response;
+        }
+
+        private async Task<bool> ActivationLink(string uniqueRef, ValidationModule validationModule)
+        {
+            var customer = customerRepository.GetCustomer(uniqueRef);
+            if (customer != null)
+            {
+                string code = "";
+                switch (validationModule)
+                {
+                    case ValidationModule.ACTIVATE_ACCOUNT:
+                        code = "AT";
+                        break;
+                    case ValidationModule.RESET_PASSWORD:
+                        code = "RS";
+                        break;
+                    default:
+                        break;
+                }
+
+                string token = CommonLogic.GetUniqueRefNumber(code);
+                string url = string.Format("{0}{1}/{2}", configuration["app_settings:WebEndpoint"], validationModule.ToString().ToLower(), token);
+                await distributedCache.SetStringAsync(token, uniqueRef, expiryOptions);
+
+                //TODO create Html template for registration with url embedded
+
+                _ = singleEmail
+                    .To(customer.Email)
+                    .Body($"Click the link to activate {url}")
+                    .Subject("Dominoes Society - Welcome")
+                    .SendAsync();
+
+                EmailRequest emailRequest = new(localizer["Customer.Registration.Subject"], "Click on the below link to activate your account", customer.Email);
+                CommonLogic.SendEmail(emailRequest);
+
+                return true;
+            }
+            return false;
         }
 
         private string GenerateJwtToken(string uniqueRef)

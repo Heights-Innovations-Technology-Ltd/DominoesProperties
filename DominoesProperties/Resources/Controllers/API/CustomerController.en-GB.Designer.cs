@@ -94,5 +94,35 @@ namespace DominoesProperties.Resources.Controllers.API {
                 return ResourceManager.GetString("Property.Id.Error", resourceCulture);
             }
         }
+        
+        internal static string Customer_NotVerified {
+            get {
+                return ResourceManager.GetString("Customer.NotVerified", resourceCulture);
+            }
+        }
+        
+        internal static string Response_Customer_Activated {
+            get {
+                return ResourceManager.GetString("Response.Customer.Activated", resourceCulture);
+            }
+        }
+        
+        internal static string Response_Customer_Password_Link {
+            get {
+                return ResourceManager.GetString("Response.Customer.Password.Link", resourceCulture);
+            }
+        }
+        
+        internal static string Response_Customer_Password_Reset {
+            get {
+                return ResourceManager.GetString("Response.Customer.Password.Reset", resourceCulture);
+            }
+        }
+        
+        internal static string Response_Customer_Password_Invalid {
+            get {
+                return ResourceManager.GetString("Response.Customer.Password.Invalid", resourceCulture);
+            }
+        }
     }
 }

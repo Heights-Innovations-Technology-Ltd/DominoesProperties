@@ -12,4 +12,30 @@ namespace DominoesProperties
         CLOSED_FOR_INVESTMENT,
         RENTED_OUT
     }
+
+    public enum Module
+    {
+
+    }
+
+    public enum TransactionType
+    {
+
+    }
+
+    public enum Channel
+    {
+
+    }
+
+    public enum PaymentType
+    {
+
+    }
+
+    public enum ValidationModule
+    {
+        RESET_PASSWORD,
+        ACTIVATE_ACCOUNT
+    }
 }

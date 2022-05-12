@@ -25,14 +25,5 @@ namespace DominoesProperties.Controllers
             utilRepository = _utilRepository;
             localizer = _localizer;
         }
-
-        [HttpGet("property-types")]
-        public ApiResponse GetPropertyTypes()
-        {
-            response.Data = utilRepository.GetPropertyTypes();
-            response.Code = HttpStatusCode.OK;
-            response.Message = localizer["Response.Success"];
-            return response;
-        }
     }
 }
