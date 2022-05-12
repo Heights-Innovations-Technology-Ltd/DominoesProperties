@@ -1,5 +1,5 @@
 ﻿using System;
-namespace DominoesProperties
+namespace DominoesProperties.Enums
 {
     public enum PropertyEnum
     {
