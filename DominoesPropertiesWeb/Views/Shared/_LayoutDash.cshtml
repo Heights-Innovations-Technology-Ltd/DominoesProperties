@@ -1,0 +1,333 @@
+﻿<!doctype html>
+<html lang="eng">
+<head>
+		<!-- Required meta tags -->
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+		<!-- Links Of CSS File -->
+		<link rel="stylesheet" href="~/css/bootstrap.min.css">
+		<link rel="stylesheet" href="~/css/owl.theme.default.min.css">
+		<link rel="stylesheet" href="~/css/owl.carousel.min.css">
+		<link rel="stylesheet" href="~/css/flaticon.css">
+		<link rel="stylesheet" href="~/css/remixicon.css">
+		<link rel="stylesheet" href="~/css/meanmenu.min.css">
+		<link rel="stylesheet" href="~/css/animate.min.css">
+		<link rel="stylesheet" href="~/css/magnific-popup.min.css">
+		<link rel="stylesheet" href="~/css/dark-mode.css">
+		<link rel="stylesheet" href="~/css/style.css">
+		<link rel="stylesheet" href="~/css/responsive.css">
+
+		<script src="~/js/jquery.min.js"></script>
+		
+		<!-- Favicon -->
+		<link rel="icon" type="image/png" href="~/images/favicon.png">
+		<!-- Title -->
+		 <title>@ViewData["Title"] - Dominoes Properties</title>
+    </head>
+
+    <body>
+		<!-- Start Preloader Area -->
+		<div class="preloader" id="loader-style">
+			<div class="preloader-wrap">
+				<span></span>
+				<span></span>
+				<span></span>
+				<span></span>
+			</div>
+		</div>
+		<!-- End Preloader Area -->
+		
+		<!-- Start Navbar Area --> 
+		<div class="navbar-area">
+			<div class="mobile-responsive-nav">
+				<div class="container">
+					<div class="mobile-responsive-menu">
+						<div class="logo">
+							<a href="index-2.html">
+								<img src="~/images/logo.png" class="main-logo" alt="Dominoes logo">
+								<img src="~/images/white-logo.png" class="white-logo" alt="Dominoes logo">
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="desktop-nav">
+				<div class="container-fluid">
+					<nav class="navbar navbar-expand-md navbar-light">
+						<a class="navbar-brand" href="index-2.html">
+							<img src="~/images/logo.pg" class="main-logo" alt="logo">
+							<img src="~/images/white-logo.pg" class="white-logo" alt="logo">
+						</a>
+
+						<div class="collapse navbar-collapse mean-menu" id="navbarSupportedContent">
+							<div class="others-options">
+								<form class="search-form">
+									<input type="text" class="form-control" placeholder="Search...">
+									<button type="submit" class="src-btn">
+										<i class="ri-search-line"></i>
+									</button>
+								</form>
+							</div>
+
+							<ul class="navbar-nav m-auto">
+								<li class="nav-item">
+									<a href="/" class="nav-link active">
+										Home            
+									</a>
+								</li>
+								<li class="nav-item">
+									<a href="#" class="nav-link">
+										Properties            
+									</a>
+								</li>
+								<li class="nav-item">
+									<a href="#" class="nav-link">
+										How it works            
+									</a>
+								</li>
+
+								<li class="nav-item">
+									<a href="#" class="nav-link">Contact Us</a>
+								</li>
+							</ul>
+
+							<div class="others-options style">
+								<ul>
+									@*<li>
+										<a href="my-listings.html" class="wishlist">
+											<i class="ri-heart-line"></i>
+											<span>0</span>
+										</a>
+									</li>*@
+									<li>
+										<div class="dropdown">
+											<button type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+												<img src="~/images/agents/agent-1.jpg" alt="Image">
+												<span>Deborah</span>
+											</button>
+											<ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+												<li>
+													<a href="dashboard.html">
+														<i class="ri-dashboard-line"></i>
+														Dashboard
+													</a>
+												</li>
+												<li>
+													<a href="my-profile.html">
+														<i class="ri-user-line"></i>
+														My Profile
+													</a>
+												</li>
+												<li>
+													<a href="edit-profile.html">
+														<i class="ri-image-edit-line"></i>
+														Edit Profile
+													</a>
+												</li>
+												<li>
+													<a href="add-listing.html">
+														<i class="ri-list-check"></i>
+														Add Listing
+													</a>
+												</li>
+												<li>
+													<a href="edit-profile.html">
+														<i class="ri-settings-2-line"></i>
+														Setting
+													</a>
+												</li>
+												<li>
+													<a href="index-2.html">
+														<i class="ri-logout-box-r-line"></i>
+														Sign out
+													</a>
+												</li>
+											</ul>
+										</div>
+									</li>
+									@*<li>
+										<a asp-controller="Home" asp-action="SignIn" class="default-btn">
+											Sign In / Sign Up
+										</a>
+									</li>*@
+								</ul>
+							</div>
+						</div>
+					</nav>
+				</div>
+			</div>
+
+			<!-- Start Dark Mode Area -->
+			<div class="switch-wrapper">
+				<div class="container-fluid">
+					<div class="switch-btn">
+						<label>
+							<input class="switch" type="checkbox" id="darkSwitch">
+							<div>
+								<div class="moon">
+									<img src="~/images/dark.png" alt="Dominoes logo">
+								</div>
+								<div class="sun">
+									<img src="~/images/light.png" alt="Dominoes logo">
+								</div>
+							</div>
+						</label>
+					</div>
+				</div>
+			</div>
+			<!-- End Dark Mode Area -->
+
+			<div class="others-option-for-responsive">
+				<div class="container">
+					<div class="dot-menu">
+						<div class="inner">
+							<div class="circle circle-one"></div>
+							<div class="circle circle-two"></div>
+							<div class="circle circle-three"></div>
+						</div>
+					</div>
+					
+					<div class="container">
+						<div class="option-inner">
+							<div class="others-options justify-content-center d-flex align-items-center">
+								<ul>
+									<li>
+										<a href="my-listings.html" class="wishlist">
+											<i class="ri-heart-line"></i>
+											<span>0</span>
+										</a>
+									</li>
+									<li>
+										<a href="my-account.html" class="login">
+											<i class="ri-user-line"></i>
+										</a>
+									</li>
+									<li>
+										<a href="add-listing.html" class="default-btn">
+											Add Listing
+										</a>
+									</li>
+									<li>
+										<form class="search-form">
+											<input type="text" class="form-control" placeholder="Search...">
+											<button type="submit" class="src-btn">
+												<i class="ri-search-line"></i>
+											</button>
+										</form>
+									</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- End Navbar Area -->
+		
+		<!-- Start Sidebar Area -->
+		<div class="dashboard-sidebar-menu">
+			<h3>Deborah Roderick</h3>
+
+			<ul>
+				<li>
+					<a href="dashboard.html" class="active">
+						<i class="ri-dashboard-line"></i>
+						Dashboard
+					</a>
+				</li>
+				<li>
+					<a href="my-profile.html">
+						<i class="ri-user-line"></i>
+						My Profile
+					</a>
+				</li>
+				<li>
+					<a href="edit-profile.html">
+						<i class="ri-image-edit-line"></i>
+						Edit Profile
+					</a>
+				</li>
+				<li>
+					<a href="add-listing.html">
+						<i class="ri-list-check"></i>
+						Add Listing
+					</a>
+				</li>
+				<li>
+					<a href="message.html">
+						<i class="ri-messenger-line"></i>
+						Message
+					</a>
+				</li>
+				<li>
+					<a href="agents-list.html">
+						<i class="ri-customer-service-line"></i>
+						Agents List
+					</a>
+				</li>
+				<li>
+					<a href="my-listings.html">
+						<i class="ri-play-list-add-line"></i>
+						My Listings
+					</a>
+				</li>
+				<li>
+					<a href="booking.html">
+						<i class="ri-dashboard-line"></i>
+						Booking
+					</a>
+				</li>
+				<li>
+					<a href="reviews.html">
+						<i class="ri-star-fill"></i>
+						Reviews
+					</a>
+				</li>
+				<li>
+					<a href="index-2.html">
+						<i class="ri-logout-circle-r-line"></i>
+						Log Out
+					</a>
+				</li>
+			</ul>
+		</div>
+		<!-- End Sidebar Area -->
+	
+    <div class="">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+	
+
+
+		<!-- Start Go Top Area -->
+		<div class="go-top">
+			<i class="ri-arrow-up-s-fill"></i>
+			<i class="ri-arrow-up-s-fill"></i>
+		</div>
+		<!-- End Go Top Area -->
+
+        
+
+        <!-- Links of JS File -->
+        <script data-cfasync="false" src="../../cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+		
+        <script src="~/js/bootstrap.bundle.min.js"></script>
+		<script src="~/js/meanmenu.min.js"></script>
+		<script src="~/js/owl.carousel.min.js"></script>
+		<script src="~/js/wow.js"></script>
+		<script src="~/js/mixitup.min.js"></script>
+		<script src="~/js/magnific-popup.min.js"></script>
+		<script src="~/js/dark-mode-switch.min.js"></script>
+		<script src="~/js/form-validator.min.js"></script>
+		<script src="~/js/contact-form-script.js"></script>
+		<script src="~/js/ajaxchimp.min.js"></script>
+		<script src="~/js/custom.js"></script>
+		<script src="~/js/main.js"></script>
+		@await RenderSectionAsync("Scripts", required: false)
+    </body>
+</html>

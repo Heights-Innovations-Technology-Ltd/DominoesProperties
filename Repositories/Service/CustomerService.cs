@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Helpers;
 using Microsoft.EntityFrameworkCore;
 using Models.Models;
 using Repositories.Repository;
-using Helpers;
 
 namespace Repositories.Service
 {

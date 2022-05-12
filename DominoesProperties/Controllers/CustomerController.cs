@@ -16,6 +16,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using Helpers;
+using DominoesProperties.Enums;
 
 namespace DominoesProperties.Controllers
 {

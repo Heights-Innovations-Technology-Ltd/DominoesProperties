@@ -1,48 +1,396 @@
-﻿<!DOCTYPE html>
-<html lang="en">
+﻿<!doctype html>
+<html lang="eng">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - DominoesPropertiesWeb</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" />
-</head>
-<body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">DominoesPropertiesWeb</a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    </header>
-    <div class="container">
+		<!-- Required meta tags -->
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+		<!-- Links Of CSS File -->
+		<link rel="stylesheet" href="~/css/bootstrap.min.css">
+		<link rel="stylesheet" href="~/css/owl.theme.default.min.css">
+		<link rel="stylesheet" href="~/css/owl.carousel.min.css">
+		<link rel="stylesheet" href="~/css/flaticon.css">
+		<link rel="stylesheet" href="~/css/remixicon.css">
+		<link rel="stylesheet" href="~/css/meanmenu.min.css">
+		<link rel="stylesheet" href="~/css/animate.min.css">
+		<link rel="stylesheet" href="~/css/magnific-popup.min.css">
+		<link rel="stylesheet" href="~/css/dark-mode.css">
+		<link rel="stylesheet" href="~/css/style.css">
+		<link rel="stylesheet" href="~/css/responsive.css">
+
+		<script src="~/js/jquery.min.js"></script>
+		
+		<!-- Favicon -->
+		<link rel="icon" type="image/png" href="~/images/favicon.png">
+		<!-- Title -->
+		 <title>@ViewData["Title"] - Dominoes Properties</title>
+    </head>
+
+    <body>
+		<!-- Start Preloader Area -->
+		<div class="preloader" id="loader-style">
+			<div class="preloader-wrap">
+				<span></span>
+				<span></span>
+				<span></span>
+				<span></span>
+			</div>
+		</div>
+		<!-- End Preloader Area -->
+		
+		<!-- Start Navbar Area --> 
+		<div class="navbar-area">
+			<div class="mobile-responsive-nav">
+				<div class="container">
+					<div class="mobile-responsive-menu">
+						<div class="logo">
+							<a href="index-2.html">
+								<img src="~/images/logo.png" class="main-logo" alt="Dominoes logo">
+								<img src="~/images/white-logo.png" class="white-logo" alt="Dominoes logo">
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="desktop-nav">
+				<div class="container-fluid">
+					<nav class="navbar navbar-expand-md navbar-light">
+						<a class="navbar-brand" href="index-2.html">
+							<img src="~/images/logo.pg" class="main-logo" alt="logo">
+							<img src="~/images/white-logo.pg" class="white-logo" alt="logo">
+						</a>
+
+						<div class="collapse navbar-collapse mean-menu" id="navbarSupportedContent">
+							<div class="others-options">
+								<form class="search-form">
+									<input type="text" class="form-control" placeholder="Search...">
+									<button type="submit" class="src-btn">
+										<i class="ri-search-line"></i>
+									</button>
+								</form>
+							</div>
+
+							<ul class="navbar-nav m-auto">
+								<li class="nav-item">
+									<a href="/" class="nav-link active">
+										Home            
+									</a>
+								</li>
+								<li class="nav-item">
+									<a href="#" class="nav-link">
+										Properties            
+									</a>
+								</li>
+								<li class="nav-item">
+									<a href="#" class="nav-link">
+										How it works            
+									</a>
+								</li>
+
+								<li class="nav-item">
+									<a href="#" class="nav-link">Contact Us</a>
+								</li>
+							</ul>
+
+							<div class="others-options style">
+								<ul>
+									@*<li>
+										<a href="my-listings.html" class="wishlist">
+											<i class="ri-heart-line"></i>
+											<span>0</span>
+										</a>
+									</li>
+									<li>
+										<a href="my-account.html" class="login">
+											<i class="ri-user-line"></i>
+										</a>
+									</li>*@
+									<li>
+										<a asp-controller="Home" asp-action="SignIn" class="default-btn">
+											Sign In / Sign Up
+										</a>
+									</li>
+								</ul>
+							</div>
+						</div>
+					</nav>
+				</div>
+			</div>
+
+			<!-- Start Dark Mode Area -->
+			<div class="switch-wrapper">
+				<div class="container-fluid">
+					<div class="switch-btn">
+						<label>
+							<input class="switch" type="checkbox" id="darkSwitch">
+							<div>
+								<div class="moon">
+									<img src="~/images/dark.png" alt="Dominoes logo">
+								</div>
+								<div class="sun">
+									<img src="~/images/light.png" alt="Dominoes logo">
+								</div>
+							</div>
+						</label>
+					</div>
+				</div>
+			</div>
+			<!-- End Dark Mode Area -->
+
+			<div class="others-option-for-responsive">
+				<div class="container">
+					<div class="dot-menu">
+						<div class="inner">
+							<div class="circle circle-one"></div>
+							<div class="circle circle-two"></div>
+							<div class="circle circle-three"></div>
+						</div>
+					</div>
+					
+					<div class="container">
+						<div class="option-inner">
+							<div class="others-options justify-content-center d-flex align-items-center">
+								<ul>
+									<li>
+										<a href="my-listings.html" class="wishlist">
+											<i class="ri-heart-line"></i>
+											<span>0</span>
+										</a>
+									</li>
+									<li>
+										<a href="my-account.html" class="login">
+											<i class="ri-user-line"></i>
+										</a>
+									</li>
+									<li>
+										<a href="add-listing.html" class="default-btn">
+											Add Listing
+										</a>
+									</li>
+									<li>
+										<form class="search-form">
+											<input type="text" class="form-control" placeholder="Search...">
+											<button type="submit" class="src-btn">
+												<i class="ri-search-line"></i>
+											</button>
+										</form>
+									</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- End Navbar Area -->
+		@if(!true)
+		{
+			<!-- Start Sidebar Area -->
+			<div class="dashboard-sidebar-menu">
+				<h3>Deborah Roderick</h3>
+
+				<ul>
+					<li>
+						<a href="dashboard.html" class="active">
+							<i class="ri-dashboard-line"></i>
+							Dashboard
+						</a>
+					</li>
+					<li>
+						<a href="my-profile.html">
+							<i class="ri-user-line"></i>
+							My Profile
+						</a>
+					</li>
+					<li>
+						<a href="edit-profile.html">
+							<i class="ri-image-edit-line"></i>
+							Edit Profile
+						</a>
+					</li>
+					<li>
+						<a href="add-listing.html">
+							<i class="ri-list-check"></i>
+							Add Listing
+						</a>
+					</li>
+					<li>
+						<a href="message.html">
+							<i class="ri-messenger-line"></i>
+							Message
+						</a>
+					</li>
+					<li>
+						<a href="agents-list.html">
+							<i class="ri-customer-service-line"></i>
+							Agents List
+						</a>
+					</li>
+					<li>
+						<a href="my-listings.html">
+							<i class="ri-play-list-add-line"></i>
+							My Listings
+						</a>
+					</li>
+					<li>
+						<a href="booking.html">
+							<i class="ri-dashboard-line"></i>
+							Booking
+						</a>
+					</li>
+					<li>
+						<a href="reviews.html">
+							<i class="ri-star-fill"></i>
+							Reviews
+						</a>
+					</li>
+					<li>
+						<a href="index-2.html">
+							<i class="ri-logout-circle-r-line"></i>
+							Log Out
+						</a>
+					</li>
+				</ul>
+			</div>
+			<!-- End Sidebar Area -->
+		}
+	
+    <div class="">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2022 - DominoesPropertiesWeb - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false)
-</body>
+	<!-- Start Footer Area -->
+		<div class="footer-area bg-color-f9fcff pt-100 pb-70">
+			<div class="container">
+				<div class="row">
+					<div class="col-lg-3 col-sm-6">
+						<div class="single-footer-widget wow animate__animated animate__fadeInUp delay-0-2s">
+							<a href="index-2.html">
+								<img src="~/images/logo.pg" class="main-logo" alt="Dominoes logo">
+								<img src="~/images/white-logo.pg" class="white-logo" alt="Dominoes logo">
+							</a>
+
+							<p>We are a great agency for buying and selling your property with confidence. So you can easily buy and sell through our company.</p>
+						</div>
+					</div>
+
+					<div class="col-lg-3 col-sm-6">
+						<div class="single-footer-widget wow animate__animated animate__fadeInUp delay-0-4s">
+							<h3>Contacts Info</h3>
+
+							<ul class="contact-info">
+								<li>
+									<i class="ri-map-pin-fill"></i>
+									Office address
+								</li>
+								<li>
+									<i class="ri-phone-fill"></i>
+									<a href="tel:+1-719-504-1984">+234 000-000-000</a>
+								</li>
+								<li>
+									<i class="ri-mail-fill"></i>
+									<a href="https://templates.envytheme.com/cdn-cgi/l/email-protection#d6bfb8b0b996b1bbb7bfbaf8b5b9bb"><span class="__cf_email__" data-cfemail="8ce5e2eae3ccebe1ede5e0a2efe3e1">[email&#160;protected]</span></a>
+								</li>
+							</ul>
+						</div>
+					</div>
+
+					<div class="col-lg-3 col-sm-6">
+						<div class="single-footer-widget wow animate__animated animate__fadeInUp delay-0-6s">
+							<h3>Helpful Links</h3>
+
+							<ul class="help-link">
+								<li>
+									<i class="ri-arrow-right-s-fill"></i>
+									<a href="/">Home</a>
+								</li>
+								<li>
+									<i class="ri-arrow-right-s-fill"></i>
+									<a href="#">Properties</a>
+								</li>
+								<li>
+									<i class="ri-arrow-right-s-fill"></i>
+									<a href="#">How it works</a>
+								</li>
+								<li>
+									<i class="ri-arrow-right-s-fill"></i>
+									<a href="#">Contact us</a>
+								</li>
+							</ul>
+						</div>
+					</div>
+
+					<div class="col-lg-3 col-sm-6">
+						<div class="single-footer-widget wow animate__animated animate__fadeInUp delay-0-8s">
+							<h3>Newsletter</h3>
+							<p>Stay Informed through our newsletter & get offers any time!</p>
+
+							<form class="newsletter-form" data-toggle="validator">
+								<input type="email" class="form-control" placeholder="Your email address" name="EMAIL" required autocomplete="off">
+	
+								<button class="submit-btn" type="submit">
+									<i class="ri-arrow-right-line"></i>
+								</button>
+	
+								<div id="validator-newsletter" class="form-result"></div>
+							</form>	
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- End Footer Area -->
+
+		<!-- Start Copyright Area -->
+		<div class="copy-right-area">
+			<div class="container">
+				<div class="row align-items-center">
+					<div class="col-lg-6 wow animate__animated animate__fadeInLeft delay-0-2s">
+						<p>Copyright @@ <span id="year"></span> All Rights Reserved by <a href="https://envytheme.com/" target="_blank">Dominoes Properties</a></p>
+					</div>
+					<div class="col-lg-6">
+						<div class="language wow animate__animated animate__fadeInRight delay-0-2s">
+							<select class="form-select" aria-label="Default select example">
+								<option selected>Language</option>
+								<option value="1">English</option>
+								<option value="2">Arabic</option>
+								<option value="3">Germany</option>
+							</select>
+							<i class="ri-global-line"></i>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- End Copyright Area -->
+
+		<!-- Start Go Top Area -->
+		<div class="go-top">
+			<i class="ri-arrow-up-s-fill"></i>
+			<i class="ri-arrow-up-s-fill"></i>
+		</div>
+		<!-- End Go Top Area -->
+
+        
+
+        <!-- Links of JS File -->
+        <script data-cfasync="false" src="../../cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+		
+        <script src="~/js/bootstrap.bundle.min.js"></script>
+		<script src="~/js/meanmenu.min.js"></script>
+		<script src="~/js/owl.carousel.min.js"></script>
+		<script src="~/js/wow.js"></script>
+		<script src="~/js/mixitup.min.js"></script>
+		<script src="~/js/magnific-popup.min.js"></script>
+		<script src="~/js/dark-mode-switch.min.js"></script>
+		<script src="~/js/form-validator.min.js"></script>
+		<script src="~/js/contact-form-script.js"></script>
+		<script src="~/js/ajaxchimp.min.js"></script>
+		<script src="~/js/custom.js"></script>
+		<script src="~/js/main.js"></script>
+		@await RenderSectionAsync("Scripts", required: false)
+    </body>
 </html>
