@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using DominoesPropertiesWeb.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -63,19 +65,20 @@ namespace DominoesPropertiesWeb.HttpContext
                 using (var stringContent = new StringContent(JsonConvert.SerializeObject(obj), Encoding.UTF8, "application/json"))
                 {
                     var result = await client.PostAsync(url + endpointURL, stringContent);
-
+                    string responJsonText = await result.Content.ReadAsStringAsync();
                     if (result.IsSuccessStatusCode)
                     {
-                        string responJsonText = await result.Content.ReadAsStringAsync();
-                        var res = JsonConvert.DeserializeObject<JObject>(Convert.ToString(responJsonText));
-                        jsonObj.success = Convert.ToBoolean(res["success"]);
-                        jsonObj.data = Convert.ToString(res["message"]);
-                        jsonObj.userObj = Convert.ToString(res["data"]);
+                        var res = JsonConvert.DeserializeObject<dynamic>(Convert.ToString(responJsonText));
+                        jsonObj.Success = true;
+                        jsonObj.Data = Convert.ToString(res["data"]);
+                        jsonObj.Message = Convert.ToString(res["message"]);
+
+                        if (result.Headers.Contains("access_token")) { jsonObj.TokenObj = result.Headers.GetValues("access_token").First(); }
                     }
                     else
                     {
-                        jsonObj.success = false;
-                        jsonObj.data = result.StatusCode;
+                        var res = JsonConvert.DeserializeObject<dynamic>(Convert.ToString(responJsonText));
+                        jsonObj.Message = Convert.ToString(res["errors"]);
                     }
                     return jsonObj;
                 }

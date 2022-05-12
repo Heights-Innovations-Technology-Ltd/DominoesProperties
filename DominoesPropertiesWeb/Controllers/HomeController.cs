@@ -64,17 +64,44 @@ namespace DominoesPropertiesWeb.Controllers
         [Route("createuser")]
         public async Task<JsonResult> Register([FromBody] Customer customer)
         {
-            if (!ModelState.IsValid)
-            {
-                jsonObj.success = false;
-                var m = ModelState;
-                //jsonObj.Data = ModelState;
-                return jsonObj;
-            }
-
-            var res = Task.Run(() => httpContext.Post("User/register", customer));
-            var data = await res.GetAwaiter().GetResult();
+            var res = Task.Run(() => httpContext.Post("Customer/register", customer));
+            await Task.WhenAll(res);
+            var data = res.Status == TaskStatus.RanToCompletion ? res.Result : null;
             return Json(JsonConvert.SerializeObject(data));
         }
+
+        [Route("/authuser")]
+        public async Task<JsonResult> Auth([FromBody] Login login)
+        {
+            var res = Task.Run(() => httpContext.Post("Customer/login", login));
+            await Task.WhenAll(res);
+            var data = res.Status == TaskStatus.RanToCompletion ? res.Result : null;
+
+            bool success = Convert.ToBoolean(data["Success"]);
+
+            if (success)
+            {
+                var resObj = JsonConvert.DeserializeObject<JObject>(Convert.ToString(data["Data"]));
+                this.session.SetString("Firstname", (string)resObj["firstName"]);
+                this.session.SetString("Lastname", (string)resObj["lastName"]);
+                this.session.SetString("ReferenceId", (string)resObj["uniqueReference"]);
+                this.session.SetString("IsActive", (string)resObj["isActive"]);
+                this.session.SetString("IsSubscribed", (string)resObj["isSubscribed"]);
+                this.session.SetString("IsVerified", (string)resObj["isVerified"]);
+                this.session.SetString("IsAccountVerified", (string)resObj["isAccountVerified"]);
+                this.session.SetString("WalletId", (string)resObj["walletId"]);
+                this.session.SetString("WalletBalance", (string)resObj["walletBalance"]);
+                this.session.SetString("Token", (string)data["TokenObj"]);
+                jsonObj.Success = success;
+                jsonObj.Data = data["Message"];
+            }
+            else
+            {
+                jsonObj.Success = success;
+                jsonObj.Data = data["Message"];
+            }
+            return Json(JsonConvert.SerializeObject(jsonObj));
+        }
+
     }
 }
