@@ -30,7 +30,7 @@ namespace DominoesProperties.Controllers
         private readonly IDistributedCache distributedCache;
         private readonly IConfiguration configuration;
         private readonly IFluentEmail singleEmail;
-        private readonly ApiResponse response = new ApiResponse(HttpStatusCode.BadRequest, "Error performing request, contact admin");
+        private readonly ApiResponse response = new ApiResponse(false, "Error performing request, contact admin");
         private readonly DistributedCacheEntryOptions expiryOptions;
 
         public CustomerController(ILoggerManager _logger, ICustomerRepository _customerRepository, IStringLocalizer<CustomerController> _stringLocalizer,
@@ -59,7 +59,7 @@ namespace DominoesProperties.Controllers
             {
                 _ = ActivationLink(customer.Email, ValidationModule.ACTIVATE_ACCOUNT);
 
-                response.Code = HttpStatusCode.Created;
+                response.Success = true;
                 response.Message = localizer["Response.Created"].Name.Replace("{params}", "Customer");
                 logger.LogInfo(response.Message);
                 return response;
@@ -74,13 +74,13 @@ namespace DominoesProperties.Controllers
             var customer = customerRepository.GetCustomer(login.Email);
             if (!customer.IsVerified.Value)
             {
-                response.Code = HttpStatusCode.PartialContent;
+                response.Success = false;
                 response.Message = localizer["Customer.NotVerified"];
                 return response;
             }
             if (customer == null || !customer.IsActive.Value || customer.IsDeleted.Value)
             {
-                response.Code = HttpStatusCode.BadRequest;
+                response.Success = false;
                 response.Message = localizer["Username.Error"];
                 return response;
             }
@@ -88,14 +88,14 @@ namespace DominoesProperties.Controllers
             if (customer.Password.Equals(CommonLogic.Encrypt(login.Password)))
             {
                 response.Data = ClassConverter.ConvertCustomerToProfile(customer);
-                response.Code = HttpStatusCode.OK;
+                response.Success = true;
                 response.Message = response.Message = localizer["Response.Success"];
                 Response.Headers.Add("access_token", GenerateJwtToken(customer.UniqueRef));
                 return response;
             }
             else
             {
-                response.Code = HttpStatusCode.BadRequest;
+                response.Success = false;
                 response.Message = localizer["Password.Error"];
                 return response;
             }
@@ -106,7 +106,7 @@ namespace DominoesProperties.Controllers
         public ApiResponse Delete(string uniqueRef)
         {
             customerRepository.DeleteCustomer(uniqueRef);
-            response.Code = HttpStatusCode.OK;
+            response.Success = true;
             response.Message = response.Message = localizer["Response.Success"];
             return response;
         }
@@ -127,7 +127,7 @@ namespace DominoesProperties.Controllers
             existingCustomer.Phone = customer.Phone;
 
             response.Message = localizer["Response.Success"];
-            response.Code = HttpStatusCode.OK;
+            response.Success = true;
             response.Data = customerRepository.UpdateCustomer(existingCustomer);
             return response;
         }
@@ -140,7 +140,7 @@ namespace DominoesProperties.Controllers
             if (ActivationLink(uniqueRef, ValidationModule.ACTIVATE_ACCOUNT).IsCompleted)
             {
                 response.Message = localizer["Auth.Link.Generated"];
-                response.Code = HttpStatusCode.OK;
+                response.Success = true;
                 return response;
             }
             else
@@ -164,7 +164,7 @@ namespace DominoesProperties.Controllers
                 customerRepository.UpdateCustomer(customer);
 
                 response.Message = string.Format(localizer["Response.Customer.Activated"], customer.Email);
-                response.Code = HttpStatusCode.OK;
+                response.Success = true;
                 response.Data = ClassConverter.ConvertCustomerToProfile(customer);
                 return response;
             }
@@ -179,7 +179,7 @@ namespace DominoesProperties.Controllers
             if (customer != null) {
                 response.Data = ClassConverter.ConvertCustomerToFullProfile(customer);
                 response.Message = localizer["Response.Success"];
-                response.Code = HttpStatusCode.OK;
+                response.Success = true;
                 return response;
             }
             else
@@ -198,7 +198,7 @@ namespace DominoesProperties.Controllers
             if (ActivationLink(email, ValidationModule.RESET_PASSWORD).IsCompleted)
             {
                 response.Message = string.Format(localizer["Response.Customer.Password.Link"], email);
-                response.Code = HttpStatusCode.OK;
+                response.Success = true;
                 return response;
             }
             else
@@ -222,7 +222,7 @@ namespace DominoesProperties.Controllers
                 customerRepository.UpdateCustomer(customer);
 
                 response.Message = string.Format(localizer["Response.Customer.Password.Reset"], customer.Email);
-                response.Code = HttpStatusCode.OK;
+                response.Success = true;
                 response.Data = ClassConverter.ConvertCustomerToProfile(customer);
                 return response;
             }
@@ -253,7 +253,7 @@ namespace DominoesProperties.Controllers
             customerRepository.UpdateCustomer(customer);
 
             response.Message = string.Format(localizer["Response.Customer.Password.Reset"], customer.Email);
-            response.Code = HttpStatusCode.OK;
+            response.Success = true;
             return response;
         }
 

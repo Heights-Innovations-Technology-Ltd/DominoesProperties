@@ -4,13 +4,13 @@ namespace DominoesProperties.Models
 {
     public class ApiResponse
     {
-        public HttpStatusCode Code;
+        public bool Success;
         public string Message;
         public object Data { get; set; }
 
-        public ApiResponse(HttpStatusCode Code, string Message)
+        public ApiResponse(bool Success, string Message)
         {
-            this.Code = Code;
+            this.Success = Success;
             this.Message = Message;
         }
     }

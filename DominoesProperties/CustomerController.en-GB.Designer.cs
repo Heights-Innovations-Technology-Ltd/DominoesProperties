@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace DominoesProperties.Resources.Controllers.API {
+namespace DominoesProperties.Resources {
     using System;
     using System.Reflection;
     
@@ -30,7 +30,7 @@ namespace DominoesProperties.Resources.Controllers.API {
         internal static System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.Equals(null, resourceMan)) {
-                    System.Resources.ResourceManager temp = new System.Resources.ResourceManager("DominoesProperties.Resources.Controllers.API.CustomerController.en-GB", typeof(CustomerController_en_GB).Assembly);
+                    System.Resources.ResourceManager temp = new System.Resources.ResourceManager("DominoesProperties.Resources.CustomerController.en-GB", typeof(CustomerController_en_GB).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

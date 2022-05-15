@@ -18,7 +18,7 @@ namespace DominoesProperties.Controllers
     {
         public readonly IUtilRepository utilRepository;
         private readonly IStringLocalizer<UtilController> localizer;
-        private ApiResponse response = new ApiResponse(HttpStatusCode.BadRequest, "Error performing request, contact admin");
+        private ApiResponse response = new ApiResponse(false, "Error performing request, contact admin");
 
         public UtilController(IUtilRepository _utilRepository, IStringLocalizer<UtilController> _localizer)
         {

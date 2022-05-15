@@ -63,7 +63,8 @@ namespace Repositories.Service
         public Customer UpdateCustomer(Customer customer)
         {
             _context.Customers.Update(customer);
-            _context.SaveChanges(); throw new NotImplementedException();
+            _context.SaveChanges();
+            return customer;
         }
     }
 }

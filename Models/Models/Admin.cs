@@ -10,6 +10,7 @@ namespace Models.Models
         public Admin()
         {
             Properties = new HashSet<Property>();
+            PropertyImages = new HashSet<PropertyImage>();
         }
 
         public string Email { get; set; }
@@ -21,5 +22,6 @@ namespace Models.Models
 
         public virtual Role RoleFkNavigation { get; set; }
         public virtual ICollection<Property> Properties { get; set; }
+        public virtual ICollection<PropertyImage> PropertyImages { get; set; }
     }
 }

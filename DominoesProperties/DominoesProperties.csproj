@@ -40,7 +40,6 @@
     <None Remove="FluentEmail.Core" />
     <None Remove="FluentEmail.Smtp" />
     <None Remove="Resources\Controller\" />
-    <None Remove="Resources\Controllers\API\" />
     <None Remove="Templates\" />
   </ItemGroup>
   <ItemGroup>
@@ -70,8 +69,6 @@
     <Folder Include="Extensions\" />
     <Folder Include="Enums\" />
     <Folder Include="Resources\" />
-    <Folder Include="Resources\Controllers\" />
-    <Folder Include="Resources\Controllers\API\" />
     <Folder Include="Templates\" />
   </ItemGroup>
   <ItemGroup>
@@ -95,7 +92,7 @@
     <Compile Update="Localize\Resources.en-GB.Designer.cs">
       <DependentUpon>Resources.en-GB.resx</DependentUpon>
     </Compile>
-    <Compile Update="Resources\Controllers\API\CustomerController.en-GB.Designer.cs">
+    <Compile Condition=" '$(EnableDefaultCompileItems)' == 'true' " Update="CustomerController.en-GB.Designer.cs">
       <DependentUpon>CustomerController.en-GB.resx</DependentUpon>
     </Compile>
   </ItemGroup>
@@ -104,7 +101,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.en-GB.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Update="Resources\Controllers\API\CustomerController.en-GB.resx">
+    <EmbeddedResource Condition=" '$(EnableDefaultEmbeddedResourceItems)' == 'true' " Update="CustomerController.en-GB.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>CustomerController.en-GB.Designer.cs</LastGenOutput>
     </EmbeddedResource>

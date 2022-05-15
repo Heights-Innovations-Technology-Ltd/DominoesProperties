@@ -27,7 +27,6 @@ using Newtonsoft.Json;
 using NLog;
 using Repositories.Repository;
 using Repositories.Service;
-using Helpers;
 
 namespace DominoesProperties
 {
@@ -72,6 +71,8 @@ namespace DominoesProperties
             services.AddScoped<IWalletRepository, WalletService>();
             services.AddScoped<IPropertyRepository, PropertyService>();
             services.AddScoped<IUtilRepository, UtilServices>();
+            services.AddScoped<ITransactionRepository, TransactionService>();
+            services.AddScoped<IPaystackRepository, PaystackService>();
 
             services.AddLocalization(opt => opt.ResourcesPath = "Resources");
             services.AddMvc().AddViewLocalization(Microsoft.AspNetCore.Mvc.Razor.LanguageViewLocationExpanderFormat.Suffix).AddDataAnnotationsLocalization();

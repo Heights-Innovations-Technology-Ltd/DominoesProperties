@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net;
+using System.Reflection;
+using System.Resources;
 using System.Threading.Tasks;
 using DominoesProperties.Helper;
 using DominoesProperties.Models;
@@ -24,7 +26,9 @@ namespace DominoesProperties.Controllers
         private readonly IStringLocalizer<PropertyController> localizer;
         public readonly IUtilRepository utilRepository;
         private readonly ICustomerRepository customerRepository;
-        private ApiResponse response = new ApiResponse(HttpStatusCode.BadRequest, "Error performing request, contact admin");
+        private ApiResponse response = new ApiResponse(false, "Error performing request, contact admin");
+        ResourceManager rm = new ResourceManager("item", Assembly.GetExecutingAssembly());
+
 
         public PropertyController(IPropertyRepository _propertyRepository, ILoggerManager _logger, IStringLocalizer<PropertyController> _localizer,
             ICustomerRepository _customerRepository, IUtilRepository _utilRepository)
@@ -51,7 +55,7 @@ namespace DominoesProperties.Controllers
             };
             Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
             logger.LogInfo($"Returned {property.TotalCount} queryParams from database.");
-            response.Code = HttpStatusCode.OK;
+            response.Success = true;
             response.Message = "Successfull";
             response.Data = property;
             return response;
@@ -61,7 +65,7 @@ namespace DominoesProperties.Controllers
         public ApiResponse Property(string uniqueId)
         {
             var property = propertyRepository.GetProperty(uniqueId);
-            response.Code = HttpStatusCode.OK;
+            response.Success = true;
             response.Message = "Successfull";
             response.Data = property;
             return response;
@@ -73,7 +77,7 @@ namespace DominoesProperties.Controllers
         {
             var property = ClassConverter.PropertyToEntity(properties);
             propertyRepository.AddNewProperty(property);
-            response.Code = HttpStatusCode.OK;
+            response.Success = true;
             response.Message = localizer["Response.Created"].ToString().Replace("{params}", $"Property {property.Name}");
             return response;
         }
@@ -99,7 +103,7 @@ namespace DominoesProperties.Controllers
             property.Latitude = string.IsNullOrEmpty(updateProperty.Latitude) ? property.Latitude : updateProperty.Latitude;
 
             response.Data = propertyRepository.UpdateProperty(property);
-            response.Code = HttpStatusCode.OK;
+            response.Success = true;
             response.Message = localizer["Response.Success"];
             return response;
         }
@@ -114,7 +118,7 @@ namespace DominoesProperties.Controllers
                 return response;
             }
             property.IsDeleted = true;
-            response.Code = HttpStatusCode.OK;
+            response.Success = true;
             response.Message = localizer["Property.Id.Error"];
             return response;
         }
@@ -140,7 +144,7 @@ namespace DominoesProperties.Controllers
                 propDescription.Toilet = description.Toilet;
 
                 response.Data = propertyRepository.UpdatePropertyDescription(propDescription);
-                response.Code = HttpStatusCode.OK;
+                response.Success = true;
                 response.Message = localizer["Response.Success"];
                 return response;
             }
@@ -154,8 +158,8 @@ namespace DominoesProperties.Controllers
         public ApiResponse GetPropertyTypes()
         {
             response.Data = utilRepository.GetPropertyTypes();
-            response.Code = HttpStatusCode.OK;
-            response.Message = localizer["Response.Success"];
+            response.Success = true;
+            response.Message = rm.GetString("welcome"); //localizer["Response.Success"];
             return response;
         }
     }

@@ -25,6 +25,7 @@ namespace Models.Models
         public virtual DbSet<Investment> Investments { get; set; }
         public virtual DbSet<PaystackPayment> PaystackPayments { get; set; }
         public virtual DbSet<Property> Properties { get; set; }
+        public virtual DbSet<PropertyImage> PropertyImages { get; set; }
         public virtual DbSet<PropertyType> PropertyTypes { get; set; }
         public virtual DbSet<Role> Roles { get; set; }
         public virtual DbSet<Transaction> Transactions { get; set; }
@@ -95,6 +96,12 @@ namespace Models.Models
             modelBuilder.Entity<Customer>(entity =>
             {
                 entity.ToTable("Customer");
+
+                entity.HasIndex(e => e.Email, "Customer_Email_uindex")
+                    .IsUnique();
+
+                entity.HasIndex(e => e.Phone, "Customer_Phone_uindex")
+                    .IsUnique();
 
                 entity.HasIndex(e => e.UniqueRef, "Customer_UniqueRef_uindex")
                     .IsUnique();
@@ -224,6 +231,13 @@ namespace Models.Models
             {
                 entity.ToTable("PaystackPayment");
 
+                entity.HasIndex(e => e.TransactionRef, "PaystackPayment_TransactionRef_uindex")
+                    .IsUnique();
+
+                entity.Property(e => e.AccessCode)
+                    .IsRequired()
+                    .HasMaxLength(20);
+
                 entity.Property(e => e.Amount).HasColumnType("decimal(18,2)");
 
                 entity.Property(e => e.Channel).HasMaxLength(10);
@@ -234,7 +248,9 @@ namespace Models.Models
                     .IsRequired()
                     .HasMaxLength(10);
 
-                entity.Property(e => e.Platform)
+                entity.Property(e => e.Payload).HasColumnType("varchar(5000)");
+
+                entity.Property(e => e.PaymentModule)
                     .IsRequired()
                     .HasMaxLength(20);
 
@@ -244,7 +260,9 @@ namespace Models.Models
                     .IsRequired()
                     .HasMaxLength(10);
 
-                entity.Property(e => e.TransactionRef).HasMaxLength(50);
+                entity.Property(e => e.TransactionRef)
+                    .IsRequired()
+                    .HasMaxLength(50);
 
                 entity.Property(e => e.Type)
                     .IsRequired()
@@ -256,6 +274,8 @@ namespace Models.Models
                 entity.ToTable("Property");
 
                 entity.HasIndex(e => e.CreatedBy, "Property_Admin_Email_fk");
+
+                entity.HasIndex(e => e.Description, "Property_Description_Id_fk");
 
                 entity.HasIndex(e => e.Type, "Property_Property_Type_Id_fk");
 
@@ -305,6 +325,49 @@ namespace Models.Models
                     .HasForeignKey(d => d.CreatedBy)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("Property_Admin_Email_fk");
+
+                entity.HasOne(d => d.Description1)
+                    .WithMany(p => p.Properties)
+                    .HasForeignKey(d => d.Description)
+                    .HasConstraintName("Property_Description_Id_fk");
+
+                entity.HasOne(d => d.TypeNavigation)
+                    .WithMany(p => p.Properties)
+                    .HasForeignKey(d => d.Type)
+                    .HasConstraintName("Property_Property_Type_Id_fk");
+            });
+
+            modelBuilder.Entity<PropertyImage>(entity =>
+            {
+                entity.ToTable("PropertyImage");
+
+                entity.HasIndex(e => e.UploadedBy, "PropertyImage_Admin_Email_fk");
+
+                entity.HasIndex(e => e.ImageUrl, "PropertyImage_ImageUrl_uindex")
+                    .IsUnique();
+
+                entity.HasIndex(e => e.PropertyId, "PropertyImage_Property_Id_fk");
+
+                entity.Property(e => e.DateUploaded).HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                entity.Property(e => e.ImageUrl)
+                    .IsRequired()
+                    .HasMaxLength(500);
+
+                entity.Property(e => e.UploadedBy)
+                    .IsRequired()
+                    .HasMaxLength(200);
+
+                entity.HasOne(d => d.Property)
+                    .WithMany(p => p.PropertyImages)
+                    .HasForeignKey(d => d.PropertyId)
+                    .HasConstraintName("PropertyImage_Property_Id_fk");
+
+                entity.HasOne(d => d.UploadedByNavigation)
+                    .WithMany(p => p.PropertyImages)
+                    .HasForeignKey(d => d.UploadedBy)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("PropertyImage_Admin_Email_fk");
             });
 
             modelBuilder.Entity<PropertyType>(entity =>
@@ -343,9 +406,6 @@ namespace Models.Models
                 entity.ToTable("Transaction");
 
                 entity.HasIndex(e => e.CustomerId, "Transaction_Customer_Id_fk");
-
-                entity.HasIndex(e => e.TransactionRef, "Transaction_TransactionRef_uindex")
-                    .IsUnique();
 
                 entity.Property(e => e.TransactionRef).HasMaxLength(50);
 
@@ -389,15 +449,18 @@ namespace Models.Models
 
                 entity.Property(e => e.LastTransactionAmount).HasColumnType("decimal(18,2)");
 
-                entity.Property(e => e.LastTransactionDate).HasDefaultValueSql("CURRENT_TIMESTAMP");
-
                 entity.Property(e => e.Limit)
                     .HasColumnType("decimal(18,2)")
                     .HasDefaultValueSql("'0.00'");
 
                 entity.Property(e => e.WalletNo)
                     .IsRequired()
-                    .HasMaxLength(15);
+                    .HasMaxLength(40);
+
+                entity.HasOne(d => d.Customer)
+                    .WithOne(p => p.Wallet)
+                    .HasForeignKey<Wallet>(d => d.CustomerId)
+                    .HasConstraintName("Wallet_Customer_Id_fk");
             });
 
             OnModelCreatingPartial(modelBuilder);

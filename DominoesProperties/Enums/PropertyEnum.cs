@@ -20,17 +20,22 @@ namespace DominoesProperties.Enums
 
     public enum TransactionType
     {
-
+        DEBIT,
+        CREDIT
     }
 
     public enum Channel
     {
-
+        CARD,
+        WALLET,
+        TRANSFER
     }
 
     public enum PaymentType
     {
-
+        SUBSCRIPTION = 1,
+        FUND_WALLET = 2,
+        PROPERTY_PURCHASE = 3
     }
 
     public enum ValidationModule

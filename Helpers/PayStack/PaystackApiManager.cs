@@ -415,9 +415,9 @@ namespace Helpers
         /// <param name="amount">The amount.</param>
         /// <param name="email">The email.</param>
         /// <returns></returns>
-        public ResponseModel MobileAppInitTransaction(decimal amount, string email)
+        public ResponseModel MobileAppInitTransaction(decimal amount, string email, string callback_url)
         {
-            string inputJson = JsonConvert.SerializeObject(new { email = email, amount = amount });
+            string inputJson = JsonConvert.SerializeObject(new { email = email, amount = amount, callback_url = callback_url });
             return CallApi(postinitializeTransaction, "POST", null, inputJson);
         }
 

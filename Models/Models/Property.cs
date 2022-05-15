@@ -10,6 +10,7 @@ namespace Models.Models
         public Property()
         {
             Investments = new HashSet<Investment>();
+            PropertyImages = new HashSet<PropertyImage>();
         }
 
         public long Id { get; set; }
@@ -19,15 +20,7 @@ namespace Models.Models
         public int? Type { get; set; }
         public int TotalUnits { get; set; }
         public decimal UnitPrice { get; set; }
-        public decimal? TotalPrice { 
-            get{
-                return this.TotalPrice;
-            }
-            set
-            {
-                value = this.TotalUnits * this.UnitPrice;
-            } 
-        }
+        public decimal? TotalPrice { get; set; }
         public string Status { get; set; }
         public int? UnitSold { get; set; }
         public int? UnitAvailable { get; set; }
@@ -43,8 +36,10 @@ namespace Models.Models
         public bool? IsDeleted { get; set; }
 
         public virtual Admin CreatedByNavigation { get; set; }
+        public virtual Description Description1 { get; set; }
         public virtual PropertyType TypeNavigation { get; set; }
         public virtual Description DescriptionNavigation { get; set; }
         public virtual ICollection<Investment> Investments { get; set; }
+        public virtual ICollection<PropertyImage> PropertyImages { get; set; }
     }
 }
