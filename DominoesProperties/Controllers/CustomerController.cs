@@ -101,20 +101,21 @@ namespace DominoesProperties.Controllers
             }
         }
 
-        [HttpDelete("{uniqueRef}")]
+        [HttpDelete]
         [Authorize]
-        public ApiResponse Delete(string uniqueRef)
+        public ApiResponse Delete()
         {
-            customerRepository.DeleteCustomer(uniqueRef);
+            customerRepository.DeleteCustomer(HttpContext.User.Identity.Name);
             response.Success = true;
             response.Message = response.Message = localizer["Response.Success"];
             return response;
         }
 
-        [HttpPut("{uniqueRef}")]
+        [HttpPut]
         [Authorize]
-        public ApiResponse Update(string uniqueRef, [FromBody] Models.Customer customer)
+        public ApiResponse Update([FromBody] Models.Customer customer)
         {
+            var uniqueRef = HttpContext.User.Identity.Name;
             var existingCustomer = customerRepository.GetCustomer(uniqueRef);
             if (existingCustomer == null)
             {
@@ -171,11 +172,11 @@ namespace DominoesProperties.Controllers
             return response;
         }
 
-        [HttpGet("{uniqueRef}")]
+        [HttpGet]
         [Authorize]
-        public ApiResponse Customer(string uniqueRef)
+        public ApiResponse Customer()
         {
-            var customer = customerRepository.GetCustomer(uniqueRef);
+            var customer = customerRepository.GetCustomer(HttpContext.User.Identity.Name);
             if (customer != null) {
                 response.Data = ClassConverter.ConvertCustomerToFullProfile(customer);
                 response.Message = localizer["Response.Success"];
@@ -233,11 +234,11 @@ namespace DominoesProperties.Controllers
             }
         }
 
-        [HttpPost("change-password/{email}")]
+        [HttpPost("change-password")]
         [Authorize]
-        public ApiResponse ResetPasswordConfirm(string email, [FromBody] PasswordReset password)
+        public ApiResponse ChangePassword([FromBody] PasswordReset password)
         {
-            var customer = customerRepository.GetCustomer(email);
+            var customer = customerRepository.GetCustomer(HttpContext.User.Identity.Name);
             if(customer == null)
             {
                 response.Message = localizer["Username.Error"];
