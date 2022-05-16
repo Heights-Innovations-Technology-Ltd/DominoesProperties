@@ -20,13 +20,13 @@ namespace Models.Models
         public string Email { get; set; }
         public string Phone { get; set; }
         public string Address { get; set; }
-        public bool? IsActive { get; set; }
-        public bool? IsVerified { get; set; }
+        public bool? IsActive { get; set; } = false;
+        public bool? IsVerified { get; set; } = false;
         public string Password { get; set; }
-        public bool? IsSubscribed { get; set; }
+        public bool? IsSubscribed { get; set; } = false;
         public string AccountNumber { get; set; }
-        public bool? IsAccountVerified { get; set; }
-        public bool? IsDeleted { get; set; }
+        public bool? IsAccountVerified { get; set; } = false;
+        public bool? IsDeleted { get; set; } = false;
 
         public virtual Wallet Wallet { get; set; }
         public virtual ICollection<Investment> Investments { get; set; }

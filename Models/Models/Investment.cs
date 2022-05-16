@@ -11,7 +11,7 @@ namespace Models.Models
         public long CustomerId { get; set; }
         public long PropertyId { get; set; }
         public int Units { get; set; }
-        public DateTime PaymentDate { get; set; }
+        public DateTime PaymentDate { get; set; } = DateTime.Now;
         public decimal Amount { get; set; }
         public decimal? Yield { get; set; }
         public string PaymentType { get; set; }

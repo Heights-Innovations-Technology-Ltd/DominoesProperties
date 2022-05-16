@@ -9,8 +9,7 @@ using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 using Models.Models;
 using DominoesProperties.Enums;
-
-// For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+using Microsoft.AspNetCore.Authorization;
 
 namespace DominoesProperties.Controllers
 {
@@ -18,46 +17,58 @@ namespace DominoesProperties.Controllers
     [ApiController]
     public class PaymentController : Controller
     {
-        private readonly PaystackApiManager payStackApi = new();
+        private static readonly PaystackApiManager payStackApi = new();
         private readonly IConfiguration configuration;
         private readonly ICustomerRepository customerRepository;
         private readonly IStringLocalizer<PaymentController> localizer;
         private readonly IPaystackRepository paystackRepository;
         private readonly ITransactionRepository transactionRepository;
-        private readonly ApiResponse response = new ApiResponse(false, "Error performing request, contact admin");
+        private readonly IWalletRepository walletRepository;
+        private readonly IInvestmentRepository investmentRepository;
+        private readonly ApiResponse response = new(false, "Error performing request, contact admin");
         
         public PaymentController(IConfiguration _configuration, ICustomerRepository _customerRepository, IStringLocalizer<PaymentController> _localizer,
-            IPaystackRepository _paystackRepository, ITransactionRepository _transactionRepository)
+            IPaystackRepository _paystackRepository, ITransactionRepository _transactionRepository, IWalletRepository _walletRepository,
+            IInvestmentRepository _investmentRepository)
         {
             configuration = _configuration;
             customerRepository = _customerRepository;
             localizer = _localizer;
             paystackRepository = _paystackRepository;
             transactionRepository = _transactionRepository;
+            walletRepository = _walletRepository;
+            investmentRepository = _investmentRepository;
         }
 
-        [HttpGet("{uniqueId}/{module}")]
-        public IActionResult InitiateTransaction(string uniqueId, PaymentType module)
+        [HttpGet]
+        [Authorize]
+        public ApiResponse InitiateTransaction([FromBody] Payment payment)
         {
-            var customer = customerRepository.GetCustomer(uniqueId);
+            var customer = customerRepository.GetCustomer(HttpContext.User.Identity.Name);
             _ = decimal.TryParse(configuration["subscription"], out decimal subscription);
-
+            var amount = payment.Module.Equals(PaymentType.SUBSCRIPTION) ? subscription : payment.Amount;
             var initResponse = payStackApi.MobileAppInitTransaction(
-                    subscription,
+                    amount,
                     customer.Email,
                     string.Format("{0}://{1}/{2}/{3}", Request.Scheme, Request.Host, "verify-payment", "")
                 ).Data;
+
             JObject jObject = JsonConvert.DeserializeObject<JObject>(Convert.ToString(initResponse));
             PaystackPayment paystack = new();
             paystack.AccessCode = Convert.ToString(jObject["access_code"]);
-            paystack.Amount = subscription;
+            paystack.Amount = amount;
             paystack.TransactionRef = Convert.ToString(jObject["reference"]);
-            paystack.PaymentModule = module.ToString();
+            paystack.PaymentModule = payment.Module.ToString();
+            paystack.Type = TransactionType.CR.ToString();
             paystackRepository.NewPayment(paystack);
-            return Redirect(Convert.ToString(jObject["authorization_url"]));
+            response.Success = true;
+            response.Message = localizer["Response.Success"];
+            response.Data = Convert.ToString(jObject["authorization_url"]);
+            return response;
         }
 
         [HttpGet("verify-payment/{reference}")]
+        [Authorize]
         public void Subscribe(string reference)
         {
             var returns = Convert.ToString(payStackApi.VerifyTransaction(reference).Data);
@@ -75,26 +86,19 @@ namespace DominoesProperties.Controllers
             transaction.Module = paystack.PaymentModule;
             transaction.Status = paystack.Status;
             transaction.TransactionRef = paystack.TransactionRef;
-            transaction.TransactionType = TransactionType.DEBIT.ToString();
+            transaction.TransactionType = TransactionType.CR.ToString();
 
             transactionRepository.NewTransaction(transaction);
 
-        }
+            if (paystack.PaymentModule.Equals(PaymentType.FUND_WALLET))
+            {
+                Wallet wallet = walletRepository.GetCustomerWallet(transaction.CustomerId);
+                wallet.Balance = wallet.Balance + paystack.Amount;
+                wallet.LastTransactionAmount = paystack.Amount;
+                wallet.LastTransactionDate = DateTime.Now;
 
-        [HttpGet("wallet/{uniqueId}")]
-        public ApiResponse FundWallet(string uniqueId)
-        {
-            var customer = customerRepository.GetCustomer(uniqueId);
-            if(customer == null){
-                response.Message = localizer["Username.Error"];
-                return response;
+                walletRepository.UpdateCustomerWallet(wallet);
             }
-            decimal subscription = new Decimal(0.00);
-            Decimal.TryParse(configuration["subscription"], out subscription);
-            response.Success = true;
-            response.Message = localizer["Response.Success"];
-            response.Data = payStackApi.MobileAppInitTransaction(subscription, customer.Email, "").Data;
-            return response;
         }
     }
 }

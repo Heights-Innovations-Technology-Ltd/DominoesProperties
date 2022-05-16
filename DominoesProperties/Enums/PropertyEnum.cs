@@ -20,8 +20,8 @@ namespace DominoesProperties.Enums
 
     public enum TransactionType
     {
-        DEBIT,
-        CREDIT
+        DR,
+        CR
     }
 
     public enum Channel
