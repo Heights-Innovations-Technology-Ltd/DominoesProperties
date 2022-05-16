@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using Models.Models;
+using Newtonsoft.Json;
 using Repositories.Repository;
 
 namespace DominoesProperties.Controllers
@@ -54,8 +55,42 @@ namespace DominoesProperties.Controllers
                 pay.Amount =  newInvestment.Amount;
                 pay.Module = Enums.PaymentType.PROPERTY_PURCHASE;
                 pay.InvestmentId = investmentId;
-                paymentController.InitiateTransaction(pay);
+                return paymentController.InitiateTransaction(pay);
             }
+            return response;
+        }
+
+        [HttpGet("{customerId}")]
+        [Authorize(Roles = "Admin")]
+        public ApiResponse Investment(string customerId){
+
+            var investments = investmentRepository.GetInvestments(customerRepository.GetCustomer(customerId).Id);
+            if(investments.Count > 1){
+                response.Message = localizer["Response.Success"];
+                response.Data = investments;
+                return response;
+            }
+            response.Message = localizer["No.Content.Found"];
+            return response;
+        }
+
+        [HttpGet]
+        public ApiResponse Investment([FromQuery] QueryParams queryParams)
+        {
+            var investments = investmentRepository.GetInvestments(queryParams);
+            var metadata = new
+            {
+                investments.TotalCount,
+                investments.PageSize,
+                investments.CurrentPage,
+                investments.TotalPages,
+                investments.HasNext,
+                investments.HasPrevious
+            };
+            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
+            response.Success = true;
+            response.Message = "Successfull";
+            response.Data = investments;
             return response;
         }
     }

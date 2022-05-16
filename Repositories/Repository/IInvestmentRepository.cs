@@ -9,6 +9,7 @@ namespace Repositories.Repository
         long AddInvestment(Investment investment);
         void UpdateInvestment(Investment investment);
         List<Investment> GetInvestments(long customerId);
+        PagedList<Investment> GetInvestments(QueryParams queryParams);
         Investment GetInvestment(long investmentId);
     }
 }

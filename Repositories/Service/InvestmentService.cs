@@ -29,6 +29,13 @@ namespace Repositories.Service
             return _context.Investments.Where(x => x.CustomerId.Equals(customerId)).ToList();
         }
 
+        public PagedList<Investment> GetInvestments(QueryParams pageParams)
+        {
+            return PagedList<Investment>.ToPagedList(_context.Investments.OrderBy(on => on.Id),
+                pageParams.PageNumber,
+                pageParams.PageSize);
+        }
+
         public void UpdateInvestment(Investment investment)
         {
             _context.Investments.Update(investment);

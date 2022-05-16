@@ -169,4 +169,8 @@
     <value>Invalid old password supplied, kindly check and try again.</value>
     <comment/>
   </data>
+  <data name="No.Content.Found" xml:space="preserve">
+    <value>The request returns an empty list</value>
+    <comment/>
+  </data>
 </root>
