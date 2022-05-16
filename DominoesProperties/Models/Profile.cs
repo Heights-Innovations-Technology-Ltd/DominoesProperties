@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Models.Models;
 
 namespace DominoesProperties.Models
 {
@@ -30,7 +31,7 @@ namespace DominoesProperties.Models
         public bool? IsAccountVerified { get; set; }
         public string WalletId { get; set; }
         public decimal WalletBalance { get; set; }
-        public List<CustomerTransaction> Transactions { get; set; }
-        public List<CustomerInvestment>  Investments { get; set; }
+        public List<Transaction> Transactions { get; set; }
+        public List<Investment>  Investments { get; set; }
     }
 }

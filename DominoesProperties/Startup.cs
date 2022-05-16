@@ -73,6 +73,7 @@ namespace DominoesProperties
             services.AddScoped<IUtilRepository, UtilServices>();
             services.AddScoped<ITransactionRepository, TransactionService>();
             services.AddScoped<IPaystackRepository, PaystackService>();
+            services.AddScoped<IInvestmentRepository, InvestmentService>();
 
             services.AddLocalization(opt => opt.ResourcesPath = "Resources");
             services.AddMvc().AddViewLocalization(Microsoft.AspNetCore.Mvc.Razor.LanguageViewLocationExpanderFormat.Suffix).AddDataAnnotationsLocalization();

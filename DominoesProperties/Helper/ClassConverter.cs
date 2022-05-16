@@ -1,6 +1,7 @@
 ﻿using System;
 using Models.Models;
 using Helpers;
+using System.Linq;
 
 namespace DominoesProperties.Helper
 {
@@ -103,7 +104,8 @@ namespace DominoesProperties.Helper
                 IsVerified = customer.IsVerified,
                 Phone = customer.Phone,
                 WalletId = customer.Wallet.WalletNo,
-                WalletBalance = customer.Wallet.Balance.Value
+                WalletBalance = customer.Wallet.Balance.Value,
+                Investments = customer.Investments.ToList()
             };
         }
     }
