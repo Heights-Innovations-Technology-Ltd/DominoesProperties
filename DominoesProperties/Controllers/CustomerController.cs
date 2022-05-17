@@ -1,6 +1,5 @@
 ﻿using DominoesProperties.Helper;
 using DominoesProperties.Models;
-using FluentEmail.Core;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Distributed;
@@ -11,12 +10,13 @@ using Models.Models;
 using Repositories.Repository;
 using System;
 using System.IdentityModel.Tokens.Jwt;
-using System.Net;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using Helpers;
 using DominoesProperties.Enums;
+using System.IO;
+using Microsoft.AspNetCore.Hosting;
 
 namespace DominoesProperties.Controllers
 {
@@ -29,25 +29,26 @@ namespace DominoesProperties.Controllers
         private readonly IStringLocalizer<CustomerController> localizer;
         private readonly IDistributedCache distributedCache;
         private readonly IConfiguration configuration;
-        private readonly IFluentEmail singleEmail;
+        private readonly IApplicationSettingsRepository applicationSettingsRepository;
+        private readonly IHostingEnvironment environment;
         private readonly ApiResponse response = new ApiResponse(false, "Error performing request, contact admin");
         private readonly DistributedCacheEntryOptions expiryOptions;
 
         public CustomerController(ILoggerManager _logger, ICustomerRepository _customerRepository, IStringLocalizer<CustomerController> _stringLocalizer,
-            IDistributedCache _distributedCache, IConfiguration _configuration, IFluentEmail _singleEmail)
+            IDistributedCache _distributedCache, IConfiguration _configuration, IApplicationSettingsRepository _applicationSettingsRepository, IHostingEnvironment _environment)
         {
             logger = _logger;
             customerRepository = _customerRepository;
             localizer = _stringLocalizer;
             distributedCache = _distributedCache;
             configuration = _configuration;
-            singleEmail = _singleEmail;
-
             expiryOptions = new DistributedCacheEntryOptions()
             {
                 AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(20),
                 SlidingExpiration = TimeSpan.FromMinutes(15)
             };
+            applicationSettingsRepository = _applicationSettingsRepository;
+            environment = _environment;
         }
 
         [HttpPost]
@@ -55,9 +56,10 @@ namespace DominoesProperties.Controllers
         public ApiResponse RegisterAsync([FromBody] Models.Customer customer)
         {
             var customerReg = customerRepository.CreateCustomer(ClassConverter.ConvertCustomerToEntity(customer));
+            var setting = applicationSettingsRepository.GetApplicationSettingsByName("EmailNotification");
             if (customerReg != null)
             {
-                _ = ActivationLink(customer.Email, ValidationModule.ACTIVATE_ACCOUNT);
+                _ = ActivationLink(customer.Email, ValidationModule.ACTIVATE_ACCOUNT, setting);
 
                 response.Success = true;
                 response.Message = localizer["Response.Created"].Name.Replace("{params}", "Customer");
@@ -138,7 +140,8 @@ namespace DominoesProperties.Controllers
         [AllowAnonymous]
         public ApiResponse SendActivationLink(string uniqueRef)
         {
-            if (ActivationLink(uniqueRef, ValidationModule.ACTIVATE_ACCOUNT).IsCompleted)
+            ApplicationSetting setting = applicationSettingsRepository.GetApplicationSettingsByName("EmailNotification");
+            if (ActivationLink(uniqueRef, ValidationModule.ACTIVATE_ACCOUNT, setting).IsCompleted)
             {
                 response.Message = localizer["Auth.Link.Generated"];
                 response.Success = true;
@@ -196,7 +199,9 @@ namespace DominoesProperties.Controllers
         [AllowAnonymous]
         public ApiResponse ResetPassword(string email)
         {
-            if (ActivationLink(email, ValidationModule.RESET_PASSWORD).IsCompleted)
+            ApplicationSetting settings = applicationSettingsRepository.GetApplicationSettingsByName("EmailNotification");
+
+            if (ActivationLink(email, ValidationModule.RESET_PASSWORD, settings).IsCompleted)
             {
                 response.Message = string.Format(localizer["Response.Customer.Password.Link"], email);
                 response.Success = true;
@@ -258,38 +263,44 @@ namespace DominoesProperties.Controllers
             return response;
         }
 
-        private async Task<bool> ActivationLink(string uniqueRef, ValidationModule validationModule)
+        private async Task<bool> ActivationLink(string uniqueRef, ValidationModule validationModule, ApplicationSetting setting)
         {
             var customer = customerRepository.GetCustomer(uniqueRef);
             if (customer != null)
             {
-                string code = "";
-                switch (validationModule)
+                try
                 {
-                    case ValidationModule.ACTIVATE_ACCOUNT:
-                        code = "AT";
-                        break;
-                    case ValidationModule.RESET_PASSWORD:
-                        code = "RS";
-                        break;
-                    default:
-                        break;
+                    string token = "", html = "";
+
+                    switch (validationModule)
+                    {
+                        case ValidationModule.ACTIVATE_ACCOUNT:
+                            token = CommonLogic.GetUniqueRefNumber("AT");
+                            string url = string.Format("{0}{1}/{2}", configuration["app_settings:WebEndpoint"], validationModule.ToString().ToLower(), token);
+                            string filePath = System.IO.Path.Combine(environment.ContentRootPath, @"EmailTemplates\NewCustomer.html");
+                            html = System.IO.File.ReadAllText(filePath.Replace(@"\", "/"));
+                            html = html.Replace("{name}", string.Format("{0} {1}", customer.FirstName, customer.LastName).Replace("{link}", url));
+                            break;
+                        case ValidationModule.RESET_PASSWORD:
+                            token = CommonLogic.GetUniqueRefNumber("RS");
+                            break;
+                        default:
+                            break;
+                    }
+
+                
+                    await distributedCache.SetStringAsync(token, uniqueRef, expiryOptions);
+
+                    //TODO create Html template for registration with url embedded
+                
+                    EmailRequest emailRequest = new(localizer["Customer.Registration.Subject"], html, customer.Email);
+                    emailRequest.Settings = setting;
+                    CommonLogic.SendEmail(emailRequest);
                 }
-
-                string token = CommonLogic.GetUniqueRefNumber(code);
-                string url = string.Format("{0}{1}/{2}", configuration["app_settings:WebEndpoint"], validationModule.ToString().ToLower(), token);
-                await distributedCache.SetStringAsync(token, uniqueRef, expiryOptions);
-
-                //TODO create Html template for registration with url embedded
-
-                _ = singleEmail
-                    .To(customer.Email)
-                    .Body($"Click the link to activate {url}")
-                    .Subject("Dominoes Society - Welcome")
-                    .SendAsync();
-
-                EmailRequest emailRequest = new(localizer["Customer.Registration.Subject"], "Click on the below link to activate your account", customer.Email);
-                CommonLogic.SendEmail(emailRequest);
+                catch (Exception ex)
+                {
+                    logger.LogError(ex.InnerException.ToString());
+                }
 
                 return true;
             }

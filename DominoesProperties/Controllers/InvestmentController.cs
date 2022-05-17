@@ -1,3 +1,5 @@
+using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using DominoesProperties.Models;
 using Helpers;
@@ -23,7 +25,8 @@ namespace DominoesProperties.Controllers
         private readonly PaymentController paymentController;
 
         public InvestmentController(ILoggerManager _logger, IPropertyRepository _propertyRepository, IStringLocalizer<InvestmentController> _localizer, 
-        ICustomerRepository _customerRepository, IInvestmentRepository _investmentRepository, PaymentController _paymentController){
+        ICustomerRepository _customerRepository, IInvestmentRepository _investmentRepository, PaymentController _paymentController)
+        {
             logger = _logger;
             propertyRepository = _propertyRepository;
             localizer = _localizer;

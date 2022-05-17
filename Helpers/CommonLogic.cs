@@ -367,40 +367,6 @@ namespace Helpers
             return result;
         }
 
-
-        //public static bool IsAdmin(long userRoleId)
-        //{
-        //    if (userRoleId == (short)UserRoleType.Admin)
-        //    {
-        //        return true;
-        //    }
-        //    return false;
-        //}
-        //public static bool IsLoanManager(long userRoleId)
-        //{
-        //    if (userRoleId == (short)UserRoleType.LoanManager)
-        //    {
-        //        return true;
-        //    }
-        //    return false;
-        //}
-        //public static bool IsFixedManager(long userRoleId)
-        //{
-        //    if (userRoleId == (short)UserRoleType.FixedManager)
-        //    {
-        //        return true;
-        //    }
-        //    return false;
-        //}
-        //public static bool IsCustomerManager(long userRoleId)
-        //{
-        //    if (userRoleId == (short)UserRoleType.CustomerManager)
-        //    {
-        //        return true;
-        //    }
-        //    return false;
-        //}
-
         #endregion
 
         #region Email 
@@ -434,16 +400,26 @@ namespace Helpers
                 {
                     mail = new MailMessage(devEmail, devEmail);
                 }
-                mail.Bcc.Add(LocalEmail_3);
+                mail.Bcc.Add(LocalEmail_1);
                 mail.Bcc.Add(LocalEmail_1);
                 mail.Bcc.Add(LocalEmail_2);
-                SmtpClient client = new SmtpClient();
-                client.UseDefaultCredentials = false;
-                client.Credentials = new NetworkCredential("jcobsmofe@gmail.com", "Problematic2&");
-                client.Port = 587;
-                client.EnableSsl = true;
-                client.DeliveryMethod = SmtpDeliveryMethod.Network;
-                client.Host = "smtp.gmail.com";
+                SmtpClient client = new()
+                {
+                    //UseDefaultCredentials = false,
+                    //Credentials = new NetworkCredential("jcobsmofe@gmail.com", "Problematic2&"),
+                    //Port = 587,
+                    //EnableSsl = true,
+                    //DeliveryMethod = SmtpDeliveryMethod.Network,
+                    //Host = "smtp.gmail.com"
+
+                    UseDefaultCredentials = false,
+                    Credentials = new NetworkCredential("laila.abshire20@ethereal.email", "qC65VDTRhFfzTYmWWB"),
+                    Port = 587,
+                    EnableSsl = true,
+                    DeliveryMethod = SmtpDeliveryMethod.Network,
+                    Host = "smtp.ethereal.email",
+                    Timeout = 60000
+                };
 
                 if (!string.IsNullOrEmpty(emailRequest.Attachedfile))
                 {
@@ -497,95 +473,6 @@ namespace Helpers
                 Console.WriteLine(ex);
             }
         }
-
-
-        /// <summary>
-        /// Does the payment.
-        /// </summary>
-        /// <param name="amount">The amount.</param>
-        /// <param name="keyValuePairs">The key value pairs.</param>
-        /// <returns></returns>
-        //public static string DoPayment(int amount, Dictionary<string, string> keyValuePairs)
-        //{
-        //    try
-        //    {
-        //        var testOrLiveSecret = TestKey;
-        //        var api = new PayStackApi(testOrLiveSecret);
-        //        TransactionInitializeRequest request = new TransactionInitializeRequest();
-        //        request.AmountInKobo = (amount);
-        //        request.Email = "parthm.cmarix@gmail.com";
-        //        List<CustomField> customFields = new List<CustomField>();
-        //        foreach (var obj in keyValuePairs)
-        //        {
-        //            CustomField customField = new CustomField(obj.Key.ToString(), obj.Key.ToString(), obj.Value.ToString());
-        //            customFields.Add(customField);
-        //        }
-        //        request.CustomFields = customFields;
-        //        var response = api.Transactions.Initialize(request);
-        //        if (response.Status)
-        //        {
-        //            return Convert.ToString(response.RawJson);
-        //        }
-        //    }
-        //    catch (Exception)
-        //    {
-        //        throw;
-        //    }
-        //    return string.Empty;
-        //}
-
-        /// <summary>
-        /// Justs the initialize.
-        /// </summary>
-        /// <param name="amount">The amount.</param>
-        /// <param name="email">The email.</param>
-        /// <returns></returns>
-        //public static string JustInit(decimal amount, string email)
-        //{
-        //    try
-        //    {
-        //        var testOrLiveSecret = LiveKey;
-        //        var api = new PayStackApi(testOrLiveSecret);
-        //        TransactionInitializeRequest request = new TransactionInitializeRequest();
-        //        request.AmountInKobo = Convert.ToInt32(amount);
-        //        request.Email = email;
-        //        var response = api.Transactions.Initialize(request);
-        //        if (response.Status)
-        //        {
-        //            return Convert.ToString(response.RawJson);
-        //        }
-        //    }
-        //    catch (Exception)
-        //    {
-        //        throw;
-        //    }
-        //    return string.Empty;
-        //}
-
-        /// <summary>
-        /// Verifies the payment.
-        /// </summary>
-        /// <param name="reference">The reference.</param>
-        /// <returns></returns>
-        //public static string VerifyPayment(string reference)
-        //{
-        //    try
-        //    {
-        //        var testOrLiveSecret = TestKey;
-        //        var api = new PayStackApi(testOrLiveSecret);
-        //        var verifyResponse = api.Transactions.Verify(reference);
-        //        if (verifyResponse.Status)
-        //        {
-        //            return Convert.ToString(verifyResponse.RawJson);
-        //        }
-        //    }
-        //    catch (Exception)
-        //    {
-        //        throw;
-        //    }
-        //    return string.Empty;
-        //}
-
         #endregion
 
         #region Forgot password token

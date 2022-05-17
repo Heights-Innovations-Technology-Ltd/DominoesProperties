@@ -41,6 +41,9 @@
     <None Remove="FluentEmail.Smtp" />
     <None Remove="Resources\Controller\" />
     <None Remove="Templates\" />
+    <None Remove="FluentEmail.Razor" />
+    <None Remove="es-MX\" />
+    <None Remove="My.Extensions.Localization.Json" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.16" />
@@ -59,9 +62,7 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="6.0.4" />
-    <PackageReference Include="Localization.AspNetCore.TagHelpers" Version="0.6.0" />
-    <PackageReference Include="FluentEmail.Core" Version="3.0.2" />
-    <PackageReference Include="FluentEmail.Smtp" Version="3.0.2" />
+    <PackageReference Include="My.Extensions.Localization.Json" Version="3.0.0" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\" />
@@ -69,7 +70,8 @@
     <Folder Include="Extensions\" />
     <Folder Include="Enums\" />
     <Folder Include="Resources\" />
-    <Folder Include="Templates\" />
+    <Folder Include="EmailTemplates\" />
+    <Folder Include="es-MX\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Models\Models.csproj">
@@ -89,21 +91,18 @@
     <None Include="nlog.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Remove="Localization\String.cs" />
+    <Compile Remove="Localization\Strings.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <Compile Update="Localize\Resources.en-GB.Designer.cs">
       <DependentUpon>Resources.en-GB.resx</DependentUpon>
-    </Compile>
-    <Compile Condition=" '$(EnableDefaultCompileItems)' == 'true' " Update="CustomerController.en-GB.Designer.cs">
-      <DependentUpon>CustomerController.en-GB.resx</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Update="Localize\Resources.en-GB.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.en-GB.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Condition=" '$(EnableDefaultEmbeddedResourceItems)' == 'true' " Update="CustomerController.en-GB.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>CustomerController.en-GB.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
 </Project>
