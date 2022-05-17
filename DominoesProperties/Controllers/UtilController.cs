@@ -1,12 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
-using DominoesProperties.Models;
+﻿using DominoesProperties.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Localization;
-using Models.Models;
 using Repositories.Repository;
 
 
@@ -16,14 +9,12 @@ namespace DominoesProperties.Controllers
     [ApiController]
     public class UtilController : Controller
     {
-        public readonly IUtilRepository utilRepository;
-        private readonly IStringLocalizer<UtilController> localizer;
-        private ApiResponse response = new ApiResponse(false, "Error performing request, contact admin");
+        private readonly IUtilRepository utilRepository;
+        private readonly ApiResponse response = new(false, "Error performing request, contact admin");
 
-        public UtilController(IUtilRepository _utilRepository, IStringLocalizer<UtilController> _localizer)
+        public UtilController(IUtilRepository _utilRepository)
         {
             utilRepository = _utilRepository;
-            localizer = _localizer;
         }
     }
 }

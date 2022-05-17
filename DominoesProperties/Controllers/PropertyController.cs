@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Net;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Resources;
-using System.Threading.Tasks;
 using DominoesProperties.Helper;
 using DominoesProperties.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -13,7 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using Models.Models;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Repositories.Repository;
 
 namespace DominoesProperties.Controllers
@@ -24,35 +17,32 @@ namespace DominoesProperties.Controllers
         private readonly IPropertyRepository propertyRepository;
         private readonly ILoggerManager logger;
         private readonly IStringLocalizer<PropertyController> localizer;
-        public readonly IUtilRepository utilRepository;
-        private readonly ICustomerRepository customerRepository;
-        private ApiResponse response = new ApiResponse(false, "Error performing request, contact admin");
-        ResourceManager rm = new ResourceManager("item", Assembly.GetExecutingAssembly());
+        private readonly IUtilRepository utilRepository;
+        private readonly ApiResponse response = new(false, "Error performing request, contact admin");
+        private readonly ResourceManager rm = new("item", Assembly.GetExecutingAssembly());
 
 
         public PropertyController(IPropertyRepository _propertyRepository, ILoggerManager _logger, IStringLocalizer<PropertyController> _localizer,
-            ICustomerRepository _customerRepository, IUtilRepository _utilRepository)
+            IUtilRepository _utilRepository)
         {
             propertyRepository = _propertyRepository;
             logger = _logger;
             localizer = _localizer;
-            customerRepository = _customerRepository;
             utilRepository = _utilRepository;
         }
 
         [HttpGet]
         public ApiResponse Property([FromQuery] QueryParams queryParams)
         {
-            var property = propertyRepository.GetProperties(queryParams);
-            var metadata = new
-            {
+            PagedList<Property> property = propertyRepository.GetProperties(queryParams);
+            (int TotalCount, int PageSize, int CurrentPage, int TotalPages, bool HasNext, bool HasPrevious) metadata = (
                 property.TotalCount,
                 property.PageSize,
                 property.CurrentPage,
                 property.TotalPages,
                 property.HasNext,
                 property.HasPrevious
-            };
+            );
             Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
             logger.LogInfo($"Returned {property.TotalCount} queryParams from database.");
             response.Success = true;
@@ -64,7 +54,7 @@ namespace DominoesProperties.Controllers
         [HttpGet("{uniqueId}")]
         public ApiResponse Property(string uniqueId)
         {
-            var property = propertyRepository.GetProperty(uniqueId);
+            Property property = propertyRepository.GetProperty(uniqueId);
             response.Success = true;
             response.Message = "Successfull";
             response.Data = property;
@@ -73,10 +63,10 @@ namespace DominoesProperties.Controllers
 
         [HttpPost]
         // [Authorize(Roles = "Admin")]
-        public ApiResponse Property([FromBody] Properties properties, [Required(ErrorMessage ="Only admin users can create property")] [FromHeader] string admin)
+        public ApiResponse Property([FromBody] Properties properties)
         {
-            var property = ClassConverter.PropertyToEntity(properties);
-            propertyRepository.AddNewProperty(property);
+            Property property = ClassConverter.PropertyToEntity(properties);
+            _ = propertyRepository.AddNewProperty(property);
             response.Success = true;
             response.Message = localizer["Response.Created"].ToString().Replace("{params}", $"Property {property.Name}");
             return response;
@@ -86,7 +76,7 @@ namespace DominoesProperties.Controllers
         [Authorize(Roles = "Admin")]
         public ApiResponse Property(string uniqueId, [FromBody] UpdateProperty updateProperty)
         {
-            var property = propertyRepository.GetProperty(uniqueId);
+            Property property = propertyRepository.GetProperty(uniqueId);
             if(property == null){
                 response.Message = localizer["Username.Error"];
                 return response;
@@ -112,7 +102,7 @@ namespace DominoesProperties.Controllers
         [Authorize(Roles = "Admin")]
         public ApiResponse Delete(string uniqueId)
         {
-            var property = propertyRepository.GetProperty(uniqueId);
+            Property property = propertyRepository.GetProperty(uniqueId);
             if(property == null){
                 response.Message = localizer["Property.Id.Error"];
                 return response;

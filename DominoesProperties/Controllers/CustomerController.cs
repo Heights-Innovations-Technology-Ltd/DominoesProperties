@@ -30,12 +30,12 @@ namespace DominoesProperties.Controllers
         private readonly IDistributedCache distributedCache;
         private readonly IConfiguration configuration;
         private readonly IApplicationSettingsRepository applicationSettingsRepository;
-        private readonly IHostingEnvironment environment;
+        private readonly IWebHostEnvironment environment;
         private readonly ApiResponse response = new ApiResponse(false, "Error performing request, contact admin");
         private readonly DistributedCacheEntryOptions expiryOptions;
 
         public CustomerController(ILoggerManager _logger, ICustomerRepository _customerRepository, IStringLocalizer<CustomerController> _stringLocalizer,
-            IDistributedCache _distributedCache, IConfiguration _configuration, IApplicationSettingsRepository _applicationSettingsRepository, IHostingEnvironment _environment)
+            IDistributedCache _distributedCache, IConfiguration _configuration, IApplicationSettingsRepository _applicationSettingsRepository, IWebHostEnvironment _environment)
         {
             logger = _logger;
             customerRepository = _customerRepository;

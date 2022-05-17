@@ -1,8 +1,4 @@
-using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using DominoesProperties.Models;
-using Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
@@ -17,17 +13,15 @@ namespace DominoesProperties.Controllers
     public class InvestmentController : Controller
     {
         private readonly ApiResponse response = new ApiResponse(false, "Error performing request, contact admin");
-        private readonly ILoggerManager logger;
         private readonly IPropertyRepository propertyRepository;
         private readonly ICustomerRepository customerRepository;
         private readonly IInvestmentRepository investmentRepository;
         private readonly IStringLocalizer<InvestmentController> localizer;
         private readonly PaymentController paymentController;
 
-        public InvestmentController(ILoggerManager _logger, IPropertyRepository _propertyRepository, IStringLocalizer<InvestmentController> _localizer, 
+        public InvestmentController(IPropertyRepository _propertyRepository, IStringLocalizer<InvestmentController> _localizer, 
         ICustomerRepository _customerRepository, IInvestmentRepository _investmentRepository, PaymentController _paymentController)
         {
-            logger = _logger;
             propertyRepository = _propertyRepository;
             localizer = _localizer;
             customerRepository = _customerRepository;
@@ -44,15 +38,17 @@ namespace DominoesProperties.Controllers
                 response.Message = localizer["Property.Not.Found"];
                 return response;
             }
-            var customer = customerRepository.GetCustomer(HttpContext.User.Identity.Name);
-            Investment newInvestment = new Investment();
-            newInvestment.Amount = property.UnitPrice * investment.Units;
-            newInvestment.CustomerId = customer.Id;
-            newInvestment.PropertyId = property.Id;
-            newInvestment.Units = investment.Units;
-            newInvestment.Yield = property.TargetYield;
+            global::Models.Models.Customer customer = customerRepository.GetCustomer(HttpContext.User.Identity.Name);
+            Investment newInvestment = new()
+            {
+                Amount = property.UnitPrice * investment.Units,
+                CustomerId = customer.Id,
+                PropertyId = property.Id,
+                Units = investment.Units,
+                Yield = property.TargetYield
+            };
             newInvestment.YearlyInterestAmount = newInvestment.Amount * newInvestment.Yield;
-            var investmentId = investmentRepository.AddInvestment(newInvestment);
+            long investmentId = investmentRepository.AddInvestment(newInvestment);
             if(investmentId != 0){
                 Payment pay = new Payment();
                 pay.Amount =  newInvestment.Amount;
@@ -67,7 +63,7 @@ namespace DominoesProperties.Controllers
         [Authorize(Roles = "Admin")]
         public ApiResponse Investment(string customerId){
 
-            var investments = investmentRepository.GetInvestments(customerRepository.GetCustomer(customerId).Id);
+            System.Collections.Generic.List<Investment> investments = investmentRepository.GetInvestments(customerRepository.GetCustomer(customerId).Id);
             if(investments.Count > 1){
                 response.Message = localizer["Response.Success"];
                 response.Data = investments;
@@ -80,16 +76,15 @@ namespace DominoesProperties.Controllers
         [HttpGet]
         public ApiResponse Investment([FromQuery] QueryParams queryParams)
         {
-            var investments = investmentRepository.GetInvestments(queryParams);
-            var metadata = new
-            {
+            PagedList<Investment> investments = investmentRepository.GetInvestments(queryParams);
+            (int TotalCount, int PageSize, int CurrentPage, int TotalPages, bool HasNext, bool HasPrevious) metadata = (
                 investments.TotalCount,
                 investments.PageSize,
                 investments.CurrentPage,
                 investments.TotalPages,
                 investments.HasNext,
                 investments.HasPrevious
-            };
+            );
             Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
             response.Success = true;
             response.Message = "Successfull";

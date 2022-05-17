@@ -24,12 +24,10 @@ namespace DominoesProperties.Controllers
         private readonly IPaystackRepository paystackRepository;
         private readonly ITransactionRepository transactionRepository;
         private readonly IWalletRepository walletRepository;
-        private readonly IInvestmentRepository investmentRepository;
         private readonly ApiResponse response = new(false, "Error performing request, contact admin");
         
         public PaymentController(IConfiguration _configuration, ICustomerRepository _customerRepository, IStringLocalizer<PaymentController> _localizer,
-            IPaystackRepository _paystackRepository, ITransactionRepository _transactionRepository, IWalletRepository _walletRepository,
-            IInvestmentRepository _investmentRepository)
+            IPaystackRepository _paystackRepository, ITransactionRepository _transactionRepository, IWalletRepository _walletRepository)
         {
             configuration = _configuration;
             customerRepository = _customerRepository;
@@ -37,7 +35,6 @@ namespace DominoesProperties.Controllers
             paystackRepository = _paystackRepository;
             transactionRepository = _transactionRepository;
             walletRepository = _walletRepository;
-            investmentRepository = _investmentRepository;
         }
 
         [HttpGet]
@@ -96,7 +93,6 @@ namespace DominoesProperties.Controllers
                 wallet.Balance = wallet.Balance + paystack.Amount;
                 wallet.LastTransactionAmount = paystack.Amount;
                 wallet.LastTransactionDate = DateTime.Now;
-
                 walletRepository.UpdateCustomerWallet(wallet);
             }
         }
