@@ -89,7 +89,7 @@ namespace DominoesProperties
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Dominoes Properties", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Dominoes Society", Version = "v1" });
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     In = ParameterLocation.Header,
