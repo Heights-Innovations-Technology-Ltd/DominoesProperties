@@ -18,6 +18,10 @@ using DominoesProperties.Enums;
 using System.IO;
 using Microsoft.AspNetCore.Hosting;
 using System.Web;
+using Azure.Storage.Blobs;
+using Microsoft.AspNetCore.Http;
+using System.ComponentModel.DataAnnotations;
+using Azure.Storage.Blobs.Models;
 
 namespace DominoesProperties.Controllers
 {
@@ -276,6 +280,26 @@ namespace DominoesProperties.Controllers
 
             response.Message = string.Format(localizer["Response.Customer.Password.Reset"], customer.Email);
             response.Success = true;
+            return response;
+        }
+
+        [HttpPost("passport")]
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public async Task<ApiResponse> UploadPassportAsync([Required][MaxLength(1 * 1024 * 1024, ErrorMessage = "Upload size cannot exceed 1MB")]  IFormFile passport)
+        {
+            var container = new BlobContainerClient(configuration["BlobClient:Url"], "passport");
+            var createResponse = await container.CreateIfNotExistsAsync();
+            if (createResponse != null && createResponse.GetRawResponse().Status == 201)
+                await container.SetAccessPolicyAsync(PublicAccessType.Blob);
+            var blob = container.GetBlobClient($"{HttpContext.User.Identity.Name}.{passport.FileName[passport.FileName.LastIndexOf(".")..]}");
+
+            using (var fileStream = passport.OpenReadStream())
+            {
+                await blob.UploadAsync(fileStream, new BlobHttpHeaders { ContentType = passport.ContentType });
+            }
+            response.Message = "Passport successfully uploaded";
+            response.Data = blob.Uri.ToString();
             return response;
         }
 

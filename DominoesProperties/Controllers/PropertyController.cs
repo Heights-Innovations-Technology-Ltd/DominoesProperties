@@ -1,9 +1,17 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Reflection;
 using System.Resources;
+using System.Threading.Tasks;
+using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
 using DominoesProperties.Helper;
 using DominoesProperties.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Localization;
 using Models.Models;
 using Newtonsoft.Json;
@@ -19,16 +27,20 @@ namespace DominoesProperties.Controllers
         private readonly IStringLocalizer<PropertyController> localizer;
         private readonly IUtilRepository utilRepository;
         private readonly ApiResponse response = new(false, "Error performing request, contact admin");
+        private readonly IConfiguration configuration;
+        private readonly IUploadRepository uploadRepository;
         private readonly ResourceManager rm = new("item", Assembly.GetExecutingAssembly());
 
 
         public PropertyController(IPropertyRepository _propertyRepository, ILoggerManager _logger, IStringLocalizer<PropertyController> _localizer,
-            IUtilRepository _utilRepository)
+            IUtilRepository _utilRepository, IConfiguration _configuration, IUploadRepository _uploadRepository)
         {
             propertyRepository = _propertyRepository;
             logger = _logger;
             localizer = _localizer;
             utilRepository = _utilRepository;
+            configuration = _configuration;
+            uploadRepository = _uploadRepository;
         }
 
         [HttpGet]
@@ -150,6 +162,44 @@ namespace DominoesProperties.Controllers
             response.Data = utilRepository.GetPropertyTypes();
             response.Success = true;
             response.Message = rm.GetString("welcome"); //localizer["Response.Success"];
+            return response;
+        }
+
+        [HttpPost("uploads/{propertyId}")]
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public async Task<ApiResponse> UploadPassportAsync(string propertyId, [Required(ErrorMessage = "No upload found")][MinLength(1, ErrorMessage = "Upload atleast 1 file")] List<IFormFile> passport)
+        {
+            var container = new BlobContainerClient(configuration["BlobClient:Url"], "properties");
+            var createResponse = await container.CreateIfNotExistsAsync();
+            if (createResponse != null && createResponse.GetRawResponse().Status == 201)
+                await container.SetAccessPolicyAsync(PublicAccessType.Blob);
+
+            int count = 0;
+            PropertyUpload[] properties = Array.Empty<PropertyUpload>();
+            passport.ForEach(async x =>
+            {
+                var blob = container.GetBlobClient($"{propertyId + count++}.{x.FileName[x.FileName.LastIndexOf(".")..]}");
+                using (var fileStream = x.OpenReadStream())
+                {
+                    _ = await blob.UploadAsync(fileStream, new BlobHttpHeaders { ContentType = x.ContentType });
+                }
+
+                properties[count] = new PropertyUpload
+                {
+                    DateUploaded = DateTime.Now,
+                    ImageName = propertyId + count++,
+                    PropertyId = propertyId,
+                    Url = blob.Uri.ToString()
+                };
+            });
+
+            if (uploadRepository.NewUpload(properties))
+            {
+                response.Success = true;
+                response.Message = "Passport successfully uploaded";
+            }
+            response.Message = "Error uploading property images";
             return response;
         }
     }

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using Microsoft.EntityFrameworkCore;
 
 #nullable disable
 
@@ -23,8 +24,8 @@ namespace Models.Models
         public virtual DbSet<Investment> Investments { get; set; }
         public virtual DbSet<PaystackPayment> PaystackPayments { get; set; }
         public virtual DbSet<Property> Properties { get; set; }
-        public virtual DbSet<PropertyImage> PropertyImages { get; set; }
         public virtual DbSet<PropertyType> PropertyTypes { get; set; }
+        public virtual DbSet<PropertyUpload> PropertyUploads { get; set; }
         public virtual DbSet<Role> Roles { get; set; }
         public virtual DbSet<Transaction> Transactions { get; set; }
         public virtual DbSet<Wallet> Wallets { get; set; }
@@ -52,6 +53,10 @@ namespace Models.Models
                 entity.HasIndex(e => e.RoleFk, "Admin_Role_Id_fk");
 
                 entity.Property(e => e.Email).HasMaxLength(200);
+
+                entity.Property(e => e.CreatedBy)
+                    .IsRequired()
+                    .HasMaxLength(200);
 
                 entity.Property(e => e.DateCreated).HasDefaultValueSql("CURRENT_TIMESTAMP");
 
@@ -139,6 +144,8 @@ namespace Models.Models
                 entity.Property(e => e.LastName)
                     .IsRequired()
                     .HasMaxLength(50);
+
+                entity.Property(e => e.PassportUrl).HasMaxLength(500);
 
                 entity.Property(e => e.Password)
                     .IsRequired()
@@ -242,9 +249,7 @@ namespace Models.Models
 
                 entity.Property(e => e.Date).HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-                entity.Property(e => e.FromAccount)
-                    .IsRequired()
-                    .HasMaxLength(10);
+                entity.Property(e => e.FromAccount).HasMaxLength(10);
 
                 entity.Property(e => e.Payload).HasColumnType("varchar(5000)");
 
@@ -254,9 +259,7 @@ namespace Models.Models
 
                 entity.Property(e => e.Status).HasMaxLength(5);
 
-                entity.Property(e => e.ToAccount)
-                    .IsRequired()
-                    .HasMaxLength(10);
+                entity.Property(e => e.ToAccount).HasMaxLength(10);
 
                 entity.Property(e => e.TransactionRef)
                     .IsRequired()
@@ -377,6 +380,22 @@ namespace Models.Models
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasMaxLength(200);
+            });
+
+            modelBuilder.Entity<PropertyUpload>(entity =>
+            {
+                entity.HasIndex(e => e.Url, "PropertyUploads_Url_uindex")
+                    .IsUnique();
+
+                entity.Property(e => e.ImageName).HasMaxLength(100);
+
+                entity.Property(e => e.PropertyId)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.Url)
+                    .IsRequired()
+                    .HasMaxLength(500);
             });
 
             modelBuilder.Entity<Role>(entity =>

@@ -26,6 +26,7 @@
     <None Remove="MySql.EntityFrameworkCore" />
     <None Remove="MySql.Data.EntityFramework" />
     <None Remove="Pomelo.EntityFrameworkCore.MySql.Design" />
+    <None Remove="Nodels\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="MySql.Data" Version="8.0.29" />
@@ -42,5 +43,6 @@
   <ItemGroup>
     <Folder Include="Models\" />
     <Folder Include="Context\" />
+    <Folder Include="Nodels\" />
   </ItemGroup>
 </Project>

@@ -27,6 +27,7 @@ namespace Models.Models
         public string AccountNumber { get; set; }
         public bool? IsAccountVerified { get; set; } = false;
         public bool? IsDeleted { get; set; } = false;
+        public string PassportUrl { get; set; }
 
         public virtual Wallet Wallet { get; set; }
         public virtual ICollection<Investment> Investments { get; set; }
