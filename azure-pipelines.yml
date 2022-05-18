@@ -32,3 +32,14 @@ steps:
   inputs:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
+- task: AzureRmWebAppDeployment@4
+  inputs:
+    ConnectionType: 'AzureRM'
+    azureSubscription: 'Azure subscription 1(bcc939ec-3c13-42e9-85f6-ce5d5e2bd9d1)'
+    appType: 'webAppLinux'
+    WebAppName: 'dominoes-society'
+    deployToSlotOrASE: true
+    ResourceGroupName: 'dominoesRg'
+    SlotName: 'production'
+    packageForLinux: '$(System.DefaultWorkingDirectory)/**/*.zip'
+    RuntimeStack: 'DOTNETCORE|3.1'
