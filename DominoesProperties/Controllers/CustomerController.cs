@@ -17,6 +17,7 @@ using Helpers;
 using DominoesProperties.Enums;
 using System.IO;
 using Microsoft.AspNetCore.Hosting;
+using System.Web;
 
 namespace DominoesProperties.Controllers
 {
@@ -31,18 +32,21 @@ namespace DominoesProperties.Controllers
         private readonly IConfiguration configuration;
         private readonly IApplicationSettingsRepository applicationSettingsRepository;
         private readonly IWebHostEnvironment environment;
-        private readonly ApiResponse response = new ApiResponse(false, "Error performing request, contact admin");
+        private readonly IAdminRepository adminRepository;
+        private readonly ApiResponse response = new(false, "Error performing request, contact admin");
         private readonly DistributedCacheEntryOptions expiryOptions;
 
         public CustomerController(ILoggerManager _logger, ICustomerRepository _customerRepository, IStringLocalizer<CustomerController> _stringLocalizer,
-            IDistributedCache _distributedCache, IConfiguration _configuration, IApplicationSettingsRepository _applicationSettingsRepository, IWebHostEnvironment _environment)
+            IDistributedCache _distributedCache, IConfiguration _configuration, IApplicationSettingsRepository _applicationSettingsRepository,
+            IWebHostEnvironment _environment, IAdminRepository _adminRepository)
         {
             logger = _logger;
             customerRepository = _customerRepository;
             localizer = _stringLocalizer;
             distributedCache = _distributedCache;
             configuration = _configuration;
-            expiryOptions = new DistributedCacheEntryOptions()
+            adminRepository = _adminRepository;
+            expiryOptions = new()
             {
                 AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(20),
                 SlidingExpiration = TimeSpan.FromMinutes(15)
@@ -55,6 +59,18 @@ namespace DominoesProperties.Controllers
         [Route("register")]
         public ApiResponse RegisterAsync([FromBody] Models.Customer customer)
         {
+            if(customerRepository.GetCustomer(customer.Email) != null)
+            {
+                response.Message = $"Customer with email {customer.Email} already exist";
+                return response;
+            }
+
+            if (adminRepository.GetUser(customer.Email) != null)
+            {
+                response.Message = $"Admin user exist with email {customer.Email} and admin is not allowed as a customer";
+                return response;
+            }
+
             var customerReg = customerRepository.CreateCustomer(ClassConverter.ConvertCustomerToEntity(customer));
             var setting = applicationSettingsRepository.GetApplicationSettingsByName("EmailNotification");
             if (customerReg != null)
@@ -276,10 +292,10 @@ namespace DominoesProperties.Controllers
                     {
                         case ValidationModule.ACTIVATE_ACCOUNT:
                             token = CommonLogic.GetUniqueRefNumber("AT");
-                            string url = string.Format("{0}{1}/{2}", configuration["app_settings:WebEndpoint"], validationModule.ToString().ToLower(), token);
+                            string url = string.Format("{0}{1}/{2}?value={3}", configuration["app_settings:WebEndpoint"], validationModule.ToString().ToLower(), token, "customer");
                             string filePath = System.IO.Path.Combine(environment.ContentRootPath, @"EmailTemplates\NewCustomer.html");
                             html = System.IO.File.ReadAllText(filePath.Replace(@"\", "/"));
-                            html = html.Replace("{name}", string.Format("{0} {1}", customer.FirstName, customer.LastName).Replace("{link}", url));
+                            html = html.Replace("{name}", string.Format("{0} {1}", customer.FirstName, customer.LastName).Replace("{link}", HttpUtility.UrlEncode(url)));
                             break;
                         case ValidationModule.RESET_PASSWORD:
                             token = CommonLogic.GetUniqueRefNumber("RS");
@@ -299,6 +315,7 @@ namespace DominoesProperties.Controllers
                 }
                 catch (Exception ex)
                 {
+                    _ = new ExceptionFormatter(logger, ex);
                     logger.LogError(ex.InnerException.ToString());
                 }
 
@@ -307,7 +324,7 @@ namespace DominoesProperties.Controllers
             return false;
         }
 
-        private string GenerateJwtToken(string uniqueRef)
+        protected string GenerateJwtToken(string uniqueRef)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["app_settings:Secret"]));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);

@@ -7,12 +7,12 @@ namespace DominoesProperties.Helper
 {
     public class ClassConverter
     {
-        public static Models.Customer ConvertCustomerToModel()
+        internal static Models.Customer ConvertCustomerToModel()
         {
             return null;
         }
 
-        public static Customer ConvertCustomerToEntity(Models.Customer customer)
+        internal static Customer ConvertCustomerToEntity(Models.Customer customer)
         {
             return new Customer
             {
@@ -26,7 +26,7 @@ namespace DominoesProperties.Helper
             };
         }
 
-        public static Models.Profile ConvertCustomerToProfile(Customer customer)
+        internal static Models.Profile ConvertCustomerToProfile(Customer customer)
         {
             return new Models.Profile {
                 UniqueReference = customer.UniqueRef,
@@ -45,7 +45,17 @@ namespace DominoesProperties.Helper
             };
         }
 
-        public static Property PropertyToEntity(Models.Properties property){
+        internal static Admin UserToAdmin(Models.AdminUser admin)
+        {
+            return new Admin
+            {
+                Email = admin.Email,
+                RoleFk = admin.RoleFk,
+                Password = admin.Password
+            };
+        }
+
+        internal static Property PropertyToEntity(Models.Properties property){
             return new Property
             {
                 UniqueId = Guid.NewGuid().ToString(),
@@ -69,7 +79,7 @@ namespace DominoesProperties.Helper
             };
         }
 
-        public static Description DescriptionToEntity(Models.PropertyDescription description){
+        internal static Description DescriptionToEntity(Models.PropertyDescription description){
             return new Description{
                 Bathroom = description.Bathroom,
                 Toilet = description.Toilet,
@@ -88,7 +98,7 @@ namespace DominoesProperties.Helper
             };
         }
 
-        public static Models.Profile ConvertCustomerToFullProfile(Customer customer)
+        internal static Models.Profile ConvertCustomerToFullProfile(Customer customer)
         {
             return new Models.Profile
             {
