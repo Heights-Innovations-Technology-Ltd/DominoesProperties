@@ -431,7 +431,7 @@ Navbar Area Style
   position: relative;
   padding-bottom: 20px;
   padding-top: 20px;
-  padding-right: 0;
+  padding-right: 15px;
   padding-left: 0;
 }
 
@@ -825,7 +825,7 @@ Navbar Area Style
 
 .desktop-nav .navbar .others-options .dropdown button span {
   margin-left: 5px;
-  color: #2b3b3a;
+  color: #fff;
 }
 
 .desktop-nav .navbar .others-options .dropdown .dropdown-menu {
