@@ -1,5 +1,8 @@
 ﻿$(".btn-register").on("click", function () {
 
+    if ($('.catch_me').val() != "") {
+        return;
+    }
 
     $(".btn-register").html("Processing...").attr("disabled", !0);
     let t = false;
@@ -62,6 +65,10 @@
 
 $('.btn-login').click(() => {
 
+    if ($('.catch_me').val() != "") {
+        return;
+    }
+
     $(".btn-login").html("Processing...").attr("disabled", !0);
     let t = false;
     var e = "";
@@ -92,13 +99,20 @@ $('.btn-login').click(() => {
             // alert('Something went wrong try again!');
         } else {
             var res = JSON.parse(xhr.responseText);
-            var data = JSON.parse(res).Data;
-            console.log(res);
+            var data = JSON.parse(res).data;
+            console.log(JSON.parse(res).Data);
           
-            if (JSON.parse(res).Success) {
+            if (JSON.parse(res).success) {
                 console.log(data);
+                location = "/Dashboard";
                 $(".btn-login").html("Login").attr("disabled", !1);
                 $(".form-control").val("");
+            } else {
+                window.scrollTo(0, 0);
+                message(data
+                    , 'error');
+                $(".btn-login").html("Login").attr("disabled", !1);
+
             }
 
         }
@@ -108,6 +122,96 @@ $('.btn-login').click(() => {
     }
 });
 
+
+const customerDetails = () => {
+    let xhr = new XMLHttpRequest();
+    let url = "/get-customer";
+    xhr.open('GET', url, false);
+    xhr.setRequestHeader("content-type", "application/json");
+    xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+    try {
+
+        xhr.send();
+        if (xhr.status != 200) {
+            // alert('Something went wrong try again!');
+        } else {
+            var res = JSON.parse(xhr.responseText);
+            var data = JSON.parse(res).data;
+
+            if (JSON.parse(res).success) {
+                console.log(data);
+                profile(data);
+                const pageProfile = this.href.substring(this.href.lastIndexOf('/') + 1);
+                console.log( "Hello" + (this.href.substring(this.href.lastIndexOf('/') + 1)));
+                console.log(pageProfile);
+                if (pageProfile) {
+                    profile(data)
+                } else {
+                    console.log('not profile');
+                }
+            } else {
+                window.scrollTo(0, 0);
+            }
+
+        }
+    } catch (err) { // instead of onerror
+        //alert("Request failed");
+        $(".btn-login").html("Login").attr("disabled", !1);
+    }
+}
+
+const profile = (data) => {
+    $('#profile').html(`
+        <li>
+		    <span id="firstname">First Name:</span>
+		    ${data.firstName}
+	    </li>
+	    <li>
+		    <span id="lastname">Last Name:</span>
+		   ${data.lastName}
+	    </li>
+	   
+	    <li>
+		    <span id="email">Email:</span>
+		   ${data.email}
+	    </li>
+	    <li>
+		    <span>Phone:</span>
+            ${data.phone}
+	    </li>
+	    <li>
+		    <span id="address">Address:</span>
+		    ${data.address};
+	    </li>
+        
+    `);
+}
+
+
+$('#signout').click(() => {
+    if (confirm("Are you sure you want to logout?")) {
+        let xhr = new XMLHttpRequest();
+        let url = "/logout";
+        xhr.open('GET', url, false);
+        xhr.setRequestHeader("content-type", "application/json");
+        xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+        try {
+
+            xhr.send();
+            if (xhr.status != 200) {
+                //alert('Something went wrong try again!');
+            } else {
+                var res = JSON.parse(xhr.responseText);
+                if (res) {
+                    location = '/';
+                }
+            }
+        } catch (err) { // instead of onerror
+            //alert("Request failed");
+        }
+    }
+   
+});
 
 
 const message = (msg, _class) => $('#msg').html(`<div class="alert alert-${_class == "error" ? 'danger' : 'success'} alert-dismissible fade show" role="alert">

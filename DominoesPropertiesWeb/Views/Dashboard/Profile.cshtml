@@ -1,0 +1,56 @@
+﻿
+@{
+    ViewData["Title"] = "Profile";
+    Layout = "~/Views/Shared/_LayoutDash.cshtml";
+}
+
+<!-- Start Dashboard Area -->
+		<div class="dashboard-area">
+			<div class="container-fluid">
+				<div class="dashboard-title-wrap">
+					<div class="row align-items-center">
+						<div class="col-lg-6 col-sm-6">
+							<ul class="dashboard-page-title">
+								<li>
+									<a href="dashboard.html">
+										Home 
+									</a>
+								</li>
+		
+								<li class="active">My Profile</li>
+							</ul>
+						</div>
+						
+					</div>
+				</div>
+
+				<div class="my-profile">
+					<div class="row">
+						<div class="col-lg-4">
+							<div class="my-profile-img">
+								<img src="~/images/agents/agent-10.jpg" alt="Image">
+								
+								<a asp-controller="Dashboard" asp-action="EditProfile" class="default-btn">
+									Edit Profile
+								</a>
+							</div>
+						</div>
+						<div class="col-lg-8">
+							<div class="my-profile-content">
+								<ul id="profile">
+									
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- End Dashboard Area -->
+		<script>
+	$(document).ready(() => {
+		customerDetails();
+	})
+</script>
+
+

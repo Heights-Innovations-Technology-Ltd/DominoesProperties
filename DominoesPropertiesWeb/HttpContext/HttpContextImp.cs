@@ -31,7 +31,6 @@ namespace DominoesPropertiesWeb.HttpContext
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, url))
             {
-                client.DefaultRequestHeaders.Add("channel", "1");
                 var token = this.session.GetString("Token");
                 client.DefaultRequestHeaders.Add("Authorization",
                     "Bearer " + token);
@@ -69,9 +68,18 @@ namespace DominoesPropertiesWeb.HttpContext
                     if (result.IsSuccessStatusCode)
                     {
                         var res = JsonConvert.DeserializeObject<dynamic>(Convert.ToString(responJsonText));
-                        jsonObj.Success = true;
-                        jsonObj.Data = Convert.ToString(res["data"]);
-                        jsonObj.Message = Convert.ToString(res["message"]);
+                        var success = Convert.ToBoolean(res["success"]);
+                        if (success)
+                        {
+                            jsonObj.Success = success;
+                            jsonObj.Data = Convert.ToString(res["data"]);
+                            jsonObj.Message = Convert.ToString(res["message"]);
+                        }
+                        else
+                        {
+                            jsonObj.Success = success;
+                            jsonObj.Data = Convert.ToString(res["message"]);
+                        }
 
                         if (result.Headers.Contains("access_token")) { jsonObj.TokenObj = result.Headers.GetValues("access_token").First(); }
                     }
