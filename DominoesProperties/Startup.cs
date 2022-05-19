@@ -89,6 +89,7 @@ namespace DominoesProperties
 
             services.AddSwaggerGen(c =>
             {
+                c.EnableAnnotations();
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Dominoes Society", Version = "v1" });
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
@@ -113,6 +114,8 @@ namespace DominoesProperties
                         Array.Empty<string>()
                     }
                 });
+                var filePath = Path.Combine(System.AppContext.BaseDirectory, "DominoesProperties.xml");
+                c.IncludeXmlComments(filePath);
             });
 
             #region Connection String

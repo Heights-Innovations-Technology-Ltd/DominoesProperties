@@ -4,6 +4,11 @@
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
 
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\net5.0\DominoesProperties.xml</DocumentationFile>
+    <NoWarn>1701;1702, 1591</NoWarn>
+  </PropertyGroup>
   <ItemGroup>
     <None Remove="Newtonsoft.Json" />
     <None Remove="Models\" />
@@ -45,6 +50,7 @@
     <None Remove="es-MX\" />
     <None Remove="My.Extensions.Localization.Json" />
     <None Remove="Azure.Storage.Blobs" />
+    <None Remove="Swashbuckle.AspNetCore.Annotations" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.16" />
@@ -65,6 +71,7 @@
     <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="6.0.4" />
     <PackageReference Include="My.Extensions.Localization.Json" Version="3.0.0" />
     <PackageReference Include="Azure.Storage.Blobs" Version="12.12.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.3.1" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\" />
