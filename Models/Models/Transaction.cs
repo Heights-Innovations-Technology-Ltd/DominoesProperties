@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 #nullable disable
 
@@ -7,6 +8,7 @@ namespace Models.Models
 {
     public partial class Transaction
     {
+        [IgnoreDataMember]
         public string TransactionRef { get; set; }
         public decimal Amount { get; set; }
         public long CustomerId { get; set; }

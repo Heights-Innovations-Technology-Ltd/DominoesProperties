@@ -1,14 +1,21 @@
 ﻿using System;
-using Newtonsoft.Json;
+using System.Collections.Generic;
+
+#nullable disable
 
 namespace Models.Models
 {
     public partial class PropertyType
     {
-        [JsonIgnore]
+        public PropertyType()
+        {
+            Properties = new HashSet<Property>();
+        }
+
         public int Id { get; set; }
         public string Name { get; set; }
-        [JsonIgnore]
         public DateTime? DateCreated { get; set; }
+
+        public virtual ICollection<Property> Properties { get; set; }
     }
 }

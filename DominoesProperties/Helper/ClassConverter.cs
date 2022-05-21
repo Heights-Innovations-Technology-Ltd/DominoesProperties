@@ -1,16 +1,18 @@
 ﻿using System;
 using Models.Models;
+using Helpers;
+using System.Linq;
 
 namespace DominoesProperties.Helper
 {
     public class ClassConverter
     {
-        public static Models.Customer ConvertCustomerToModel()
+        internal static Models.Customer ConvertCustomerToModel()
         {
             return null;
         }
 
-        public static Customer ConvertCustomerToEntity(Models.Customer customer)
+        internal static Customer ConvertCustomerToEntity(Models.Customer customer)
         {
             return new Customer
             {
@@ -24,7 +26,7 @@ namespace DominoesProperties.Helper
             };
         }
 
-        public static Models.Profile ConvertCustomerToProfile(Customer customer)
+        internal static Models.Profile ConvertCustomerToProfile(Customer customer)
         {
             return new Models.Profile {
                 UniqueReference = customer.UniqueRef,
@@ -43,7 +45,17 @@ namespace DominoesProperties.Helper
             };
         }
 
-        public static Property PropertyToEntity(Models.Properties property){
+        internal static Admin UserToAdmin(Models.AdminUser admin)
+        {
+            return new Admin
+            {
+                Email = admin.Email,
+                RoleFk = admin.RoleFk,
+                Password = admin.Password
+            };
+        }
+
+        internal static Property PropertyToEntity(Models.Properties property){
             return new Property
             {
                 UniqueId = Guid.NewGuid().ToString(),
@@ -67,7 +79,7 @@ namespace DominoesProperties.Helper
             };
         }
 
-        public static Description DescriptionToEntity(Models.PropertyDescription description){
+        internal static Description DescriptionToEntity(Models.PropertyDescription description){
             return new Description{
                 Bathroom = description.Bathroom,
                 Toilet = description.Toilet,
@@ -83,6 +95,27 @@ namespace DominoesProperties.Helper
                 Refrigerator = description.Refrigerator,
                 SecurityGuard = description.SecurityGuard,
                 SwimmingPool = description.SwimmingPool
+            };
+        }
+
+        internal static Models.Profile ConvertCustomerToFullProfile(Customer customer)
+        {
+            return new Models.Profile
+            {
+                UniqueReference = customer.UniqueRef,
+                FirstName = customer.FirstName,
+                LastName = customer.LastName,
+                Address = customer.Address,
+                Email = customer.Email,
+                IsAccountVerified = customer.IsAccountVerified,
+                AccountNumber = customer.AccountNumber,
+                IsActive = customer.IsActive,
+                IsSubscribed = customer.IsSubscribed,
+                IsVerified = customer.IsVerified,
+                Phone = customer.Phone,
+                WalletId = customer.Wallet.WalletNo,
+                WalletBalance = customer.Wallet.Balance.Value,
+                Investments = customer.Investments.ToList()
             };
         }
     }
