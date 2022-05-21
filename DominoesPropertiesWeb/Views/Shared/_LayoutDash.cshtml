@@ -44,7 +44,7 @@
     <body>
 		<script>
 			$(function(){
-				if($('#refId').val() == "" || $('#refId').val() == null) return location = '/';
+				//if($('#refId').val() == "" || $('#refId').val() == null) return location = '/';
 			});
 		</script>
 		<!-- Start Preloader Area -->
@@ -252,9 +252,15 @@
 						My Profile
 					</a>
 				</li>
-				<li>
+				@*<li>
 					<a href="edit-profile.html">
 						<i class="ri-image-edit-line"></i>
+						Properties
+					</a>
+				</li>*@
+				<li>
+					<a asp-controller="Protperty" asp-action="Index">
+						<i class="ri-user-line"></i>
 						Properties
 					</a>
 				</li>
