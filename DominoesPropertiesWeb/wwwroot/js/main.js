@@ -100,7 +100,7 @@ $('.btn-login').click(() => {
         } else {
             var res = JSON.parse(xhr.responseText);
             var data = JSON.parse(res).data;
-            console.log(JSON.parse(res).Data);
+            console.log(data);
           
             if (JSON.parse(res).success) {
                 console.log(data);
