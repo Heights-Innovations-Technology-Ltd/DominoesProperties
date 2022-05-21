@@ -7,6 +7,8 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using Helpers.Enum;
+using Newtonsoft.Json.Serialization;
+using Helpers.PayStack;
 
 namespace Helpers
 {
@@ -415,9 +417,9 @@ namespace Helpers
         /// <param name="amount">The amount.</param>
         /// <param name="email">The email.</param>
         /// <returns></returns>
-        public ResponseModel MobileAppInitTransaction(decimal amount, string email, string callback_url = null)
+        public ResponseModel MobileAppInitTransaction(PaymentModel model)
         {
-            string inputJson = JsonConvert.SerializeObject(new { email = email, amount = amount, callback_url = callback_url });
+            string inputJson = JsonConvert.SerializeObject(model);
             return CallApi(postinitializeTransaction, "POST", null, inputJson);
         }
 

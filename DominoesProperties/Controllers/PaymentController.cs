@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 using Models.Models;
 using DominoesProperties.Enums;
 using Microsoft.AspNetCore.Authorization;
+using Helpers.PayStack;
 
 namespace DominoesProperties.Controllers
 {
@@ -44,17 +45,21 @@ namespace DominoesProperties.Controllers
             var customer = customerRepository.GetCustomer(HttpContext.User.Identity.Name);
             _ = decimal.TryParse(configuration["subscription"], out decimal subscription);
             var amount = payment.Module.Equals(PaymentType.SUBSCRIPTION) ? subscription : payment.Amount;
-            var initResponse = payStackApi.MobileAppInitTransaction(
-                    amount,
-                    customer.Email,
-                    string.Format("{0}://{1}/{2}/{3}", Request.Scheme, Request.Host, "verify-payment", "")
-                ).Data;
+            var transRef = Guid.NewGuid().ToString();
 
+            PaymentModel m = new() {
+                amount = amount*100,
+                email = customer.Email,
+                reference = transRef,
+                callback = string.Format("{0}://{1}/{2}/{3}", Request.Scheme, Request.Host, "api/payment/verify-payment", transRef)
+            };
+
+            var initResponse = payStackApi.MobileAppInitTransaction(m).Data;
             JObject jObject = JsonConvert.DeserializeObject<JObject>(Convert.ToString(initResponse));
             PaystackPayment paystack = new();
             paystack.AccessCode = Convert.ToString(jObject["access_code"]);
             paystack.Amount = amount;
-            paystack.TransactionRef = Convert.ToString(jObject["reference"]);
+            paystack.TransactionRef = transRef;
             paystack.PaymentModule = payment.Module.ToString();
             paystack.Type = TransactionType.CR.ToString();
             paystackRepository.NewPayment(paystack);
@@ -69,6 +74,11 @@ namespace DominoesProperties.Controllers
         public void Subscribe(string reference)
         {
             var returns = Convert.ToString(payStackApi.VerifyTransaction(reference).Data);
+            if (string.IsNullOrWhiteSpace(returns))
+            {
+                return;
+            }
+
             JObject jObject = JsonConvert.DeserializeObject<JObject>(returns);
 
             PaystackPayment paystack = paystackRepository.GetPaystack(reference);
