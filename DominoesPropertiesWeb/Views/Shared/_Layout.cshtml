@@ -1,4 +1,5 @@
-﻿<!doctype html>
+﻿
+<!doctype html>
 <html lang="eng">
 <head>
 		<!-- Required meta tags -->
@@ -24,6 +25,21 @@
 		<link rel="icon" type="image/png" href="~/images/favicon.png">
 		<!-- Title -->
 		 <title>@ViewData["Title"] - Dominoes Properties</title>
+
+		 @using Microsoft.AspNetCore.Http;
+		@inject IHttpContextAccessor HttpContextAccessor
+
+		@{
+			var Username = @HttpContextAccessor.HttpContext.Session.GetString("uniqueReference");
+			var IsSubscribed = @HttpContextAccessor.HttpContext.Session.GetString("IsSubscribed");
+			var WalletId = @HttpContextAccessor.HttpContext.Session.GetString("WalletId");
+			var Firstname = @HttpContextAccessor.HttpContext.Session.GetString("Firstname");
+			var Lastname = @HttpContextAccessor.HttpContext.Session.GetString("Lastname");
+			var userFullName = string.Format("{0} {1}", Firstname, Lastname);
+		}
+		@Html.Hidden("refId", Username)
+		@Html.Hidden("isSubcribed", IsSubscribed)
+		@Html.Hidden("fullname", userFullName)
     </head>
 
     <body>

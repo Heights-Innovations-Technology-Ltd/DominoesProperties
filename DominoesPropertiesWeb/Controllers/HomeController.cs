@@ -92,16 +92,25 @@ namespace DominoesPropertiesWeb.Controllers
                 this.session.SetString("WalletId", (string)resObj["walletId"]);
                 this.session.SetString("WalletBalance", (string)resObj["walletBalance"]);
                 this.session.SetString("Token", (string)data["TokenObj"]);
-                jsonObj.Success = success;
-                jsonObj.Data = data["Message"];
+                jsonObj.success = success;
+                jsonObj.data = data["Message"];
             }
             else
             {
-                jsonObj.Success = success;
-                jsonObj.Data = data["Message"];
+                jsonObj.success = success;
+                jsonObj.data = data["Data"];
             }
             return Json(JsonConvert.SerializeObject(jsonObj));
         }
 
+
+        [Route("get-customer")]
+        public async Task<JsonResult> Customer()
+        {
+            var res = Task.Run(() => httpContext.Get("Customer"));
+            await Task.WhenAll(res);
+            var data = res.Status == TaskStatus.RanToCompletion ? res.Result : null;
+            return Json(JsonConvert.SerializeObject(data));
+        }
     }
 }
