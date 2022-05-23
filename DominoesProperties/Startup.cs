@@ -15,12 +15,10 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Models.Models;
@@ -78,6 +76,7 @@ namespace DominoesProperties
             services.AddScoped<IApplicationSettingsRepository, ApplicationSettingsService>();
             services.AddTransient<PaymentController, PaymentController>();
             services.AddTransient<IAdminRepository, AdminService>();
+            services.AddTransient<IUploadRepository, UploadService>();
 
             services.AddMvc().AddViewLocalization(Microsoft.AspNetCore.Mvc.Razor.LanguageViewLocationExpanderFormat.Suffix).AddDataAnnotationsLocalization();
 

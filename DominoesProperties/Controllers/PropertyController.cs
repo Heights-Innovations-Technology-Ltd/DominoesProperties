@@ -29,7 +29,6 @@ namespace DominoesProperties.Controllers
         private readonly ApiResponse response = new(false, "Error performing request, contact admin");
         private readonly IConfiguration configuration;
         private readonly IUploadRepository uploadRepository;
-        private readonly ResourceManager rm = new("item", Assembly.GetExecutingAssembly());
 
 
         public PropertyController(IPropertyRepository _propertyRepository, ILoggerManager _logger, IStringLocalizer<PropertyController> _localizer,
@@ -74,7 +73,7 @@ namespace DominoesProperties.Controllers
         }
 
         [HttpPost]
-        // [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         public ApiResponse Property([FromBody] Properties properties)
         {
             Property property = ClassConverter.PropertyToEntity(properties);
@@ -161,7 +160,7 @@ namespace DominoesProperties.Controllers
         {
             response.Data = utilRepository.GetPropertyTypes();
             response.Success = true;
-            response.Message = rm.GetString("welcome"); //localizer["Response.Success"];
+            response.Message = "Property types fetched successfully!";
             return response;
         }
 
