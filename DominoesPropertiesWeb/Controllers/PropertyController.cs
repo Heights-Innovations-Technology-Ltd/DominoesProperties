@@ -4,6 +4,7 @@ namespace DominoesPropertiesWeb.Controllers
 {
     public class PropertyController : Controller
     {
+
         public IActionResult Index()
         {
             return View();
