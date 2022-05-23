@@ -18,7 +18,6 @@ namespace DominoesPropertiesWeb.Controllers
         private readonly IHttpContext httpContext;
         private readonly IWebHostEnvironment hostEnvironment;
 
-
         string url = string.Empty;
         dynamic jsonObj = new JObject();
 
