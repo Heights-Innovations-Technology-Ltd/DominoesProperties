@@ -6,6 +6,7 @@ using System.Net;
 using System.Net.Mail;
 using System.Reflection;
 using System.Text;
+using DominoesProperties.Controllers;
 using DominoesProperties.Extensions;
 using DominoesProperties.Helper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -34,7 +35,7 @@ namespace DominoesProperties
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
-            LogManager.LoadConfiguration(String.Concat(Directory.GetCurrentDirectory(), "/nlog.config"));
+            LogManager.LoadConfiguration(string.Concat(Directory.GetCurrentDirectory(), "/nlog.config"));
         }
 
         public IConfiguration Configuration { get; }
@@ -70,37 +71,25 @@ namespace DominoesProperties
             services.AddScoped<IWalletRepository, WalletService>();
             services.AddScoped<IPropertyRepository, PropertyService>();
             services.AddScoped<IUtilRepository, UtilServices>();
+            services.AddScoped<ITransactionRepository, TransactionService>();
+            services.AddScoped<IPaystackRepository, PaystackService>();
+            services.AddScoped<IInvestmentRepository, InvestmentService>();
+            services.AddScoped<IApplicationSettingsRepository, ApplicationSettingsService>();
+            services.AddTransient<PaymentController, PaymentController>();
+            services.AddTransient<IAdminRepository, AdminService>();
 
-            services.AddLocalization(opt => opt.ResourcesPath = "Resources");
             services.AddMvc().AddViewLocalization(Microsoft.AspNetCore.Mvc.Razor.LanguageViewLocationExpanderFormat.Suffix).AddDataAnnotationsLocalization();
-
-            services.Configure<RequestLocalizationOptions>(opt =>
-            {
-                var supportedCultures = new List<CultureInfo>
-                {
-                    new CultureInfo("en-GB"),
-                    new CultureInfo("en-US")
-                };
-                opt.DefaultRequestCulture = new RequestCulture(culture: "en-GB", uiCulture: "en-US");
-                opt.SupportedCultures = supportedCultures;
-                opt.SupportedUICultures = supportedCultures;
-            });
 
             services.AddControllers().AddNewtonsoftJson(options =>
                 options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore
             );
 
-            services.AddFluentEmail("jcobsmofe@gmail.com").AddSmtpSender(new SmtpClient("smtp.gmail.com")
-            {
-                UseDefaultCredentials = false,
-                Port = Configuration.GetSection("smtp").GetValue<int>("port"),
-                Credentials = new NetworkCredential(Configuration.GetSection("smtp").GetValue<string>("sender"), Configuration.GetSection("smtp").GetValue<string>("password")),
-                EnableSsl = true,
-            });
+            services.AddJsonLocalization(opt => opt.ResourcesPath = "Resources");
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Dominoes Properties", Version = "v1" });
+                c.EnableAnnotations();
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Dominoes Society", Version = "v1" });
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     In = ParameterLocation.Header,
@@ -124,6 +113,8 @@ namespace DominoesProperties
                         Array.Empty<string>()
                     }
                 });
+                var filePath = Path.Combine(System.AppContext.BaseDirectory, "DominoesProperties.xml");
+                c.IncludeXmlComments(filePath);
             });
 
             #region Connection String
@@ -168,8 +159,6 @@ namespace DominoesProperties
                 CommonLogic.SendExceptionEmail("Exception Occurred", "Error On Method :  " + MethodBase.GetCurrentMethod().DeclaringType.Name + " and Message : " + exception.Message + "<br> StackTrace : " + exception.StackTrace);
                 await context.Response.WriteAsync(result);
             }));
-            
-            app.UseRequestLocalization(app.ApplicationServices.GetRequiredService<IOptions<RequestLocalizationOptions>>().Value);
 
             app.UseCors("AllowAllHeaders");
 

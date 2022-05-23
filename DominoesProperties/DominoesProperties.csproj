@@ -4,6 +4,11 @@
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
 
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\net5.0\DominoesProperties.xml</DocumentationFile>
+    <NoWarn>1701;1702, 1591</NoWarn>
+  </PropertyGroup>
   <ItemGroup>
     <None Remove="Newtonsoft.Json" />
     <None Remove="Models\" />
@@ -40,8 +45,12 @@
     <None Remove="FluentEmail.Core" />
     <None Remove="FluentEmail.Smtp" />
     <None Remove="Resources\Controller\" />
-    <None Remove="Resources\Controllers\API\" />
     <None Remove="Templates\" />
+    <None Remove="FluentEmail.Razor" />
+    <None Remove="es-MX\" />
+    <None Remove="My.Extensions.Localization.Json" />
+    <None Remove="Azure.Storage.Blobs" />
+    <None Remove="Swashbuckle.AspNetCore.Annotations" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.16" />
@@ -60,9 +69,9 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="6.0.4" />
-    <PackageReference Include="Localization.AspNetCore.TagHelpers" Version="0.6.0" />
-    <PackageReference Include="FluentEmail.Core" Version="3.0.2" />
-    <PackageReference Include="FluentEmail.Smtp" Version="3.0.2" />
+    <PackageReference Include="My.Extensions.Localization.Json" Version="3.0.0" />
+    <PackageReference Include="Azure.Storage.Blobs" Version="12.12.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.3.1" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\" />
@@ -70,9 +79,8 @@
     <Folder Include="Extensions\" />
     <Folder Include="Enums\" />
     <Folder Include="Resources\" />
-    <Folder Include="Resources\Controllers\" />
-    <Folder Include="Resources\Controllers\API\" />
-    <Folder Include="Templates\" />
+    <Folder Include="EmailTemplates\" />
+    <Folder Include="es-MX\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Models\Models.csproj">
@@ -92,21 +100,18 @@
     <None Include="nlog.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Remove="Localization\String.cs" />
+    <Compile Remove="Localization\Strings.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <Compile Update="Localize\Resources.en-GB.Designer.cs">
       <DependentUpon>Resources.en-GB.resx</DependentUpon>
-    </Compile>
-    <Compile Update="Resources\Controllers\API\CustomerController.en-GB.Designer.cs">
-      <DependentUpon>CustomerController.en-GB.resx</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Update="Localize\Resources.en-GB.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.en-GB.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Resources\Controllers\API\CustomerController.en-GB.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>CustomerController.en-GB.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
 </Project>

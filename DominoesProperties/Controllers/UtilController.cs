@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
 using DominoesProperties.Models;
+using Helpers.PayStack;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Localization;
-using Models.Models;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Repositories.Repository;
 
 
@@ -16,23 +13,26 @@ namespace DominoesProperties.Controllers
     [ApiController]
     public class UtilController : Controller
     {
-        public readonly IUtilRepository utilRepository;
-        private readonly IStringLocalizer<UtilController> localizer;
-        private ApiResponse response = new ApiResponse(HttpStatusCode.BadRequest, "Error performing request, contact admin");
+        private readonly IUtilRepository utilRepository;
+        private readonly ApiResponse response = new(false, "Error performing request, contact admin");
 
-        public UtilController(IUtilRepository _utilRepository, IStringLocalizer<UtilController> _localizer)
+        public UtilController(IUtilRepository _utilRepository)
         {
             utilRepository = _utilRepository;
-            localizer = _localizer;
         }
 
-        [HttpGet("property-types")]
-        public ApiResponse GetPropertyTypes()
+        [HttpGet("test")]
+        public string converttojson()
         {
-            response.Data = utilRepository.GetPropertyTypes();
-            response.Code = HttpStatusCode.OK;
-            response.Message = localizer["Response.Success"];
-            return response;
+            var reff = Guid.NewGuid().ToString();
+            PaymentModel m = new()
+            {
+                amount = 100,
+                email = "au@gmail.com",
+                reference = reff,
+                callback = string.Format("{0}://{1}/{2}/{3}", Request.Scheme, Request.Host, "api/payment/verify-payment", reff)
+            };
+            return JsonConvert.SerializeObject(m);
         }
     }
 }

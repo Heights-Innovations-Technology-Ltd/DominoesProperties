@@ -7,6 +7,11 @@ namespace Models.Models
 {
     public partial class Description
     {
+        public Description()
+        {
+            Properties = new HashSet<Property>();
+        }
+
         public long Id { get; set; }
         public long PropertyId { get; set; }
         public int? Bathroom { get; set; }
@@ -25,5 +30,6 @@ namespace Models.Models
         public bool? Basement { get; set; }
 
         public virtual Property Property { get; set; }
+        public virtual ICollection<Property> Properties { get; set; }
     }
 }

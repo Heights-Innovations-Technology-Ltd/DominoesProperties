@@ -1,5 +1,5 @@
 ﻿using System;
-namespace DominoesProperties
+namespace DominoesProperties.Enums
 {
     public enum PropertyEnum
     {
@@ -11,5 +11,36 @@ namespace DominoesProperties
         OPEN_FOR_INVESTMENT,
         CLOSED_FOR_INVESTMENT,
         RENTED_OUT
+    }
+
+    public enum Module
+    {
+
+    }
+
+    public enum TransactionType
+    {
+        DR,
+        CR
+    }
+
+    public enum Channel
+    {
+        CARD,
+        WALLET,
+        TRANSFER
+    }
+
+    public enum PaymentType
+    {
+        SUBSCRIPTION = 1,
+        FUND_WALLET = 2,
+        PROPERTY_PURCHASE = 3
+    }
+
+    public enum ValidationModule
+    {
+        RESET_PASSWORD,
+        ACTIVATE_ACCOUNT
     }
 }

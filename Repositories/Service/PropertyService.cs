@@ -29,7 +29,7 @@ namespace Repositories.Service
 
         public bool DeleteProperty(string uniqueId)
         {
-            var property = _context.Properties.Where(x => x.UniqueId.Equals(uniqueId)).SingleOrDefault();
+            var property = _context.Properties.SingleOrDefault(x => x.UniqueId.Equals(uniqueId));
             property.IsDeleted = true;
             _context.SaveChanges();
 
@@ -48,10 +48,10 @@ namespace Repositories.Service
 
         public Property GetProperty(string uniqueId)
         {
-            var property = _context.Properties.Local.SingleOrDefault();
+            var property = _context.Properties.Local.SingleOrDefault(x => x.UniqueId.Equals(uniqueId));
             if (property == null)
             {
-                property = _context.Properties.SingleOrDefault();
+                property = _context.Properties.SingleOrDefault(x => x.UniqueId.Equals(uniqueId));
             }
             return property;
         }
