@@ -74,9 +74,9 @@ namespace DominoesProperties
             services.AddScoped<IPaystackRepository, PaystackService>();
             services.AddScoped<IInvestmentRepository, InvestmentService>();
             services.AddScoped<IApplicationSettingsRepository, ApplicationSettingsService>();
-            services.AddTransient<PaymentController, PaymentController>();
-            services.AddTransient<IAdminRepository, AdminService>();
-            services.AddTransient<IUploadRepository, UploadService>();
+            services.AddScoped<PaymentController, PaymentController>();
+            services.AddScoped<IAdminRepository, AdminService>();
+            services.AddScoped<IUploadRepository, UploadService>();
 
             services.AddMvc().AddViewLocalization(Microsoft.AspNetCore.Mvc.Razor.LanguageViewLocationExpanderFormat.Suffix).AddDataAnnotationsLocalization();
 
