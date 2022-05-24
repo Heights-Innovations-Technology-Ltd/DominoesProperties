@@ -1,4 +1,5 @@
 ﻿using DominoesPropertiesWeb.HttpContext;
+using DominoesPropertiesWeb.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -55,6 +56,5 @@ namespace DominoesPropertiesWeb.Controllers
             var data = res.Status == TaskStatus.RanToCompletion ? res.Result : null;
             return Json(JsonConvert.SerializeObject(data));
         }
-
     }
 }
