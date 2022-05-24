@@ -28,48 +28,48 @@
 
 				<div class="add-listing">
 					<form class="basic-informations">
+						<div id="msg"></div>
 						<h3>Basic Informations</h3>
 
 						<div class="row">
 							<div class="col-lg-6 col-md-6">
 								<div class="form-group">
 									<label>Property Name</label>
-									<input type="text" class="form-control" id="name">
+									<input type="text" class="form-control" id="name" required>
 								</div>
 							</div>
 							<div class="col-lg-6 col-md-6">
 								<div class="form-group">
-									<label>Property Type</label>
-									<input type="text" class="form-control" id="property"> 
+									<label for="type">Property Type</label>
+									<select class="form-control" id="type" required>
+										<option>Select Type</option>
+									</select>
 								</div>
 							</div>
 							<div class="col-lg-6 col-md-6">
 								<div class="form-group">
 									<label>Unit Price</label>
-									<input type="text" class="form-control" id="price">
+									<input type="text" class="form-control" id="price" required>
 								</div>
 							</div>
 							<div class="col-lg-6 col-md-6">
 								<div class="form-group">
-									<label>Category</label>
-									<input type="email" class="form-control" id="status">
+									<label>Total Unit</label>
+									<input type="text" class="form-control" id="unit" required>
+								</div>
+							</div>
+							<div class="col-lg-6 col-md-6">
+								<div class="form-group">
+									<label for="type">Property Category</label>
+									<select class="form-control" id="status" required>
+										<option>Select Category</option>
+									</select>
 								</div>
 							</div>
 
 							<h3 class="mt-30">Location / Contacts</h3>
 
-							<div class="col-lg-6 col-md-6">
-								<div class="form-group">
-									<label>Address</label>
-									<input type="text" class="form-control" id="location">
-								</div>
-							</div>
-							<div class="col-lg-6 col-md-6">
-								<div class="form-group">
-									<label>Description</label>
-									<textarea name="description" class="form-control" cols="3" rows="6" id="description"></textarea>
-								</div>
-							</div>
+							
 							<div class="col-lg-6 col-md-6">
 								<div class="form-group">
 									<label>Logitude</label>
@@ -80,6 +80,12 @@
 								<div class="form-group">
 									<label>Latitude</label>
 									<input type="text" class="form-control" id="latitude">
+								</div>
+							</div>
+							<div class="col-lg-12 col-md-12">
+								<div class="form-group">
+									<label>Address</label>
+									<input type="text" class="form-control" id="location">
 								</div>
 							</div>
 							@*<div class="col-lg-12">
@@ -96,58 +102,61 @@
 								</div>
 							</div>*@
 							<div class="features-content">
-								<h3>Features</h3>
+								<h3>Description</h3>
 								<div class="row">
 									<div class="col-lg-3 col-sm-6">
 										<ul>
 											<li>
-												<div class="form-check">
-													<input type="checkbox" class="form-check-input" id="exampleCheck1">
-													<label class="form-check-label" for="exampleCheck1">Bathroom</label>
+												<div class="form-group">
+													<label>Bath Room</label>
+													<input type="number" class="form-control" id="bathroom">
 												</div>
 											</li>
+
 											<li>
-												<div class="form-check">
-													<input type="checkbox" class="form-check-input" id="exampleCheck1">
-													<label class="form-check-label" for="exampleCheck1">Toilet</label>
-												</div>
-											</li>
-											<li>
-												<div class="form-check">
-													<input type="checkbox" class="form-check-input" id="exampleCheck1">
-													<label class="form-check-label" for="exampleCheck1">Floor Level </label>
+												<div class="form-group">
+													<label>Bed Room</label>
+													<input type="number" class="form-control" id="bedroom">
 												</div>
 											</li>
 										</ul>
 									</div>
 									<div class="col-lg-3 col-sm-6">
 										<ul>
+
+											<li>
+												<div class="form-group">
+													<label>Floor Level</label>
+													<input type="number" class="form-control" id="floorLevel">
+												</div>
+											</li>
+
 											<li>
 												<div class="form-check">
 													<input type="checkbox" class="form-check-input" id="exampleCheck1">
-													<label class="form-check-label" for="exampleCheck1">Bed Room</label>
-												</div>
+													<label class="form-check-label" for="exampleCheck1">Laundry</label>
+												</div>  
 											</li>
-											<li>
-												<div class="form-check">
-													<input type="checkbox" class="form-check-input" id="exampleCheck1">
-													<label class="form-check-label" for="exampleCheck1">Land Size</label>
-												</div>
-											</li>
-											<li>
-												<div class="form-check">
-													<input type="checkbox" class="form-check-input" id="exampleCheck1">
-													<label class="form-check-label" for="exampleCheck1">Air Conditioned </label>
-												</div>
-											</li>
-										</ul>
-									</div>
-									<div class="col-lg-3 col-sm-6">
-										<ul>
 											<li>
 												<div class="form-check">
 													<input type="checkbox" class="form-check-input" id="exampleCheck1">
 													<label class="form-check-label" for="exampleCheck1">Refrigerator</label>
+												</div>
+											</li>
+											<li>
+												<div class="form-check">
+													<input type="checkbox" class="form-check-input" id="exampleCheck1">
+													<label class="form-check-label" for="exampleCheck1">Basement</label>
+												</div>
+											</li>
+										</ul>
+									</div>
+									<div class="col-lg-3 col-sm-6">
+										<ul>
+											<li>
+												<div class="form-group">
+													<label>Toilet</label>
+													<input type="number" class="form-control" id="toilet">
 												</div>
 											</li>
 											<li>
@@ -162,15 +171,21 @@
 													<label class="form-check-label" for="exampleCheck1">Swimming Pool </label>
 												</div>
 											</li>
+											<li>
+												<div class="form-check">
+													<input type="checkbox" class="form-check-input" id="exampleCheck1">
+													<label class="form-check-label" for="exampleCheck1">Fire place</label>
+												</div>
+											</li>
 										</ul>
 									</div>
 									<div class="col-lg-3 col-sm-6">
 										<ul>
 											<li>
-												<div class="form-check">
-													<input type="checkbox" class="form-check-input" id="exampleCheck1">
-													<label class="form-check-label" for="exampleCheck1">Laundry</label>
-												</div>  
+												<div class="form-group">
+													<label>Land Size</label>
+													<input type="text" class="form-control" id="landsize">
+												</div>
 											</li>
 											<li>
 												<div class="form-check">
@@ -184,20 +199,10 @@
 													<label class="form-check-label" for="exampleCheck1">Security Guard</label>
 												</div>
 											</li>
-										</ul>
-									</div>
-									<div class="col-lg-3 col-sm-6">
-										<ul>
 											<li>
 												<div class="form-check">
-													<input type="checkbox" class="form-check-input" id="exampleCheck1">
-													<label class="form-check-label" for="exampleCheck1">Fire place</label>
-												</div>
-											</li>
-											<li>
-												<div class="form-check">
-													<input type="checkbox" class="form-check-input" id="exampleCheck1">
-													<label class="form-check-label" for="exampleCheck1">Basement</label>
+													<input type="checkbox" class="form-check-input" id="aircondition">
+													<label class="form-check-label" for="aircondition">Air Conditioned</label>
 												</div>
 											</li>
 										</ul>
@@ -205,7 +210,7 @@
 								</div>
 							</div>
 							<div class="col-lg-12">
-								<button type="submit" class="default-btn">Add More</button>
+								<button type="submit" class="default-btn btn-property">Submit</button>
 							</div>
 						</div>
 					</form>

@@ -1,9 +1,9 @@
 ﻿using System;
 using DominoesProperties.Models;
+using Helpers;
 using Helpers.PayStack;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Repositories.Repository;
 
 
@@ -24,15 +24,10 @@ namespace DominoesProperties.Controllers
         [HttpGet("test")]
         public string converttojson()
         {
-            var reff = Guid.NewGuid().ToString();
-            PaymentModel m = new()
-            {
-                amount = 100,
-                email = "au@gmail.com",
-                reference = reff,
-                callback = string.Format("{0}://{1}/{2}/{3}", Request.Scheme, Request.Host, "api/payment/verify-payment", reff)
-            };
-            return JsonConvert.SerializeObject(m);
+            Console.WriteLine(CommonLogic.Encrypt("domino_user"));
+            Console.WriteLine(CommonLogic.Encrypt("user.domino@2022!"));
+            //return JsonConvert.SerializeObject(m);
+            return "";
         }
     }
 }

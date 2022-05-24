@@ -50,9 +50,14 @@ namespace DominoesProperties.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Admin", Policy = "Super")]
+        [Authorize]
         public async Task<ApiResponse> AdminAsync([FromBody] AdminUser admin)
         {
+            if(!HttpContext.User.Identity.Name.Equals(configuration["Authourization:user"]))
+            {
+                response.Message = "Logged in user is not a super admin and is not authourized to create admin user";
+                return response;
+            }    
             if (adminRepository.GetUser(admin.Email) != null)
             {
                 response.Message = $"User exist with email {admin.Email}";
@@ -182,7 +187,8 @@ namespace DominoesProperties.Controllers
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
             var claims = new[] {
-                new Claim(JwtRegisteredClaimNames.UniqueName, uniqueRef),new Claim(JwtRegisteredClaimNames.Jti, Convert.ToString(Guid.NewGuid()))
+                new Claim(JwtRegisteredClaimNames.UniqueName, uniqueRef),
+                new Claim(JwtRegisteredClaimNames.Jti, Convert.ToString(Guid.NewGuid()))
             };
 
             var token = new JwtSecurityToken(configuration["app_settings:Issuer"],
