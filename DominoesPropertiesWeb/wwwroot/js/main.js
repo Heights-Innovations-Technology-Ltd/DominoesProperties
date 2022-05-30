@@ -123,7 +123,50 @@ $('.btn-login').click(() => {
 });
 
 
-const customerDetails = () => {
+$('btn-property').click(() => {
+    $(".btn-login").html("Processing...").attr("disabled", !0);
+    let t = false;
+    var e = "";
+    if (
+        ($("#property-form")
+            .find("input")
+            .each(function () {
+                $(this).prop("required") && ($(this).val() || ((t = !0), (name = $(this).attr("name")), (e += name + ", ")));
+            })
+        )
+    )
+
+        if (t) message("Validation error the following field are required " + e.substring(0, e.length - 2), 'error'), window.scrollTo(0, 0), $(".btn-property").attr("disabled", !1).html("Submit");
+
+    if (!Number($("#price").val())) {
+        message("Valid unit price is required!", 'error');
+        $("#price").focus();
+        return;
+    }
+    if ($("#logitude").val() != "" && !Number($("#logitude").val())) {
+        message("Valid logitude is required!", 'error');
+        $("#logitude").focus();
+        return;
+    }
+    if ($("#latitude").val() != "" && !Number($("#latitude").val())) {
+        message("Valid latitude is required!", 'error');
+        $("#latitude").focus();
+        return;
+    }
+
+    var params = {
+        Name: $("#name").val().trim(),
+        Location: $("#location").val(),
+        Type: $("#type").val(),
+        TotalUnits: $("#totalUnit").val(),
+        UnitPrice: $("#price").val(),
+        Status: $("#status").val(),
+        Description: $("#description").val(),
+        InterestRate: $("#inserestRate").val(),
+        Longitude: $("#logitude").val(),
+        Latitude: $("#latitude").val()
+    };
+
     let xhr = new XMLHttpRequest();
     let url = "/get-customer";
     xhr.open('GET', url, false);
@@ -131,7 +174,7 @@ const customerDetails = () => {
     xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
     try {
 
-        xhr.send();
+        xhr.send(JSON.stringify(params);
         if (xhr.status != 200) {
             // alert('Something went wrong try again!');
         } else {
@@ -140,25 +183,26 @@ const customerDetails = () => {
 
             if (JSON.parse(res).success) {
                 console.log(data);
-                profile(data);
-                const pageProfile = this.href.substring(this.href.lastIndexOf('/') + 1);
-                console.log( "Hello" + (this.href.substring(this.href.lastIndexOf('/') + 1)));
-                console.log(pageProfile);
-                if (pageProfile) {
-                    profile(data)
-                } else {
-                    console.log('not profile');
-                }
+                message(data
+                    , 'success');
+                window.scrollTo(0, 0);
+                $(".btn-property").html("Submit").attr("disabled", !1);
+                $(".form-control").val("");
+                
             } else {
                 window.scrollTo(0, 0);
+                message(data
+                    , 'error');
+                $(".btn-property").html("Submit").attr("disabled", !1);
+
             }
 
         }
     } catch (err) { // instead of onerror
         //alert("Request failed");
-        $(".btn-login").html("Login").attr("disabled", !1);
+        $(".btn-property").html("Submit").attr("disabled", !1);
     }
-}
+});
 
 const profile = (data) => {
     $('#profile').html(`
@@ -187,6 +231,7 @@ const profile = (data) => {
     `);
 }
 
+
 const GetProperties = () => {
     let xhr = new XMLHttpRequest();
     let url = "/get-properties";
@@ -205,7 +250,6 @@ const GetProperties = () => {
             if (JSON.parse(res).success) {
                 console.log(data);
                 propertiesTmp(data);
-               
             } else {
                 window.scrollTo(0, 0);
             }
@@ -332,18 +376,15 @@ $('.btn-property').click(() => {
     xhr.setRequestHeader("content-type", "application/json");
     xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
     try {
-
         xhr.send(JSON.stringify(params));
         if (xhr.status != 200) {
             // alert('Something went wrong try again!');
         } else {
             var res = JSON.parse(xhr.responseText);
             var data = JSON.parse(res).data;
-
             if (JSON.parse(res).success) {
                 console.log(data);
                 propertiesTmp(data);
-
             } else {
                 window.scrollTo(0, 0);
             }
