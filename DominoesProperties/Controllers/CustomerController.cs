@@ -82,7 +82,7 @@ namespace DominoesProperties.Controllers
                 _ = ActivationLink(customer.Email, ValidationModule.ACTIVATE_ACCOUNT, setting);
 
                 response.Success = true;
-                response.Message = localizer["Response.Created"].Name.Replace("{params}", "Customer");
+                response.Message = "Customer account successfully created!";
                 logger.LogInfo(response.Message);
                 return response;
             }
@@ -330,10 +330,8 @@ namespace DominoesProperties.Controllers
 
                 
                     await distributedCache.SetStringAsync(token, uniqueRef, expiryOptions);
-
-                    //TODO create Html template for registration with url embedded
                 
-                    EmailRequest emailRequest = new(localizer["Customer.Registration.Subject"], html, customer.Email);
+                    EmailRequest emailRequest = new("New Customer -  Real Estate ", html, customer.Email);
                     emailRequest.Settings = setting;
                     CommonLogic.SendEmail(emailRequest);
                 }
