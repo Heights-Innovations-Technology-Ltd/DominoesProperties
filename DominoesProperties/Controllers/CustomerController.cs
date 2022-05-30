@@ -97,13 +97,13 @@ namespace DominoesProperties.Controllers
             if (!customer.IsVerified.Value)
             {
                 response.Success = false;
-                response.Message = localizer["Customer.NotVerified"];
+                response.Message = "Customer account not verified, <html><a href='#'>click here</a></html> to verify your account";
                 return response;
             }
             if (customer == null || !customer.IsActive.Value || customer.IsDeleted.Value)
             {
                 response.Success = false;
-                response.Message = localizer["Username.Error"];
+                response.Message = "Username name not found, kindly check and try again";
                 return response;
             }
 
@@ -111,14 +111,14 @@ namespace DominoesProperties.Controllers
             {
                 response.Data = ClassConverter.ConvertCustomerToProfile(customer);
                 response.Success = true;
-                response.Message = response.Message = localizer["Response.Success"];
+                response.Message = "Login successful";
                 Response.Headers.Add("access_token", GenerateJwtToken(customer.UniqueRef));
                 return response;
             }
             else
             {
                 response.Success = false;
-                response.Message = localizer["Password.Error"];
+                response.Message = "Incorrect password supplied";
                 return response;
             }
         }
@@ -129,7 +129,7 @@ namespace DominoesProperties.Controllers
         {
             customerRepository.DeleteCustomer(HttpContext.User.Identity.Name);
             response.Success = true;
-            response.Message = response.Message = localizer["Response.Success"];
+            response.Message = response.Message = "Customer successfully deleted";
             return response;
         }
 
@@ -149,7 +149,7 @@ namespace DominoesProperties.Controllers
             existingCustomer.AccountNumber = customer.AccountNumber;
             existingCustomer.Phone = customer.Phone;
 
-            response.Message = localizer["Response.Success"];
+            response.Message = "Customer profile updated successfully!";
             response.Success = true;
             response.Data = customerRepository.UpdateCustomer(existingCustomer);
             return response;
@@ -163,13 +163,13 @@ namespace DominoesProperties.Controllers
             ApplicationSetting setting = applicationSettingsRepository.GetApplicationSettingsByName("EmailNotification");
             if (ActivationLink(uniqueRef, ValidationModule.ACTIVATE_ACCOUNT, setting).IsCompleted)
             {
-                response.Message = localizer["Auth.Link.Generated"];
+                response.Message = "Activation link successfully generated and sent to customer email, kindly check your email to activate account";
                 response.Success = true;
                 return response;
             }
             else
             {
-                response.Message = localizer["Username.Error"];
+                response.Message = "Invalid username supplied";
                 return response;
             }
         }
@@ -187,7 +187,7 @@ namespace DominoesProperties.Controllers
                 customer.IsActive = true;
                 customerRepository.UpdateCustomer(customer);
 
-                response.Message = string.Format(localizer["Response.Customer.Activated"], customer.Email);
+                response.Message = string.Format("Customer account {0} successfully activated", customer.Email);
                 response.Success = true;
                 response.Data = ClassConverter.ConvertCustomerToProfile(customer);
                 return response;
@@ -202,13 +202,13 @@ namespace DominoesProperties.Controllers
             var customer = customerRepository.GetCustomer(HttpContext.User.Identity.Name);
             if (customer != null) {
                 response.Data = ClassConverter.ConvertCustomerToFullProfile(customer);
-                response.Message = localizer["Response.Success"];
+                response.Message = "Successfuly fetch customer";
                 response.Success = true;
                 return response;
             }
             else
             {
-                response.Message = localizer["Username.Error"];
+                response.Message = "Invalid username provided";
             }
             return response;
         }
@@ -223,13 +223,13 @@ namespace DominoesProperties.Controllers
 
             if (ActivationLink(email, ValidationModule.RESET_PASSWORD, settings).IsCompleted)
             {
-                response.Message = string.Format(localizer["Response.Customer.Password.Link"], email);
+                response.Message = string.Format("Password reset link successfully sent to {0}", email);
                 response.Success = true;
                 return response;
             }
             else
             {
-                response.Message = localizer["Username.Error"];
+                response.Message = "Invalid username supplied";
             }
             return response;
         }
@@ -247,14 +247,14 @@ namespace DominoesProperties.Controllers
                 customer.IsVerified = true;
                 customerRepository.UpdateCustomer(customer);
 
-                response.Message = string.Format(localizer["Response.Customer.Password.Reset"], customer.Email);
+                response.Message = string.Format("Password reset successful for {0}", customer.Email);
                 response.Success = true;
                 response.Data = ClassConverter.ConvertCustomerToProfile(customer);
                 return response;
             }
             else
             {
-                response.Message = localizer["Username.Error"];
+                response.Message = "Invalid username supplied";
                 return response;
             }
         }
@@ -266,19 +266,19 @@ namespace DominoesProperties.Controllers
             var customer = customerRepository.GetCustomer(HttpContext.User.Identity.Name);
             if(customer == null)
             {
-                response.Message = localizer["Username.Error"];
+                response.Message = "Invalid username supplied";
                 return response;
             }
 
             if (!customer.Password.Equals(CommonLogic.Encrypt(password.Token)))
             {
-                response.Message = localizer["Response.Customer.Password.Invalid"];
+                response.Message = "Invalid old password supplied, kindly check and try again";
                 return response;
             }
             customer.Password = password.Password;
             customerRepository.UpdateCustomer(customer);
 
-            response.Message = string.Format(localizer["Response.Customer.Password.Reset"], customer.Email);
+            response.Message = string.Format("Password reset successful for {0}", customer.Email);
             response.Success = true;
             return response;
         }
@@ -317,7 +317,7 @@ namespace DominoesProperties.Controllers
                         case ValidationModule.ACTIVATE_ACCOUNT:
                             token = CommonLogic.GetUniqueRefNumber("AT");
                             string url = string.Format("{0}{1}/{2}?value={3}", configuration["app_settings:WebEndpoint"], validationModule.ToString().ToLower(), token, "customer");
-                            string filePath = System.IO.Path.Combine(environment.ContentRootPath, @"EmailTemplates\NewCustomer.html");
+                            string filePath = Path.Combine(environment.ContentRootPath, @"EmailTemplates\NewCustomer.html");
                             html = System.IO.File.ReadAllText(filePath.Replace(@"\", "/"));
                             html = html.Replace("{name}", string.Format("{0} {1}", customer.FirstName, customer.LastName).Replace("{link}", HttpUtility.UrlEncode(url)));
                             break;
