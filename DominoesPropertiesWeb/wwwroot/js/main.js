@@ -123,87 +123,6 @@ $('.btn-login').click(() => {
 });
 
 
-$('btn-property').click(() => {
-    $(".btn-login").html("Processing...").attr("disabled", !0);
-    let t = false;
-    var e = "";
-    if (
-        ($("#property-form")
-            .find("input")
-            .each(function () {
-                $(this).prop("required") && ($(this).val() || ((t = !0), (name = $(this).attr("name")), (e += name + ", ")));
-            })
-        )
-    )
-
-        if (t) message("Validation error the following field are required " + e.substring(0, e.length - 2), 'error'), window.scrollTo(0, 0), $(".btn-property").attr("disabled", !1).html("Submit");
-
-    if (!Number($("#price").val())) {
-        message("Valid unit price is required!", 'error');
-        $("#price").focus();
-        return;
-    }
-    if ($("#logitude").val() != "" && !Number($("#logitude").val())) {
-        message("Valid logitude is required!", 'error');
-        $("#logitude").focus();
-        return;
-    }
-    if ($("#latitude").val() != "" && !Number($("#latitude").val())) {
-        message("Valid latitude is required!", 'error');
-        $("#latitude").focus();
-        return;
-    }
-
-    var params = {
-        Name: $("#name").val().trim(),
-        Location: $("#location").val(),
-        Type: $("#type").val(),
-        TotalUnits: $("#totalUnit").val(),
-        UnitPrice: $("#price").val(),
-        Status: $("#status").val(),
-        Description: $("#description").val(),
-        InterestRate: $("#inserestRate").val(),
-        Longitude: $("#logitude").val(),
-        Latitude: $("#latitude").val()
-    };
-
-    let xhr = new XMLHttpRequest();
-    let url = "/get-customer";
-    xhr.open('GET', url, false);
-    xhr.setRequestHeader("content-type", "application/json");
-    xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
-    try {
-
-        xhr.send(JSON.stringify(params);
-        if (xhr.status != 200) {
-            // alert('Something went wrong try again!');
-        } else {
-            var res = JSON.parse(xhr.responseText);
-            var data = JSON.parse(res).data;
-
-            if (JSON.parse(res).success) {
-                console.log(data);
-                message(data
-                    , 'success');
-                window.scrollTo(0, 0);
-                $(".btn-property").html("Submit").attr("disabled", !1);
-                $(".form-control").val("");
-                
-            } else {
-                window.scrollTo(0, 0);
-                message(data
-                    , 'error');
-                $(".btn-property").html("Submit").attr("disabled", !1);
-
-            }
-
-        }
-    } catch (err) { // instead of onerror
-        //alert("Request failed");
-        $(".btn-property").html("Submit").attr("disabled", !1);
-    }
-});
-
 const profile = (data) => {
     $('#profile').html(`
         <li>
@@ -309,6 +228,7 @@ const propertTmp = (data) => {
     });
 }
 
+
 $('.btn-property').click(() => {
     $(".btn-property").html("Processing...").attr("disabled", !0);
     let t = false;
@@ -319,60 +239,67 @@ $('.btn-property').click(() => {
             .each(function () {
                 $(this).prop("required") && ($(this).val() || ((t = !0), (name = $(this).attr("name")), (e += name + ", ")));
             })
+            
         )
     )
-
+        
         if (t) message("Validation error the following field are required " + e.substring(0, e.length - 2), 'error'), window.scrollTo(0, 0), $(".btn-property").attr("disabled", !1).html("Submit");
 
-    if (!Number($("#price").val())) {
+    if ((!Number($("#price").val())) && $("#price").val() != '') {
+        $(".btn-property").html("Submit").attr("disabled", !1);
         message("Invalid price supply, kindly check and try again!", 'error');
         $('#price').focus();
         return;
     }
 
-    if (!Number($("#logitutde").val()) && $("#logitude").val() != '') {
+    if ((!Number($("#logitutde").val())) && $("#logitude").val() != '') {
+        $(".btn-property").html("Submit").attr("disabled", !1);
         message("Invalid logitude supply, kindly check and try again!", 'error');
         $('#logitude').focus();
         return;
     }
 
-    if (!Number($("#latitude").val()) && $("#latitude").val() != '') {
+    if ((!Number($("#latitude").val())) && $("#latitude").val() != '') {
+        $(".btn-Submit").html("Submit").attr("disabled", !1);
         message("Invalid latitude supply, kindly check and try again!", 'error');
         $('#latitude').focus();
         return;
     }
+    
 
     var params = {
         Name: $("#name").val().trim(),
         Location: $("#location").val(),
-        Type: $("#type").val(),
+        Type: $("#types").val(),
         UnitPrice: $("#price").val(),
         Status: $("#status").val(),
-        UnitAvailable: $("#unitAvailable").val(),
+        UnitAvailable: $("#unit").val(),
         Description: {
             Bathroom: $("#bathroom").val(),
             Toilet: $("#toilet").val(),
             FloorLevel: $("#floorLevel").val(),
-            Bedroom: $("#bedRoom").val(),
+            Bedroom: $("#bedRoom").val(),   
             LandSize: $("#landSize").val(),
-            AirConditioned: $("#airConditioned").val(),
-            Refrigerator: $("#refrigerator").val(),
-            Parking: $("#parking").val(),
-            SwimmingPool: $("#swimmingPool").val(),
-            Laundry: $("#laundry").val(),
-            Gym: $("#gym").val(),
-            SecurityGuard: $("#securityGuard").val(),
-            Fireplace: $("#fireplace").val(),
-            Basement: $("#basement").val(),
+            AirConditioned: $("#airConditioned").is(":checked") ? 1 : 0,
+            Refrigerator: $("#refrigerator").is(":checked") ? 1 : 0,
+            Parking: $("#parking").is(":checked") ? 1 : 0,
+            SwimmingPool: $("#swimmingPool").is(":checked") ? 1 : 0,
+            Laundry: $("#laundry").is(":checked") ? 1 : 0,
+            Gym: $("#gym").is(":checked") ? 1 : 0,
+            SecurityGuard: $("#securityGuard").is(":checked") ? 1 : 0,
+            Fireplace: $("#fireplace").is(":checked") ? 1 : 0,
+            Basement: $("#basement").is(":checked") ? 1 : 0,
         },
         InterestRate: $("#interest").val(),
         Longitude: $("#logitude").val(),
         Latitude: $("#latitude").val()
 
     };
+
+    console.log(params);
     let xhr = new XMLHttpRequest();
     let url = "/create-property";
-    xhr.open('GET', url, false);
+    xhr.open('POST', url, false);
     xhr.setRequestHeader("content-type", "application/json");
     xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
     try {
@@ -383,6 +310,7 @@ $('.btn-property').click(() => {
             var res = JSON.parse(xhr.responseText);
             var data = JSON.parse(res).data;
             if (JSON.parse(res).success) {
+                $(".btn-property").html("Submit").attr("disabled", !1);
                 console.log(data);
                 propertiesTmp(data);
             } else {
@@ -392,10 +320,71 @@ $('.btn-property').click(() => {
         }
     } catch (err) { // instead of onerror
         //alert("Request failed");
-        $(".btn-login").html("Login").attr("disabled", !1);
+        $(".btn-property").html("Submit").attr("disabled", !1);
     }
 });
 
+
+const GetInvestments = () => {
+    let xhr = new XMLHttpRequest();
+    let url = "/get-investments";
+    xhr.open('GET', url, false);
+    xhr.setRequestHeader("content-type", "application/json");
+    xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+    try {
+
+        xhr.send();
+        if (xhr.status != 200) {
+            // alert('Something went wrong try again!');
+        } else {
+            var res = JSON.parse(xhr.responseText);
+            var data = JSON.parse(res).data;
+
+            if (JSON.parse(res).success) {
+                console.log(data);
+                investmentTmp(data);
+            } else {
+                window.scrollTo(0, 0);
+            }
+
+        }
+    } catch (err) { // instead of onerror
+        //alert("Request failed");
+        $(".btn-login").html("Login").attr("disabled", !1);
+    }
+}
+
+const GetPropertyTypes = () => {
+    let xhr = new XMLHttpRequest();
+    let url = "/get-property-types";
+    xhr.open('GET', url, false);
+    xhr.setRequestHeader("content-type", "application/json");
+    xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+    try {
+
+        xhr.send();
+        if (xhr.status != 200) {
+            // alert('Something went wrong try again!');
+        } else {
+            var res = JSON.parse(xhr.responseText);
+            var data = JSON.parse(res).data;
+
+            if (JSON.parse(res).success) {
+                console.log(data);
+                $('#types').html(`<option lable="&nbsp">Select Type </option>`);
+                data.forEach(x => {
+                    $('#types').append(`<option value="${x.id}">${x.name} </option>`);
+                });
+            } else {
+                window.scrollTo(0, 0);
+            }
+
+        }
+    } catch (err) { // instead of onerror
+        //alert("Request failed");
+        $(".btn-login").html("Login").attr("disabled", !1);
+    }
+}
 
 $('#signout').click(() => {
     if (confirm("Are you sure you want to logout?")) {

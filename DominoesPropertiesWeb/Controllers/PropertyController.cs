@@ -42,7 +42,7 @@ namespace DominoesPropertiesWeb.Controllers
         [Route("create-property")]
         public async Task<JsonResult> CreateProperty([FromBody] Property property)
         {
-            var res = Task.Run(() => httpContext.Post("Customer/register", property));
+            var res = Task.Run(() => httpContext.Post("Property", property));
             await Task.WhenAll(res);
             var data = res.Status == TaskStatus.RanToCompletion ? res.Result : null;
             return Json(JsonConvert.SerializeObject(data));
@@ -52,6 +52,15 @@ namespace DominoesPropertiesWeb.Controllers
         public async Task<JsonResult> GetProperties()
         {
             var res = Task.Run(() => httpContext.Get("Property"));
+            await Task.WhenAll(res);
+            var data = res.Status == TaskStatus.RanToCompletion ? res.Result : null;
+            return Json(JsonConvert.SerializeObject(data));
+        }
+
+        [Route("get-property-types")]
+        public async Task<JsonResult> GetPropertyType()
+        {
+            var res = Task.Run(() => httpContext.Get("Property/types"));
             await Task.WhenAll(res);
             var data = res.Status == TaskStatus.RanToCompletion ? res.Result : null;
             return Json(JsonConvert.SerializeObject(data));

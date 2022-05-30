@@ -73,7 +73,7 @@ namespace DominoesProperties.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         public ApiResponse Property([FromBody] Properties properties)
         {
             Property property = ClassConverter.PropertyToEntity(properties);
