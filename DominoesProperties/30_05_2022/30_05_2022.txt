@@ -1,3 +1,4 @@
 Service not available, closing transmission channel. The server response was: Service not available
 Service not available, closing transmission channel. The server response was: Service not available
 Service not available, closing transmission channel. The server response was: Service not available
+The operation has timed out.
