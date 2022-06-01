@@ -51,6 +51,8 @@
     <None Remove="My.Extensions.Localization.Json" />
     <None Remove="Azure.Storage.Blobs" />
     <None Remove="Swashbuckle.AspNetCore.Annotations" />
+    <None Remove="MailKit" />
+    <None Remove="MimeKit" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.16" />

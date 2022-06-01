@@ -319,7 +319,7 @@ namespace DominoesProperties.Controllers
                             string url = string.Format("{0}{1}/{2}?value={3}", configuration["app_settings:WebEndpoint"], validationModule.ToString().ToLower(), token, "customer");
                             string filePath = Path.Combine(environment.ContentRootPath, @"EmailTemplates\NewCustomer.html");
                             html = System.IO.File.ReadAllText(filePath.Replace(@"\", "/"));
-                            html = html.Replace("{name}", string.Format("{0} {1}", customer.FirstName, customer.LastName).Replace("{link}", HttpUtility.UrlEncode(url)));
+                            html = html.Replace("{name}", string.Format("{0} {1}", customer.FirstName, customer.LastName)).Replace("{link}", HttpUtility.UrlEncode(url));
                             break;
                         case ValidationModule.RESET_PASSWORD:
                             token = CommonLogic.GetUniqueRefNumber("RS");
@@ -328,7 +328,6 @@ namespace DominoesProperties.Controllers
                             break;
                     }
 
-                
                     await distributedCache.SetStringAsync(token, uniqueRef, expiryOptions);
                 
                     EmailRequest emailRequest = new("New Customer -  Real Estate ", html, customer.Email);

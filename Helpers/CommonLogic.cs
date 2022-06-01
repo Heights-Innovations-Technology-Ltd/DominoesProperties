@@ -405,20 +405,20 @@ namespace Helpers
                 mail.Bcc.Add(LocalEmail_2);
                 SmtpClient client = new()
                 {
-                    UseDefaultCredentials = false,
-                    Credentials = new NetworkCredential("aojinadu@demotekglobal.com", "Oluwabusayomi1"),
-                    Port = 465,
-                    EnableSsl = true,
-                    DeliveryMethod = SmtpDeliveryMethod.Network,
-                    Host = "demotekglobal.com"
-
                     //UseDefaultCredentials = false,
-                    //Credentials = new NetworkCredential("laila.abshire20@ethereal.email", "qC65VDTRhFfzTYmWWB"),
-                    //Port = 587,
+                    //Credentials = new NetworkCredential("aojinadu@demotekglobal.com", "Oluwabusayomi1"),
+                    //Port = 465,
                     //EnableSsl = true,
                     //DeliveryMethod = SmtpDeliveryMethod.Network,
-                    //Host = "smtp.ethereal.email",
-                    //Timeout = 60000
+                    //Host = "demotekglobal.com"
+
+                    UseDefaultCredentials = false,
+                    Credentials = new NetworkCredential("laila.abshire20@ethereal.email", "qC65VDTRhFfzTYmWWB"),
+                    Port = 587,
+                    EnableSsl = true,
+                    DeliveryMethod = SmtpDeliveryMethod.Network,
+                    Host = "smtp.ethereal.email",
+                    Timeout = 60000
                 };
 
                 if (!string.IsNullOrEmpty(emailRequest.Attachedfile))
