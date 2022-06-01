@@ -9,6 +9,8 @@ using System.Text;
 using DominoesProperties.Controllers;
 using DominoesProperties.Extensions;
 using DominoesProperties.Helper;
+using DominoesProperties.Models;
+using DominoesProperties.Services;
 using Helpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -77,6 +79,7 @@ namespace DominoesProperties
             services.AddScoped<PaymentController, PaymentController>();
             services.AddScoped<IAdminRepository, AdminService>();
             services.AddScoped<IUploadRepository, UploadService>();
+            services.AddTransient<IEmailService, EmailService>();
 
             services.AddMvc().AddViewLocalization(Microsoft.AspNetCore.Mvc.Razor.LanguageViewLocationExpanderFormat.Suffix).AddDataAnnotationsLocalization();
 
@@ -120,7 +123,7 @@ namespace DominoesProperties
             #region Connection String
             services.AddDbContext<dominoespropertiesContext>(opts => opts.UseMySQL(Configuration.GetConnectionString("DominoProps_String")));
             #endregion
-
+            services.Configure<EmailSettings>(Configuration.GetSection("EmailSettings"));
             services.AddStackExchangeRedisCache(options =>
             {
                 options.Configuration = Configuration.GetSection("Redis").GetValue<String>("Host");
