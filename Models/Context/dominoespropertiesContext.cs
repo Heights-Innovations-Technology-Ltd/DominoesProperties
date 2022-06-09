@@ -186,12 +186,6 @@ namespace Models.Models
                 entity.Property(e => e.SecurityGuard).HasColumnType("bit(1)");
 
                 entity.Property(e => e.SwimmingPool).HasColumnType("bit(1)");
-
-                entity.HasOne(d => d.Property)
-                    .WithOne(p => p.DescriptionNavigation)
-                    .HasForeignKey<Description>(d => d.PropertyId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("Description_Property_Id_fk");
             });
 
             modelBuilder.Entity<Investment>(entity =>
@@ -276,8 +270,6 @@ namespace Models.Models
 
                 entity.HasIndex(e => e.CreatedBy, "Property_Admin_Email_fk");
 
-                entity.HasIndex(e => e.Description, "Property_Description_Id_fk");
-
                 entity.HasIndex(e => e.Type, "Property_Property_Type_Id_fk");
 
                 entity.HasIndex(e => e.UniqueId, "Property_UniqueId_uindex")
@@ -326,11 +318,6 @@ namespace Models.Models
                     .HasForeignKey(d => d.CreatedBy)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("Property_Admin_Email_fk");
-
-                entity.HasOne(d => d.Description1)
-                    .WithMany(p => p.Properties)
-                    .HasForeignKey(d => d.Description)
-                    .HasConstraintName("Property_Description_Id_fk");
 
                 entity.HasOne(d => d.TypeNavigation)
                     .WithMany(p => p.Properties)

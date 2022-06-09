@@ -12,11 +12,11 @@ namespace Repositories.Service
         {
         }
 
-        public bool AddNewProperty(Property property)
+        public Property AddNewProperty(Property property)
         {
             _context.Properties.Add(property);
             _context.SaveChanges();
-            return true;
+            return property;
         }
 
         public Property AddPropertyDescription(Description description)
