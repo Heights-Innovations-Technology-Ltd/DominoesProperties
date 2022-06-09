@@ -78,6 +78,7 @@ namespace DominoesProperties.Controllers
         public ApiResponse Property([FromBody] Properties properties)
         {
             Property property = ClassConverter.PropertyToEntity(properties);
+            property.Description = propertyRepository.AddPropertyDescription(property.Description1).Id;
             _ = propertyRepository.AddNewProperty(property);
             response.Success = true;
             response.Message = localizer["Response.Created"].ToString().Replace("{params}", $"Property {property.Name}");

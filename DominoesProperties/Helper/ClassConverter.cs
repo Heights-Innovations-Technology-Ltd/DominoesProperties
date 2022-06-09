@@ -60,7 +60,7 @@ namespace DominoesProperties.Helper
             {
                 UniqueId = Guid.NewGuid().ToString(),
                 Name = property.Name,
-                Description = DescriptionToEntity(property.Description).Id,
+                Description1 = DescriptionToEntity(property.Description),
                 ClosingDate = property.ClosingDate,
                 CreatedBy = property.CreatedBy,
                 DateCreated = DateTime.Now,
