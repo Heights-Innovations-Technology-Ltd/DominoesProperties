@@ -64,19 +64,20 @@ namespace DominoesProperties.Controllers
             paystack.Type = TransactionType.CR.ToString();
             paystackRepository.NewPayment(paystack);
             response.Success = true;
-            response.Message = localizer["Response.Success"];
+            response.Message = "Successfully initialized payment link";
             response.Data = Convert.ToString(jObject["authorization_url"]);
             return response;
         }
 
         [HttpGet("verify-payment/{reference}")]
-        //[Authorize]
-        public void Subscribe(string reference)
+        [Authorize]
+        public ApiResponse Subscribe(string reference)
         {
             var returns = Convert.ToString(payStackApi.VerifyTransaction(reference).Data);
             if (string.IsNullOrWhiteSpace(returns))
             {
-                return;
+                response.Message = "Unsuccessful transaction, try again later";
+                return response;
             }
 
             JObject jObject = JsonConvert.DeserializeObject<JObject>(returns);
@@ -105,6 +106,10 @@ namespace DominoesProperties.Controllers
                 wallet.LastTransactionDate = DateTime.Now;
                 walletRepository.UpdateCustomerWallet(wallet);
             }
+
+            response.Success = true;
+            response.Message = string.Format("Payment successfully done");
+            return response;
         }
     }
 }

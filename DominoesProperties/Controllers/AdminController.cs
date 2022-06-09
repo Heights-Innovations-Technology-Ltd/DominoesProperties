@@ -50,14 +50,17 @@ namespace DominoesProperties.Controllers
         }
 
         [HttpPost]
-        //[Authorize]
-        public async Task<ApiResponse> AdminAsync([FromBody] AdminUser admin)
+        public async Task<ApiResponse> AdminAsync([FromHeader] string apiKey, [FromHeader] string adminUsername, [FromBody] AdminUser admin)
         {
-            //if(!HttpContext.User.Identity.Name.Equals(configuration["Authourization:user"]))
-            //{
-            //    response.Message = "Logged in user is not a super admin and is not authourized to create admin user";
-            //    return response;
-            //}    
+            if(string.IsNullOrEmpty(apiKey) || !")H@McQfTjWnZr4t7w!z%C*F-JaNdRgUkXp2s5v8x/A?D(G+KbPeShVmYq3t6w9z$".Equals(apiKey))
+            {
+                throw new UnauthorizedAccessException("Unauthorised user access, kindly contact admin");
+            }
+            if (adminRepository.GetUser(adminUsername).RoleFk != (int) Enums.Role.SUPER)
+            {
+                response.Message = $"Invalid admin user {admin.Email}";
+                return response;
+            }
             if (adminRepository.GetUser(admin.Email) != null)
             {
                 response.Message = $"User exist with email {admin.Email}";
@@ -69,8 +72,7 @@ namespace DominoesProperties.Controllers
                 return response;
             }
             var adminEntity = ClassConverter.UserToAdmin(admin);
-            adminEntity.CreatedBy = HttpContext.User.Identity.Name;
-
+            adminEntity.CreatedBy = adminUsername;
             if (adminRepository.AddUser(adminEntity))
             {
                 try

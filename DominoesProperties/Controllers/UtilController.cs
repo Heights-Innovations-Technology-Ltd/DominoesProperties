@@ -1,16 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
-using System.Web;
 using DominoesProperties.Enums;
 using DominoesProperties.Models;
 using DominoesProperties.Services;
 using Helpers;
-using Helpers.PayStack;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using Models.Models;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Repositories.Repository;
 
 
@@ -34,7 +33,7 @@ namespace DominoesProperties.Controllers
             _emailService = emailService;
         }
 
-        [HttpGet("test/{email}")]
+        [HttpGet("test-email/{email}")]
         public bool SendTestMail(string email)
         {
             string token = CommonLogic.GetUniqueRefNumber("AT");
@@ -50,6 +49,22 @@ namespace DominoesProperties.Controllers
                 EmailToName = "Dominoes Tester",
                 EmailToId = email
             });
+        }
+
+        [HttpPost("test/{action}")]
+        public ApiResponse SendTestMail([FromBody] JObject keyValues, string action)
+        {
+            Dictionary<string, string> keyValuePairs = new Dictionary<string, string>();
+            JObject jObject = JsonConvert.DeserializeObject<JObject>(Convert.ToString(keyValues));
+            foreach (JProperty property in jObject.Properties())
+            {
+                keyValuePairs.Add(property.Name, "encrypt".Equals(action) ? CommonLogic.Encrypt(property.Value.ToString()) : CommonLogic.Decrypt(property.Value.ToString()));
+            }
+
+            response.Success = true;
+            response.Message = "Success!";
+            response.Data = keyValuePairs;
+            return response;
         }
     }
 }
