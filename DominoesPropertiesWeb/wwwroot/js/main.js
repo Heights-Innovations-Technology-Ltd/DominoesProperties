@@ -36,7 +36,7 @@
             success: function (t) {
                 var res = JSON.parse(t);
                 if (res.Success) {
-                    message(res.Message, 'success');
+                    message(res.Message + '. Kindly check your mail to activate your account', 'success');
                     $(".form-control").val(""),
                     $("#firstName").focus(),
                         window.scrollTo(0, 0),
@@ -271,14 +271,14 @@ $('.btn-property').click(() => {
         Name: $("#name").val().trim(),
         Location: $("#location").val(),
         Type: $("#types").val(),
-        UnitPrice: $("#price").val(),
+        UnitPrice: Number($("#price").val()),
         Status: $("#status").val(),
-        UnitAvailable: $("#unit").val(),
+        UnitAvailable: Number($("#unit").val()),
         Description: {
-            Bathroom: $("#bathroom").val(),
-            Toilet: $("#toilet").val(),
-            FloorLevel: $("#floorLevel").val(),
-            Bedroom: $("#bedRoom").val(),   
+            Bathroom: Number($("#bathroom").val()),
+            Toilet: Number($("#toilet").val()),
+            FloorLevel: Number($("#floorLevel").val()),
+            Bedroom: Number($("#bedRoom").val()),
             LandSize: $("#landSize").val(),
             AirConditioned: $("#airConditioned").is(":checked") ? 1 : 0,
             Refrigerator: $("#refrigerator").is(":checked") ? 1 : 0,
@@ -290,9 +290,9 @@ $('.btn-property').click(() => {
             Fireplace: $("#fireplace").is(":checked") ? 1 : 0,
             Basement: $("#basement").is(":checked") ? 1 : 0,
         },
-        InterestRate: $("#interest").val(),
-        Longitude: $("#logitude").val(),
-        Latitude: $("#latitude").val()
+        InterestRate: Number($("#interest").val()),
+        Longitude: Number($("#logitude").val()),
+        Latitude: Number($("#latitude").val())
 
     };
 
@@ -385,6 +385,143 @@ const GetPropertyTypes = () => {
         $(".btn-login").html("Login").attr("disabled", !1);
     }
 }
+
+$('.btn-activate').click(() => {
+
+    let urls = window.location.href.split("/");
+    let token = urls[5].split("?")[0];
+
+    if (!token.includes("AT")) {
+        return;
+    }
+    $(".btn-activate").html("Processing...").attr("disabled", !0);
+
+    let params = {
+        "token": token
+    }
+    let xhr = new XMLHttpRequest();
+    let url = "/activate";
+    xhr.open('PUT', url, false);
+    xhr.setRequestHeader("content-type", "application/json");
+    xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+    try {
+
+        xhr.send(JSON.stringify(params));
+        if (xhr.status != 200) {
+            // alert('Something went wrong try again!');
+        } else {
+            var res = JSON.parse(xhr.responseText);
+            var data = JSON.parse(res).Data;
+            var messages = JSON.parse(res).Message;
+
+            if (JSON.parse(res).Success) {
+                $('.btn-activate').css('display', 'none').removeClass('.btn-activate');
+                $('.active-title').html(`${messages}. Kindly proceed to login into your account`);
+                setTimeout(() => {
+                    location = '/Home/signin';
+                }, 3000);
+                console.log(data);
+            } else {
+                $(".btn-activate").html("Activate").attr("disabled", !1);
+                window.scrollTo(0, 0);
+                message(messages, 'error');
+                console.log(data);
+            }
+
+        }
+    } catch (err) { // instead of onerror
+        //alert("Request failed");
+        $(".btn-activate").html("Activate").attr("disabled", !1);
+    }
+});
+
+$('#property-link').click(() => {
+    if ($('#refId').val() == null || $('#refId').val() == "") {
+        location = "/Home/signin";
+        return;
+    }
+    location = "/Home/properties";
+});
+
+$('.btn-subscribe').click(() => {
+    $(".btn-subscribe").html("Processing...").attr("disabled", !0);
+    let xhr = new XMLHttpRequest();
+    let url = "/subscribe";
+    xhr.open('GET', url, false);
+    xhr.setRequestHeader("content-type", "application/json");
+    xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+    try {
+
+        xhr.send();
+        if (xhr.status != 200) {
+            $(".btn-subscribe").html("Subscribe to get full access").attr("disabled", !1);
+            // alert('Something went wrong try again!');
+        } else {
+            var res = JSON.parse(xhr.responseText);
+            var data = JSON.parse(res).Data;
+
+            if (JSON.parse(res).Success) {
+                location = data;
+                //window.open(data, "Dominoes Society", "status=1,toolbar=1");
+                $(".btn-subscribe").html("Subscribe to get full access").attr("disabled", !1);
+                console.log(data);
+            } else {
+                $(".btn-subscribe").html("Subscribe to get full access").attr("disabled", !1);
+                window.scrollTo(0, 0);
+                message(data, 'error');
+                console.log(data);
+            }
+
+        }
+    } catch (err) { // instead of onerror
+        //alert("Request failed");
+        $(".btn-subscribe").html("Subscribe to get full access").attr("disabled", !1);
+    }
+});
+
+$('.btn-verify').click(() => {
+
+    let urls = window.location.href.split("/");
+    let token = urls[5].split("?")[0];
+    console.log(token);
+
+    $(".btn-verify").html("Processing...").attr("disabled", !0);
+
+    let params = {
+        "token": token
+    }
+    let xhr = new XMLHttpRequest();
+    let url = "/verify-payment";
+    xhr.open('POST', url, false);
+    xhr.setRequestHeader("content-type", "application/json");
+    xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+    try {
+
+        xhr.send(JSON.stringify(params));
+        if (xhr.status != 200) {
+            // alert('Something went wrong try again!');
+        } else {
+            var res = JSON.parse(xhr.responseText);
+            var data = JSON.parse(res).Data;
+
+            if (JSON.parse(res).Success) {
+                $('.btn-verify').css('display', 'none').removeClass('.btn-verify');
+                $('.active-title').html(`${messages}. Kindly proceed to login into your account`);
+               
+                console.log(data);
+            } else {
+                $(".btn-verify").html("Verify").attr("disabled", !1);
+                window.scrollTo(0, 0);
+                message(messages, 'error');
+                console.log(data);
+            }
+
+        }
+    } catch (err) { // instead of onerror
+        //alert("Request failed");
+        $(".btn-verify").html("Verify").attr("disabled", !1);
+    }
+});
 
 $('#signout').click(() => {
     if (confirm("Are you sure you want to logout?")) {

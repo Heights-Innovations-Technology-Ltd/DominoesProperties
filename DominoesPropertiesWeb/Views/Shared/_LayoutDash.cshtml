@@ -83,12 +83,12 @@
 
 						<div class="collapse navbar-collapse mean-menu" id="navbarSupportedContent">
 							<div class="others-options">
-								<form class="search-form">
-									<input type="text" class="form-control" placeholder="Search...">
-									<button type="submit" class="src-btn">
-										<i class="ri-search-line"></i>
-									</button>
-								</form>
+							@if(IsSubscribed == "False")
+								{
+									<a href="javascript:void(0)" class="default-btn btn-subscribe">
+										Subscribe to get full access
+									</a>
+								}
 							</div>
 
 							<ul class="navbar-nav m-auto">
@@ -156,7 +156,8 @@
 											</ul>
 										</div>
 									</li>
-									@*<li>
+									
+								@*<li>
 										<a asp-controller="Home" asp-action="SignIn" class="default-btn">
 											Sign In / Sign Up
 										</a>

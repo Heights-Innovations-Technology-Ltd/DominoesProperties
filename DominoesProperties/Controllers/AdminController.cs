@@ -50,14 +50,14 @@ namespace DominoesProperties.Controllers
         }
 
         [HttpPost]
-        [Authorize]
+        //[Authorize]
         public async Task<ApiResponse> AdminAsync([FromBody] AdminUser admin)
         {
-            if(!HttpContext.User.Identity.Name.Equals(configuration["Authourization:user"]))
-            {
-                response.Message = "Logged in user is not a super admin and is not authourized to create admin user";
-                return response;
-            }    
+            //if(!HttpContext.User.Identity.Name.Equals(configuration["Authourization:user"]))
+            //{
+            //    response.Message = "Logged in user is not a super admin and is not authourized to create admin user";
+            //    return response;
+            //}    
             if (adminRepository.GetUser(admin.Email) != null)
             {
                 response.Message = $"User exist with email {admin.Email}";
@@ -92,6 +92,7 @@ namespace DominoesProperties.Controllers
                     _ = new ExceptionFormatter(logger, ex);
                 }
             }
+           
             response.Message = $"Admin user {admin.Email} created successfully";
             return response;
         }

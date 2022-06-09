@@ -112,5 +112,53 @@ namespace DominoesPropertiesWeb.Controllers
             var data = res.Status == TaskStatus.RanToCompletion ? res.Result : null;
             return Json(JsonConvert.SerializeObject(data));
         }
+
+        [HttpGet("/Home/activate_account/{token}")]
+        public IActionResult Activate_Account(string token, [FromQuery(Name = "value")]string value)
+        {
+            return View();
+        }
+
+        [Route("activate")]
+        public async Task<JsonResult> ActivateAccount([FromBody] dynamic token)
+        {
+            JObject jObject = JsonConvert.DeserializeObject<JObject>(Convert.ToString(token));
+            
+            var res = Task.Run(() => httpContext.Put("Customer/activate/" + Convert.ToString(jObject["token"]), null));
+            await Task.WhenAll(res);
+            var data = res.Status == TaskStatus.RanToCompletion ? res.Result : null;
+            return Json(JsonConvert.SerializeObject(data));
+        }
+        
+
+        [Route("subscribe")]
+        public async Task<JsonResult> Subscribe() 
+        {
+            dynamic obj = new ExpandoObject();
+
+            obj.Amount = 10000;
+            obj.Module = 1;
+            obj.InvestmentId = 0;
+            var res = Task.Run(() => httpContext.Post("Payment", obj));
+            var data = await res.GetAwaiter().GetResult();
+            return Json(JsonConvert.SerializeObject(data));
+        }
+
+        [HttpGet("/Home/verify-payment/{token}")]
+        public IActionResult VerifyPayment(string token, [FromQuery(Name = "value")] string value)
+        {
+            return View();
+        }
+
+        [Route("verify-payment")]
+        public async Task<JsonResult> Verify([FromBody] dynamic token)
+        {
+            JObject jObject = JsonConvert.DeserializeObject<JObject>(Convert.ToString(token));
+            
+            var res = Task.Run(() => httpContext.Get("Payment/verify-payment/" + Convert.ToString(jObject["token"])));
+            await Task.WhenAll(res);
+            var data = res.Status == TaskStatus.RanToCompletion ? res.Result : null;
+            return Json(JsonConvert.SerializeObject(data));
+        }
     }
 }

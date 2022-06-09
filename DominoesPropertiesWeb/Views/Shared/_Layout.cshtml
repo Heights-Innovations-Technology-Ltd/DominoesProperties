@@ -1,7 +1,7 @@
 ﻿
 <!doctype html>
 <html lang="eng">
-<head>
+	<head>
 		<!-- Required meta tags -->
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -24,24 +24,23 @@
 		<!-- Favicon -->
 		<link rel="icon" type="image/png" href="~/images/favicon.png">
 		<!-- Title -->
-		 <title>@ViewData["Title"] - Dominoes Properties</title>
-
-		 @using Microsoft.AspNetCore.Http;
+		<title>@ViewData["Title"] - Dominoes Properties</title>
+    </head>
+	@using Microsoft.AspNetCore.Http;
 		@inject IHttpContextAccessor HttpContextAccessor
 
 		@{
-			var Username = @HttpContextAccessor.HttpContext.Session.GetString("uniqueReference");
+			string Username = @HttpContextAccessor.HttpContext.Session.GetString("ReferenceId");
 			var IsSubscribed = @HttpContextAccessor.HttpContext.Session.GetString("IsSubscribed");
 			var WalletId = @HttpContextAccessor.HttpContext.Session.GetString("WalletId");
 			var Firstname = @HttpContextAccessor.HttpContext.Session.GetString("Firstname");
 			var Lastname = @HttpContextAccessor.HttpContext.Session.GetString("Lastname");
 			var userFullName = string.Format("{0} {1}", Firstname, Lastname);
 		}
+
 		@Html.Hidden("refId", Username)
 		@Html.Hidden("isSubcribed", IsSubscribed)
 		@Html.Hidden("fullname", userFullName)
-    </head>
-
     <body>
 		<!-- Start Preloader Area -->
 		<div class="preloader" id="loader-style">
@@ -94,8 +93,8 @@
 									</a>
 								</li>
 								<li class="nav-item">
-									<a href="#" class="nav-link">
-										Properties            
+									<a href="#" class="nav-link" id="property-link">
+										Properties
 									</a>
 								</li>
 								<li class="nav-item">
@@ -122,11 +121,21 @@
 											<i class="ri-user-line"></i>
 										</a>
 									</li>*@
-									<li>
-										<a asp-controller="Home" asp-action="SignIn" class="default-btn">
-											Sign In / Sign Up
+									@if(Username != null && IsSubscribed == "False")
+									{
+										<a href="javascript:void(0)" class="default-btn btn-subscribe">
+											Subscribe to get full access
 										</a>
-									</li>
+									}else{
+										<li>
+										
+											<a asp-controller="Home" asp-action="SignIn" class="default-btn">
+												Sign In / Sign Up
+											</a>
+										
+										</li>
+									}
+									
 								</ul>
 							</div>
 						</div>

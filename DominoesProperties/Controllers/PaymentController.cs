@@ -38,7 +38,7 @@ namespace DominoesProperties.Controllers
             walletRepository = _walletRepository;
         }
 
-        [HttpGet]
+        [HttpPost]
         [Authorize]
         public ApiResponse InitiateTransaction([FromBody] Payment payment)
         {
@@ -51,7 +51,7 @@ namespace DominoesProperties.Controllers
                 amount = amount*100,
                 email = customer.Email,
                 reference = transRef,
-                callback = string.Format("{0}://{1}/{2}/{3}", Request.Scheme, Request.Host, "api/payment/verify-payment", transRef)
+                callback = string.Format("{0}{1}/{2}", configuration["app_settings:WebEndpoint"], "verify-payment", transRef)
             };
 
             var initResponse = payStackApi.MobileAppInitTransaction(m).Data;
@@ -70,7 +70,7 @@ namespace DominoesProperties.Controllers
         }
 
         [HttpGet("verify-payment/{reference}")]
-        [Authorize]
+        //[Authorize]
         public void Subscribe(string reference)
         {
             var returns = Convert.ToString(payStackApi.VerifyTransaction(reference).Data);
