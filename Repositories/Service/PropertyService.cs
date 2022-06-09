@@ -56,6 +56,16 @@ namespace Repositories.Service
             return property;
         }
 
+        public Description GetDescriptionByPropertyId(string propertyId)
+        {
+            var description = _context.Descriptions.Local.SingleOrDefault(x => x.PropertyId.Equals(propertyId));
+            if (description == null)
+            {
+                description = _context.Descriptions.SingleOrDefault(x => x.PropertyId.Equals(propertyId));
+            }
+            return description;
+        }
+
         public Property UpdateProperty(Property property)
         {
             _context.Properties.Update(property);

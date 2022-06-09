@@ -14,5 +14,6 @@ namespace Repositories.Repository
         Property GetProperty(string uniqueId);
         List<Property> GetProperties();
         PagedList<Property> GetProperties(QueryParams ownerParameters);
+        Description GetDescriptionByPropertyId(string propertyId);
     }
 }

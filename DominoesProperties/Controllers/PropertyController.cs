@@ -129,7 +129,7 @@ namespace DominoesProperties.Controllers
         [HttpPut("description/{propertyId}")]
         [Authorize]
         public ApiResponse UpdateDescription(string propertyId, [FromBody] PropertyDescription description){
-            var propDescription = propertyRepository.GetProperty(propertyId).DescriptionNavigation;
+            var propDescription = propertyRepository.GetDescriptionByPropertyId(propertyId);
             if(propDescription != null){
                 propDescription.AirConditioned = description.AirConditioned;
                 propDescription.Basement = description.Basement;
