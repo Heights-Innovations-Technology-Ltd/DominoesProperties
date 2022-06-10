@@ -6,7 +6,7 @@ namespace Repositories.Repository
 {
     public interface IPropertyRepository
     {
-        bool AddNewProperty(Property property);
+        Property AddNewProperty(Property property);
         Property AddPropertyDescription(Description description);
         Property UpdatePropertyDescription(Description description);
         Property UpdateProperty(Property property);
@@ -14,5 +14,6 @@ namespace Repositories.Repository
         Property GetProperty(string uniqueId);
         List<Property> GetProperties();
         PagedList<Property> GetProperties(QueryParams ownerParameters);
+        Description GetDescriptionByPropertyId(string propertyId);
     }
 }

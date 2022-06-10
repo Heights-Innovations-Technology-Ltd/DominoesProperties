@@ -77,8 +77,9 @@ namespace DominoesProperties.Controllers
         public ApiResponse Property([FromBody] Properties properties)
         {
             Property property = ClassConverter.PropertyToEntity(properties);
-            property.Description = propertyRepository.AddPropertyDescription(property.Description1).Id;
-            _ = propertyRepository.AddNewProperty(property);
+            Description description = ClassConverter.DescriptionToEntity(properties.Description);
+            description.PropertyId = propertyRepository.AddNewProperty(property).Id;
+            propertyRepository.AddPropertyDescription(description);
             response.Success = true;
             response.Message = localizer["Response.Created"].ToString().Replace("{params}", $"Property {property.Name}");
             return response;
@@ -128,7 +129,7 @@ namespace DominoesProperties.Controllers
         [HttpPut("description/{propertyId}")]
         [Authorize]
         public ApiResponse UpdateDescription(string propertyId, [FromBody] PropertyDescription description){
-            var propDescription = propertyRepository.GetProperty(propertyId).DescriptionNavigation;
+            var propDescription = propertyRepository.GetDescriptionByPropertyId(propertyId);
             if(propDescription != null){
                 propDescription.AirConditioned = description.AirConditioned;
                 propDescription.Basement = description.Basement;

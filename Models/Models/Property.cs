@@ -25,7 +25,6 @@ namespace Models.Models
         public int? UnitSold { get; set; }
         public int? UnitAvailable { get; set; }
         public DateTime? ClosingDate { get; set; }
-        public long? Description { get; set; }
         public decimal? TargetYield { get; set; }
         public decimal? ProjectedGrowth { get; set; }
         public decimal? InterestRate { get; set; }
@@ -38,7 +37,6 @@ namespace Models.Models
         public virtual Admin CreatedByNavigation { get; set; }
         public virtual Description Description1 { get; set; }
         public virtual PropertyType TypeNavigation { get; set; }
-        public virtual Description DescriptionNavigation { get; set; }
         public virtual ICollection<Investment> Investments { get; set; }
         public virtual ICollection<PropertyImage> PropertyImages { get; set; }
     }
