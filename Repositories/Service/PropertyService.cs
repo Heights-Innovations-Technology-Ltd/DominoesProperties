@@ -12,11 +12,11 @@ namespace Repositories.Service
         {
         }
 
-        public bool AddNewProperty(Property property)
+        public Property AddNewProperty(Property property)
         {
             _context.Properties.Add(property);
             _context.SaveChanges();
-            return true;
+            return property;
         }
 
         public Property AddPropertyDescription(Description description)
@@ -54,6 +54,16 @@ namespace Repositories.Service
                 property = _context.Properties.SingleOrDefault(x => x.UniqueId.Equals(uniqueId));
             }
             return property;
+        }
+
+        public Description GetDescriptionByPropertyId(string propertyId)
+        {
+            var description = _context.Descriptions.Local.SingleOrDefault(x => x.PropertyId.Equals(propertyId));
+            if (description == null)
+            {
+                description = _context.Descriptions.SingleOrDefault(x => x.PropertyId.Equals(propertyId));
+            }
+            return description;
         }
 
         public Property UpdateProperty(Property property)
