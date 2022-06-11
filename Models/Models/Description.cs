@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 #nullable disable
 
@@ -29,6 +30,7 @@ namespace Models.Models
         public bool? Fireplace { get; set; }
         public bool? Basement { get; set; }
 
+        [NotMapped]
         public virtual Property Property { get; set; }
         public virtual ICollection<Property> Properties { get; set; }
     }

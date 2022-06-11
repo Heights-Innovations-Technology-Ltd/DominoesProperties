@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Repositories.Repository;
 
 
 namespace DominoesProperties.Controllers
@@ -19,15 +18,13 @@ namespace DominoesProperties.Controllers
     [ApiController]
     public class UtilController : Controller
     {
-        private readonly IUtilRepository utilRepository;
         private readonly IConfiguration configuration;
         private readonly IWebHostEnvironment environment;
         private readonly ApiResponse response = new(false, "Error performing request, contact admin");
         private readonly IEmailService _emailService;
         
-        public UtilController(IUtilRepository _utilRepository, IConfiguration _configuration, IWebHostEnvironment _environment, IEmailService emailService)
+        public UtilController(IConfiguration _configuration, IWebHostEnvironment _environment, IEmailService emailService)
         {
-            utilRepository = _utilRepository;
             configuration = _configuration;
             environment = _environment;
             _emailService = emailService;
@@ -51,7 +48,8 @@ namespace DominoesProperties.Controllers
             });
         }
 
-        [HttpPost("test/{action}")]
+        [HttpPost]
+        [Route("test/{action}")]
         public ApiResponse SendTestMail([FromBody] JObject keyValues, string action)
         {
             Dictionary<string, string> keyValuePairs = new Dictionary<string, string>();
