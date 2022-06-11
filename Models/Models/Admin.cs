@@ -11,7 +11,7 @@ namespace Models.Models
         public Admin()
         {
             Properties = new HashSet<Property>();
-            PropertyImages = new HashSet<PropertyImage>();
+            PropertyImages = new HashSet<PropertyUpload>();
         }
 
         public string Email { get; set; }
@@ -27,6 +27,6 @@ namespace Models.Models
         [IgnoreDataMember]
         public virtual ICollection<Property> Properties { get; set; }
         [IgnoreDataMember]
-        public virtual ICollection<PropertyImage> PropertyImages { get; set; }
+        public virtual ICollection<PropertyUpload> PropertyImages { get; set; }
     }
 }

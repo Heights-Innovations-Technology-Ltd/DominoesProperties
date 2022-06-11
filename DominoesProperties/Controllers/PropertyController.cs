@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Reflection;
-using System.Resources;
 using System.Threading.Tasks;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
@@ -29,10 +27,11 @@ namespace DominoesProperties.Controllers
         private readonly ApiResponse response = new(false, "Error performing request, contact admin");
         private readonly IConfiguration configuration;
         private readonly IUploadRepository uploadRepository;
+        private readonly IAdminRepository adminRepository;
 
 
         public PropertyController(IPropertyRepository _propertyRepository, ILoggerManager _logger, IStringLocalizer<PropertyController> _localizer,
-            IUtilRepository _utilRepository, IConfiguration _configuration, IUploadRepository _uploadRepository)
+            IUtilRepository _utilRepository, IConfiguration _configuration, IUploadRepository _uploadRepository, IAdminRepository _adminRepository)
         {
             propertyRepository = _propertyRepository;
             logger = _logger;
@@ -40,6 +39,7 @@ namespace DominoesProperties.Controllers
             utilRepository = _utilRepository;
             configuration = _configuration;
             uploadRepository = _uploadRepository;
+            adminRepository = _adminRepository;
         }
 
         [HttpGet]
@@ -73,15 +73,16 @@ namespace DominoesProperties.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Admin")]
+        [Authorize]
         public ApiResponse Property([FromBody] Properties properties)
         {
             Property property = ClassConverter.PropertyToEntity(properties);
+            property.CreatedBy = adminRepository.GetUser(HttpContext.User.Identity.Name).Email;
             Description description = ClassConverter.DescriptionToEntity(properties.Description);
             description.PropertyId = propertyRepository.AddNewProperty(property).Id;
             propertyRepository.AddPropertyDescription(description);
             response.Success = true;
-            response.Message = localizer["Response.Created"].ToString().Replace("{params}", $"Property {property.Name}");
+            response.Message = $"Property {property.Name} created successfully";
             return response;
         }
 
@@ -91,7 +92,7 @@ namespace DominoesProperties.Controllers
         {
             Property property = propertyRepository.GetProperty(uniqueId);
             if(property == null){
-                response.Message = localizer["Username.Error"];
+                response.Message = "Username name not found, kindly check and try again";
                 return response;
             }
             property.Location = string.IsNullOrEmpty(updateProperty.Location) ? property.Location : updateProperty.Location;
@@ -107,7 +108,7 @@ namespace DominoesProperties.Controllers
 
             response.Data = propertyRepository.UpdateProperty(property);
             response.Success = true;
-            response.Message = localizer["Response.Success"];
+            response.Message = "Successful";
             return response;
         }
 
@@ -117,12 +118,12 @@ namespace DominoesProperties.Controllers
         {
             Property property = propertyRepository.GetProperty(uniqueId);
             if(property == null){
-                response.Message = localizer["Property.Id.Error"];
+                response.Message = $"No property with the given name {uniqueId} found";
                 return response;
             }
             property.IsDeleted = true;
             response.Success = true;
-            response.Message = localizer["Property.Id.Error"];
+            response.Message = "Successful";
             return response;
         }
 
@@ -148,11 +149,11 @@ namespace DominoesProperties.Controllers
 
                 response.Data = propertyRepository.UpdatePropertyDescription(propDescription);
                 response.Success = true;
-                response.Message = localizer["Response.Success"];
+                response.Message = "Successful";
                 return response;
             }
             else{
-                response.Message = localizer["Property.Id.Error"];
+                response.Message = $"No property with the given name {propertyId} found";
                 return response;
             }
         }
@@ -169,7 +170,7 @@ namespace DominoesProperties.Controllers
         [HttpPost("uploads/{propertyId}")]
         [Authorize]
         [ValidateAntiForgeryToken]
-        public async Task<ApiResponse> UploadPassportAsync(string propertyId, [Required(ErrorMessage = "No upload found")][MinLength(1, ErrorMessage = "Upload atleast 1 file")] List<IFormFile> passport)
+        public async Task<ApiResponse> UploadPassportAsync(long propertyId, [Required(ErrorMessage = "No upload found")][MinLength(1, ErrorMessage = "Upload atleast 1 file")] List<IFormFile> passport)
         {
             var container = new BlobContainerClient(configuration["BlobClient:Url"], "properties");
             var createResponse = await container.CreateIfNotExistsAsync();
@@ -189,7 +190,7 @@ namespace DominoesProperties.Controllers
                 properties[count] = new PropertyUpload
                 {
                     DateUploaded = DateTime.Now,
-                    ImageName = propertyId + count++,
+                    ImageName = (propertyId + count++).ToString(),
                     PropertyId = propertyId,
                     Url = blob.Uri.ToString()
                 };

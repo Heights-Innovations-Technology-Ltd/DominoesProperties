@@ -1,6 +1,4 @@
-﻿using System;
-using Models.Models;
-
+﻿using Models.Context;
 namespace Repositories.Repository
 {
     /// <summary>

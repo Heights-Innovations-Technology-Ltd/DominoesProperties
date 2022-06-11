@@ -3,6 +3,7 @@ using System.Net;
 using System.Threading.Tasks;
 using DominoesProperties.Models;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Repositories.Repository;
 
 namespace DominoesProperties.Extensions
@@ -40,6 +41,7 @@ namespace DominoesProperties.Extensions
             {
                 BadHttpRequestException => "Invalid request payload supplied",
                 NotImplementedException => "Method not implemented in logic",
+                DbUpdateException => "Read/Write error, kindly contact admin",
                 _ => exception.Message
             };
 

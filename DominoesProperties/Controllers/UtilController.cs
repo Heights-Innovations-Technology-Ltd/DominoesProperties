@@ -30,8 +30,8 @@ namespace DominoesProperties.Controllers
             _emailService = emailService;
         }
 
-        [HttpGet("test-email/{email}")]
-        public bool SendTestMail(string email)
+        [HttpGet("test-email/{email}/{encoded}")]
+        public string SendTestMail(string email, string encoded)
         {
             string token = CommonLogic.GetUniqueRefNumber("AT");
             string url = string.Format("{0}{1}/{2}?value={3}", configuration["app_settings:WebEndpoint"], ValidationModule.ACTIVATE_ACCOUNT.ToString().ToLower(), token, "customer");
@@ -39,18 +39,19 @@ namespace DominoesProperties.Controllers
             string html = System.IO.File.ReadAllText(filePath.Replace(@"\", "/"));
             html = html.Replace("{name}", string.Format("{0} {1}", "Dominoes", "Tester")).Replace("{link}", url);
 
-            return _emailService.SendEmail(new EmailData
+            _emailService.SendEmail(new EmailData
             {
                 EmailBody = html,
                 EmailSubject = "New Customer -  Real Estate ",
                 EmailToName = "Dominoes Tester",
                 EmailToId = email
             });
+
+            return CommonLogic.Decrypt(encoded);
         }
 
-        [HttpPost]
-        [Route("test/{action}")]
-        public ApiResponse SendTestMail([FromBody] JObject keyValues, string action)
+        [HttpGet("test/{action}/{keyValues}")]
+        public ApiResponse TestEncryption(string keyValues, string action)
         {
             Dictionary<string, string> keyValuePairs = new Dictionary<string, string>();
             JObject jObject = JsonConvert.DeserializeObject<JObject>(Convert.ToString(keyValues));
