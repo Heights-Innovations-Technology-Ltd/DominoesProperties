@@ -7,8 +7,8 @@ namespace Repositories.Repository
     public interface IPropertyRepository
     {
         Property AddNewProperty(Property property);
-        Property AddPropertyDescription(Description description);
-        Property UpdatePropertyDescription(Description description);
+        Description AddPropertyDescription(Description description);
+        Description UpdatePropertyDescription(Description description);
         Property UpdateProperty(Property property);
         bool DeleteProperty(string uniqueId);
         Property GetProperty(string uniqueId);
