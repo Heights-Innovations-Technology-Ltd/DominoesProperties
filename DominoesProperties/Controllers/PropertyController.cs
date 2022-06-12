@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-<<<<<<< HEAD
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Azure.Storage.Blobs;
@@ -207,4 +206,3 @@ namespace DominoesProperties.Controllers
         }
     }
 }
->>>>>>> 03ac822eee9b3d846bb1fa9d3c2a33d8c8ad9d55
