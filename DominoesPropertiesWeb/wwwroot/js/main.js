@@ -122,6 +122,65 @@ $('.btn-login').click(() => {
     }
 });
 
+$('.btn-adminlogin').click(() => {
+
+    if ($('.catch_me').val() != "") {
+        return;
+    }
+
+    $(".btn-login").html("Processing...").attr("disabled", !0);
+    let t = false;
+    var e = "";
+    if (
+        ($("#login-form")
+            .find("input")
+            .each(function () {
+                $(this).prop("required") && ($(this).val() || ((t = !0), (name = $(this).attr("name")), (e += name + ", ")));
+            })
+        )
+    )
+        
+    if (t) message("Validation error the following field are required " + e.substring(0, e.length - 2), 'error'), window.scrollTo(0, 0), $(".btn-login").attr("disabled", !1).html("Login");
+
+    var params = {
+        Email: $("#logEmail").val().trim(),
+        Password: $("#logPassword").val()
+    };
+    let xhr = new XMLHttpRequest();
+    let url = "/authadmin";
+    xhr.open('POST', url, false);
+    xhr.setRequestHeader("content-type", "application/json");
+    xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+    try {
+
+        xhr.send(JSON.stringify(params));
+        if (xhr.status != 200) {
+            // alert('Something went wrong try again!');
+        } else {
+            var res = JSON.parse(xhr.responseText);
+            var data = JSON.parse(res).data;
+            console.log(data);
+          
+            if (JSON.parse(res).success) {
+                console.log(data);
+                location = "/Dashboard";
+                $(".btn-login").html("Login").attr("disabled", !1);
+                $(".form-control").val("");
+            } else {
+                window.scrollTo(0, 0);
+                message(data
+                    , 'error');
+                $(".btn-login").html("Login").attr("disabled", !1);
+
+            }
+
+        }
+    } catch (err) { // instead of onerror
+        //alert("Request failed");
+        $(".btn-login").html("Login").attr("disabled", !1);
+    }
+});
+
 
 const profile = (data) => {
     $('#profile').html(`
@@ -151,7 +210,11 @@ const profile = (data) => {
 }
 
 
-const GetProperties = () => {
+const GetProperties = (type) => {
+    if ($('#isAdmin').val() == "1") {
+
+        $('.add-property').html(`<a asp-controller="Property" asp-action="Create" class="default-btn">Add New Property</a>`);
+    }
     let xhr = new XMLHttpRequest();
     let url = "/get-properties";
     xhr.open('GET', url, false);
@@ -168,7 +231,12 @@ const GetProperties = () => {
 
             if (JSON.parse(res).success) {
                 console.log(data);
-                propertiesTmp(data);
+                $('#property-count').html(data.length + ' Results Found')
+                if (type == "admin") {
+                    propertTmp(data);
+                } else {
+                    propertiesTmp(data);
+                }
             } else {
                 window.scrollTo(0, 0);
             }
@@ -176,7 +244,6 @@ const GetProperties = () => {
         }
     } catch (err) { // instead of onerror
         //alert("Request failed");
-        $(".btn-login").html("Login").attr("disabled", !1);
     }
 }
 
@@ -187,15 +254,15 @@ const propertTmp = (data) => {
         let res = `<div class="col-xl-4 col-md-6">
 				    <div class="single-featured-item">
 					    <div class="featured-img mb-0">
-						    <img src="~/images/featured/featured-1.jpg" alt="Image">
-						    <span>Rent</span>
+						    <img src="/images/featured/featured-1.jpg" alt="Image">
+						    <span>${x.status}</span>
 					    </div>
 					    <div class="featured-content style-three">
 						    <div class="d-flex justify-content-between">
 							    <h3>
-								    <a href="single-listing.html">House For Rent</a>
+								    <a href="/Home/PropertyDetails">${x.name}</a>
 							    </h3>
-							    <h3 class="price">$ 600,000</h3>
+							    <h3 class="price">&#8358; ${formatToCurrency(x.unitPrice)}</h3>
 						    </div>
 						    <p>
 							    <i class="ri-map-pin-fill"></i>
@@ -217,8 +284,8 @@ const propertTmp = (data) => {
 						    </ul>
 
 						    <a href="agents.html" class="agent-user">
-							    <img src="~/images/agents/agent-5.jpg" alt="Image">
-							    <span>By Darlene Small</span>
+							    <img src="/images/agents/agent-5.jpg" alt="Image">
+							    <span>By Admin</span>
 						    </a>
 					    </div>
 				    </div>
@@ -226,6 +293,90 @@ const propertTmp = (data) => {
 
         $('#properties').append(res);
     });
+}
+
+const propertiesTmp = (data) => {
+    $('#properties').html('');
+
+    data.forEach(x => {
+        let res = `<div class="col-lg-6 col-md-6">
+									<div class="single-featured-item">
+										<div class="featured-img mb-0">
+											<img src="/images/featured/featured-2.jpg" alt="Image">
+											 <span>${x.status}</span>
+										</div>
+										<div class="featured-content style-three">
+											<div class="d-flex justify-content-between">
+												<h3>
+													<a href="/Home/PropertyDetails/${x.uniqueId}">${x.name}</a>
+												</h3>
+												 <h3 class="price">&#8358; ${formatToCurrency(x.unitPrice)}</h3>
+											</div>
+											<p>
+												<i class="ri-map-pin-fill"></i>
+												${x.location}
+											</p>
+											<ul>
+												<li>
+													<i class="ri-hotel-bed-fill"></i>
+													6 Bed
+												</li>
+												<li>
+													<i class="ri-wheelchair-fill"></i>
+													5 Bath
+												</li>
+												<li>
+													<i class="ri-ruler-2-line"></i>
+													1200 Sqft
+												</li>
+											</ul>
+
+											<a href="agents.html" class="agent-user">
+												<img src="/images/agents/agent-6.jpg" alt="Image">
+												<span>By Florence Prada</span>
+											</a>
+										</div>
+									</div>
+								</div>`;
+
+        $('#properties').append(res);
+    });
+}
+
+const getSingleProperty = () => {
+    let urls = window.location.href.split("/");
+    let id = urls[5];
+    let xhr = new XMLHttpRequest();
+    let url = `/single-property/${id}`;
+    xhr.open('GET', url, false);
+    xhr.setRequestHeader("content-type", "application/json");
+    xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+    try {
+
+        xhr.send();
+        if (xhr.status != 200) {
+            // alert('Something went wrong try again!');
+        } else {
+            var res = JSON.parse(xhr.responseText);
+            var data = JSON.parse(res).data;
+
+            if (JSON.parse(res).success) {
+
+                $('#name').html(data.name);
+                $('#price').html("&#8358; " + formatToCurrency(data.unitPrice));
+                $('#location').html(data.location);
+                console.log(data);
+            } else {
+                
+                window.scrollTo(0, 0);
+                //console.log(data);
+            }
+
+        }
+    } catch (err) { // instead of onerror
+        //alert("Request failed");
+        $(".btn-activate").html("Activate").attr("disabled", !1);
+    }
 }
 
 
@@ -310,9 +461,12 @@ $('.btn-property').click(() => {
             var res = JSON.parse(xhr.responseText);
             var data = JSON.parse(res).data;
             if (JSON.parse(res).success) {
+                window.scrollTo(0, 0);
+                $('form-control').val('');
+                $('#name').focus();
                 $(".btn-property").html("Submit").attr("disabled", !1);
+                message(data, "success");
                 console.log(data);
-                propertiesTmp(data);
             } else {
                 window.scrollTo(0, 0);
             }
@@ -552,3 +706,7 @@ $('#signout').click(() => {
 const message = (msg, _class) => $('#msg').html(`<div class="alert alert-${_class == "error" ? 'danger' : 'success'} alert-dismissible fade show" role="alert">
 							${msg}
 						</div>`);
+
+function formatToCurrency(amount) {
+    return (amount).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+}

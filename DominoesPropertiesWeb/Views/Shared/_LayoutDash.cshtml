@@ -36,11 +36,17 @@
 			var WalletId = @HttpContextAccessor.HttpContext.Session.GetString("WalletId");
 			var Firstname = @HttpContextAccessor.HttpContext.Session.GetString("Firstname");
 			var Lastname = @HttpContextAccessor.HttpContext.Session.GetString("Lastname");
+			var isAdmin = @HttpContextAccessor.HttpContext.Session.GetString("RoleFK");
+			
 			var userFullName = string.Format("{0} {1}", Firstname, Lastname);
+			if(isAdmin != null && isAdmin != ""){
+				userFullName = @HttpContextAccessor.HttpContext.Session.GetString("Email");
+			}
 		}
 		@Html.Hidden("refId", Username)
 		@Html.Hidden("isSubcribed", IsSubscribed)
 		@Html.Hidden("fullname", userFullName)
+		@Html.Hidden("isAdmin", isAdmin)
     <body>
 		<script>
 			$(function(){
@@ -77,15 +83,15 @@
 				<div class="container-fluid">
 					<nav class="navbar navbar-expand-md navbar-light">
 						<a class="navbar-brand" href="index-2.html">
-							<img src="~/images/logo.pg" class="main-logo" alt="logo">
-							<img src="~/images/white-logo.pg" class="white-logo" alt="logo">
+							<img src="~/images/logo.png" class="main-logo" alt="logo">
+							<img src="~/images/white-logo.png" class="white-logo" alt="logo">
 						</a>
 
 						<div class="collapse navbar-collapse mean-menu" id="navbarSupportedContent">
 							<div class="others-options">
 							@if(IsSubscribed == "False")
 								{
-									<a href="javascript:void(0)" class="default-btn btn-subscribe">
+									<a href="javascript:void(0)" class="default-btn btn-subscribe rounded">
 										Subscribe to get full access
 									</a>
 								}
@@ -98,7 +104,7 @@
 									</a>
 								</li>
 								<li class="nav-item">
-									<a href="#" class="nav-link">
+									<a  href="javascript:void(0)" class="nav-link" id="property-link">
 										Properties            
 									</a>
 								</li>
@@ -134,13 +140,15 @@
 														Dashboard
 													</a>
 												</li>
-												<li>
-													<a asp-controller="Dashboard" asp-action="Profile">
-														<i class="ri-user-line"></i>
-														My Profile
-													</a>
-												</li>
-												
+												@if(userFullName != null)
+												{
+													<li>
+														<a asp-controller="Dashboard" asp-action="Profile">
+															<i class="ri-user-line"></i>
+															My Profile
+														</a>
+													</li>
+												}
 												<li>
 													<a href="edit-profile.html">
 														<i class="ri-settings-2-line"></i>
@@ -241,36 +249,52 @@
 			<h3>Dominoes Society</h3>
 
 			<ul>
-				<li>
-					<a href="dashboard.html" class="active">
-						<i class="ri-dashboard-line"></i>
-						Dashboard
-					</a>
-				</li>
-				<li>
-					<a asp-controller="Dashboard" asp-action="Profile">
-						<i class="ri-user-line"></i>
-						My Profile
-					</a>
-				</li>
-				@*<li>
-					<a href="edit-profile.html">
-						<i class="ri-image-edit-line"></i>
-						Properties
-					</a>
-				</li>*@
-				<li>
-					<a asp-controller="Property" asp-action="Index">
-						<i class="ri-user-line"></i>
-						Properties
-					</a>
-				</li>
-				<li>
-					<a asp-controller="Investment" asp-action="Index">
-						<i class="ri-user-line"></i>
-						Investments
-					</a>
-				</li>
+				@if(isAdmin != null && isAdmin != ""){
+					<li>
+						<a href="dashboard.html" class="active">
+							<i class="ri-dashboard-line"></i>
+							Dashboard
+						</a>
+					</li>
+					<li>
+						<a asp-controller="Property" asp-action="Index">
+							<i class="ri-user-line"></i>
+							Properties
+						</a>
+					</li>
+					<li>
+						<a asp-controller="Investment" asp-action="Index">
+							<i class="ri-user-line"></i>
+							Investments
+						</a>
+					</li>
+				}else{
+					<li>
+						<a href="dashboard.html" class="active">
+							<i class="ri-dashboard-line"></i>
+							Dashboard
+						</a>
+					</li>
+					<li>
+						<a asp-controller="Dashboard" asp-action="Profile">
+							<i class="ri-user-line"></i>
+							My Profile
+						</a>
+					</li>
+					@*<li>
+						<a asp-controller="Property" asp-action="Index">
+							<i class="ri-user-line"></i>
+							Properties
+						</a>
+					</li>*@
+					<li>
+						<a asp-controller="Investment" asp-action="Index">
+							<i class="ri-user-line"></i>
+							Investments
+						</a>
+					</li>
+				}
+				
 			</ul>
 		</div>
 		<!-- End Sidebar Area -->

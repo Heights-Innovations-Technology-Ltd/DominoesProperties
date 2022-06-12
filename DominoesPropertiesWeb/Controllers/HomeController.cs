@@ -55,6 +55,17 @@ namespace DominoesPropertiesWeb.Controllers
             return View();
         }
 
+        public IActionResult Properties()
+        {
+            return View();
+        }
+
+        [HttpGet("/Home/PropertyDetails/{uniqueid}")]
+        public IActionResult PropertyDetails(string uniqueid)
+        {
+            return View();
+        }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

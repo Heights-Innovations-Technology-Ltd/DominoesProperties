@@ -35,12 +35,18 @@
 			var WalletId = @HttpContextAccessor.HttpContext.Session.GetString("WalletId");
 			var Firstname = @HttpContextAccessor.HttpContext.Session.GetString("Firstname");
 			var Lastname = @HttpContextAccessor.HttpContext.Session.GetString("Lastname");
+			var isAdmin = @HttpContextAccessor.HttpContext.Session.GetString("RoleFK");
+			
 			var userFullName = string.Format("{0} {1}", Firstname, Lastname);
+			if(isAdmin != null && isAdmin != ""){
+				userFullName = @HttpContextAccessor.HttpContext.Session.GetString("Email");
+			}
 		}
 
 		@Html.Hidden("refId", Username)
 		@Html.Hidden("isSubcribed", IsSubscribed)
 		@Html.Hidden("fullname", userFullName)
+		@Html.Hidden("isAdmin", isAdmin)
     <body>
 		<!-- Start Preloader Area -->
 		<div class="preloader" id="loader-style">
@@ -72,8 +78,8 @@
 				<div class="container-fluid">
 					<nav class="navbar navbar-expand-md navbar-light">
 						<a class="navbar-brand" href="index-2.html">
-							<img src="~/images/logo.pg" class="main-logo" alt="logo">
-							<img src="~/images/white-logo.pg" class="white-logo" alt="logo">
+							<img src="~/images/logo.png" class="main-logo" alt="logo">
+							<img src="~/images/white-logo.png" class="white-logo" alt="logo">
 						</a>
 
 						<div class="collapse navbar-collapse mean-menu" id="navbarSupportedContent">
@@ -93,7 +99,7 @@
 									</a>
 								</li>
 								<li class="nav-item">
-									<a href="#" class="nav-link" id="property-link">
+									<a href="javascript:void(0)" class="nav-link" id="property-link">
 										Properties
 									</a>
 								</li>
@@ -123,7 +129,7 @@
 									</li>*@
 									@if(Username != null && IsSubscribed == "False")
 									{
-										<a href="javascript:void(0)" class="default-btn btn-subscribe">
+										<a href="javascript:void(0)" class="default-btn btn-subscribe rounded">
 											Subscribe to get full access
 										</a>
 									}else{
@@ -294,8 +300,8 @@
 					<div class="col-lg-3 col-sm-6">
 						<div class="single-footer-widget wow animate__animated animate__fadeInUp delay-0-2s">
 							<a href="index-2.html">
-								<img src="~/images/logo.pg" class="main-logo" alt="Dominoes logo">
-								<img src="~/images/white-logo.pg" class="white-logo" alt="Dominoes logo">
+								<img src="~/images/logo.png" class="main-logo" alt="Dominoes logo">
+								<img src="~/images/white-logo.png" class="white-logo" alt="Dominoes logo">
 							</a>
 
 							<p>We are a great agency for buying and selling your property with confidence. So you can easily buy and sell through our company.</p>

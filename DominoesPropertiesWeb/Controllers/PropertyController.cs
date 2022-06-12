@@ -102,5 +102,14 @@ namespace DominoesPropertiesWeb.Controllers
             var data = res.Status == TaskStatus.RanToCompletion ? res.Result : null;
             return Json(JsonConvert.SerializeObject(data));
         }
+        
+        [Route("single-property/{uniqueId}")]
+        public async Task<JsonResult> GetSingleProperty([FromRoute] string uniqueId)
+        {
+            var res = Task.Run(() => httpContext.Get("Property/" + uniqueId));
+            await Task.WhenAll(res);
+            var data = res.Status == TaskStatus.RanToCompletion ? res.Result : null;
+            return Json(JsonConvert.SerializeObject(data));
+        }
     }
 }
