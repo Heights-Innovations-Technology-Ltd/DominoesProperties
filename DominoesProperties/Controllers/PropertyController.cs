@@ -66,9 +66,11 @@ namespace DominoesProperties.Controllers
         public ApiResponse Property(string uniqueId)
         {
             Property property = propertyRepository.GetProperty(uniqueId);
+            Properties properties = ClassConverter.EntityToProperty(property);
+            properties.Description = ClassConverter.ConvertDescription(propertyRepository.GetDescriptionByPropertyId(property.Id.ToString()));
             response.Success = true;
             response.Message = "Successfull";
-            response.Data = property;
+            response.Data = properties;
             return response;
         }
 
