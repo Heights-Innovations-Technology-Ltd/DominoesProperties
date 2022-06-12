@@ -1,5 +1,6 @@
 
 using DominoesProperties.Enums;
+using Models.Models;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
@@ -34,6 +35,8 @@ namespace DominoesProperties.Models
         public DateTime? DateCreated { get; set; }
         public string Longitude { get; set; }
         public string Latitude { get; set; }
+        public PropertyDescription description;
+        public string TypeName { get; set; }
         
         [JsonIgnore]
         public string CreatedBy { get; set; }

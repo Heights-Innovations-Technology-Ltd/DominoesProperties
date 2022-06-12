@@ -4,6 +4,7 @@ using System.Linq;
 using Models.Models;
 using Models.Context;
 using Repositories.Repository;
+using Microsoft.EntityFrameworkCore;
 
 namespace Repositories.Service
 {
@@ -42,7 +43,7 @@ namespace Repositories.Service
             var properties = _context.Properties.Local.ToList();
             if(properties.Count < 1)
             {
-                properties = _context.Properties.ToList();
+                properties = _context.Properties.Include(x => x.TypeNavigation).ToList();
             }
             return properties;
         }
