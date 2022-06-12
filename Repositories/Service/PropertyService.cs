@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Models.Models;
+using Models.Context;
 using Repositories.Repository;
 
 namespace Repositories.Service
@@ -19,12 +20,12 @@ namespace Repositories.Service
             return property;
         }
 
-        public Property AddPropertyDescription(Description description)
+        public Description AddPropertyDescription(Description description)
         {
             _context.Descriptions.Add(description);
             _context.SaveChanges();
 
-            return description.Property;
+            return description;
         }
 
         public bool DeleteProperty(string uniqueId)
@@ -74,12 +75,12 @@ namespace Repositories.Service
             return property;
         }
 
-        public Property UpdatePropertyDescription(Description description)
+        public Description UpdatePropertyDescription(Description description)
         {
             _context.Descriptions.Update(description);
             _context.SaveChanges();
 
-            return description.Property;
+            return description;
         }
 
         public PagedList<Property> GetProperties(QueryParams pageParams)

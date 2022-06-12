@@ -11,7 +11,7 @@ namespace Models.Models
         public Property()
         {
             Investments = new HashSet<Investment>();
-            PropertyImages = new HashSet<PropertyImage>();
+            PropertyUploads = new HashSet<PropertyUpload>();
         }
 
         public long Id { get; set; }
@@ -36,11 +36,8 @@ namespace Models.Models
         public bool? IsDeleted { get; set; }
 
         public virtual Admin CreatedByNavigation { get; set; }
-
-        [NotMapped]
-        public virtual Description Description1 { get; set; }
         public virtual PropertyType TypeNavigation { get; set; }
         public virtual ICollection<Investment> Investments { get; set; }
-        public virtual ICollection<PropertyImage> PropertyImages { get; set; }
+        public virtual ICollection<PropertyUpload> PropertyUploads { get; set; }
     }
 }

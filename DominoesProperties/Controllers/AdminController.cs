@@ -191,7 +191,7 @@ namespace DominoesProperties.Controllers
 
             var claims = new[] {
                 new Claim(JwtRegisteredClaimNames.UniqueName, uniqueRef),
-                new Claim(JwtRegisteredClaimNames.Jti, Convert.ToString(Guid.NewGuid()))
+                new Claim(JwtRegisteredClaimNames.Jti, uniqueRef)
             };
 
             var token = new JwtSecurityToken(configuration["app_settings:Issuer"],
