@@ -3,7 +3,14 @@
     ViewData["Title"] = "EditProfile";
     Layout = "~/Views/Shared/_LayoutDash.cshtml";
 }
+@using Microsoft.AspNetCore.Http;
+@inject IHttpContextAccessor HttpContextAccessor
 
+@{
+	string Username = @HttpContextAccessor.HttpContext.Session.GetString("ReferenceId");
+	var IsSubscribed = @HttpContextAccessor.HttpContext.Session.GetString("IsSubscribed");
+	var isAdmin = @HttpContextAccessor.HttpContext.Session.GetString("RoleFK");
+}
 <!-- Start Dashboard Area -->
 <div class="dashboard-area">
 	<div class="container-fluid">
@@ -20,14 +27,22 @@
 						<li class="active">Edit Profile</li>
 					</ul>
 				</div>
+				<div class="col-lg-6 col-sm-6" style="text-align:right!important">
+					@if(Username != null && IsSubscribed == "False")
+					{
+						<a href="javascript:void(0)" class="default-btn btn-subscribe rounded" style="background-color:#ea580c">
+							Subscribe to get full access
+						</a>
+					}
+				</div>
 			</div>
 		</div>
 
 		<div class="edit-profile">
 			<div class="information d-flex align-items-center">
-				<img src="~/images/agents/agent-10.jpg" alt="Image">
+				<img src="~/images/agents/user.png" class="img-thumbnail" alt="Image">
 						
-				<div class="file-upload-account-info">
+				@*<div class="file-upload-account-info">
 					<input type="file" name="file" id="file-2" class="inputfile">
 					<label class="upload">
 						<i class="ri-link"></i>
@@ -35,7 +50,7 @@
 					</label>
 					<p>* Minimum required size is 500px by 500px.</p>
 					<p>* Make sure to Save Changes after uploading your image.</p>
-				</div>
+				</div>*@
 			</div>
 
 			<form class="contact-information">
@@ -112,5 +127,10 @@
 	</div>
 </div>
 <!-- End Dashboard Area -->
+<script>
+	$(document).ready(() => {
+		GetUserProfile("edit");
+	});
+</script>
 
 

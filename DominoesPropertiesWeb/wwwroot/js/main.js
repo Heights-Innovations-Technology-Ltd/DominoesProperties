@@ -181,9 +181,45 @@ $('.btn-adminlogin').click(() => {
     }
 });
 
+const GetUserProfile = (mode) => {
+    
+    let xhr = new XMLHttpRequest();
+    let url = "/get-customer";
+    xhr.open('GET', url, false);
+    xhr.setRequestHeader("content-type", "application/json");
+    xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+    try {
 
-const profile = (data) => {
-    $('#profile').html(`
+        xhr.send();
+        if (xhr.status != 200) {
+            // alert('Something went wrong try again!');
+        } else {
+            var res = JSON.parse(xhr.responseText);
+            var data = JSON.parse(res).data;
+
+            if (JSON.parse(res).success) {
+                console.log(data);
+                profile(data,mode);
+               
+            } else {
+                window.scrollTo(0, 0);
+            }
+
+        }
+    } catch (err) { // instead of onerror
+        //alert("Request failed");
+    }
+}
+
+const profile = (data, mode) => {
+    if (mode == "edit") {
+        $('#firstname').val(data.firstName);
+        $('#lastname').val(data.lastName);
+        $('#email').val(data.email);
+        $('#phone').val(data.phone);
+        $('#address').val(data.address);
+    } else {
+        $('#profile').html(`
         <li>
 		    <span id="firstname">First Name:</span>
 		    ${data.firstName}
@@ -207,13 +243,15 @@ const profile = (data) => {
 	    </li>
         
     `);
+    }
+    
 }
 
 
 const GetProperties = (type) => {
     if ($('#isAdmin').val() == "1") {
 
-        $('.add-property').html(`<a asp-controller="Property" asp-action="Create" class="default-btn">Add New Property</a>`);
+        $('.add-property').html(`<a href="/property/create" class="default-btn">Add New Property</a>`);
     }
     let xhr = new XMLHttpRequest();
     let url = "/get-properties";
@@ -255,38 +293,44 @@ const propertTmp = (data) => {
 				    <div class="single-featured-item">
 					    <div class="featured-img mb-0">
 						    <img src="/images/featured/featured-1.jpg" alt="Image">
-						    <span>${x.status}</span>
 					    </div>
 					    <div class="featured-content style-three">
 						    <div class="d-flex justify-content-between">
 							    <h3>
-								    <a href="/Home/PropertyDetails">${x.name}</a>
+								    <a href="javascript:void(0)" onclick="propertyDetails('${x.uniqueId}')">${x.name}</a>
 							    </h3>
 							    <h3 class="price">&#8358; ${formatToCurrency(x.unitPrice)}</h3>
 						    </div>
 						    <p>
 							    <i class="ri-map-pin-fill"></i>
-							    77 Morris St. Ridgewood, NJ 67655
+							    ${x.location}
 						    </p>
 						    <ul>
-							    <li>
+							   <li>
 								    <i class="ri-hotel-bed-fill"></i>
-								    5 Bed
+								    ${x.description["bedroom"]} Bed
 							    </li>
 							    <li>
 								    <i class="ri-wheelchair-fill"></i>
-								    5 Bath
+								    ${x.description["bathroom"]} Bath
 							    </li>
 							    <li>
 								    <i class="ri-ruler-2-line"></i>
-								    1000 Sqft
+								    ${x.description["landSize"]} Sqft
+							    </li>
+                                <li>
+								    <i class="ri-wheelchair-fill"></i>
+								    ${x.description["toilet"]} Toilet
+							    </li>
+                                <li>
+								    <i class="ri-building-2-fill"></i>
+								    ${x.description["floorLevel"]} Floor
 							    </li>
 						    </ul>
 
-						    <a href="agents.html" class="agent-user">
-							    <img src="/images/agents/agent-5.jpg" alt="Image">
-							    <span>By Admin</span>
-						    </a>
+						    <button type="button" onclick="propertyDetails('${x.uniqueId}')" class="btn btn-primary btn-sm">
+								<span>View Property</span>
+							</button>
 					    </div>
 				    </div>
 			    </div>`;
@@ -303,14 +347,13 @@ const propertiesTmp = (data) => {
 									<div class="single-featured-item">
 										<div class="featured-img mb-0">
 											<img src="/images/featured/featured-2.jpg" alt="Image">
-											 <span>${x.status}</span>
 										</div>
 										<div class="featured-content style-three">
 											<div class="d-flex justify-content-between">
 												<h3>
-													<a href="/Home/PropertyDetails/${x.uniqueId}">${x.name}</a>
+													<a href="javascript:void(0)" onclick="propertyDetails('${x.uniqueId}')">${x.name} this property with long property name</a>
 												</h3>
-												 <h3 class="price">&#8358; ${formatToCurrency(x.unitPrice)}</h3>
+												 <h3 class="price">&#8358;${formatToCurrency(x.unitPrice)}</h3>
 											</div>
 											<p>
 												<i class="ri-map-pin-fill"></i>
@@ -319,22 +362,29 @@ const propertiesTmp = (data) => {
 											<ul>
 												<li>
 													<i class="ri-hotel-bed-fill"></i>
-													6 Bed
+													${x.description["bedroom"]} Bed
 												</li>
 												<li>
 													<i class="ri-wheelchair-fill"></i>
-													5 Bath
+													${x.description["bathroom"]} Bath
 												</li>
 												<li>
 													<i class="ri-ruler-2-line"></i>
-													1200 Sqft
+													${x.description["landSize"]} Sqft
+												</li>
+                                                <li>
+													<i class="ri-wheelchair-fill"></i>
+													${x.description["toilet"]} Toilet
+												</li>
+                                                <li>
+													<i class="ri-building-2-fill"></i>
+													${x.description["floorLevel"]} Floor
 												</li>
 											</ul>
 
-											<a href="agents.html" class="agent-user">
-												<img src="/images/agents/agent-6.jpg" alt="Image">
-												<span>By Florence Prada</span>
-											</a>
+											<button type="button" onclick="propertyDetails('${x.uniqueId}')" class="btn btn-primary btn-sm">
+												<span>View Property</span>
+											</button>
 										</div>
 									</div>
 								</div>`;
@@ -343,7 +393,22 @@ const propertiesTmp = (data) => {
     });
 }
 
+const propertyDetails = (id) => {
+    if ($('#isSubcribed').val() == "False" && $('#refId').val() != "") {
+        $('#subscribeModal').modal('show');
+        return;
+    }
+
+    location = '/Home/PropertyDetails/' + id;
+}
+
 const getSingleProperty = () => {
+    if ($('#isSubcribed').val() == "False" && $('#refId').val() != "") {
+        location = '/Dashboard/Profile';
+        return;
+    }
+
+    
     let urls = window.location.href.split("/");
     let id = urls[5];
     let xhr = new XMLHttpRequest();
@@ -403,19 +468,19 @@ $('.btn-property').click(() => {
         return;
     }
 
-    if ((!Number($("#logitutde").val())) && $("#logitude").val() != '') {
-        $(".btn-property").html("Submit").attr("disabled", !1);
-        message("Invalid logitude supply, kindly check and try again!", 'error');
-        $('#logitude').focus();
-        return;
-    }
+    //if ((!Number(Number($("#logitutde").val()))) && $("#logitude").val() != '') {
+    //    $(".btn-property").html("Submit").attr("disabled", !1);
+    //    message("Invalid logitude supply, kindly check and try again!", 'error');
+    //    $('#logitude').focus();
+    //    return;
+    //}
 
-    if ((!Number($("#latitude").val())) && $("#latitude").val() != '') {
-        $(".btn-Submit").html("Submit").attr("disabled", !1);
-        message("Invalid latitude supply, kindly check and try again!", 'error');
-        $('#latitude').focus();
-        return;
-    }
+    //if ((!Number($("#latitude").val())) && $("#latitude").val() != '') {
+    //    $(".btn-Submit").html("Submit").attr("disabled", !1);
+    //    message("Invalid latitude supply, kindly check and try again!", 'error');
+    //    $('#latitude').focus();
+    //    return;
+    //}
     
 
     var params = {
@@ -459,15 +524,19 @@ $('.btn-property').click(() => {
             // alert('Something went wrong try again!');
         } else {
             var res = JSON.parse(xhr.responseText);
-            var data = JSON.parse(res).data;
-            if (JSON.parse(res).success) {
+            var data = JSON.parse(res).Data;
+            console.log(res);
+            if (JSON.parse(res).Success) {
                 window.scrollTo(0, 0);
-                $('form-control').val('');
-                $('#name').focus();
+                message(JSON.parse(res).Message, "success");
+                $('.form-control').val('');
                 $(".btn-property").html("Submit").attr("disabled", !1);
-                message(data, "success");
-                console.log(data);
+
+                setTimeout(() => {
+                    location.reload();
+                }, 2000);
             } else {
+                $(".btn-property").html("Submit").attr("disabled", !1);
                 window.scrollTo(0, 0);
             }
 
@@ -641,21 +710,20 @@ $('.btn-verify').click(() => {
 
     $(".btn-verify").html("Processing...").attr("disabled", !0);
 
-    let params = {
-        "token": token
-    }
+    
     let xhr = new XMLHttpRequest();
-    let url = "/verify-payment";
-    xhr.open('POST', url, false);
+    let url = "/verifypayment/" + token;
+    xhr.open('GET', url, false);
     xhr.setRequestHeader("content-type", "application/json");
     xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
     try {
 
-        xhr.send(JSON.stringify(params));
+        xhr.send();
         if (xhr.status != 200) {
             // alert('Something went wrong try again!');
         } else {
             var res = JSON.parse(xhr.responseText);
+            console.log(res);
             var data = JSON.parse(res).Data;
 
             if (JSON.parse(res).Success) {
@@ -666,7 +734,7 @@ $('.btn-verify').click(() => {
             } else {
                 $(".btn-verify").html("Verify").attr("disabled", !1);
                 window.scrollTo(0, 0);
-                message(messages, 'error');
+                $('.active-title').html(`<span class="text-danger">Payment verification failed, kindly contact administrator</span>`);
                 console.log(data);
             }
 
@@ -678,26 +746,24 @@ $('.btn-verify').click(() => {
 });
 
 $('#signout').click(() => {
-    if (confirm("Are you sure you want to logout?")) {
-        let xhr = new XMLHttpRequest();
-        let url = "/logout";
-        xhr.open('GET', url, false);
-        xhr.setRequestHeader("content-type", "application/json");
-        xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
-        try {
+    let xhr = new XMLHttpRequest();
+    let url = "/logout";
+    xhr.open('GET', url, false);
+    xhr.setRequestHeader("content-type", "application/json");
+    xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+    try {
 
-            xhr.send();
-            if (xhr.status != 200) {
-                //alert('Something went wrong try again!');
-            } else {
-                var res = JSON.parse(xhr.responseText);
-                if (res) {
-                    location = '/';
-                }
+        xhr.send();
+        if (xhr.status != 200) {
+            //alert('Something went wrong try again!');
+        } else {
+            var res = JSON.parse(xhr.responseText);
+            if (res) {
+                location = '/';
             }
-        } catch (err) { // instead of onerror
-            //alert("Request failed");
         }
+    } catch (err) { // instead of onerror
+        //alert("Request failed");
     }
    
 });

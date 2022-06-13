@@ -114,16 +114,6 @@ namespace DominoesPropertiesWeb.Controllers
             return Json(JsonConvert.SerializeObject(jsonObj));
         }
 
-
-        [Route("get-customer")]
-        public async Task<JsonResult> Customer()
-        {
-            var res = Task.Run(() => httpContext.Get("Customer"));
-            await Task.WhenAll(res);
-            var data = res.Status == TaskStatus.RanToCompletion ? res.Result : null;
-            return Json(JsonConvert.SerializeObject(data));
-        }
-
         [HttpGet("/Home/activate_account/{token}")]
         public IActionResult Activate_Account(string token, [FromQuery(Name = "value")]string value)
         {
@@ -161,12 +151,11 @@ namespace DominoesPropertiesWeb.Controllers
             return View();
         }
 
-        [Route("verify-payment")]
-        public async Task<JsonResult> Verify([FromBody] dynamic token)
+        [Route("/verifypayment/{token}")]
+        public async Task<JsonResult> Verify(string token)
         {
-            JObject jObject = JsonConvert.DeserializeObject<JObject>(Convert.ToString(token));
             
-            var res = Task.Run(() => httpContext.Get("Payment/verify-payment/" + Convert.ToString(jObject["token"])));
+            var res = Task.Run(() => httpContext.Get("Payment/verify-payment/" + token ));
             await Task.WhenAll(res);
             var data = res.Status == TaskStatus.RanToCompletion ? res.Result : null;
             return Json(JsonConvert.SerializeObject(data));

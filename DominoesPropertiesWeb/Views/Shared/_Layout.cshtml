@@ -116,34 +116,58 @@
 
 							<div class="others-options style">
 								<ul>
-									@*<li>
-										<a href="my-listings.html" class="wishlist">
-											<i class="ri-heart-line"></i>
-											<span>0</span>
-										</a>
-									</li>
-									<li>
-										<a href="my-account.html" class="login">
-											<i class="ri-user-line"></i>
-										</a>
-									</li>*@
-									@if(Username != null && IsSubscribed == "False")
-									{
-										<a href="javascript:void(0)" class="default-btn btn-subscribe rounded">
-											Subscribe to get full access
-										</a>
-									}else{
+							
+									@if(Username == "" || userFullName == " "){
 										<li>
-										
 											<a asp-controller="Home" asp-action="SignIn" class="default-btn">
 												Sign In / Sign Up
 											</a>
-										
 										</li>
 									}
-									
+
+									@if(isAdmin != null || Username != null)
+									{
+										<li>
+											<div class="dropdown">
+												<button type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+													<img src="~/images/agents/agent-1.jpg" alt="Image">
+													<span>@userFullName</span>
+												</button>
+												<ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+													<li>
+														<a asp-controller="Dashboard" asp-action="Index">
+															<i class="ri-dashboard-line"></i>
+															Dashboard
+														</a>
+													</li>
+													@if(userFullName != null)
+													{
+														<li>
+															<a asp-controller="Dashboard" asp-action="Profile">
+																<i class="ri-user-line"></i>
+																My Profile
+															</a>
+														</li>
+													}
+													<li>
+														<a href="edit-profile.html">
+															<i class="ri-settings-2-line"></i>
+															Setting
+														</a>
+													</li>
+													<li>
+														<a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#signoutModal">
+															<i class="ri-logout-box-r-line"></i>
+															Sign out
+														</a>
+													</li>
+												</ul>
+											</div>
+										</li>
+									}
 								</ul>
 							</div>
+							
 						</div>
 					</nav>
 				</div>
@@ -351,6 +375,7 @@
 									<a href="#">Contact us</a>
 								</li>
 							</ul>
+						
 						</div>
 					</div>
 
@@ -397,6 +422,44 @@
 			</div>
 		</div>
 		<!-- End Copyright Area -->
+
+		<!-- Start subscribe modal-->
+		<div class="modal fade" id="subscribeModal" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+			<div class="modal-dialog modal-dialog-centered">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="exampleModalToggleLabel">Warning!!!</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						Property details can only be view by subscribed users, kindly subscribe to get full access 
+					</div>
+					<div class="modal-footer">
+						<button class="btn btn-primary btn-subscribe" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal" data-bs-dismiss="modal">Subcribe</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- End Subscribe Modal-->
+		 <!-- Start signout modal-->
+		<div class="modal fade" id="signoutModal" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+			<div class="modal-dialog modal-dialog-centered">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="exampleModalToggleLabel">Warning!!!</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						Are you sure you want to logout?
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+						<button type="button" class="btn btn-primary" id="signout">Logout</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- End Signout Modal-->
 
 		<!-- Start Go Top Area -->
 		<div class="go-top">

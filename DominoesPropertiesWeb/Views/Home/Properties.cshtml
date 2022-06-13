@@ -34,23 +34,21 @@
 								<h3>Filter search</h3>
 								<form>
 									<div class="form-group">
-										<input type="text" class="form-control style" placeholder="Current Location">
-										<i class="ri-map-pin-2-line"></i>
-									</div>
-									<div class="form-group">
 										<select class="form-select form-control" aria-label="Default select example">
 											<option selected>All Categories</option>
-											<option value="1">House</option>
-											<option value="2">Hotel</option>
+											<option value="0">ONGOING CONSTRUCTION</option>
+											<option value="1">OPEN FOR INVESTMENT</option>
+											<option value="2">CLOSED FOR INVESTMENT</option>
+											<option value="3">RENTED OUT</option>
 										</select>
 									</div>
-									<div class="form-group">
+									@*<div class="form-group">
 										<select class="form-select form-control" aria-label="Default select example">
 											<option selected>All Statuses</option>
 											<option value="1">House</option>
 											<option value="2">Hotel</option>
 										</select>
-									</div>
+									</div>*@
 									<div class="form-group">
 										<select class="form-select form-control" aria-label="Default select example">
 											<option selected>Price</option>
@@ -62,80 +60,34 @@
 										<div class="col-lg-6 col-sm-6">
 											<div class="form-group">
 												<label>Bedroom</label>
-												<select class="form-select form-control" aria-label="Default select example">
-													<option selected>Any</option>
-													<option value="1">2</option>
-													<option value="2">4</option>
-												</select>
+												<input type="number" class="form-control bedroom" />
 											</div>
 										</div>
 										<div class="col-lg-6 col-sm-6">
 											<div class="form-group">
-												<label>Bedrooms</label>
-												<select class="form-select form-control" aria-label="Default select example">
-													<option selected>Any</option>
-													<option value="1">2</option>
-													<option value="2">3</option>
-												</select>
+												<label>Bathrooms</label>
+												<input type="number" class="form-control bathroom" />
 											</div>
 										</div>
 										<div class="col-lg-6 col-sm-6">
 											<div class="form-group">
-												<label>Floors</label>
-												<select class="form-select form-control" aria-label="Default select example">
-													<option selected>Any</option>
-													<option value="1">1</option>
-													<option value="2">2</option>
-												</select>
+												<label>Floors Level</label>
+												<input type="number" class="form-control floor" />
 											</div>
 										</div>
 										<div class="col-lg-6 col-sm-6">
 											<div class="form-group">
-												<label>Parking</label>
-												<select class="form-select form-control" aria-label="Default select example">
-													<option selected>Any</option>
-													<option value="1">1</option>
-													<option value="2">2</option>
-												</select>
+												<label>Toilet</label>
+												<input type="number" class="form-control toilet" />
 											</div>
 										</div>
-										<div class="col-lg-6 col-sm-6">
+										<div class="col-lg-12 col-sm-12">
 											<div class="form-group">
-												<label>Building Size</label>
+												<label>Land Size</label>
 												<select class="form-select form-control" aria-label="Default select example">
 													<option selected>Min SF</option>
 													<option value="1">1</option>
 													<option value="2">2</option>
-												</select>
-											</div>
-										</div>
-										<div class="col-lg-6 col-sm-6">
-											<div class="form-group">
-												<label>Building Size</label>
-												<select class="form-select form-control" aria-label="Default select example">
-													<option selected>Max SF</option>
-													<option value="1">1</option>
-													<option value="2">2</option>
-												</select>
-											</div>
-										</div>
-										<div class="col-lg-6 col-sm-6">
-											<div class="form-group">
-												<label>Lot Size</label>
-												<select class="form-select form-control" aria-label="Default select example">
-													<option selected>Min</option>
-													<option value="1">14''</option>
-													<option value="2">20''</option>
-												</select>
-											</div>
-										</div>
-										<div class="col-lg-6 col-sm-6">
-											<div class="form-group">
-												<label>Max</label>
-												<select class="form-select form-control" aria-label="Default select example">
-													<option selected>Min</option>
-													<option value="1">25''</option>
-													<option value="2">33''</option>
 												</select>
 											</div>
 										</div>
@@ -166,32 +118,22 @@
 													<div class="form-check">
 														<input class="form-check-input" type="checkbox" id="flexCheckDefault-4">
 														<label class="form-check-label" for="flexCheckDefault-4">
-															Window Coverings
+															Air Conditioned
 														</label>
 													</div>
 													<div class="form-check">
 														<input class="form-check-input" type="checkbox" id="flexCheckDefault-5">
 														<label class="form-check-label" for="flexCheckDefault-5">
-															Barbeque
+															Security Guard
 														</label>
 													</div>
-													<div class="form-check">
-														<input class="form-check-input" type="checkbox" id="flexCheckDefault-6">
-														<label class="form-check-label" for="flexCheckDefault-6">
-															Grage
-														</label>
-													</div>
+													
 												</div>
 											</div>
 
 											<div class="col-lg-6 col-sm-6">
 												<div class="mb-20">
-													<div class="form-check">
-														<input class="form-check-input" type="checkbox" id="flexCheckDefault-7">
-														<label class="form-check-label" for="flexCheckDefault-7">
-															Parking
-														</label>
-													</div>
+													
 													<div class="form-check">
 														<input class="form-check-input" type="checkbox" id="flexCheckDefault-8">
 														<label class="form-check-label" for="flexCheckDefault-8">
@@ -204,12 +146,7 @@
 															Fitness Gym
 														</label>
 													</div>
-													<div class="form-check">
-														<input class="form-check-input" type="checkbox" id="flexCheckDefault-10">
-														<label class="form-check-label" for="flexCheckDefault-10">
-															Security Garage 
-														</label>
-													</div>
+													
 													<div class="form-check">
 														<input class="form-check-input" type="checkbox" id="flexCheckDefault-11">
 														<label class="form-check-label" for="flexCheckDefault-11">
@@ -227,7 +164,7 @@
 
 											<div class="col-lg-6 col-sm-6">
 												<button class="default-btn">
-													Save Search
+													Search
 												</button>
 											</div>
 
@@ -253,8 +190,10 @@
 									<div class="col-lg-6">
 										<select class="form-select form-control" aria-label="Default select example">
 											<option selected>All Categories</option>
-											<option value="1">House</option>
-											<option value="2">Hotel</option>
+											<option value="0">ONGOING CONSTRUCTION</option>
+											<option value="1">OPEN FOR INVESTMENT</option>
+											<option value="2">CLOSED FOR INVESTMENT</option>
+											<option value="3">RENTED OUT</option>
 										</select>
 									</div>
 								</div>
@@ -282,6 +221,7 @@
 					</div>
 				</div>
 			</div>
+
 		</div>
 		<!-- End Listing Area -->
 
