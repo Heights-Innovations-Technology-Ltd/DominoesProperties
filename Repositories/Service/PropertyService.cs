@@ -81,7 +81,7 @@ namespace Repositories.Service
 
         public PagedList<Property> GetProperties(QueryParams pageParams)
         {
-            return PagedList<Property>.ToPagedList(_context.Properties.OrderBy(on => on.Id),
+            return PagedList<Property>.ToPagedList(_context.Properties.Include(x => x.TypeNavigation).OrderBy(on => on.Id),
                 pageParams.PageNumber,
                 pageParams.PageSize);
         }
