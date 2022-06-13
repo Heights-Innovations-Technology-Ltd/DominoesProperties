@@ -40,12 +40,7 @@ namespace Repositories.Service
 
         public List<Property> GetProperties()
         {
-            var properties = _context.Properties.Local.ToList();
-            if(properties.Count < 1)
-            {
-                properties = _context.Properties.Include(x => x.TypeNavigation).ToList();
-            }
-            return properties;
+            return _context.Properties.Include(x => x.TypeNavigation).ToList();
         }
 
         public Property GetProperty(string uniqueId)
@@ -53,7 +48,7 @@ namespace Repositories.Service
             var property = _context.Properties.Local.SingleOrDefault(x => x.UniqueId.Equals(uniqueId));
             if (property == null)
             {
-                property = _context.Properties.SingleOrDefault(x => x.UniqueId.Equals(uniqueId));
+                property = _context.Properties.Include(x => x.TypeNavigation).SingleOrDefault(x => x.UniqueId.Equals(uniqueId));
             }
             return property;
         }
