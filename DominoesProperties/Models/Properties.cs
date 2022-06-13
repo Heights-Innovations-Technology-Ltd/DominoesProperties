@@ -35,7 +35,6 @@ namespace DominoesProperties.Models
         public DateTime? DateCreated { get; set; }
         public string Longitude { get; set; }
         public string Latitude { get; set; }
-        public PropertyDescription description;
         public string TypeName { get; set; }
         
         [JsonIgnore]

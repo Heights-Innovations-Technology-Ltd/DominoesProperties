@@ -46,6 +46,12 @@ namespace DominoesProperties.Controllers
         public ApiResponse Property([FromQuery] QueryParams queryParams)
         {
             PagedList<Property> property = propertyRepository.GetProperties(queryParams);
+            List<Properties> properties = new();
+            property.ForEach(x => {
+                var prop = ClassConverter.EntityToProperty(x);
+                prop.Description = ClassConverter.ConvertDescription(propertyRepository.GetDescriptionByPropertyId(prop.UniqueId));
+                properties.Add(prop);
+                });
             (int TotalCount, int PageSize, int CurrentPage, int TotalPages, bool HasNext, bool HasPrevious) metadata = (
                 property.TotalCount,
                 property.PageSize,
@@ -58,7 +64,7 @@ namespace DominoesProperties.Controllers
             logger.LogInfo($"Returned {property.TotalCount} queryParams from database.");
             response.Success = true;
             response.Message = "Successfull";
-            response.Data = property;
+            response.Data = properties;
             return response;
         }
 
@@ -67,7 +73,7 @@ namespace DominoesProperties.Controllers
         {
             Property property = propertyRepository.GetProperty(uniqueId);
             Properties properties = ClassConverter.EntityToProperty(property);
-            properties.Description = ClassConverter.ConvertDescription(propertyRepository.GetDescriptionByPropertyId(property.Id.ToString()));
+            properties.Description = ClassConverter.ConvertDescription(propertyRepository.GetDescriptionByPropertyId(property.UniqueId));
             response.Success = true;
             response.Message = "Successfull";
             response.Data = properties;
@@ -81,7 +87,7 @@ namespace DominoesProperties.Controllers
             Property property = ClassConverter.PropertyToEntity(properties);
             property.CreatedBy = adminRepository.GetUser(HttpContext.User.Identity.Name).Email;
             Description description = ClassConverter.DescriptionToEntity(properties.Description);
-            description.PropertyId = propertyRepository.AddNewProperty(property).Id;
+            description.PropertyId = propertyRepository.AddNewProperty(property).UniqueId;
             propertyRepository.AddPropertyDescription(description);
             response.Success = true;
             response.Message = $"Property {property.Name} created successfully";

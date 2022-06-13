@@ -9,7 +9,7 @@ namespace Models.Models
     public partial class Description
     {
         public long Id { get; set; }
-        public long? PropertyId { get; set; }
+        public string PropertyId { get; set; }
         public int? Bathroom { get; set; }
         public int? Toilet { get; set; }
         public int? FloorLevel { get; set; }
