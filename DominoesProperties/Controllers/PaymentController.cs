@@ -21,18 +21,16 @@ namespace DominoesProperties.Controllers
         private static readonly PaystackApiManager payStackApi = new();
         private readonly IConfiguration configuration;
         private readonly ICustomerRepository customerRepository;
-        private readonly IStringLocalizer<PaymentController> localizer;
         private readonly IPaystackRepository paystackRepository;
         private readonly ITransactionRepository transactionRepository;
         private readonly IWalletRepository walletRepository;
         private readonly ApiResponse response = new(false, "Error performing request, contact admin");
         
-        public PaymentController(IConfiguration _configuration, ICustomerRepository _customerRepository, IStringLocalizer<PaymentController> _localizer,
+        public PaymentController(IConfiguration _configuration, ICustomerRepository _customerRepository,
             IPaystackRepository _paystackRepository, ITransactionRepository _transactionRepository, IWalletRepository _walletRepository)
         {
             configuration = _configuration;
             customerRepository = _customerRepository;
-            localizer = _localizer;
             paystackRepository = _paystackRepository;
             transactionRepository = _transactionRepository;
             walletRepository = _walletRepository;
