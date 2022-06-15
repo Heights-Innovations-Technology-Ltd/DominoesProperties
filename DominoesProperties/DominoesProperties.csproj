@@ -47,7 +47,6 @@
     <None Remove="Resources\Controller\" />
     <None Remove="Templates\" />
     <None Remove="FluentEmail.Razor" />
-    <None Remove="es-MX\" />
     <None Remove="My.Extensions.Localization.Json" />
     <None Remove="Azure.Storage.Blobs" />
     <None Remove="Swashbuckle.AspNetCore.Annotations" />
@@ -84,7 +83,6 @@
     <Folder Include="Enums\" />
     <Folder Include="Resources\" />
     <Folder Include="EmailTemplates\" />
-    <Folder Include="es-MX\" />
     <Folder Include="Services\" />
   </ItemGroup>
   <ItemGroup>
