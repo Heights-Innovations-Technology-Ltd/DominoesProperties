@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Localization;
 using Models.Models;
 using Newtonsoft.Json;
 using Repositories.Repository;
@@ -23,7 +22,6 @@ namespace DominoesProperties.Controllers
     {
         private readonly IPropertyRepository propertyRepository;
         private readonly ILoggerManager logger;
-        private readonly IStringLocalizer<PropertyController> localizer;
         private readonly IUtilRepository utilRepository;
         private readonly ApiResponse response = new(false, "Error performing request, contact admin");
         private readonly IConfiguration configuration;
@@ -31,12 +29,11 @@ namespace DominoesProperties.Controllers
         private readonly IAdminRepository adminRepository;
 
 
-        public PropertyController(IPropertyRepository _propertyRepository, ILoggerManager _logger, IStringLocalizer<PropertyController> _localizer,
+        public PropertyController(IPropertyRepository _propertyRepository, ILoggerManager _logger,
             IUtilRepository _utilRepository, IConfiguration _configuration, IUploadRepository _uploadRepository, IAdminRepository _adminRepository)
         {
             propertyRepository = _propertyRepository;
             logger = _logger;
-            localizer = _localizer;
             utilRepository = _utilRepository;
             configuration = _configuration;
             uploadRepository = _uploadRepository;
