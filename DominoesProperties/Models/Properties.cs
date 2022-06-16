@@ -1,6 +1,3 @@
-
-using DominoesProperties.Enums;
-using Models.Models;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
