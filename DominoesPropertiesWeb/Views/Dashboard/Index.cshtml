@@ -3,7 +3,26 @@
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_LayoutDash.cshtml";
 }
+@using Microsoft.AspNetCore.Http;
+		@inject IHttpContextAccessor HttpContextAccessor
 
+		@{
+			var Username = @HttpContextAccessor.HttpContext.Session.GetString("ReferenceId");
+			var IsSubscribed = @HttpContextAccessor.HttpContext.Session.GetString("IsSubscribed");
+			var WalletId = @HttpContextAccessor.HttpContext.Session.GetString("WalletId");
+			var Firstname = @HttpContextAccessor.HttpContext.Session.GetString("Firstname");
+			var Lastname = @HttpContextAccessor.HttpContext.Session.GetString("Lastname");
+			var isAdmin = @HttpContextAccessor.HttpContext.Session.GetString("RoleFK");
+			
+			var userFullName = string.Format("{0} {1}", Firstname, Lastname);
+			if(isAdmin != null && isAdmin != ""){
+				userFullName = @HttpContextAccessor.HttpContext.Session.GetString("Email");
+			}
+		}
+		@Html.Hidden("refId", Username)
+		@Html.Hidden("isSubcribed", IsSubscribed)
+		@Html.Hidden("fullname", userFullName)
+		@Html.Hidden("isAdmin", isAdmin)
 <!-- Start Dashboard Area -->
 <div class="dashboard-area">
 	<div class="container-fluid">
@@ -35,41 +54,83 @@
 
 		<div class="dashboard-interface-card">
 			<div class="row">
-				<div class="col-xl-4 col-sm-6">
-					<div class="single-interface-card">
-						<i class="ri-home-8-line"></i>
-						<p>Total Properties</p>
-						<h2>07</h2>
+				@if(isAdmin != "" && isAdmin != null)
+				{
+					<div class="col-xl-4 col-sm-6">
+						<div class="single-interface-card">
+							<i class="ri-home-8-line"></i>
+							<p>Total Properties</p>
+							<h2>0</h2>
+						</div>
 					</div>
-				</div>
-				<div class="col-xl-4 col-sm-6">
-					<div class="single-interface-card">
-						<i class="ri-home-7-line"></i>
-						<p>Published Properties</p>
-						<h2>05</h2>
+					<div class="col-xl-4 col-sm-6">
+						<div class="single-interface-card">
+							<i class="ri-home-7-line"></i>
+							<p>Active Properties</p>
+							<h2>0</h2>
+						</div>
 					</div>
-				</div>
-				<div class="col-xl-4 col-sm-6">
-					<div class="single-interface-card">
-						<i class="ri-chat-2-line"></i>
-						<p>Pending Properties</p>
-						<h2>0</h2>
+					<div class="col-xl-4 col-sm-6">
+						<div class="single-interface-card">
+							<i class="ri-building-2-line"></i>
+							<p>Active Investments</p>
+							<h2>0</h2>
+						</div>
 					</div>
-				</div>
-				<div class="col-xl-4 col-sm-6">
-					<div class="single-interface-card">
-						<i class="ri-discuss-fill"></i>
-						<p>Wallet Ballance</p>
-						<h2>84</h2>
+					<div class="col-xl-4 col-sm-6">
+						<div class="single-interface-card">
+							<i class="ri-notification-2-fill"></i>
+							<p>Payment Due Investments</p>
+							<h2>0</h2>
+						</div>
 					</div>
-				</div>
-				<div class="col-xl-4 col-sm-6">
-					<div class="single-interface-card">
-						<i class="ri-heart-fill"></i>
-						<p>My Favorites</p>
-						<h2>19</h2>
+					<div class="col-xl-4 col-sm-6">
+						<div class="single-interface-card">
+							<i class="ri-shield-user-fill"></i>
+							<p>Total Customers</p>
+							<h2>0</h2>
+						</div>
 					</div>
-				</div>
+					<div class="col-xl-4 col-sm-6">
+						<div class="single-interface-card">
+							<i class="ri-shield-user-line"></i>
+							<p>Inactive Customers</p>
+							<h2>0</h2>
+						</div>
+					</div>
+				}
+				else
+				{
+					<div class="col-xl-4 col-sm-6">
+						<div class="single-interface-card">
+							<i class="ri-home-8-line"></i>
+							<p>Total Properties</p>
+							<h2>0</h2>
+						</div>
+					</div>
+					<div class="col-xl-4 col-sm-6">
+						<div class="single-interface-card">
+							<i class="ri-home-7-line"></i>
+							<p>Active Properties</p>
+							<h2>0</h2>
+						</div>
+					</div>
+					<div class="col-xl-4 col-sm-6">
+						<div class="single-interface-card">
+							<i class="ri-building-2-line"></i>
+							<p>Active Investments</p>
+							<h2>0</h2>
+						</div>
+					</div>
+					<div class="col-xl-4 col-sm-6">
+						<div class="single-interface-card">
+							<i class="ri-notification-2-fill"></i>
+							<p>Payment Due Investments</p>
+							<h2>0</h2>
+						</div>
+					</div>
+				}
+				
 			</div>
 		</div>
 	</div>

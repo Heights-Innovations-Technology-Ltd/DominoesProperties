@@ -1,7 +1,7 @@
 ﻿
 <!doctype html>
 <html lang="eng">
-<head>
+	<head>
 		<!-- Required meta tags -->
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -24,24 +24,29 @@
 		<!-- Favicon -->
 		<link rel="icon" type="image/png" href="~/images/favicon.png">
 		<!-- Title -->
-		 <title>@ViewData["Title"] - Dominoes Properties</title>
-
-		 @using Microsoft.AspNetCore.Http;
+		<title>@ViewData["Title"] - Dominoes Properties</title>
+    </head>
+	@using Microsoft.AspNetCore.Http;
 		@inject IHttpContextAccessor HttpContextAccessor
 
 		@{
-			var Username = @HttpContextAccessor.HttpContext.Session.GetString("uniqueReference");
+			string Username = @HttpContextAccessor.HttpContext.Session.GetString("ReferenceId");
 			var IsSubscribed = @HttpContextAccessor.HttpContext.Session.GetString("IsSubscribed");
 			var WalletId = @HttpContextAccessor.HttpContext.Session.GetString("WalletId");
 			var Firstname = @HttpContextAccessor.HttpContext.Session.GetString("Firstname");
 			var Lastname = @HttpContextAccessor.HttpContext.Session.GetString("Lastname");
+			var isAdmin = @HttpContextAccessor.HttpContext.Session.GetString("RoleFK");
+			
 			var userFullName = string.Format("{0} {1}", Firstname, Lastname);
+			if(isAdmin != null && isAdmin != ""){
+				userFullName = @HttpContextAccessor.HttpContext.Session.GetString("Email");
+			}
 		}
+
 		@Html.Hidden("refId", Username)
 		@Html.Hidden("isSubcribed", IsSubscribed)
 		@Html.Hidden("fullname", userFullName)
-    </head>
-
+		@Html.Hidden("isAdmin", isAdmin)
     <body>
 		<!-- Start Preloader Area -->
 		<div class="preloader" id="loader-style">
@@ -73,8 +78,8 @@
 				<div class="container-fluid">
 					<nav class="navbar navbar-expand-md navbar-light">
 						<a class="navbar-brand" href="index-2.html">
-							<img src="~/images/logo.pg" class="main-logo" alt="logo">
-							<img src="~/images/white-logo.pg" class="white-logo" alt="logo">
+							<img src="~/images/logo.png" class="main-logo" alt="logo">
+							<img src="~/images/white-logo.png" class="white-logo" alt="logo">
 						</a>
 
 						<div class="collapse navbar-collapse mean-menu" id="navbarSupportedContent">
@@ -94,8 +99,8 @@
 									</a>
 								</li>
 								<li class="nav-item">
-									<a href="#" class="nav-link">
-										Properties            
+									<a href="javascript:void(0)" class="nav-link" id="property-link">
+										Properties
 									</a>
 								</li>
 								<li class="nav-item">
@@ -111,24 +116,58 @@
 
 							<div class="others-options style">
 								<ul>
-									@*<li>
-										<a href="my-listings.html" class="wishlist">
-											<i class="ri-heart-line"></i>
-											<span>0</span>
-										</a>
-									</li>
-									<li>
-										<a href="my-account.html" class="login">
-											<i class="ri-user-line"></i>
-										</a>
-									</li>*@
-									<li>
-										<a asp-controller="Home" asp-action="SignIn" class="default-btn">
-											Sign In / Sign Up
-										</a>
-									</li>
+							
+									@if(Username == "" || userFullName == " "){
+										<li>
+											<a asp-controller="Home" asp-action="SignIn" class="default-btn">
+												Sign In / Sign Up
+											</a>
+										</li>
+									}
+
+									@if(isAdmin != null || Username != null)
+									{
+										<li>
+											<div class="dropdown">
+												<button type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+													<img src="~/images/agents/agent-1.jpg" alt="Image">
+													<span>@userFullName</span>
+												</button>
+												<ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+													<li>
+														<a asp-controller="Dashboard" asp-action="Index">
+															<i class="ri-dashboard-line"></i>
+															Dashboard
+														</a>
+													</li>
+													@if(userFullName != null)
+													{
+														<li>
+															<a asp-controller="Dashboard" asp-action="Profile">
+																<i class="ri-user-line"></i>
+																My Profile
+															</a>
+														</li>
+													}
+													<li>
+														<a href="edit-profile.html">
+															<i class="ri-settings-2-line"></i>
+															Setting
+														</a>
+													</li>
+													<li>
+														<a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#signoutModal">
+															<i class="ri-logout-box-r-line"></i>
+															Sign out
+														</a>
+													</li>
+												</ul>
+											</div>
+										</li>
+									}
 								</ul>
 							</div>
+							
 						</div>
 					</nav>
 				</div>
@@ -285,8 +324,8 @@
 					<div class="col-lg-3 col-sm-6">
 						<div class="single-footer-widget wow animate__animated animate__fadeInUp delay-0-2s">
 							<a href="index-2.html">
-								<img src="~/images/logo.pg" class="main-logo" alt="Dominoes logo">
-								<img src="~/images/white-logo.pg" class="white-logo" alt="Dominoes logo">
+								<img src="~/images/logo.png" class="main-logo" alt="Dominoes logo">
+								<img src="~/images/white-logo.png" class="white-logo" alt="Dominoes logo">
 							</a>
 
 							<p>We are a great agency for buying and selling your property with confidence. So you can easily buy and sell through our company.</p>
@@ -336,6 +375,7 @@
 									<a href="#">Contact us</a>
 								</li>
 							</ul>
+						
 						</div>
 					</div>
 
@@ -382,6 +422,44 @@
 			</div>
 		</div>
 		<!-- End Copyright Area -->
+
+		<!-- Start subscribe modal-->
+		<div class="modal fade" id="subscribeModal" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+			<div class="modal-dialog modal-dialog-centered">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="exampleModalToggleLabel">Warning!!!</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						Property details can only be view by subscribed users, kindly subscribe to get full access 
+					</div>
+					<div class="modal-footer">
+						<button class="btn btn-primary btn-subscribe" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal" data-bs-dismiss="modal">Subcribe</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- End Subscribe Modal-->
+		 <!-- Start signout modal-->
+		<div class="modal fade" id="signoutModal" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+			<div class="modal-dialog modal-dialog-centered">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="exampleModalToggleLabel">Warning!!!</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						Are you sure you want to logout?
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+						<button type="button" class="btn btn-primary" id="signout">Logout</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- End Signout Modal-->
 
 		<!-- Start Go Top Area -->
 		<div class="go-top">

@@ -94,6 +94,7 @@ namespace DominoesProperties.Controllers
                     _ = new ExceptionFormatter(logger, ex);
                 }
             }
+           
             response.Message = $"Admin user {admin.Email} created successfully";
             return response;
         }
