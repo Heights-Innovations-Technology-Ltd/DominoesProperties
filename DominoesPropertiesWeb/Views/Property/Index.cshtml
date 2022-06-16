@@ -5,72 +5,79 @@
 }
 
 <!-- Start Dashboard Area -->
-		<div class="dashboard-area">
-			<div class="container-fluid">
-				<div class="dashboard-title-wrap">
-					<div class="row align-items-center">
-						<div class="col-lg-6 col-sm-6">
-							<ul class="dashboard-page-title">
-								<li>
-									<a href="dashboard.html">
-										Home 
-									</a>
-								</li>
+	<div class="dashboard-area">
+		<div class="container-fluid">
+			<div class="dashboard-title-wrap">
+				<div class="row align-items-center">
+					<div class="col-lg-6 col-sm-6">
+						<ul class="dashboard-page-title">
+							<li>
+								<a href="dashboard.html">
+									Home 
+								</a>
+							</li>
 		
-								<li class="active">Properties</li>
-							</ul>
+							<li class="active">Properties</li>
+						</ul>
+					</div>
+					<div class="col-lg-6 col-sm-6">
+						<form class="dashboard-src-form">
+							<div class="form-group">
+								<input type="text" class="form-control" placeholder="Search">
+								<button type="submit" class="src-btn">
+									<i class="ri-search-line"></i>
+								</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+
+			<div class="my-listing">
+				<div class="latest-lavel">
+					<div class="row align-items-center">
+					
+						<div class="col-lg-6 col-sm-6 add-property">
+							
 						</div>
+	
 						<div class="col-lg-6 col-sm-6">
-							<form class="dashboard-src-form">
-								<div class="form-group">
-									<input type="text" class="form-control" placeholder="Search">
-									<button type="submit" class="src-btn">
-										<i class="ri-search-line"></i>
-									</button>
-								</div>
-							</form>
+							<select class="form-select form-control" aria-label="Default select example">
+								<option selected>Latest</option>
+								<option value="1">Lavel One</option>
+								<option value="2">Lavel Two</option>
+								<option value="3">Lavel Three</option>
+							</select>
 						</div>
 					</div>
 				</div>
 
-				<div class="my-listing">
-					<div class="latest-lavel">
-						<div class="row align-items-center">
-							<div class="col-lg-6 col-sm-6">
-								<a asp-controller="Property" asp-action="Create" class="default-btn">Add New Property</a>
-							</div>
-	
-							<div class="col-lg-6 col-sm-6">
-								<select class="form-select form-control" aria-label="Default select example">
-									<option selected>Latest</option>
-									<option value="1">Lavel One</option>
-									<option value="2">Lavel Two</option>
-									<option value="3">Lavel Three</option>
-								</select>
-							</div>
-						</div>
-					</div>
-
-					<div class="row" id="properties">
+				<div class="row" id="properties">
 						
-						<div class="col-lg-12">
-							<div class="pagination-area">
-								<a href="#" class="next page-numbers">
-									<i class="ri-arrow-left-line"></i>
-								</a>
-								<span class="page-numbers current" aria-current="page">1</span>
-								<a href="#" class="page-numbers">2</a>
-								<a href="#" class="page-numbers">3</a>
-								<a href="#" class="page-numbers">4</a>
+					<div class="col-lg-12">
+						<div class="pagination-area">
+							<a href="#" class="next page-numbers">
+								<i class="ri-arrow-left-line"></i>
+							</a>
+							<span class="page-numbers current" aria-current="page">1</span>
+							<a href="#" class="page-numbers">2</a>
+							<a href="#" class="page-numbers">3</a>
+							<a href="#" class="page-numbers">4</a>
 								
-								<a href="#" class="next page-numbers">
-									<i class="ri-arrow-right-line"></i>
-								</a>
-							</div>
+							<a href="#" class="next page-numbers">
+								<i class="ri-arrow-right-line"></i>
+							</a>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
-		<!-- End Dashboard Area -->
+	</div>
+	<!-- End Dashboard Area -->
+
+		<script>
+			$(document).ready(() =>{
+				GetProperties("admin");
+			})
+		</script>
 

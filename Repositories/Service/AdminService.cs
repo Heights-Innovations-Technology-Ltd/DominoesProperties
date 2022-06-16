@@ -21,7 +21,7 @@ namespace Repositories.Service
                 _context.SaveChanges();
                 return true;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return false;
             }

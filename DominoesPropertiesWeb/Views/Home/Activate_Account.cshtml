@@ -1,0 +1,30 @@
+﻿
+@{
+    ViewData["Title"] = "Activate_Account";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- Start Coming Soon Area -->
+	<div class="coming-soon-area">
+        <div id="msg"></div>
+        <div class="d-table">
+            <div class="d-table-cell">
+                <div class="coming-soon-content">
+					<h4 class="active-title">Kindly click on the below button to activate your estate account</h4>
+						
+                    <button type="button" class="default-btn btn-activate d-none">
+							Activate
+							<i class="flaticon-next"></i>
+					</button>
+                </div>
+            </div>
+		</div>
+    </div>
+    <!-- End Coming Soon Area -->
+
+    <script>
+        $(document).ready(() => {
+            $('.btn-activate').trigger('click');
+        });
+    </script>
+
