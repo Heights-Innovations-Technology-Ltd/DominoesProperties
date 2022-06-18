@@ -1,9 +1,9 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using Models.Models;
 
 #nullable disable
 
-namespace Models.Models
+namespace Models.Context
 {
     public partial class dominoespropertiesContext : DbContext
     {
@@ -164,9 +164,6 @@ namespace Models.Models
             {
                 entity.ToTable("Description");
 
-                entity.HasIndex(e => e.PropertyId, "Description_PropertyId_uindex")
-                    .IsUnique();
-
                 entity.Property(e => e.AirConditioned).HasColumnType("bit(1)");
 
                 entity.Property(e => e.Basement).HasColumnType("bit(1)");
@@ -186,12 +183,6 @@ namespace Models.Models
                 entity.Property(e => e.SecurityGuard).HasColumnType("bit(1)");
 
                 entity.Property(e => e.SwimmingPool).HasColumnType("bit(1)");
-
-                entity.HasOne(d => d.Property)
-                    .WithOne(p => p.DescriptionNavigation)
-                    .HasForeignKey<Description>(d => d.PropertyId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("Description_Property_Id_fk");
             });
 
             modelBuilder.Entity<Investment>(entity =>
@@ -276,8 +267,6 @@ namespace Models.Models
 
                 entity.HasIndex(e => e.CreatedBy, "Property_Admin_Email_fk");
 
-                entity.HasIndex(e => e.Description, "Property_Description_Id_fk");
-
                 entity.HasIndex(e => e.Type, "Property_Property_Type_Id_fk");
 
                 entity.HasIndex(e => e.UniqueId, "Property_UniqueId_uindex")
@@ -327,48 +316,10 @@ namespace Models.Models
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("Property_Admin_Email_fk");
 
-                entity.HasOne(d => d.Description1)
-                    .WithMany(p => p.Properties)
-                    .HasForeignKey(d => d.Description)
-                    .HasConstraintName("Property_Description_Id_fk");
-
                 entity.HasOne(d => d.TypeNavigation)
                     .WithMany(p => p.Properties)
                     .HasForeignKey(d => d.Type)
                     .HasConstraintName("Property_Property_Type_Id_fk");
-            });
-
-            modelBuilder.Entity<PropertyImage>(entity =>
-            {
-                entity.ToTable("PropertyImage");
-
-                entity.HasIndex(e => e.UploadedBy, "PropertyImage_Admin_Email_fk");
-
-                entity.HasIndex(e => e.ImageUrl, "PropertyImage_ImageUrl_uindex")
-                    .IsUnique();
-
-                entity.HasIndex(e => e.PropertyId, "PropertyImage_Property_Id_fk");
-
-                entity.Property(e => e.DateUploaded).HasDefaultValueSql("CURRENT_TIMESTAMP");
-
-                entity.Property(e => e.ImageUrl)
-                    .IsRequired()
-                    .HasMaxLength(500);
-
-                entity.Property(e => e.UploadedBy)
-                    .IsRequired()
-                    .HasMaxLength(200);
-
-                entity.HasOne(d => d.Property)
-                    .WithMany(p => p.PropertyImages)
-                    .HasForeignKey(d => d.PropertyId)
-                    .HasConstraintName("PropertyImage_Property_Id_fk");
-
-                entity.HasOne(d => d.UploadedByNavigation)
-                    .WithMany(p => p.PropertyImages)
-                    .HasForeignKey(d => d.UploadedBy)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("PropertyImage_Admin_Email_fk");
             });
 
             modelBuilder.Entity<PropertyType>(entity =>
@@ -384,18 +335,21 @@ namespace Models.Models
 
             modelBuilder.Entity<PropertyUpload>(entity =>
             {
+                entity.HasIndex(e => e.PropertyId, "PropertyUploads_Property_Id_fk");
+
                 entity.HasIndex(e => e.Url, "PropertyUploads_Url_uindex")
                     .IsUnique();
 
                 entity.Property(e => e.ImageName).HasMaxLength(100);
 
-                entity.Property(e => e.PropertyId)
-                    .IsRequired()
-                    .HasMaxLength(50);
-
                 entity.Property(e => e.Url)
                     .IsRequired()
                     .HasMaxLength(500);
+
+                entity.HasOne(d => d.Property)
+                    .WithMany(p => p.PropertyUploads)
+                    .HasForeignKey(d => d.PropertyId)
+                    .HasConstraintName("PropertyUploads_Property_Id_fk");
             });
 
             modelBuilder.Entity<Role>(entity =>

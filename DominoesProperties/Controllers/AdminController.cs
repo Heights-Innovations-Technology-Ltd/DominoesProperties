@@ -50,9 +50,17 @@ namespace DominoesProperties.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Admin", Policy = "Super")]
-        public async Task<ApiResponse> AdminAsync([FromBody] AdminUser admin)
+        public async Task<ApiResponse> AdminAsync([FromHeader] string apiKey, [FromHeader] string adminUsername, [FromBody] AdminUser admin)
         {
+            if(string.IsNullOrEmpty(apiKey) || !")H@McQfTjWnZr4t7w!z%C*F-JaNdRgUkXp2s5v8x/A?D(G+KbPeShVmYq3t6w9z$".Equals(apiKey))
+            {
+                throw new UnauthorizedAccessException("Unauthorised user access, kindly contact admin");
+            }
+            if (adminRepository.GetUser(adminUsername).RoleFk != (int) Enums.Role.SUPER)
+            {
+                response.Message = $"Invalid admin user {admin.Email}";
+                return response;
+            }
             if (adminRepository.GetUser(admin.Email) != null)
             {
                 response.Message = $"User exist with email {admin.Email}";
@@ -64,8 +72,7 @@ namespace DominoesProperties.Controllers
                 return response;
             }
             var adminEntity = ClassConverter.UserToAdmin(admin);
-            adminEntity.CreatedBy = HttpContext.User.Identity.Name;
-
+            adminEntity.CreatedBy = adminUsername;
             if (adminRepository.AddUser(adminEntity))
             {
                 try
@@ -87,6 +94,7 @@ namespace DominoesProperties.Controllers
                     _ = new ExceptionFormatter(logger, ex);
                 }
             }
+           
             response.Message = $"Admin user {admin.Email} created successfully";
             return response;
         }
@@ -182,7 +190,8 @@ namespace DominoesProperties.Controllers
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
             var claims = new[] {
-                new Claim(JwtRegisteredClaimNames.UniqueName, uniqueRef),new Claim(JwtRegisteredClaimNames.Jti, Convert.ToString(Guid.NewGuid()))
+                new Claim(JwtRegisteredClaimNames.UniqueName, uniqueRef),
+                new Claim(JwtRegisteredClaimNames.Jti, uniqueRef)
             };
 
             var token = new JwtSecurityToken(configuration["app_settings:Issuer"],

@@ -5,193 +5,79 @@
 }
 
 <!-- Start Dashboard Area -->
-		<div class="dashboard-area">
-			<div class="container-fluid">
-				<div class="dashboard-title-wrap">
-					<div class="row align-items-center">
-						<div class="col-lg-6 col-sm-6">
-							<ul class="dashboard-page-title">
-								<li>
-									<a href="dashboard.html">
-										Home 
-									</a>
-								</li>
+	<div class="dashboard-area">
+		<div class="container-fluid">
+			<div class="dashboard-title-wrap">
+				<div class="row align-items-center">
+					<div class="col-lg-6 col-sm-6">
+						<ul class="dashboard-page-title">
+							<li>
+								<a href="dashboard.html">
+									Home 
+								</a>
+							</li>
 		
-								<li class="active">Properties</li>
-							</ul>
+							<li class="active">Properties</li>
+						</ul>
+					</div>
+					<div class="col-lg-6 col-sm-6">
+						<form class="dashboard-src-form">
+							<div class="form-group">
+								<input type="text" class="form-control" placeholder="Search">
+								<button type="submit" class="src-btn">
+									<i class="ri-search-line"></i>
+								</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+
+			<div class="my-listing">
+				<div class="latest-lavel">
+					<div class="row align-items-center">
+					
+						<div class="col-lg-6 col-sm-6 add-property">
+							
 						</div>
+	
 						<div class="col-lg-6 col-sm-6">
-							<form class="dashboard-src-form">
-								<div class="form-group">
-									<input type="text" class="form-control" placeholder="Search">
-									<button type="submit" class="src-btn">
-										<i class="ri-search-line"></i>
-									</button>
-								</div>
-							</form>
+							<select class="form-select form-control" aria-label="Default select example">
+								<option selected>Latest</option>
+								<option value="1">Lavel One</option>
+								<option value="2">Lavel Two</option>
+								<option value="3">Lavel Three</option>
+							</select>
 						</div>
 					</div>
 				</div>
 
-				<div class="my-listing">
-					<div class="latest-lavel">
-						<div class="row align-items-center">
-							<div class="col-lg-6 col-sm-6">
-								<a asp-controller="Property" asp-action="Create" class="default-btn">Add New Property</a>
-							</div>
-	
-							<div class="col-lg-6 col-sm-6">
-								<select class="form-select form-control" aria-label="Default select example">
-									<option selected>Latest</option>
-									<option value="1">Lavel One</option>
-									<option value="2">Lavel Two</option>
-									<option value="3">Lavel Three</option>
-								</select>
-							</div>
-						</div>
-					</div>
-
-					<div class="row">
-						<div class="col-xl-4 col-md-6">
-							<div class="single-featured-item">
-								<div class="featured-img mb-0">
-									<img src="~/images/featured/featured-1.jpg" alt="Image">
-									<span>Rent</span>
-								</div>
-								<div class="featured-content style-three">
-									<div class="d-flex justify-content-between">
-										<h3>
-											<a href="single-listing.html">House For Rent</a>
-										</h3>
-										<h3 class="price">$ 600,000</h3>
-									</div>
-									<p>
-										<i class="ri-map-pin-fill"></i>
-										77 Morris St. Ridgewood, NJ 67655
-									</p>
-									<ul>
-										<li>
-											<i class="ri-hotel-bed-fill"></i>
-											5 Bed
-										</li>
-										<li>
-											<i class="ri-wheelchair-fill"></i>
-											5 Bath
-										</li>
-										<li>
-											<i class="ri-ruler-2-line"></i>
-											1000 Sqft
-										</li>
-									</ul>
-		
-									<a href="agents.html" class="agent-user">
-										<img src="~/images/agents/agent-5.jpg" alt="Image">
-										<span>By Darlene Small</span>
-									</a>
-								</div>
-							</div>
-						</div>
-	
-						<div class="col-xl-4 col-md-6">
-							<div class="single-featured-item">
-								<div class="featured-img mb-0">
-									<img src="~/images/featured/featured-2.jpg" alt="Image">
-									<span>Sale</span>
-								</div>
-								<div class="featured-content style-three">
-									<div class="d-flex justify-content-between">
-										<h3>
-											<a href="single-listing.html">House For Sall</a>
-										</h3>
-										<h3 class="price">$ 900,000</h3>
-									</div>
-									<p>
-										<i class="ri-map-pin-fill"></i>
-										7788 Randall Mill Drive Waldorf, MD 22666
-									</p>
-									<ul>
-										<li>
-											<i class="ri-hotel-bed-fill"></i>
-											6 Bed
-										</li>
-										<li>
-											<i class="ri-wheelchair-fill"></i>
-											5 Bath
-										</li>
-										<li>
-											<i class="ri-ruler-2-line"></i>
-											1200 Sqft
-										</li>
-									</ul>
-		
-									<a href="agents.html" class="agent-user">
-										<img src="~/images/agents/agent-6.jpg" alt="Image">
-										<span>By Florence Prada</span>
-									</a>
-								</div>
-							</div>
-						</div>
-	
-						<div class="col-xl-4 col-md-6">
-							<div class="single-featured-item">
-								<div class="featured-img mb-0">
-									<img src="~/images/featured/featured-3.jpg" alt="Image">
-									<span>Rent</span>
-								</div>
-								<div class="featured-content style-three">
-									<div class="d-flex justify-content-between">
-										<h3>
-											<a href="single-listing.html">House For Rent</a>
-										</h3>
-										<h3 class="price">$ 700,000</h3>
-									</div>
-									<p>
-										<i class="ri-map-pin-fill"></i>
-										33 Winding Way Ave. New Bern, NC 28280
-									</p>
-									<ul>
-										<li>
-											<i class="ri-hotel-bed-fill"></i>
-											5 Bed
-										</li>
-										<li>
-											<i class="ri-wheelchair-fill"></i>
-											4 Bath
-										</li>
-										<li>
-											<i class="ri-ruler-2-line"></i>
-											1150 Sqft
-										</li>
-									</ul>
-		
-									<a href="agents.html" class="agent-user">
-										<img src="~/images/agents/agent-7.jpg" alt="Image">
-										<span>By Anthony Nguyen</span>
-									</a>
-								</div>
-							</div>
-						</div>
-	
+				<div class="row" id="properties">
 						
-
-						<div class="col-lg-12">
-							<div class="pagination-area">
-								<a href="#" class="next page-numbers">
-									<i class="ri-arrow-left-line"></i>
-								</a>
-								<span class="page-numbers current" aria-current="page">1</span>
-								<a href="#" class="page-numbers">2</a>
-								<a href="#" class="page-numbers">3</a>
-								<a href="#" class="page-numbers">4</a>
+					<div class="col-lg-12">
+						<div class="pagination-area">
+							<a href="#" class="next page-numbers">
+								<i class="ri-arrow-left-line"></i>
+							</a>
+							<span class="page-numbers current" aria-current="page">1</span>
+							<a href="#" class="page-numbers">2</a>
+							<a href="#" class="page-numbers">3</a>
+							<a href="#" class="page-numbers">4</a>
 								
-								<a href="#" class="next page-numbers">
-									<i class="ri-arrow-right-line"></i>
-								</a>
-							</div>
+							<a href="#" class="next page-numbers">
+								<i class="ri-arrow-right-line"></i>
+							</a>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
-		<!-- End Dashboard Area -->
+	</div>
+	<!-- End Dashboard Area -->
+
+		<script>
+			$(document).ready(() =>{
+				GetProperties("admin");
+			})
+		</script>
 

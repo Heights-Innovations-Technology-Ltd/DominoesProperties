@@ -17,6 +17,7 @@ namespace DominoesPropertiesWeb.HttpContext
 
         string url = string.Empty;
         dynamic jsonObj = new JObject();
+        
         private readonly ISession session;
 
         HttpClient client = new HttpClient();
@@ -26,6 +27,7 @@ namespace DominoesPropertiesWeb.HttpContext
             _config = config;
             url = _config["Base_URL"];
             session = httpContextAccessor.HttpContext.Session;
+            
         }
         public async Task<dynamic> Get(string endpointURL)
         {
@@ -82,6 +84,44 @@ namespace DominoesPropertiesWeb.HttpContext
                         }
 
                         if (result.Headers.Contains("access_token")) { jsonObj.TokenObj = result.Headers.GetValues("access_token").First(); }
+                    }
+                    else
+                    {
+                        var res = JsonConvert.DeserializeObject<dynamic>(Convert.ToString(responJsonText));
+                        jsonObj.Message = Convert.ToString(res["errors"]);
+                    }
+                    return jsonObj;
+                }
+            }
+        }
+
+        public async Task<dynamic> Put(string endpointURL, dynamic obj)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Put, url))
+            {
+                var token = this.session.GetString("Token");
+                client.DefaultRequestHeaders.Add("Authorization",
+                    "Bearer " + token);
+
+                using (var stringContent = new StringContent(JsonConvert.SerializeObject(obj), Encoding.UTF8, "application/json"))
+                {
+                    var result = await client.PutAsync(url + endpointURL, stringContent);
+                    string responJsonText = await result.Content.ReadAsStringAsync();
+                    if (result.IsSuccessStatusCode)
+                    {
+                        var res = JsonConvert.DeserializeObject<dynamic>(Convert.ToString(responJsonText));
+                        var success = Convert.ToBoolean(res["success"]);
+                        if (success)
+                        {
+                            jsonObj.Success = success;
+                            jsonObj.Data = Convert.ToString(res["data"]);
+                            jsonObj.Message = Convert.ToString(res["message"]);
+                        }
+                        else
+                        {
+                            jsonObj.Success = false;
+                            jsonObj.Data = Convert.ToString(res["message"]);
+                        }
                     }
                     else
                     {

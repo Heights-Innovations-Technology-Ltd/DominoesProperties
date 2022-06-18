@@ -4,7 +4,6 @@ using Helpers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Repositories.Repository;
-using Microsoft.Extensions.Localization;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 using Models.Models;
@@ -21,24 +20,22 @@ namespace DominoesProperties.Controllers
         private static readonly PaystackApiManager payStackApi = new();
         private readonly IConfiguration configuration;
         private readonly ICustomerRepository customerRepository;
-        private readonly IStringLocalizer<PaymentController> localizer;
         private readonly IPaystackRepository paystackRepository;
         private readonly ITransactionRepository transactionRepository;
         private readonly IWalletRepository walletRepository;
         private readonly ApiResponse response = new(false, "Error performing request, contact admin");
         
-        public PaymentController(IConfiguration _configuration, ICustomerRepository _customerRepository, IStringLocalizer<PaymentController> _localizer,
+        public PaymentController(IConfiguration _configuration, ICustomerRepository _customerRepository,
             IPaystackRepository _paystackRepository, ITransactionRepository _transactionRepository, IWalletRepository _walletRepository)
         {
             configuration = _configuration;
             customerRepository = _customerRepository;
-            localizer = _localizer;
             paystackRepository = _paystackRepository;
             transactionRepository = _transactionRepository;
             walletRepository = _walletRepository;
         }
 
-        [HttpGet]
+        [HttpPost]
         [Authorize]
         public ApiResponse InitiateTransaction([FromBody] Payment payment)
         {
@@ -51,7 +48,7 @@ namespace DominoesProperties.Controllers
                 amount = amount*100,
                 email = customer.Email,
                 reference = transRef,
-                callback = string.Format("{0}://{1}/{2}/{3}", Request.Scheme, Request.Host, "api/payment/verify-payment", transRef)
+                callback = string.Format("{0}{1}/{2}", configuration["app_settings:WebEndpoint"], "verify-payment", transRef)
             };
 
             var initResponse = payStackApi.MobileAppInitTransaction(m).Data;
@@ -64,19 +61,20 @@ namespace DominoesProperties.Controllers
             paystack.Type = TransactionType.CR.ToString();
             paystackRepository.NewPayment(paystack);
             response.Success = true;
-            response.Message = localizer["Response.Success"];
+            response.Message = "Successfully initialized payment link";
             response.Data = Convert.ToString(jObject["authorization_url"]);
             return response;
         }
 
         [HttpGet("verify-payment/{reference}")]
         [Authorize]
-        public void Subscribe(string reference)
+        public ApiResponse Subscribe(string reference)
         {
             var returns = Convert.ToString(payStackApi.VerifyTransaction(reference).Data);
             if (string.IsNullOrWhiteSpace(returns))
             {
-                return;
+                response.Message = "Unsuccessful transaction, try again later";
+                return response;
             }
 
             JObject jObject = JsonConvert.DeserializeObject<JObject>(returns);
@@ -105,6 +103,10 @@ namespace DominoesProperties.Controllers
                 wallet.LastTransactionDate = DateTime.Now;
                 walletRepository.UpdateCustomerWallet(wallet);
             }
+
+            response.Success = true;
+            response.Message = string.Format("Payment successfully done");
+            return response;
         }
     }
 }

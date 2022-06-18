@@ -55,6 +55,17 @@ namespace DominoesPropertiesWeb.Controllers
             return View();
         }
 
+        public IActionResult Properties()
+        {
+            return View();
+        }
+
+        [HttpGet("/Home/PropertyDetails/{uniqueid}")]
+        public IActionResult PropertyDetails(string uniqueid)
+        {
+            return View();
+        }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
@@ -103,11 +114,48 @@ namespace DominoesPropertiesWeb.Controllers
             return Json(JsonConvert.SerializeObject(jsonObj));
         }
 
-
-        [Route("get-customer")]
-        public async Task<JsonResult> Customer()
+        [HttpGet("/Home/activate_account/{token}")]
+        public IActionResult Activate_Account(string token, [FromQuery(Name = "value")]string value)
         {
-            var res = Task.Run(() => httpContext.Get("Customer"));
+            return View();
+        }
+
+        [Route("activate")]
+        public async Task<JsonResult> ActivateAccount([FromBody] dynamic token)
+        {
+            JObject jObject = JsonConvert.DeserializeObject<JObject>(Convert.ToString(token));
+            
+            var res = Task.Run(() => httpContext.Put("Customer/activate/" + Convert.ToString(jObject["token"]), null));
+            await Task.WhenAll(res);
+            var data = res.Status == TaskStatus.RanToCompletion ? res.Result : null;
+            return Json(JsonConvert.SerializeObject(data));
+        }
+        
+
+        [Route("subscribe")]
+        public async Task<JsonResult> Subscribe() 
+        {
+            dynamic obj = new ExpandoObject();
+
+            obj.Amount = 10000;
+            obj.Module = 1;
+            obj.InvestmentId = 0;
+            var res = Task.Run(() => httpContext.Post("Payment", obj));
+            var data = await res.GetAwaiter().GetResult();
+            return Json(JsonConvert.SerializeObject(data));
+        }
+
+        [HttpGet("/Home/verify-payment/{token}")]
+        public IActionResult VerifyPayment(string token, [FromQuery(Name = "value")] string value)
+        {
+            return View();
+        }
+
+        [Route("/verifypayment/{token}")]
+        public async Task<JsonResult> Verify(string token)
+        {
+            
+            var res = Task.Run(() => httpContext.Get("Payment/verify-payment/" + token ));
             await Task.WhenAll(res);
             var data = res.Status == TaskStatus.RanToCompletion ? res.Result : null;
             return Json(JsonConvert.SerializeObject(data));

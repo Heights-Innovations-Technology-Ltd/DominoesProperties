@@ -295,7 +295,7 @@ namespace Helpers
         {
             try
             {
-                HtmlToPdf converter = new HtmlToPdf();
+                HtmlToPdf converter = new();
                 converter.Options.MarginLeft = 10;
                 converter.Options.MarginTop = 10;
                 converter.Options.MarginRight = 10;
@@ -334,7 +334,7 @@ namespace Helpers
             bool result = false;
             try
             {
-                using (Process proc = new Process())
+                using (Process proc = new())
                 {
                     proc.StartInfo.FileName = "nslookup";
                     proc.StartInfo.Arguments = string.Format("-type={0} {1}", recType, host);
@@ -406,11 +406,11 @@ namespace Helpers
                 SmtpClient client = new()
                 {
                     //UseDefaultCredentials = false,
-                    //Credentials = new NetworkCredential("jcobsmofe@gmail.com", "Problematic2&"),
-                    //Port = 587,
+                    //Credentials = new NetworkCredential("aojinadu@demotekglobal.com", "Oluwabusayomi1"),
+                    //Port = 465,
                     //EnableSsl = true,
                     //DeliveryMethod = SmtpDeliveryMethod.Network,
-                    //Host = "smtp.gmail.com"
+                    //Host = "demotekglobal.com"
 
                     UseDefaultCredentials = false,
                     Credentials = new NetworkCredential("laila.abshire20@ethereal.email", "qC65VDTRhFfzTYmWWB"),
@@ -454,14 +454,14 @@ namespace Helpers
                 string devEmail = "jcobsmofe@gmail.com";
                 MailMessage mail;
                 mail = new MailMessage(devEmail, "ce080123@gmail.com");
-                mail.CC.Add("dev.nestbank.ng@gmail.com");
+                mail.CC.Add("aojinadu@demotekglobal.com");
                 SmtpClient client = new SmtpClient();
                 client.UseDefaultCredentials = false;
-                client.Credentials = new NetworkCredential("jcobsmofe@gmail.com", "Problematic2&");
+                client.Credentials = new NetworkCredential("aojinadu@demotekglobal.com", "Oluwabusayomi1");
                 client.Port = 587;
                 client.EnableSsl = true;
                 client.DeliveryMethod = SmtpDeliveryMethod.Network;
-                client.Host = "smtp.gmail.com";
+                client.Host = "demotekglobal.com";
                 mail.Subject = subject;
                 mail.Body = body;
                 mail.IsBodyHtml = true;

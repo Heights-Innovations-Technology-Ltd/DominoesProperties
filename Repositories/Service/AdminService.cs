@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Models.Context;
 using Models.Models;
 using Repositories.Repository;
 
@@ -20,7 +21,7 @@ namespace Repositories.Service
                 _context.SaveChanges();
                 return true;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return false;
             }

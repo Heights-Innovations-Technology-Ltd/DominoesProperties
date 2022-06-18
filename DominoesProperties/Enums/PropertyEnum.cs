@@ -5,6 +5,12 @@ namespace DominoesProperties.Enums
     {
     }
 
+    public enum Role
+    {
+        ADMIN = 2,
+        SUPER = 1
+    }
+
     public enum PropertyStatus
     {
         ONGOING_CONSTRUCTION,

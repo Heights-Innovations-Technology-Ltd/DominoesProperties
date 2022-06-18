@@ -36,11 +36,17 @@
 			var WalletId = @HttpContextAccessor.HttpContext.Session.GetString("WalletId");
 			var Firstname = @HttpContextAccessor.HttpContext.Session.GetString("Firstname");
 			var Lastname = @HttpContextAccessor.HttpContext.Session.GetString("Lastname");
+			var isAdmin = @HttpContextAccessor.HttpContext.Session.GetString("RoleFK");
+			
 			var userFullName = string.Format("{0} {1}", Firstname, Lastname);
+			if(isAdmin != null && isAdmin != ""){
+				userFullName = @HttpContextAccessor.HttpContext.Session.GetString("Email");
+			}
 		}
 		@Html.Hidden("refId", Username)
 		@Html.Hidden("isSubcribed", IsSubscribed)
 		@Html.Hidden("fullname", userFullName)
+		@Html.Hidden("isAdmin", isAdmin)
     <body>
 		<script>
 			$(function(){
@@ -77,20 +83,12 @@
 				<div class="container-fluid">
 					<nav class="navbar navbar-expand-md navbar-light">
 						<a class="navbar-brand" href="index-2.html">
-							<img src="~/images/logo.pg" class="main-logo" alt="logo">
-							<img src="~/images/white-logo.pg" class="white-logo" alt="logo">
+							<img src="~/images/logo.png" class="main-logo" alt="logo">
+							<img src="~/images/white-logo.png" class="white-logo" alt="logo">
 						</a>
 
 						<div class="collapse navbar-collapse mean-menu" id="navbarSupportedContent">
-							<div class="others-options">
-								<form class="search-form">
-									<input type="text" class="form-control" placeholder="Search...">
-									<button type="submit" class="src-btn">
-										<i class="ri-search-line"></i>
-									</button>
-								</form>
-							</div>
-
+							
 							<ul class="navbar-nav m-auto">
 								<li class="nav-item">
 									<a href="/" class="nav-link active">
@@ -98,7 +96,7 @@
 									</a>
 								</li>
 								<li class="nav-item">
-									<a href="#" class="nav-link">
+									<a  href="javascript:void(0)" class="nav-link" id="property-link">
 										Properties            
 									</a>
 								</li>
@@ -134,13 +132,15 @@
 														Dashboard
 													</a>
 												</li>
-												<li>
-													<a asp-controller="Dashboard" asp-action="Profile">
-														<i class="ri-user-line"></i>
-														My Profile
-													</a>
-												</li>
-												
+												@if(userFullName != null)
+												{
+													<li>
+														<a asp-controller="Dashboard" asp-action="Profile">
+															<i class="ri-user-line"></i>
+															My Profile
+														</a>
+													</li>
+												}
 												<li>
 													<a href="edit-profile.html">
 														<i class="ri-settings-2-line"></i>
@@ -148,7 +148,7 @@
 													</a>
 												</li>
 												<li>
-													<a href="javascript:void(0)" id="signout">
+													<a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#signoutModal">
 														<i class="ri-logout-box-r-line"></i>
 														Sign out
 													</a>
@@ -156,7 +156,8 @@
 											</ul>
 										</div>
 									</li>
-									@*<li>
+									
+								@*<li>
 										<a asp-controller="Home" asp-action="SignIn" class="default-btn">
 											Sign In / Sign Up
 										</a>
@@ -240,30 +241,52 @@
 			<h3>Dominoes Society</h3>
 
 			<ul>
-				<li>
-					<a href="dashboard.html" class="active">
-						<i class="ri-dashboard-line"></i>
-						Dashboard
-					</a>
-				</li>
-				<li>
-					<a asp-controller="Dashboard" asp-action="Profile">
-						<i class="ri-user-line"></i>
-						My Profile
-					</a>
-				</li>
-				@*<li>
-					<a href="edit-profile.html">
-						<i class="ri-image-edit-line"></i>
-						Properties
-					</a>
-				</li>*@
-				<li>
-					<a asp-controller="Protperty" asp-action="Index">
-						<i class="ri-user-line"></i>
-						Properties
-					</a>
-				</li>
+				@if(isAdmin != null && isAdmin != ""){
+					<li>
+						<a href="/Dashboard" class="active">
+							<i class="ri-dashboard-line"></i>
+							Dashboard
+						</a>
+					</li>
+					<li>
+						<a asp-controller="Property" asp-action="Index">
+							<i class="ri-building-2-fill"></i>
+							Properties
+						</a>
+					</li>
+					<li>
+						<a asp-controller="Investment" asp-action="Index">
+							<i class="ri-building-line"></i>
+							Investments
+						</a>
+					</li>
+				}else{
+					<li>
+						<a href="/Dashboard" class="active">
+							<i class="ri-dashboard-line"></i>
+							Dashboard
+						</a>
+					</li>
+					<li>
+						<a asp-controller="Dashboard" asp-action="Profile">
+							<i class="ri-user-line"></i>
+							My Profile
+						</a>
+					</li>
+					@*<li>
+						<a asp-controller="Property" asp-action="Index">
+							<i class="ri-user-line"></i>
+							Properties
+						</a>
+					</li>*@
+					<li>
+						<a asp-controller="Investment" asp-action="Index">
+							<i class="ri-building-2-line"></i>
+							Investments
+						</a>
+					</li>
+				}
+				
 			</ul>
 		</div>
 		<!-- End Sidebar Area -->
@@ -284,7 +307,25 @@
 		</div>
 		<!-- End Go Top Area -->
 
-        
+        <!-- Start signout modal-->
+		<div class="modal fade" id="signoutModal" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+			<div class="modal-dialog modal-dialog-centered">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="exampleModalToggleLabel">Warning!!!</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						Are you sure you want to logout?
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+						<button type="button" class="btn btn-primary" id="signout">Logout</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- End Signout Modal-->
 
         <!-- Links of JS File -->
         <script data-cfasync="false" src="../../cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>

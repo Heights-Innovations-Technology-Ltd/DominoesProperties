@@ -9,17 +9,21 @@
     <None Remove="Service\" />
     <None Remove="NLog.Extensions.Logging" />
     <None Remove="NLog.Web.AspNetCore" />
+    <None Remove="MailKit" />
+    <None Remove="MimeKit" />
+    <None Remove="Microsoft.AspNetCore.Http.Abstractions" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Repository\" />
     <Folder Include="Service\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Models\Models.csproj" />
     <ProjectReference Include="..\Helpers\Helpers.csproj" />
+    <ProjectReference Include="..\Models\Models.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="NLog.Extensions.Logging" Version="1.7.4" />
-    <PackageReference Include="NLog.Web.AspNetCore" Version="4.14.0" />
+    <PackageReference Include="NLog.Extensions.Logging" Version="5.0.0" />
+    <PackageReference Include="NLog.Web.AspNetCore" Version="5.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
   </ItemGroup>
 </Project>

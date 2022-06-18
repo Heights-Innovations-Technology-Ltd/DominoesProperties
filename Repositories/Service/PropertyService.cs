@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using Models.Models;
+using Models.Context;
 using Repositories.Repository;
+using Microsoft.EntityFrameworkCore;
 
 namespace Repositories.Service
 {
@@ -12,19 +14,19 @@ namespace Repositories.Service
         {
         }
 
-        public bool AddNewProperty(Property property)
+        public Property AddNewProperty(Property property)
         {
             _context.Properties.Add(property);
             _context.SaveChanges();
-            return true;
+            return property;
         }
 
-        public Property AddPropertyDescription(Description description)
+        public Description AddPropertyDescription(Description description)
         {
             _context.Descriptions.Add(description);
             _context.SaveChanges();
 
-            return description.Property;
+            return description;
         }
 
         public bool DeleteProperty(string uniqueId)
@@ -38,12 +40,7 @@ namespace Repositories.Service
 
         public List<Property> GetProperties()
         {
-            var properties = _context.Properties.Local.ToList();
-            if(properties.Count < 1)
-            {
-                properties = _context.Properties.ToList();
-            }
-            return properties;
+            return _context.Properties.Include(x => x.TypeNavigation).ToList();
         }
 
         public Property GetProperty(string uniqueId)
@@ -51,9 +48,19 @@ namespace Repositories.Service
             var property = _context.Properties.Local.SingleOrDefault(x => x.UniqueId.Equals(uniqueId));
             if (property == null)
             {
-                property = _context.Properties.SingleOrDefault(x => x.UniqueId.Equals(uniqueId));
+                property = _context.Properties.Include(x => x.TypeNavigation).SingleOrDefault(x => x.UniqueId.Equals(uniqueId));
             }
             return property;
+        }
+
+        public Description GetDescriptionByPropertyId(string propertyId)
+        {
+            var description = _context.Descriptions.Local.SingleOrDefault(x => x.PropertyId.Equals(propertyId));
+            if (description == null)
+            {
+                description = _context.Descriptions.SingleOrDefault(x => x.PropertyId.Equals(propertyId));
+            }
+            return description;
         }
 
         public Property UpdateProperty(Property property)
@@ -64,17 +71,17 @@ namespace Repositories.Service
             return property;
         }
 
-        public Property UpdatePropertyDescription(Description description)
+        public Description UpdatePropertyDescription(Description description)
         {
             _context.Descriptions.Update(description);
             _context.SaveChanges();
 
-            return description.Property;
+            return description;
         }
 
         public PagedList<Property> GetProperties(QueryParams pageParams)
         {
-            return PagedList<Property>.ToPagedList(_context.Properties.OrderBy(on => on.Id),
+            return PagedList<Property>.ToPagedList(_context.Properties.Include(x => x.TypeNavigation).OrderBy(on => on.Id),
                 pageParams.PageNumber,
                 pageParams.PageSize);
         }

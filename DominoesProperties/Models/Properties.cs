@@ -1,5 +1,3 @@
-
-using DominoesProperties.Enums;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
@@ -21,7 +19,7 @@ namespace DominoesProperties.Models
         [Required(ErrorMessage ="Property price per unit is required")]
         public decimal UnitPrice { get; set; }
         [Required(ErrorMessage ="Current property status is required")]
-        public PropertyStatus Status { get; set; }
+        public string Status { get; set; }
         public int? UnitSold { get; set; }
         public int? UnitAvailable { get; set; }
         public DateTime? ClosingDate { get; set; }
@@ -34,6 +32,7 @@ namespace DominoesProperties.Models
         public DateTime? DateCreated { get; set; }
         public string Longitude { get; set; }
         public string Latitude { get; set; }
+        public string TypeName { get; set; }
         
         [JsonIgnore]
         public string CreatedBy { get; set; }
