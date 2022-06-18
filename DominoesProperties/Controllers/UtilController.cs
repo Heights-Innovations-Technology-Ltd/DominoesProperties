@@ -31,7 +31,7 @@ namespace DominoesProperties.Controllers
         }
 
         [HttpGet("test-email/{email}/{encoded}")]
-        public string SendTestMail(string email, string encoded)
+        public bool SendTestMail(string email, string encoded)
         {
             string token = CommonLogic.GetUniqueRefNumber("AT");
             string url = string.Format("{0}{1}/{2}?value={3}", configuration["app_settings:WebEndpoint"], ValidationModule.ACTIVATE_ACCOUNT.ToString().ToLower(), token, "customer");
@@ -39,7 +39,7 @@ namespace DominoesProperties.Controllers
             string html = System.IO.File.ReadAllText(filePath.Replace(@"\", "/"));
             html = html.Replace("{name}", string.Format("{0} {1}", "Dominoes", "Tester")).Replace("{link}", url);
 
-            _emailService.SendEmail(new EmailData
+            return _emailService.SendEmail(new EmailData
             {
                 EmailBody = html,
                 EmailSubject = "New Customer -  Real Estate ",
@@ -47,7 +47,7 @@ namespace DominoesProperties.Controllers
                 EmailToId = email
             });
 
-            return CommonLogic.Decrypt(encoded);
+            //return CommonLogic.Decrypt(encoded);
         }
 
         [HttpGet("test/{action}/{keyValues}")]
