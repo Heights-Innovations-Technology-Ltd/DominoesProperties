@@ -1,0 +1,226 @@
+﻿
+@{
+    ViewData["Title"] = "Edit";
+    Layout = "~/Views/Shared/_LayoutDash.cshtml";
+}
+
+<!-- Start Dashboard Area -->
+	<div class="dashboard-area">
+		<div class="container-fluid">
+			<div class="dashboard-title-wrap">
+				<div class="row align-items-center">
+					<div class="col-lg-6 col-sm-6">
+						<ul class="dashboard-page-title">
+							<li>
+								<a href="dashboard.html">
+									Home 
+								</a>
+							</li>
+		
+							<li class="active">Edit Property</li>
+						</ul>
+					</div>
+					<div class="col-lg-6 col-sm-6">
+							
+					</div>
+				</div>
+			</div>
+
+			<div class="add-listing">
+				<form class="basic-informations" id="property-form">
+					<div id="msg"></div>
+					<h3>Basic Informations</h3>
+
+					<div class="row">
+						<div class="col-lg-6 col-md-6">
+							<div class="form-group">
+								<label>Property Name</label>
+								<input type="text" class="form-control" name="Property-Name" id="name" required>
+							</div>
+						</div>
+						<div class="col-lg-6 col-md-6">
+							<div class="form-group">
+								<label for="type">Property Type</label>
+								<select class="form-control" name="Property-Type" id="types" required>
+									<option>Select Type</option>
+								</select>
+							</div>
+						</div>
+						<div class="col-lg-6 col-md-6">
+							<div class="form-group">
+								<label>Unit Price</label>
+								<input type="text" class="form-control" name="Price" id="price" required>
+							</div>
+						</div>
+						<div class="col-lg-6 col-md-6">
+							<div class="form-group">
+								<label>Total Unit</label>
+								<input type="text" class="form-control" name="Total-Unit" id="unit" required>
+							</div>
+						</div>
+						<div class="col-lg-6 col-md-6">
+							<div class="form-group">
+								<label for="type">Property Category</label>
+								<select class="form-control" name="Property-Category" id="status" required>
+									<option>Select Category</option>
+									<option value="0">ONGOING CONSTRUCTION</option>
+									<option value="1">OPEN FOR INVESTMENT</option>
+									<option value="2">CLOSED FOR INVESTMENT</option>
+									<option value="3">RENTED OUT</option>
+
+								</select>
+							</div>
+						</div>
+						<div class="col-lg-6 col-md-6">
+							<div class="form-group">
+								<label>Interest Rate</label>
+								<input type="text" class="form-control" name="Interest" id="interest">
+							</div>
+						</div>
+
+						<h3 class="mt-30">Location / Contacts</h3>
+
+							
+						<div class="col-lg-6 col-md-6">
+							<div class="form-group">
+								<label>Logitude</label>
+								<input type="text" class="form-control" id="logitude">
+							</div>
+						</div>
+						<div class="col-lg-6 col-md-6">
+							<div class="form-group">
+								<label>Latitude</label>
+								<input type="text" class="form-control" id="latitude">
+							</div>
+						</div>
+						<div class="col-lg-12 col-md-12">
+							<div class="form-group">
+								<label>Address</label>
+								<input type="text" class="form-control" id="location">
+							</div>
+						</div>
+						
+						<div class="features-content">
+							<h3>Description</h3>
+							<div class="row">
+								<div class="col-lg-3 col-sm-6">
+									<ul>
+										<li>
+											<div class="form-group">
+												<label>Bath Room</label>
+												<input type="number" class="form-control" id="bathroom">
+											</div>
+										</li>
+
+										<li>
+											<div class="form-group">
+												<label>Bed Room</label>
+												<input type="number" class="form-control" id="bedRoom">
+											</div>
+										</li>
+									</ul>
+								</div>
+								<div class="col-lg-3 col-sm-6">
+									<ul>
+
+										<li>
+											<div class="form-group">
+												<label>Floor Level</label>
+												<input type="number" class="form-control" id="floorLevel">
+											</div>
+										</li>
+
+										<li>
+											<div class="form-check">
+												<input type="checkbox" class="form-check-input" id="laundry">
+												<label class="form-check-label" for="laundry">Laundry</label>
+											</div>  
+										</li>
+										<li>
+											<div class="form-check">
+												<input type="checkbox" class="form-check-input" id="refrigerator">
+												<label class="form-check-label" for="refrigerator">Refrigerator</label>
+											</div>
+										</li>
+										<li>
+											<div class="form-check">
+												<input type="checkbox" class="form-check-input" id="basement">
+												<label class="form-check-label" for="basement">Basement</label>
+											</div>
+										</li>
+									</ul>
+								</div>
+								<div class="col-lg-3 col-sm-6">
+									<ul>
+										<li>
+											<div class="form-group">
+												<label>Toilet</label>
+												<input type="number" class="form-control" id="toilet">
+											</div>
+										</li>
+										<li>
+											<div class="form-check">
+												<input type="checkbox" class="form-check-input" id="parking">
+												<label class="form-check-label" for="parking">Parking</label>
+											</div>
+										</li>
+										<li>
+											<div class="form-check">
+												<input type="checkbox" class="form-check-input" id="swimmingPool">
+												<label class="form-check-label" for="swimmingPool">Swimming Pool </label>
+											</div>
+										</li>
+										<li>
+											<div class="form-check">
+												<input type="checkbox" class="form-check-input" unchecked id="fireplace">
+												<label class="form-check-label" for="fireplace">Fire place</label>
+											</div>
+										</li>
+									</ul>
+								</div>
+								<div class="col-lg-3 col-sm-6">
+									<ul>
+										<li>
+											<div class="form-group">
+												<label>Land Size</label>
+												<input type="text" class="form-control" id="landSize">
+											</div>
+										</li>
+										<li>
+											<div class="form-check">
+												<input type="checkbox" class="form-check-input" id="gym">
+												<label class="form-check-label" for="gyn">Gym</label>
+											</div>
+										</li>
+										<li>
+											<div class="form-check">
+												<input type="checkbox" class="form-check-input" id="securityGuard">
+												<label class="form-check-label" for="securityGuard">Security Guard</label>
+											</div>
+										</li>
+										<li>
+											<div class="form-check">
+												<input type="checkbox" class="form-check-input" id="airCondition">
+												<label class="form-check-label" for="airCondition">Air Conditioned</label>
+											</div>
+										</li>
+									</ul>
+								</div>
+							</div>
+						</div>
+						<div class="col-lg-12">
+							<button type="button" class="default-btn btn-update-property rounded">Edit</button>
+						</div>
+					</div>
+				</form>
+
+					
+			</div>
+		</div>
+	</div>
+<!-- End Dashboard Area -->
+<script>
+	$(document).ready(() =>{
+		editSingleProperty();
+	});
+</script>

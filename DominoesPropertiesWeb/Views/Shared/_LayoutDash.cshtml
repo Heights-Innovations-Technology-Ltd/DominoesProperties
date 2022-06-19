@@ -18,6 +18,7 @@
 		<link rel="stylesheet" href="~/css/dark-mode.css">
 		<link rel="stylesheet" href="~/css/style.css">
 		<link rel="stylesheet" href="~/css/responsive.css">
+		<link rel="stylesheet" href="path/to/font-awesome/css/font-awesome.min.css">
 
 		<script src="~/js/jquery.min.js"></script>
 		
@@ -47,6 +48,7 @@
 		@Html.Hidden("isSubcribed", IsSubscribed)
 		@Html.Hidden("fullname", userFullName)
 		@Html.Hidden("isAdmin", isAdmin)
+		@Html.Hidden("createdBy", @HttpContextAccessor.HttpContext.Session.GetString("Email"))
     <body>
 		<script>
 			$(function(){

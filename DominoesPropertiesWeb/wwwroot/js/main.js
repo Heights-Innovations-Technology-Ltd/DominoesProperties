@@ -36,7 +36,12 @@
             success: function (t) {
                 var res = JSON.parse(t);
                 if (res.Success) {
-                    message(res.Message + '. Kindly check your mail to activate your account', 'success');
+                   // message(res.Message + '. Kindly check your mail to activate your account', 'success');
+                    Swal.fire(
+                        'Good job!',
+                        res.Message + '. Kindly check your mail to activate your account',
+                        'success'
+                    )
                     $(".form-control").val(""),
                     $("#firstName").focus(),
                         window.scrollTo(0, 0),
@@ -251,7 +256,7 @@ const profile = (data, mode) => {
 const GetProperties = (type) => {
     if ($('#isAdmin').val() == "1") {
 
-        $('.add-property').html(`<a href="/property/create" class="default-btn">Add New Property</a>`);
+        $('.add-property').html(`<a href="/property/create" class="default-btn rounded">Add New Property</a>`);
     }
     let xhr = new XMLHttpRequest();
     let url = "/get-properties";
@@ -271,7 +276,7 @@ const GetProperties = (type) => {
                 console.log(data);
                 $('#property-count').html(data.length + ' Results Found')
                 if (type == "admin") {
-                    propertTmp(data);
+                    adminPropertTmp(data);
                 } else {
                     propertiesTmp(data);
                 }
@@ -285,73 +290,20 @@ const GetProperties = (type) => {
     }
 }
 
-const propertTmp = (data) => {
+const adminPropertTmp = (data) => {
     $('#properties').html('');
 
     data.forEach(x => {
-        let res = `<div class="col-xl-4 col-md-6">
-				    <div class="single-featured-item">
-					    <div class="featured-img mb-0">
-						    <img src="/images/featured/featured-1.jpg" alt="Image">
-					    </div>
-					    <div class="featured-content style-three">
-						    <div class="d-flex justify-content-between">
-							    <h3>
-								    <a href="javascript:void(0)" onclick="propertyDetails('${x.uniqueId}')">${x.name}</a>
-							    </h3>
-							    <h3 class="price">&#8358; ${formatToCurrency(x.unitPrice)}</h3>
-						    </div>
-						    <p>
-							    <i class="ri-map-pin-fill"></i>
-							    ${x.location}
-						    </p>
-						    <ul>
-							   <li>
-								    <i class="ri-hotel-bed-fill"></i>
-								    ${x.description["bedroom"]} Bed
-							    </li>
-							    <li>
-								    <i class="ri-wheelchair-fill"></i>
-								    ${x.description["bathroom"]} Bath
-							    </li>
-							    <li>
-								    <i class="ri-ruler-2-line"></i>
-								    ${x.description["landSize"]} Sqft
-							    </li>
-                                <li>
-								    <i class="ri-wheelchair-fill"></i>
-								    ${x.description["toilet"]} Toilet
-							    </li>
-                                <li>
-								    <i class="ri-building-2-fill"></i>
-								    ${x.description["floorLevel"]} Floor
-							    </li>
-						    </ul>
-
-						    <button type="button" onclick="propertyDetails('${x.uniqueId}')" class="btn btn-primary btn-sm">
-								<span>View Property</span>
-							</button>
-					    </div>
-				    </div>
-			    </div>`;
-
-        $('#properties').append(res);
-    });
-}
-
-const propertiesTmp = (data) => {
-    $('#properties').html('');
-
-    data.forEach(x => {
-        let res = `<div class="col-lg-6 col-md-6">
+        let res = `<div class="col-lg-4 col-md-4">
 									<div class="single-featured-item">
+ <a href="/property/viewproperty/${x.uniqueId}">
 										<div class="featured-img mb-0">
 											<img src="/images/featured/featured-2.jpg" alt="Image">
 										</div>
 										<div class="featured-content style-three">
 											<div class="d-flex justify-content-between">
 												<h3>
-													<a href="javascript:void(0)" onclick="propertyDetails('${x.uniqueId}')">${x.name} this property with long property name</a>
+													<a href="/property/viewproperty/${x.uniqueId}">${x.name}</a>
 												</h3>
 												 <h3 class="price">&#8358;${formatToCurrency(x.unitPrice)}</h3>
 											</div>
@@ -381,11 +333,60 @@ const propertiesTmp = (data) => {
 													${x.description["floorLevel"]} Floor
 												</li>
 											</ul>
-
-											<button type="button" onclick="propertyDetails('${x.uniqueId}')" class="btn btn-primary btn-sm">
-												<span>View Property</span>
-											</button>
 										</div>
+</a>
+									</div>
+								</div>`;
+
+        $('#properties').append(res);
+    });
+}
+
+const propertiesTmp = (data) => {
+    $('#properties').html('');
+
+    data.forEach(x => {
+        let res = `<div class="col-lg-6 col-md-6">
+									<div class="single-featured-item">
+ <a href="javascript:void(0)" onclick="propertyDetails('${x.uniqueId}')">
+										<div class="featured-img mb-0">
+											<img src="/images/featured/featured-2.jpg" alt="Image">
+										</div>
+										<div class="featured-content style-three">
+											<div class="d-flex justify-content-between">
+												<h3>
+													<a href="javascript:void(0)" onclick="propertyDetails('${x.uniqueId}')">${x.name}</a>
+												</h3>
+												 <h3 class="price">&#8358;${formatToCurrency(x.unitPrice)}</h3>
+											</div>
+											<p>
+												<i class="ri-map-pin-fill"></i>
+												${x.location}
+											</p>
+											<ul>
+												<li>
+													<i class="ri-hotel-bed-fill"></i>
+													${x.description["bedroom"]} Bed
+												</li>
+												<li>
+													<i class="ri-wheelchair-fill"></i>
+													${x.description["bathroom"]} Bath
+												</li>
+												<li>
+													<i class="ri-ruler-2-line"></i>
+													${x.description["landSize"]} Sqft
+												</li>
+                                                <li>
+													<i class="ri-wheelchair-fill"></i>
+													${x.description["toilet"]} Toilet
+												</li>
+                                                <li>
+													<i class="ri-building-2-fill"></i>
+													${x.description["floorLevel"]} Floor
+												</li>
+											</ul>
+										</div>
+</a>
 									</div>
 								</div>`;
 
@@ -394,20 +395,33 @@ const propertiesTmp = (data) => {
 }
 
 const propertyDetails = (id) => {
-    if ($('#isSubcribed').val() == "False" && $('#refId').val() != "") {
-        $('#subscribeModal').modal('show');
-        return;
-    }
+    //if ($('#isSubcribed').val() == "False" && $('#refId').val() != "") {
+    //    //$('#subscribeModal').modal('show');
+    //    Swal.fire({
+    //        icon: 'info',
+    //        title: 'Oops...',
+    //        text: 'Property details can only be view by subscribed users, kindly subscribe to get full access ',
+    //        footer: `<a href="javascript:void(0)" class="default-btn rounded" onclick="onSubscribe()">Subcribe Now</a>`
+    //    })
+    //    return;
+    //}
 
     location = '/Home/PropertyDetails/' + id;
 }
 
-const getSingleProperty = () => {
-    if ($('#isSubcribed').val() == "False" && $('#refId').val() != "") {
-        location = '/Dashboard/Profile';
-        return;
-    }
+$('.edit-property').click(() => {
+    let urls = window.location.href.split("/");
+    let id = urls[5];
+    let url = `/property/edit/${id}`;
+    location = url;
+});
 
+const getSingleProperty = () => {
+
+    //if ($('#isSubcribed').val() == "False" && $('#refId').val() != "") {
+    //    location = '/Dashboard/Profile';
+    //    return;
+    //}
     
     let urls = window.location.href.split("/");
     let id = urls[5];
@@ -430,9 +444,173 @@ const getSingleProperty = () => {
                 $('#name').html(data.name);
                 $('#price').html("&#8358; " + formatToCurrency(data.unitPrice));
                 $('#location').html(data.location);
+                $('.property-feature').html(`<li>
+												<i class="ri-hotel-bed-fill"></i>
+												${data.description["bedroom"]} Bed
+											</li>
+											<li>
+												<i class="ri-wheelchair-fill"></i>
+												${data.description["bathroom"]} Bath
+											</li>
+											<li>
+												<i class="ri-ruler-2-line"></i>
+												${data.description["landSize"]} Sqft
+											</li>
+                                            <li>
+												<i class="ri-wheelchair-fill"></i>
+												${data.description["toilet"]} Toilet
+											</li>
+                                            <li>
+												<i class="ri-building-2-fill"></i>
+												${data.description["floorLevel"]} Floor
+											</li>`);
+
+                $('.description').html(`
+                    <div class="col-lg-3 col-sm-6">
+					    <ul>
+						    <li>
+							    <i class="${data.description['airConditioned'] ? 'ri-checkbox-line' : 'ri-checkbox-blank-line'}"></i>
+							    Air Conditioned
+						    </li>
+						    <li>
+							    <i class="${data.description['laundry'] ? 'ri-checkbox-line' : 'ri-checkbox-blank-line'}"></i>
+							    Laundry
+						    </li>
+						    <li>
+							    <i class="${data.description['airConditioned'] ? 'ri-checkbox-line' : 'ri-checkbox-blank-line'}"></i>
+							    Barbeque
+						    </li>
+					    </ul>
+				    </div>
+				    <div class="col-lg-3 col-sm-6">
+					    <ul>
+						    <li>
+							    <i class="${data.description['refrigerator'] ? 'ri-checkbox-line' : 'ri-checkbox-blank-line'}"></i>
+							    Refrigerator
+						    </li>
+						    <li>
+							    <i class="${data.description['airConditioned'] ? 'ri-checkbox-line' : 'ri-checkbox-blank-line'}"></i>
+							    Window Coverings
+						    </li>
+						    <li>
+							    <i class="${data.description['airConditioned'] ? 'ri-checkbox-line' : 'ri-checkbox-blank-line'}"></i>
+							    Grage
+						    </li>
+					    </ul>
+				    </div>
+				    <div class="col-lg-3 col-sm-6">
+					    <ul>
+						    <li>
+							    <i class="${data.description['parking'] ? 'ri-checkbox-line' : 'ri-checkbox-blank-line'}"></i>
+							    Parking
+						    </li>
+						    <li>
+							    <i class="${data.description['gym'] ? 'ri-checkbox-line' : 'ri-checkbox-blank-line'}"></i>
+							    Fitness Gym
+						    </li>
+						    <li>
+							    <i class="${data.description['fireplace'] ? 'ri-checkbox-line' : 'ri-checkbox-blank-line'}"></i>
+							    Fireplace
+						    </li>
+					    </ul>
+				    </div>
+				    <div class="col-lg-3 col-sm-6">
+					    <ul>
+						    <li>
+							    <i class="${data.description['swimmingPool'] ? 'ri-checkbox-line' : 'ri-checkbox-blank-line'}"></i>
+							    Swimming Pool
+						    </li>
+						    <li>
+							    <i class="${data.description['securityGuard'] ? 'ri-checkbox-line' : 'ri-checkbox-blank-line'}"></i>
+							    Security Garage
+						    </li>
+						    <li>
+							    <i class="${data.description['basement'] ? 'ri-checkbox-line' : 'ri-checkbox-blank-line'}"></i>
+							    Basement
+						    </li>
+					    </ul>
+				    </div>
+                `);
+                $("#bathroom").val(data.description['bathroom']);
+                $("#toilet").val(data.description['toilet']);
+                $("#floorLevel").val(data.description['toilet']);
+                $("#bedRoom").val(data.description['bedroom']);
+                $("#landSize").val(data.description['landSize']);
+                if (data.description['airConditioned']) $("#airConditioned").attr('checked', 'checked');
+                if (data.description['refrigerator']) $("#refrigerator").attr('checked', 'checked');
+                if (data.description['parking']) $("#parking").attr('checked', 'checked');
+                if (data.description['swimmingPool']) $("#swimmingPool").attr('checked', 'checked');
+                if (data.description['laundry']) $("#laundry").attr('checked', 'checked');
+                if (data.description['gym']) $("#gym").attr('checked', 'checked');
+                if (data.description['securityGuard']) $("#securityGuard").attr('checked', 'checked');
+                if (data.description['fireplace']) $("#fireplace").attr('checked', 'checked');
+                if (data.description['basement']) $("#basement").attr('checked', 'checked');
                 console.log(data);
             } else {
                 
+                window.scrollTo(0, 0);
+                //console.log(data);
+            }
+
+        }
+    } catch (err) { // instead of onerror
+        //alert("Request failed");
+        $(".btn-activate").html("Activate").attr("disabled", !1);
+    }
+}
+
+const editSingleProperty = () => {
+
+    //if ($('#isSubcribed').val() == "False" && $('#refId').val() != "") {
+    //    location = '/Dashboard/Profile';
+    //    return;
+    //}
+
+    let urls = window.location.href.split("/");
+    let id = urls[5];
+    let xhr = new XMLHttpRequest();
+    let url = `/single-property/${id}`;
+    xhr.open('GET', url, false);
+    xhr.setRequestHeader("content-type", "application/json");
+    xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+    try {
+
+        xhr.send();
+        if (xhr.status != 200) {
+            // alert('Something went wrong try again!');
+        } else {
+            var res = JSON.parse(xhr.responseText);
+            var data = JSON.parse(res).data;
+
+            if (JSON.parse(res).success) {
+               
+                $("#name").val(data.name);
+                $("#location").val(data.location);
+                 //$("#types").val(),
+                $("#price").val(data.unitPrice);
+                $("#status").val();
+                $("#unit").val(data.totalUnits);
+
+                $("#bathroom").val(data.description['bathroom']);
+                $("#toilet").val(data.description['toilet']);
+                $("#floorLevel").val(data.description['toilet']);
+                $("#bedRoom").val(data.description['bedroom']);
+                $("#landSize").val(data.description['landSize']);
+                if (data.description['airConditioned']) $("#airConditioned").attr('checked', 'checked');
+                if (data.description['refrigerator']) $("#refrigerator").attr('checked', 'checked');
+                if (data.description['parking']) $("#parking").attr('checked', 'checked');
+                if (data.description['swimmingPool']) $("#swimmingPool").attr('checked', 'checked');
+                if (data.description['laundry']) $("#laundry").attr('checked', 'checked');
+                if (data.description['gym']) $("#gym").attr('checked', 'checked');
+                if (data.description['securityGuard']) $("#securityGuard").attr('checked', 'checked');
+                if (data.description['fireplace']) $("#fireplace").attr('checked', 'checked');
+                if (data.description['basement'])$("#basement").attr('checked', 'checked');
+                $("#interest").val(data.interestRate);
+                $("#logitude").val(data.longitude);
+                $("#latitude").val(data.latitude);
+                console.log(data);
+            } else {
+
                 window.scrollTo(0, 0);
                 //console.log(data);
             }
@@ -528,7 +706,12 @@ $('.btn-property').click(() => {
             console.log(res);
             if (JSON.parse(res).Success) {
                 window.scrollTo(0, 0);
-                message(JSON.parse(res).Message, "success");
+                //message(JSON.parse(res).Message, "success");
+                Swal.fire(
+                    'Good job!',
+                    JSON.parse(res).Message,
+                    'success'
+                );
                 $('.form-control').val('');
                 $(".btn-property").html("Submit").attr("disabled", !1);
 
@@ -544,6 +727,114 @@ $('.btn-property').click(() => {
     } catch (err) { // instead of onerror
         //alert("Request failed");
         $(".btn-property").html("Submit").attr("disabled", !1);
+    }
+});
+
+$('.btn-update-property').click(() => {
+    $(".btn-update-property").html("Processing...").attr("disabled", !0);
+    let t = false;
+    var e = "";
+    if (
+        ($("#property-form")
+            .find("input")
+            .each(function () {
+                $(this).prop("required") && ($(this).val() || ((t = !0), (name = $(this).attr("name")), (e += name + ", ")));
+            })
+            
+        )
+    )
+        
+        if (t) message("Validation error the following field are required " + e.substring(0, e.length - 2), 'error'), window.scrollTo(0, 0), $(".btn-update-property").attr("disabled", !1).html("Submit");
+
+    if ((!Number($("#price").val())) && $("#price").val() != '') {
+        $(".btn-update-property").html("Submit").attr("disabled", !1);
+        message("Invalid price supply, kindly check and try again!", 'error');
+        $('#price').focus();
+        return;
+    }
+
+    //if ((!Number(Number($("#logitutde").val()))) && $("#logitude").val() != '') {
+    //    $(".btn-property").html("Submit").attr("disabled", !1);
+    //    message("Invalid logitude supply, kindly check and try again!", 'error');
+    //    $('#logitude').focus();
+    //    return;
+    //}
+
+    //if ((!Number($("#latitude").val())) && $("#latitude").val() != '') {
+    //    $(".btn-Submit").html("Submit").attr("disabled", !1);
+    //    message("Invalid latitude supply, kindly check and try again!", 'error');
+    //    $('#latitude').focus();
+    //    return;
+    //}
+    
+
+    var params = {
+        Name: $("#name").val().trim(),
+        Location: $("#location").val(),
+        Type: $("#types").val(),
+        UnitPrice: Number($("#price").val()),
+        Status: $("#status").val(),
+        UnitAvailable: Number($("#unit").val()),
+        Description: {
+            Bathroom: Number($("#bathroom").val()),
+            Toilet: Number($("#toilet").val()),
+            FloorLevel: Number($("#floorLevel").val()),
+            Bedroom: Number($("#bedRoom").val()),
+            LandSize: $("#landSize").val(),
+            AirConditioned: $("#airConditioned").is(":checked") ? 1 : 0,
+            Refrigerator: $("#refrigerator").is(":checked") ? 1 : 0,
+            Parking: $("#parking").is(":checked") ? 1 : 0,
+            SwimmingPool: $("#swimmingPool").is(":checked") ? 1 : 0,
+            Laundry: $("#laundry").is(":checked") ? 1 : 0,
+            Gym: $("#gym").is(":checked") ? 1 : 0,
+            SecurityGuard: $("#securityGuard").is(":checked") ? 1 : 0,
+            Fireplace: $("#fireplace").is(":checked") ? 1 : 0,
+            Basement: $("#basement").is(":checked") ? 1 : 0,
+        },
+        InterestRate: Number($("#interest").val()),
+        Longitude: Number($("#logitude").val()),
+        Latitude: Number($("#latitude").val()),
+        CreatedBy: Number($("#createdBy").val())
+
+    };
+
+    console.log(params);
+    let xhr = new XMLHttpRequest();
+    let url = "/update-property";
+    xhr.open('PUT', url, false);
+    xhr.setRequestHeader("content-type", "application/json");
+    xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+    try {
+        xhr.send(JSON.stringify(params));
+        if (xhr.status != 200) {
+            // alert('Something went wrong try again!');
+        } else {
+            var res = JSON.parse(xhr.responseText);
+            var data = JSON.parse(res).Data;
+            console.log(res);
+            if (JSON.parse(res).Success) {
+                window.scrollTo(0, 0);
+                //message(JSON.parse(res).Message, "success");
+                Swal.fire(
+                    'Good job!',
+                    JSON.parse(res).Message,
+                    'success'
+                );
+                $('.form-control').val('');
+                $(".btn-update-property").html("Submit").attr("disabled", !1);
+
+                setTimeout(() => {
+                    location.reload();
+                }, 2000);
+            } else {
+                $(".btn-update-property").html("Submit").attr("disabled", !1);
+                window.scrollTo(0, 0);
+            }
+
+        }
+    } catch (err) { // instead of onerror
+        //alert("Request failed");
+        $(".btn-update-property").html("Submit").attr("disabled", !1);
     }
 });
 
@@ -666,8 +957,8 @@ $('#property-link').click(() => {
     location = "/Home/properties";
 });
 
-$('.btn-subscribe').click(() => {
-    $(".btn-subscribe").html("Processing...").attr("disabled", !0);
+const onSubscribe = () => {
+    $(".btn-subscribe").html("Loading...").attr("disabled", !0);
     let xhr = new XMLHttpRequest();
     let url = "/subscribe";
     xhr.open('GET', url, false);
@@ -677,7 +968,7 @@ $('.btn-subscribe').click(() => {
 
         xhr.send();
         if (xhr.status != 200) {
-            $(".btn-subscribe").html("Subscribe to get full access").attr("disabled", !1);
+            $(".btn-subscribe").html("Loading...").attr("disabled", !0);
             // alert('Something went wrong try again!');
         } else {
             var res = JSON.parse(xhr.responseText);
@@ -700,7 +991,7 @@ $('.btn-subscribe').click(() => {
         //alert("Request failed");
         $(".btn-subscribe").html("Subscribe to get full access").attr("disabled", !1);
     }
-});
+};
 
 $('.btn-verify').click(() => {
 
@@ -744,6 +1035,49 @@ $('.btn-verify').click(() => {
         $(".btn-verify").html("Verify").attr("disabled", !1);
     }
 });
+
+$('.btn-property-investment').on('click', () => {
+    $(".btn-property-investment").html("Processing...").attr("disabled", !0);
+    let urls = window.location.href.split("/");
+    let id = urls[5];
+    let params = {
+        propertyUniqueId: id,
+        units: 1
+    }
+    let xhr = new XMLHttpRequest();
+    let url = "/invest";
+    xhr.open('POST', url, false);
+    xhr.setRequestHeader("content-type", "application/json");
+    xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+    try {
+        xhr.send(JSON.stringify(params));
+        if (xhr.status != 200) {
+            // alert('Something went wrong try again!');
+        } else {
+            var res = JSON.parse(xhr.responseText);
+            var data = JSON.parse(res).Data;
+            console.log(res);
+            if (JSON.parse(res).Success) {
+                window.scrollTo(0, 0);
+                //message(JSON.parse(res).Message, "success");
+                Swal.fire(
+                    'Good job!',
+                    JSON.parse(res).Message,
+                    'success'
+                );
+                $('.form-control').val('');
+                $(".btn-property-investment").html("Invest").attr("disabled", !1);
+            } else {
+                $(".btn-property-investment").html("Invest").attr("disabled", !1);
+                window.scrollTo(0, 0);
+            }
+
+        }
+    } catch (err) { // instead of onerror
+        //alert("Request failed");
+        $(".btn-property-investment").html("Invest").attr("disabled", !1);
+    }
+})
 
 $('#signout').click(() => {
     let xhr = new XMLHttpRequest();
