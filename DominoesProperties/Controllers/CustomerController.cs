@@ -137,7 +137,7 @@ namespace DominoesProperties.Controllers
 
         [HttpPut]
         [Authorize]
-        public ApiResponse Update([FromBody] Models.Customer customer)
+        public ApiResponse Update([FromBody] CustomerUpdate customer)
         {
             var uniqueRef = HttpContext.User.Identity.Name;
             var existingCustomer = customerRepository.GetCustomer(uniqueRef);

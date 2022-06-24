@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>DominoesProperties</name>
+    </assembly>
+    <members>
+        <member name="P:DominoesProperties.Models.PasswordReset.Token">
+            <summary>
+            This parameter takes the OLD PASSWORD for endpoint, CHANGE PASSWORD and it takes TOKEN for endpoint, RESET PASSWORD
+            </summary>
+        </member>
+    </members>
+</doc>
