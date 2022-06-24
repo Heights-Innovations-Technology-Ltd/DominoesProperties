@@ -4,8 +4,11 @@ using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -130,6 +133,35 @@ namespace DominoesPropertiesWeb.HttpContext
                     }
                     return jsonObj;
                 }
+            }
+        }
+
+        public async Task<dynamic> PostUpload(string endpointURL, IFormFileCollection files)
+        {
+            var filePath = Path.GetTempFileName();
+            var token = this.session.GetString("Token");
+            client.DefaultRequestHeaders.Add("Authorization",
+                "Bearer " + token);
+            client.DefaultRequestHeaders.Add("files", (IEnumerable<string>)files);
+            using (var multipartFormContent = new MultipartFormDataContent())
+            {
+                //foreach (var file in files)
+                //{
+                //var fileName = file.FileName;
+
+                //    //Load the file and set the file's Content-Type header
+                //var fileStreamContent = new StreamContent(File.OpenRead(filePath));
+                //fileStreamContent.Headers.ContentType = new MediaTypeHeaderValue("image/png");
+
+                //    //Add the file
+                //multipartFormContent.Add(fileStreamContent, name: "files", fileName: files);
+                //}
+
+                //Send it
+                var response = await client.PostAsync(url + endpointURL, new StringContent(JsonConvert.SerializeObject(files)));
+                //var response = await client.PostAsync(url + endpointURL, new StringContent(JsonConvert.SerializeObject(files)));
+                response.EnsureSuccessStatusCode();
+                return await response.Content.ReadAsStringAsync();
             }
         }
     }

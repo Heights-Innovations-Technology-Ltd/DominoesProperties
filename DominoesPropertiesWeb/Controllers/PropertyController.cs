@@ -7,7 +7,10 @@ using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
 using System.Dynamic;
+using System.IO;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace DominoesPropertiesWeb.Controllers
@@ -134,6 +137,33 @@ namespace DominoesPropertiesWeb.Controllers
             var data = await res.GetAwaiter().GetResult();
             return Json(JsonConvert.SerializeObject(data));
         }
+        
+        [Route("property-decription/{propertyId}")]
+        public async Task<JsonResult> PropertyDescription([FromBody] dynamic property, string propertyId)
+        {
+            JObject jObject = JsonConvert.DeserializeObject<JObject>(Convert.ToString(property));
+            dynamic DesObj = new ExpandoObject();
+
+            DesObj.Bathroom = Convert.ToInt32(jObject["Description"]["Bathroom"]);
+            DesObj.Toilet = Convert.ToInt32(jObject["Description"]["Toilet"]);
+            DesObj.FloorLevel = Convert.ToInt32(jObject["Description"]["FloorLevel"]);
+            DesObj.Bedroom = Convert.ToInt32(jObject["Description"]["Bedroom"]);
+            DesObj.LandSize = Convert.ToString(jObject["Description"]["LandSize"]);
+            DesObj.AirConditioned = Convert.ToInt32(jObject["Description"]["AirConditioned"]);
+            DesObj.Refrigerator = Convert.ToInt32(jObject["Description"]["Refrigerator"]);
+            DesObj.Parking = Convert.ToInt32(jObject["Description"]["Parking"]);
+            DesObj.SwimmingPool = Convert.ToInt32(jObject["Description"]["SwimmingPool"]);
+            DesObj.Laundry = Convert.ToInt32(jObject["Description"]["Laundry"]);
+            DesObj.Gym = Convert.ToInt32(jObject["Description"]["Gym"]);
+            DesObj.SecurityGuard = Convert.ToInt32(jObject["Description"]["SecurityGuard"]);
+            DesObj.Fireplace = Convert.ToInt32(jObject["Description"]["Fireplace"]);
+            DesObj.Basement = Convert.ToInt32(jObject["Description"]["Basement"]);
+
+
+            var res = Task.Run(() => httpContext.Put("Property/description/" + propertyId, DesObj));
+            var data = await res.GetAwaiter().GetResult();
+            return Json(JsonConvert.SerializeObject(data));
+        }
 
         [Route("get-properties")]
         public async Task<JsonResult> GetProperties()
@@ -160,6 +190,41 @@ namespace DominoesPropertiesWeb.Controllers
             await Task.WhenAll(res);
             var data = res.Status == TaskStatus.RanToCompletion ? res.Result : null;
             return Json(JsonConvert.SerializeObject(data));
+        }
+
+        [HttpPost("/upload-property/{propertyId}")]
+        public async Task<JsonResult> uploadDoc(string propertyId)
+        {
+            var json = Request.Form.Files;
+
+            if (json.Count > 0)
+            {
+                var res = Task.Run(() => httpContext.Post("Property/uploads/" + propertyId, json));
+                var data = await res.GetAwaiter().GetResult();
+                return Json(JsonConvert.SerializeObject(data));
+            }
+            return Json(this.StatusCode(StatusCodes.Status204NoContent, "Empty request body"));
+        }
+
+        private List<string> GetUploadedFileName(HttpRequest httpRequest, string propertyId)
+        {
+            List<string> filenamelistofCustomerFiles = new();
+            foreach (var formfile in httpRequest.Form.Files)
+            {
+                if (formfile.Length > 0)
+                {
+                    string filePath = Path.Combine(hostEnvironment.WebRootPath, _config["app_settings:commodityUploads"]);
+                    if (!Directory.Exists(filePath))
+                        Directory.CreateDirectory(filePath);
+
+                    using (var stream = new FileStream(Path.Combine(filePath, propertyId + formfile.FileName), FileMode.Create))
+                    {
+                        formfile.CopyTo(stream);
+                    }
+                    filenamelistofCustomerFiles.Add(formfile.FileName);
+                }
+            }
+            return filenamelistofCustomerFiles;
         }
     }
 }

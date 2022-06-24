@@ -53,20 +53,21 @@
 				</div>*@
 			</div>
 
-			<form class="contact-information">
+			<form class="contact-information" id="profile-form">
 				<h3>Contact Information</h3>
 
 				<div class="row">
 					<div class="col-lg-6 col-md-6">
 						<div class="form-group">
+							<input type="hidden" class="catch_me" />
 							<label>First Name</label>
-							<input type="text" class="form-control" placeholder="Dominoes" id="firstname">
+							<input type="text" class="form-control" placeholder="Dominoes" id="firstname" name="firstName" required>
 						</div>
 					</div>
 					<div class="col-lg-6 col-md-6">
 						<div class="form-group">
 							<label>Last Name</label>
-							<input type="text" class="form-control" placeholder="Society" id="lastname">
+							<input type="text" class="form-control" placeholder="Society" id="lastname" name="lastName" required>
 						</div>
 					</div>
 					<div class="col-lg-6 col-md-6">
@@ -78,48 +79,48 @@
 					<div class="col-lg-6 col-md-6">
 						<div class="form-group">
 							<label>Phone</label>
-							<input type="text" class="form-control" placeholder="" id="phone">
+							<input type="text" class="form-control" placeholder="" id="phone" name="phone" required>
 						</div>
 					</div>
 					<div class="col-lg-6 col-md-6">
 						<div class="form-group">
 							<label>Address</label>
-							<input type="text" class="form-control" placeholder="8135 Walt Whitman Street Willingboro, NJ 08046" id="address">
+							<input type="text" class="form-control" placeholder="8135 Walt Whitman Street Willingboro, NJ 08046" name="address" id="address" required>
 						</div>
 					</div>
 					
 					<div class="col-lg-6 col-md-6">
-						<button type="button" class="default-btn">
+						<button type="button" class="default-btn rounded btn-update-profile">
 							Save Change
 						</button>
 					</div>
 				</div>
 			</form>
 
-			<form class="reset-password">
+			<form class="reset-password"id="password-form">
 				<h3>Reset Password</h3>
 
 				<div class="row">
 					<div class="col-lg-12">
 						<div class="form-group">
 							<label>Current Password</label>
-							<input type="password" class="form-control" placeholder="*********">
+							<input type="password" class="form-control" id="current" name="current-password" required placeholder="*********">
 						</div>
 					</div>
 					<div class="col-lg-6 col-md-6">
 						<div class="form-group">
 							<label>New Password</label>
-							<input type="password" class="form-control" placeholder="*********">
+							<input type="password" class="form-control" id="password" name="password" required placeholder="*********">
 						</div>
 					</div>
 					<div class="col-lg-6 col-md-6">
 						<div class="form-group">
 							<label>Confirm New Password</label>
-							<input type="password" class="form-control" placeholder="*********">
+							<input type="password" class="form-control" id="confirm" name="confirm-password"  required placeholder="*********">
 						</div>
 					</div>
 					<div class="col-lg-6 col-md-6">
-						<button type="submit" class="default-btn">Reset Password</button>
+						<button type="submit" class="default-btn rounded btn-change-password">Reset Password</button>
 					</div>
 				</div>
 			</form>

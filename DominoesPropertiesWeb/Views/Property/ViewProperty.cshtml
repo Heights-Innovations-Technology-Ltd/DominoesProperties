@@ -37,6 +37,7 @@ ul{
 			<div class="single-listing-area pb-70 ">
 				<div class="container">
 					<div class="row">
+						<div id="msg"></div>
 						<div class="single-properties-item single-listing-warp mt-0">
 							<div class="row">
 								<div class="col-lg-4 col-md-4 pe-0">
@@ -120,7 +121,7 @@ ul{
 								<label>Property Images</label>
 								<div class="information d-flex align-items-center">
 									<div class="file-upload-account-info">
-										<input type="file" name="file" id="file-2" multiple class="inputfile">
+										<input type="file" name="fileUpload[]" id="fileUpload" multiple class="inputfile">
 										<label class="upload">
 											<i class="ri-image-add-line"></i>
 										</label>
@@ -134,7 +135,7 @@ ul{
 		  </div>
 		  <div class="modal-footer">
 			<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-			<button type="button" class="btn btn-primary">Submit</button>
+			<button type="button" class="btn btn-primary" id="btnUpload">Submit</button>
 		  </div>
 		</div>
 	  </div>
@@ -265,7 +266,7 @@ ul{
 		  </div>
 		  <div class="modal-footer">
 			<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-			<button type="button" class="btn btn-primary">Submit</button>
+			<button type="button" class="btn btn-primary btn-update-decription">Submit</button>
 		  </div>
 		</div>
 	  </div>

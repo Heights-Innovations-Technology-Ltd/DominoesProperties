@@ -838,6 +838,131 @@ $('.btn-update-property').click(() => {
     }
 });
 
+$('.btn-update-decription').click(() => {
+    $(".btn-update-decription").html("Processing...").attr("disabled", !0);
+
+    let urls = window.location.href.split("/");
+    let id = urls[5];
+
+    var params = {
+        Description: {
+            Bathroom: Number($("#bathroom").val()),
+            Toilet: Number($("#toilet").val()),
+            FloorLevel: Number($("#floorLevel").val()),
+            Bedroom: Number($("#bedRoom").val()),
+            LandSize: $("#landSize").val(),
+            AirConditioned: $("#airConditioned").is(":checked") ? 1 : 0,
+            Refrigerator: $("#refrigerator").is(":checked") ? 1 : 0,
+            Parking: $("#parking").is(":checked") ? 1 : 0,
+            SwimmingPool: $("#swimmingPool").is(":checked") ? 1 : 0,
+            Laundry: $("#laundry").is(":checked") ? 1 : 0,
+            Gym: $("#gym").is(":checked") ? 1 : 0,
+            SecurityGuard: $("#securityGuard").is(":checked") ? 1 : 0,
+            Fireplace: $("#fireplace").is(":checked") ? 1 : 0,
+            Basement: $("#basement").is(":checked") ? 1 : 0,
+        }
+    };
+
+    console.log(params);
+    let xhr = new XMLHttpRequest();
+    let url = "/property-decription/" + id;
+    xhr.open('PUT', url, false);
+    xhr.setRequestHeader("content-type", "application/json");
+    xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+    try {
+        xhr.send(JSON.stringify(params));
+        if (xhr.status != 200) {
+            // alert('Something went wrong try again!');
+        } else {
+            var res = JSON.parse(xhr.responseText);
+            var data = JSON.parse(res).Data;
+            console.log(res);
+            if (JSON.parse(res).Success) {
+                window.scrollTo(0, 0);
+                message("Description updated successfully", "success");
+                $('#descriptionModal').modal('hide');
+                //$('.form-control').val('');
+                Swal.fire(
+                    'Good job!',
+                    JSON.parse(res).Message,
+                    'success'
+                );
+                $(".btn-update-decription").html("Submit").attr("disabled", !1);
+
+                setTimeout(() => {
+                    location.reload();
+                }, 2000);
+            } else {
+                $(".btn-update-decription").html("Submit").attr("disabled", !1);
+                window.scrollTo(0, 0);
+            }
+
+        }
+    } catch (err) { // instead of onerror
+        //alert("Request failed");
+        $(".btn-update-decription").html("Submit").attr("disabled", !1);
+    }
+});
+
+$('#btnUpload').on('click', function () {
+    let t = false;
+    var e = "";
+    let urls = window.location.href.split("/");
+    let id = urls[5];
+    $("#btnUpload").attr("disabled", !0).html(`Processing...`)
+    
+    var fileUpload = $("#fileUpload").get(0);
+
+    var files = fileUpload.files;
+
+    if (files.length == 0) {
+        $('#msg').html(message("Property image is required!", 'error'));
+        return;
+    }
+
+    var data = new FormData();
+    if (files.length != 0) {
+        //var fname = files[0].name;
+       // var extension = fname.substr(fname.lastIndexOf("."))
+        //var re = /(\.jpg|\.jpeg|\.gif|\.png)$/i;
+        //if (!re.exec(extension)) {
+        //    alert("File extension not supported!");
+        //    return;
+        //}
+
+        for (var index = 0; index < files.length; index++) {
+           // var name = files[index].name;
+            data.append("files", files[index]);
+        }
+       // data.append(files[0].name, files[0]);
+    }
+
+    var oReq = new XMLHttpRequest();
+    oReq.open("POST", "/upload-property/" + id, false);
+    oReq.onload = function (oEvent) {
+        if (oReq.status == 200) {
+            var res = JSON.parse(oReq.responseText);
+            let data = JSON.parse(res).data;
+            console.log(res);
+            if (JSON.parse(res).success){
+
+            }
+
+            else {
+                $('#msg').html(message(data, 'error'));
+                window.scrollTo(0, 0);
+                $("#btnUpload").attr("disabled", !1).html(`Submit`);
+                params = {};
+            }
+        } else {
+            $("#btnUpload").attr("disabled", !1).html(`<i data-acorn-icon="save"></i><span>Submit</span>`);
+        }
+    };
+
+    //data.append("params", JSON.stringify(params));
+
+    oReq.send(data);
+});
 
 const GetInvestments = () => {
     let xhr = new XMLHttpRequest();
@@ -1078,6 +1203,138 @@ $('.btn-property-investment').on('click', () => {
         $(".btn-property-investment").html("Invest").attr("disabled", !1);
     }
 })
+
+$(".btn-change-password").on("click", function () {
+
+    $(".btn-change-password").html("Processing...").attr("disabled", !0);
+    let t = false;
+    var e = "";
+    if (
+        ($("#password-form")
+            .find("input")
+            .each(function () {
+                $(this).prop("required") && ($(this).val() || ((t = !0), (name = $(this).attr("name")), (e += name + ", ")));
+            }))
+    )
+        if (t) message("Validation error the following field are required " + e.substring(0, e.length - 2), 'error'), window.scrollTo(0, 0), $(".btn-change-password").attr("disabled", !1).html("Reset Password");
+        else {
+            if ($("#password").val() != $("#confirm").val()) {
+                message("Password mismatch, kindly check and try again", "error");
+                return;
+            }
+
+            var a = {
+                currentPassword: $("#current").val(),
+                Password: $("#password").val(),
+                confirm: $("#confirm").val(),
+            };
+
+            
+
+            $.ajax({
+                type: "post",
+                url: "/change-password",
+                headers: { "Content-Type": "application/json" },
+                data: JSON.stringify(a),
+                success: function (t) {
+                    var res = JSON.parse(t);
+                    if (res.Success) {
+                        // message(res.Message + '. Kindly check your mail to activate your account', 'success');
+                        Swal.fire(
+                            'Good job!',
+                            res.Message,
+                            'success'
+                        )
+                        $(".form-control").val(""),
+                            $("#firstName").focus(),
+                            window.scrollTo(0, 0),
+                            $(".btn-change-password").html("Reset Password").attr("disabled", !1),
+
+                            a = {};
+
+                    } else {
+
+                        message(res.Data
+                            , 'error');
+                            window.scrollTo(0, 0);
+                            $(".btn-change-password").html("Reset Password").attr("disabled", !1);
+                        a = {};
+                    }
+
+                },
+                error: function (t) {
+                    if (400 == t.status) return //alert("check your supply value and try again!"),
+                    void $(".btn-change-password").html("Reset Password").attr("disabled", !1);
+                    $(".btn-change-password").html("Reset Password").attr("disabled", !1);
+                },
+            });
+        }
+});
+
+$(".btn-update-profile").on("click", function () {
+
+    if ($('.catch_me').val() != "") {
+        return;
+    }
+
+    $(".btn-update-profile").html("Processing...").attr("disabled", !0);
+    let t = false;
+    var e = "";
+    if (
+        ($("#profile-form")
+            .find("input")
+            .each(function () {
+                $(this).prop("required") && ($(this).val() || ((t = !0), (name = $(this).attr("name")), (e += name + ", ")));
+            }))
+    )
+        if (t) message("Validation error the following field are required " + e.substring(0, e.length - 2), 'error'), window.scrollTo(0, 0), $(".btn-update-profile").attr("disabled", !1).html("Edit");
+        else {
+            var a = {
+                FirstName: $("#firstname").val(),
+                LastName: $("#lastname").val(),
+                Phone: $("#phone").val(),
+                Address: $("#address").val()
+            };
+
+            $.ajax({
+                type: "post",
+                url: "/update-profile",
+                headers: { "Content-Type": "application/json" },
+                data: JSON.stringify(a),
+                success: function (t) {
+                    var res = JSON.parse(t);
+                    if (res.Success) {
+                        // message(res.Message + '. Kindly check your mail to activate your account', 'success');
+                        Swal.fire(
+                            'Good job!',
+                            res.Message + '. Kindly check your mail to activate your account',
+                            'success'
+                        )
+                        $(".form-control").val(""),
+                            $("#firstName").focus(),
+                            window.scrollTo(0, 0),
+                            $(".btn-update-profile").html("Edit").attr("disabled", !1),
+
+                            a = {};
+
+                    } else {
+
+                        message(res.Data
+                            , 'error'),
+                            window.scrollTo(0, 0),
+                            $(".btn-update-profile").html("Edit").attr("disabled", !1);
+                        a = {};
+                    }
+
+                },
+                error: function (t) {
+                    if (400 == t.status) return //alert("check your supply value and try again!"),
+                    void $(".btn-update-profile").html("Edit").attr("disabled", !1);
+                    $(".btn-update-profile").html("Edit").attr("disabled", !1);
+                },
+            });
+        }
+});
 
 $('#signout').click(() => {
     let xhr = new XMLHttpRequest();
