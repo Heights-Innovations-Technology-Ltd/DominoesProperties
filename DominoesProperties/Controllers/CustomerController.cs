@@ -148,8 +148,12 @@ namespace DominoesProperties.Controllers
             }
 
             existingCustomer.Address = customer.Address;
-            existingCustomer.AccountNumber = customer.AccountNumber;
             existingCustomer.Phone = customer.Phone;
+            if (existingCustomer.AccountNumber == null)
+            {
+                existingCustomer.AccountNumber = customer.AccountNumber;
+                existingCustomer.BankName = customer.BankName;
+            }
 
             response.Message = "Customer profile updated successfully!";
             response.Success = true;

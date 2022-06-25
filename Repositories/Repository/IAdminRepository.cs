@@ -10,5 +10,6 @@ namespace Repositories.Repository
         List<Admin> GetUser();
         void DeleteUser(string uniqueReference);
         Admin UpdateUser(Admin customer);
+        public Dictionary<string, int> AdminDashboard();
     }
 }

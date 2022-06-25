@@ -33,6 +33,7 @@ namespace DominoesProperties.Models
         public string Longitude { get; set; }
         public string Latitude { get; set; }
         public string TypeName { get; set; }
+        public string Summary { get; set; }
         
         [JsonIgnore]
         public string CreatedBy { get; set; }
