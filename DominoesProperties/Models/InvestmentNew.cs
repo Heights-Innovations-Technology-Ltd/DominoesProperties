@@ -7,8 +7,8 @@ namespace DominoesProperties.Models
     {
         [Required(ErrorMessage ="Property Id is required")]
         public string PropertyUniqueId { get; set; }
+        [Range(1, 0)]
         [Required(ErrorMessage ="Number of units to be bought is required")]
-        [MinLength(1)]
         public int Units { get; set; }
     }
 }

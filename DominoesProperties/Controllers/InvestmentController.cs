@@ -30,12 +30,12 @@ namespace DominoesProperties.Controllers
         }
         
         [HttpPost]
-        [Authorize]
-        public ApiResponse Investment([FromBody] InvestmentNew investment)
+        //[Authorize]
+        public ApiResponse Investments([FromBody] InvestmentNew investment)
         {
             var property = propertyRepository.GetProperty(investment.PropertyUniqueId);
             if(property == null){
-                response.Message = localizer["Property.Not.Found"];
+                response.Message = $"Property with id {investment.PropertyUniqueId} not found";
                 return response;
             }
             global::Models.Models.Customer customer = customerRepository.GetCustomer(HttpContext.User.Identity.Name);
@@ -50,10 +50,12 @@ namespace DominoesProperties.Controllers
             newInvestment.YearlyInterestAmount = newInvestment.Amount * newInvestment.Yield;
             long investmentId = investmentRepository.AddInvestment(newInvestment);
             if(investmentId != 0){
-                Payment pay = new Payment();
-                pay.Amount =  newInvestment.Amount;
-                pay.Module = Enums.PaymentType.PROPERTY_PURCHASE;
-                pay.InvestmentId = investmentId;
+                Payment pay = new()
+                {
+                    Amount = newInvestment.Amount,
+                    Module = Enums.PaymentType.PROPERTY_PURCHASE,
+                    InvestmentId = investmentId
+                };
                 return paymentController.InitiateTransaction(pay);
             }
             return response;
@@ -65,11 +67,11 @@ namespace DominoesProperties.Controllers
 
             System.Collections.Generic.List<Investment> investments = investmentRepository.GetInvestments(customerRepository.GetCustomer(customerId).Id);
             if(investments.Count > 1){
-                response.Message = localizer["Response.Success"];
+                response.Message = "Successful";
                 response.Data = investments;
                 return response;
             }
-            response.Message = localizer["No.Content.Found"];
+            response.Message = "No record found";
             return response;
         }
 
