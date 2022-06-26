@@ -292,7 +292,7 @@ namespace DominoesProperties.Controllers
         [HttpPost("passport")]
         [Authorize]
         [ValidateAntiForgeryToken]
-        public async Task<ApiResponse> UploadPassportAsync([Required][MaxLength(1 * 1024 * 1024, ErrorMessage = "Upload size cannot exceed 1MB")]  IFormFile passport)
+        public async Task<ApiResponse> UploadPassportAsync([FromForm][Required][MaxLength(1 * 1024 * 1024, ErrorMessage = "Upload size cannot exceed 1MB")]  IFormFile passport)
         {
             var container = new BlobContainerClient(configuration["BlobClient:Url"], "passport");
             var createResponse = await container.CreateIfNotExistsAsync();
