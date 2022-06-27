@@ -100,7 +100,8 @@ namespace DominoesProperties.Helper
                 Type = property.Type,
                 TotalUnits = property.TotalUnits,
                 UnitSold = property.UnitSold,
-                TypeName = property.TypeNavigation.Name
+                TypeName = property.TypeNavigation.Name,
+                Summary = property.Summary
             };
         }
 

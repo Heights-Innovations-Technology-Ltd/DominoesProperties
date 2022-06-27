@@ -169,7 +169,7 @@ namespace DominoesProperties.Controllers
             Property property = propertyRepository.GetProperty(uniqueId);
             if (property == null)
             {
-                response.Message = "Username name not found, kindly check and try again";
+                response.Message = "Username not found, kindly check and try again";
                 return response;
             }
             property.Location = string.IsNullOrEmpty(updateProperty.Location) ? property.Location : updateProperty.Location;
@@ -182,6 +182,7 @@ namespace DominoesProperties.Controllers
             property.InterestRate = updateProperty.InterestRate > 0 ? updateProperty.InterestRate : property.InterestRate;
             property.Longitude = string.IsNullOrEmpty(updateProperty.Longitude) ? property.Longitude : updateProperty.Longitude;
             property.Latitude = string.IsNullOrEmpty(updateProperty.Latitude) ? property.Latitude : updateProperty.Latitude;
+            property.Summary = string.IsNullOrEmpty(updateProperty.Summary) ? property.Summary : updateProperty.Summary;
 
             response.Data = propertyRepository.UpdateProperty(property);
             response.Success = true;
@@ -251,7 +252,7 @@ namespace DominoesProperties.Controllers
         [HttpPost("uploads/{propertyId}")]
         [Authorize]
         [ValidateAntiForgeryToken]
-        public async Task<ApiResponse> UploadPassportAsync(long propertyId, [Required(ErrorMessage = "No upload found")][MinLength(1, ErrorMessage = "Upload atleast 1 file")] List<IFormFile> passport)
+        public async Task<ApiResponse> UploadPassportAsync(long propertyId, [FromForm][Required(ErrorMessage = "No upload found")][MinLength(1, ErrorMessage = "Upload atleast 1 file")] List<IFormFile> passport)
         {
             var container = new BlobContainerClient(configuration["BlobClient:Url"], "properties");
             var createResponse = await container.CreateIfNotExistsAsync();

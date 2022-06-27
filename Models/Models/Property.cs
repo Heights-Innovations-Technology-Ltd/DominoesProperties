@@ -34,6 +34,7 @@ namespace Models.Models
         public string Latitude { get; set; }
         public string CreatedBy { get; set; }
         public bool? IsDeleted { get; set; }
+        public string Summary { get; set; }
 
         public virtual Admin CreatedByNavigation { get; set; }
         public virtual PropertyType TypeNavigation { get; set; }

@@ -148,8 +148,12 @@ namespace DominoesProperties.Controllers
             }
 
             existingCustomer.Address = customer.Address;
-            existingCustomer.AccountNumber = customer.AccountNumber;
             existingCustomer.Phone = customer.Phone;
+            if (existingCustomer.AccountNumber == null)
+            {
+                existingCustomer.AccountNumber = customer.AccountNumber;
+                existingCustomer.BankName = customer.BankName;
+            }
 
             response.Message = "Customer profile updated successfully!";
             response.Success = true;
@@ -288,7 +292,7 @@ namespace DominoesProperties.Controllers
         [HttpPost("passport")]
         [Authorize]
         [ValidateAntiForgeryToken]
-        public async Task<ApiResponse> UploadPassportAsync([Required][MaxLength(1 * 1024 * 1024, ErrorMessage = "Upload size cannot exceed 1MB")]  IFormFile passport)
+        public async Task<ApiResponse> UploadPassportAsync([FromForm][Required][MaxLength(1 * 1024 * 1024, ErrorMessage = "Upload size cannot exceed 1MB")]  IFormFile passport)
         {
             var container = new BlobContainerClient(configuration["BlobClient:Url"], "passport");
             var createResponse = await container.CreateIfNotExistsAsync();
