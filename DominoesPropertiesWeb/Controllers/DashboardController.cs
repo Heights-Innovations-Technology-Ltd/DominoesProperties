@@ -70,21 +70,21 @@ namespace DominoesPropertiesWeb.Controllers
             return Json(JsonConvert.SerializeObject(data));
         } 
         
-        [Route("change-password")]
+        [Route("/change-password")]
         public async Task<JsonResult> ChangePassword([FromBody] dynamic password)
         {
             JObject jObject = JsonConvert.DeserializeObject<JObject>(Convert.ToString(password));
 
             dynamic obj = new ExpandoObject();
 
-            obj.Token = Convert.ToString(jObject["currentPassword"]);
+            obj.Token = Convert.ToString(jObject["CurrentPassword"]);
             obj.Password = Convert.ToString(jObject["Password"]);
             obj.ConfirmPassword = Convert.ToString(jObject["Confirm"]);
-            obj.Phone = Convert.ToString(jObject["phone"]);
 
-            var res = Task.Run(() => httpContext.Put("Customer/change-password", obj));
-            await Task.WhenAll(res);
-            var data = res.Status == TaskStatus.RanToCompletion ? res.Result : null;
+            var res = Task.Run(() => httpContext.Post("Customer/change-password", obj));
+            var data = await res.GetAwaiter().GetResult();
+            //await Task.WhenAll(res);
+            //var data = res.Status == TaskStatus.RanToCompletion ? res.Result : null;
             return Json(JsonConvert.SerializeObject(data));
         }
 

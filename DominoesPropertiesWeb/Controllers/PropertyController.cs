@@ -97,8 +97,8 @@ namespace DominoesPropertiesWeb.Controllers
             return Json(JsonConvert.SerializeObject(data));
         }
         
-        [Route("update-property")]
-        public async Task<JsonResult> EditProperty([FromBody] dynamic property)
+        [Route("update-property/{propertyId}")]
+        public async Task<JsonResult> EditProperty([FromBody] dynamic property, string propertyId)
         {
             JObject jObject = JsonConvert.DeserializeObject<JObject>(Convert.ToString(property));
             
@@ -133,7 +133,7 @@ namespace DominoesPropertiesWeb.Controllers
             obj.Description = DesObj;
 
 
-            var res = Task.Run(() => httpContext.Post("Property", obj));
+            var res = Task.Run(() => httpContext.Put("Property/" + propertyId, obj));
             var data = await res.GetAwaiter().GetResult();
             return Json(JsonConvert.SerializeObject(data));
         }

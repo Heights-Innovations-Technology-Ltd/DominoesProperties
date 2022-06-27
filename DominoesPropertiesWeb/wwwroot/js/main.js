@@ -224,29 +224,56 @@ const profile = (data, mode) => {
         $('#phone').val(data.phone);
         $('#address').val(data.address);
     } else {
+        $('.fullName').text(data.firstName + " " + data.lastName);
+        $('.walletId').html("wallet ID ( <strong>" + data.walletId + "</strong> )");
+        $('.walletBalance').html('&#8358; ' + data.walletBalance);
         $('#profile').html(`
-        <li>
-		    <span id="firstname">First Name:</span>
-		    ${data.firstName}
-	    </li>
-	    <li>
-		    <span id="lastname">Last Name:</span>
-		   ${data.lastName}
-	    </li>
-	   
-	    <li>
-		    <span id="email">Email:</span>
-		   ${data.email}
-	    </li>
-	    <li>
-		    <span>Phone:</span>
-            ${data.phone}
-	    </li>
-	    <li>
-		    <span id="address">Address:</span>
-		    ${data.address};
-	    </li>
-        
+            <div class="card-body">
+				<div class="row">
+					<div class="col-sm-3">
+					<h6 class="mb-0">Full Name</h6>
+					</div>
+					<div class="col-sm-9">
+					<p class="text-muted mb-0"> ${data.firstName} ${data.lastName}</p>
+					</div>
+				</div>
+				<hr>
+				<div class="row">
+					<div class="col-sm-3">
+					<h6 class="mb-0">Email</h6>
+					</div>
+					<div class="col-sm-9">
+					<p class="text-muted mb-0"> ${data.email}</p>
+					</div>
+				</div>
+				<hr>
+				<div class="row">
+					<div class="col-sm-3">
+					<h6 class="mb-0">Phone</h6>
+					</div>
+					<div class="col-sm-9">
+					<p class="text-muted mb-0"> ${data.phone}</p>
+					</div>
+				</div>
+				<hr>
+				<div class="row">
+					<div class="col-sm-3">
+					<h6 class="mb-0">Account Number</h6>
+					</div>
+					<div class="col-sm-9">
+					<p class="text-muted mb-0">${data.accountNumber}</p>
+					</div>
+				</div>
+				<hr>
+				<div class="row">
+					<div class="col-sm-3">
+					<h6 class="mb-0">Address</h6>
+					</div>
+					<div class="col-sm-9">
+					<p class="text-muted mb-0"> ${data.address}</p>
+					</div>
+				</div>
+			</div>
     `);
     }
     
@@ -477,27 +504,12 @@ const getSingleProperty = () => {
 							    Laundry
 						    </li>
 						    <li>
-							    <i class="${data.description['airConditioned'] ? 'ri-checkbox-line' : 'ri-checkbox-blank-line'}"></i>
-							    Barbeque
-						    </li>
-					    </ul>
-				    </div>
-				    <div class="col-lg-3 col-sm-6">
-					    <ul>
-						    <li>
 							    <i class="${data.description['refrigerator'] ? 'ri-checkbox-line' : 'ri-checkbox-blank-line'}"></i>
 							    Refrigerator
 						    </li>
-						    <li>
-							    <i class="${data.description['airConditioned'] ? 'ri-checkbox-line' : 'ri-checkbox-blank-line'}"></i>
-							    Window Coverings
-						    </li>
-						    <li>
-							    <i class="${data.description['airConditioned'] ? 'ri-checkbox-line' : 'ri-checkbox-blank-line'}"></i>
-							    Grage
-						    </li>
 					    </ul>
 				    </div>
+				   
 				    <div class="col-lg-3 col-sm-6">
 					    <ul>
 						    <li>
@@ -586,7 +598,8 @@ const editSingleProperty = () => {
                
                 $("#name").val(data.name);
                 $("#location").val(data.location);
-                 //$("#types").val(),
+                setSelectedOption("#types", data.type);
+                setSelectedOption("#status", data.status);
                 $("#price").val(data.unitPrice);
                 $("#status").val();
                 $("#unit").val(data.totalUnits);
@@ -608,6 +621,7 @@ const editSingleProperty = () => {
                 $("#interest").val(data.interestRate);
                 $("#logitude").val(data.longitude);
                 $("#latitude").val(data.latitude);
+                //$("#description").val(data.description);
                 console.log(data);
             } else {
 
@@ -624,284 +638,376 @@ const editSingleProperty = () => {
 
 
 $('.btn-property').click(() => {
-    $(".btn-property").html("Processing...").attr("disabled", !0);
-    let t = false;
-    var e = "";
-    if (
-        ($("#property-form")
-            .find("input")
-            .each(function () {
-                $(this).prop("required") && ($(this).val() || ((t = !0), (name = $(this).attr("name")), (e += name + ", ")));
-            })
-            
-        )
-    )
-        
-        if (t) message("Validation error the following field are required " + e.substring(0, e.length - 2), 'error'), window.scrollTo(0, 0), $(".btn-property").attr("disabled", !1).html("Submit");
-
-    if ((!Number($("#price").val())) && $("#price").val() != '') {
-        $(".btn-property").html("Submit").attr("disabled", !1);
-        message("Invalid price supply, kindly check and try again!", 'error');
-        $('#price').focus();
-        return;
-    }
-
-    //if ((!Number(Number($("#logitutde").val()))) && $("#logitude").val() != '') {
-    //    $(".btn-property").html("Submit").attr("disabled", !1);
-    //    message("Invalid logitude supply, kindly check and try again!", 'error');
-    //    $('#logitude').focus();
-    //    return;
-    //}
-
-    //if ((!Number($("#latitude").val())) && $("#latitude").val() != '') {
-    //    $(".btn-Submit").html("Submit").attr("disabled", !1);
-    //    message("Invalid latitude supply, kindly check and try again!", 'error');
-    //    $('#latitude').focus();
-    //    return;
-    //}
-    
-
-    var params = {
-        Name: $("#name").val().trim(),
-        Location: $("#location").val(),
-        Type: $("#types").val(),
-        UnitPrice: Number($("#price").val()),
-        Status: $("#status").val(),
-        UnitAvailable: Number($("#unit").val()),
-        Description: {
-            Bathroom: Number($("#bathroom").val()),
-            Toilet: Number($("#toilet").val()),
-            FloorLevel: Number($("#floorLevel").val()),
-            Bedroom: Number($("#bedRoom").val()),
-            LandSize: $("#landSize").val(),
-            AirConditioned: $("#airConditioned").is(":checked") ? 1 : 0,
-            Refrigerator: $("#refrigerator").is(":checked") ? 1 : 0,
-            Parking: $("#parking").is(":checked") ? 1 : 0,
-            SwimmingPool: $("#swimmingPool").is(":checked") ? 1 : 0,
-            Laundry: $("#laundry").is(":checked") ? 1 : 0,
-            Gym: $("#gym").is(":checked") ? 1 : 0,
-            SecurityGuard: $("#securityGuard").is(":checked") ? 1 : 0,
-            Fireplace: $("#fireplace").is(":checked") ? 1 : 0,
-            Basement: $("#basement").is(":checked") ? 1 : 0,
+    const confirmPropertyUpdate = Swal.mixin({
+        customClass: {
+            confirmButton: 'btn btn-success mx-2',
+            cancelButton: 'btn btn-danger'
         },
-        InterestRate: Number($("#interest").val()),
-        Longitude: Number($("#logitude").val()),
-        Latitude: Number($("#latitude").val())
+        buttonsStyling: false
+    })
 
-    };
+    confirmPropertyUpdate.fire({
+        title: 'Are you sure?',
+        text: "To create this property!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, create it!',
+        cancelButtonText: 'No, cancel!',
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $(".btn-property").html("Processing...").attr("disabled", !0);
+            let t = false;
+            var e = "";
+            if (
+                ($("#property-form")
+                    .find("input")
+                    .each(function () {
+                        $(this).prop("required") && ($(this).val() || ((t = !0), (name = $(this).attr("name")), (e += name + ", ")));
+                    })
 
-    console.log(params);
-    let xhr = new XMLHttpRequest();
-    let url = "/create-property";
-    xhr.open('POST', url, false);
-    xhr.setRequestHeader("content-type", "application/json");
-    xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
-    try {
-        xhr.send(JSON.stringify(params));
-        if (xhr.status != 200) {
-            // alert('Something went wrong try again!');
-        } else {
-            var res = JSON.parse(xhr.responseText);
-            var data = JSON.parse(res).Data;
-            console.log(res);
-            if (JSON.parse(res).Success) {
-                window.scrollTo(0, 0);
-                //message(JSON.parse(res).Message, "success");
-                Swal.fire(
-                    'Good job!',
-                    JSON.parse(res).Message,
-                    'success'
-                );
-                $('.form-control').val('');
+                )
+            )
+
+                if (t) message("Validation error the following field are required " + e.substring(0, e.length - 2), 'error'), window.scrollTo(0, 0), $(".btn-property").attr("disabled", !1).html("Submit");
+
+            if ((!Number($("#price").val())) && $("#price").val() != '') {
                 $(".btn-property").html("Submit").attr("disabled", !1);
-
-                setTimeout(() => {
-                    location.reload();
-                }, 2000);
-            } else {
-                $(".btn-property").html("Submit").attr("disabled", !1);
-                window.scrollTo(0, 0);
+                message("Invalid price supply, kindly check and try again!", 'error');
+                $('#price').focus();
+                return;
             }
 
+            var params = {
+                Name: $("#name").val().trim(),
+                Location: $("#location").val(),
+                Type: $("#types").val(),
+                UnitPrice: Number($("#price").val()),
+                Status: $("#status").val(),
+                UnitAvailable: Number($("#unit").val()),
+                Description: {
+                    Bathroom: Number($("#bathroom").val()),
+                    Toilet: Number($("#toilet").val()),
+                    FloorLevel: Number($("#floorLevel").val()),
+                    Bedroom: Number($("#bedRoom").val()),
+                    LandSize: $("#landSize").val(),
+                    AirConditioned: $("#airConditioned").is(":checked") ? 1 : 0,
+                    Refrigerator: $("#refrigerator").is(":checked") ? 1 : 0,
+                    Parking: $("#parking").is(":checked") ? 1 : 0,
+                    SwimmingPool: $("#swimmingPool").is(":checked") ? 1 : 0,
+                    Laundry: $("#laundry").is(":checked") ? 1 : 0,
+                    Gym: $("#gym").is(":checked") ? 1 : 0,
+                    SecurityGuard: $("#securityGuard").is(":checked") ? 1 : 0,
+                    Fireplace: $("#fireplace").is(":checked") ? 1 : 0,
+                    Basement: $("#basement").is(":checked") ? 1 : 0,
+                },
+                InterestRate: Number($("#interest").val()),
+                Longitude: Number($("#logitude").val()),
+                Latitude: Number($("#latitude").val()),
+                Desc: $("#description").val()
+
+            };
+
+            console.log(params);
+            let xhr = new XMLHttpRequest();
+            let url = "/create-property";
+            xhr.open('POST', url, false);
+            xhr.setRequestHeader("content-type", "application/json");
+            xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+            try {
+                xhr.send(JSON.stringify(params));
+                if (xhr.status != 200) {
+                    // alert('Something went wrong try again!');
+                } else {
+                    var res = JSON.parse(xhr.responseText);
+                    var data = JSON.parse(res).Data;
+                    var Message = JSON.parse(res).Message;
+                    console.log(res);
+                    if (JSON.parse(res).Success) {
+                        window.scrollTo(0, 0);
+                        //message(JSON.parse(res).Message, "success");
+                        $('.form-control').val('');
+                        $(".btn-property").html("Submit").attr("disabled", !1);
+                        Swal.fire(
+                            'Good job!',
+                            Message,
+                            'success'
+                        );
+
+                        setTimeout(() => {
+                            location.reload();
+                        }, 2000);
+                    } else {
+                        $(".btn-property").html("Submit").attr("disabled", !1);
+                        window.scrollTo(0, 0);
+                    }
+
+                }
+            } catch (err) { // instead of onerror
+                //alert("Request failed");
+                $(".btn-property").html("Submit").attr("disabled", !1);
+            }
+        } else if (
+            /* Read more about handling dismissals below */
+            result.dismiss === Swal.DismissReason.cancel
+        ) {
+            confirmPropertyUpdate.fire(
+                'Cancelled',
+                'No changes was made :)',
+                'error'
+            )
         }
-    } catch (err) { // instead of onerror
-        //alert("Request failed");
-        $(".btn-property").html("Submit").attr("disabled", !1);
-    }
+    });
 });
 
 $('.btn-update-property').click(() => {
-    $(".btn-update-property").html("Processing...").attr("disabled", !0);
-    let t = false;
-    var e = "";
-    if (
-        ($("#property-form")
-            .find("input")
-            .each(function () {
-                $(this).prop("required") && ($(this).val() || ((t = !0), (name = $(this).attr("name")), (e += name + ", ")));
-            })
-            
-        )
-    )
-        
-        if (t) message("Validation error the following field are required " + e.substring(0, e.length - 2), 'error'), window.scrollTo(0, 0), $(".btn-update-property").attr("disabled", !1).html("Submit");
 
-    if ((!Number($("#price").val())) && $("#price").val() != '') {
-        $(".btn-update-property").html("Submit").attr("disabled", !1);
-        message("Invalid price supply, kindly check and try again!", 'error');
-        $('#price').focus();
-        return;
-    }
-
-    //if ((!Number(Number($("#logitutde").val()))) && $("#logitude").val() != '') {
-    //    $(".btn-property").html("Submit").attr("disabled", !1);
-    //    message("Invalid logitude supply, kindly check and try again!", 'error');
-    //    $('#logitude').focus();
-    //    return;
-    //}
-
-    //if ((!Number($("#latitude").val())) && $("#latitude").val() != '') {
-    //    $(".btn-Submit").html("Submit").attr("disabled", !1);
-    //    message("Invalid latitude supply, kindly check and try again!", 'error');
-    //    $('#latitude').focus();
-    //    return;
-    //}
-    
-
-    var params = {
-        Name: $("#name").val().trim(),
-        Location: $("#location").val(),
-        Type: $("#types").val(),
-        UnitPrice: Number($("#price").val()),
-        Status: $("#status").val(),
-        UnitAvailable: Number($("#unit").val()),
-        Description: {
-            Bathroom: Number($("#bathroom").val()),
-            Toilet: Number($("#toilet").val()),
-            FloorLevel: Number($("#floorLevel").val()),
-            Bedroom: Number($("#bedRoom").val()),
-            LandSize: $("#landSize").val(),
-            AirConditioned: $("#airConditioned").is(":checked") ? 1 : 0,
-            Refrigerator: $("#refrigerator").is(":checked") ? 1 : 0,
-            Parking: $("#parking").is(":checked") ? 1 : 0,
-            SwimmingPool: $("#swimmingPool").is(":checked") ? 1 : 0,
-            Laundry: $("#laundry").is(":checked") ? 1 : 0,
-            Gym: $("#gym").is(":checked") ? 1 : 0,
-            SecurityGuard: $("#securityGuard").is(":checked") ? 1 : 0,
-            Fireplace: $("#fireplace").is(":checked") ? 1 : 0,
-            Basement: $("#basement").is(":checked") ? 1 : 0,
+    const confirmPropertyUpdate = Swal.mixin({
+        customClass: {
+            confirmButton: 'btn btn-success mx-2',
+            cancelButton: 'btn btn-danger'
         },
-        InterestRate: Number($("#interest").val()),
-        Longitude: Number($("#logitude").val()),
-        Latitude: Number($("#latitude").val()),
-        CreatedBy: Number($("#createdBy").val())
+        buttonsStyling: false
+    })
 
-    };
+    confirmPropertyUpdate.fire({
+        title: 'Are you sure?',
+        text: "To make changes to this property data!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, update it!',
+        cancelButtonText: 'No, cancel!',
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $(".btn-update-property").html("Processing...").attr("disabled", !0);
+            let t = false;
+            var e = "";
+            if (
+                ($("#property-form")
+                    .find("input")
+                    .each(function () {
+                        $(this).prop("required") && ($(this).val() || ((t = !0), (name = $(this).attr("name")), (e += name + ", ")));
+                    })
 
-    console.log(params);
-    let xhr = new XMLHttpRequest();
-    let url = "/update-property";
-    xhr.open('PUT', url, false);
-    xhr.setRequestHeader("content-type", "application/json");
-    xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
-    try {
-        xhr.send(JSON.stringify(params));
-        if (xhr.status != 200) {
-            // alert('Something went wrong try again!');
-        } else {
-            var res = JSON.parse(xhr.responseText);
-            var data = JSON.parse(res).Data;
-            console.log(res);
-            if (JSON.parse(res).Success) {
-                window.scrollTo(0, 0);
-                //message(JSON.parse(res).Message, "success");
-                Swal.fire(
-                    'Good job!',
-                    JSON.parse(res).Message,
-                    'success'
-                );
-                $('.form-control').val('');
+                )
+            )
+
+                if (t) message("Validation error the following field are required " + e.substring(0, e.length - 2), 'error'), window.scrollTo(0, 0), $(".btn-update-property").attr("disabled", !1).html("Submit");
+
+            if ((!Number($("#price").val())) && $("#price").val() != '') {
                 $(".btn-update-property").html("Submit").attr("disabled", !1);
-
-                setTimeout(() => {
-                    location.reload();
-                }, 2000);
-            } else {
-                $(".btn-update-property").html("Submit").attr("disabled", !1);
-                window.scrollTo(0, 0);
+                message("Invalid price supply, kindly check and try again!", 'error');
+                $('#price').focus();
+                return;
             }
+            let urls = window.location.href.split("/");
+            let id = urls[5];
 
+            var params = {
+                Name: $("#name").val().trim(),
+                Location: $("#location").val(),
+                Type: $("#types").val(),
+                UnitPrice: Number($("#price").val()),
+                Status: $("#status").val(),
+                UnitAvailable: Number($("#unit").val()),
+                Description: {
+                    Bathroom: Number($("#bathroom").val()),
+                    Toilet: Number($("#toilet").val()),
+                    FloorLevel: Number($("#floorLevel").val()),
+                    Bedroom: Number($("#bedRoom").val()),
+                    LandSize: $("#landSize").val(),
+                    AirConditioned: $("#airConditioned").is(":checked") ? 1 : 0,
+                    Refrigerator: $("#refrigerator").is(":checked") ? 1 : 0,
+                    Parking: $("#parking").is(":checked") ? 1 : 0,
+                    SwimmingPool: $("#swimmingPool").is(":checked") ? 1 : 0,
+                    Laundry: $("#laundry").is(":checked") ? 1 : 0,
+                    Gym: $("#gym").is(":checked") ? 1 : 0,
+                    SecurityGuard: $("#securityGuard").is(":checked") ? 1 : 0,
+                    Fireplace: $("#fireplace").is(":checked") ? 1 : 0,
+                    Basement: $("#basement").is(":checked") ? 1 : 0,
+                },
+                InterestRate: Number($("#interest").val()),
+                Longitude: Number($("#logitude").val()),
+                Latitude: Number($("#latitude").val()),
+                Desc: $("#description").val(),
+                CreatedBy: $("#createdBy").val()
+
+            };
+
+            console.log(params);
+            let xhr = new XMLHttpRequest();
+            let url = "/update-property/" + id;
+            xhr.open('PUT', url, false);
+            xhr.setRequestHeader("content-type", "application/json");
+            xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+            try {
+                xhr.send(JSON.stringify(params));
+                if (xhr.status != 200) {
+                    // alert('Something went wrong try again!');
+                } else {
+                    var res = JSON.parse(xhr.responseText);
+                    var data = JSON.parse(res).Data;
+                    console.log(res);
+                    if (JSON.parse(res).Success) {
+                        window.scrollTo(0, 0);
+                        //message(JSON.parse(res).Message, "success");
+                        //$('.form-control').val('');
+                        $(".btn-update-property").html("Edit").attr("disabled", !1);
+                        Swal.fire(
+                            'Good job!',
+                            JSON.parse(res).Message,
+                            'success'
+                        );
+                        //setTimeout(() => {
+                        //    location.reload();
+                        //}, 2000);
+                    } else {
+                        $(".btn-update-property").html("Edit").attr("disabled", !1);
+                        window.scrollTo(0, 0);
+                    }
+
+                }
+            } catch (err) { // instead of onerror
+                //alert("Request failed");
+                $(".btn-update-property").html("Edit").attr("disabled", !1);
+            }
+        } else if (
+            /* Read more about handling dismissals below */
+            result.dismiss === Swal.DismissReason.cancel
+        ) {
+            confirmPropertyUpdate.fire(
+                'Cancelled',
+                'No changes was made :)',
+                'error'
+            )
         }
-    } catch (err) { // instead of onerror
-        //alert("Request failed");
-        $(".btn-update-property").html("Submit").attr("disabled", !1);
-    }
+    });
+
+    //const confirmPropertyUpdate = Swal.mixin({
+    //    customClass: {
+    //        confirmButton: 'btn btn-success',
+    //        cancelButton: 'btn btn-danger'
+    //    },
+    //    buttonsStyling: false
+    //})
+
+    //confirmPropertyUpdate.fire({
+    //    title: 'Are you sure?',
+    //    text: "To make changes to this property data!",
+    //    icon: 'warning',
+    //    showCancelButton: true,
+    //    confirmButtonText: 'Yes, update it!',
+    //    cancelButtonText: 'No, cancel!',
+    //    reverseButtons: true
+    //}).then((result) => {
+    //    if (result.isConfirmed) {
+
+    //    } else if (
+    //        /* Read more about handling dismissals below */
+    //        result.dismiss === Swal.DismissReason.cancel
+    //    ) {
+    //        confirmPropertyUpdate.fire(
+    //            'Cancelled',
+    //            'No changes was made :)',
+    //            'error'
+    //        )
+    //    }
+    //});
 });
 
 $('.btn-update-decription').click(() => {
-    $(".btn-update-decription").html("Processing...").attr("disabled", !0);
+     const confirmPropertyUpdate = Swal.mixin({
+        customClass: {
+            confirmButton: 'btn btn-success mx-2',
+            cancelButton: 'btn btn-danger'
+        },
+        buttonsStyling: false
+    })
 
-    let urls = window.location.href.split("/");
-    let id = urls[5];
+    confirmPropertyUpdate.fire({
+        title: 'Are you sure?',
+        text: "To make changes to property description!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, update it!',
+        cancelButtonText: 'No, cancel!',
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $(".btn-update-decription").html("Processing...").attr("disabled", !0);
 
-    var params = {
-        Description: {
-            Bathroom: Number($("#bathroom").val()),
-            Toilet: Number($("#toilet").val()),
-            FloorLevel: Number($("#floorLevel").val()),
-            Bedroom: Number($("#bedRoom").val()),
-            LandSize: $("#landSize").val(),
-            AirConditioned: $("#airConditioned").is(":checked") ? 1 : 0,
-            Refrigerator: $("#refrigerator").is(":checked") ? 1 : 0,
-            Parking: $("#parking").is(":checked") ? 1 : 0,
-            SwimmingPool: $("#swimmingPool").is(":checked") ? 1 : 0,
-            Laundry: $("#laundry").is(":checked") ? 1 : 0,
-            Gym: $("#gym").is(":checked") ? 1 : 0,
-            SecurityGuard: $("#securityGuard").is(":checked") ? 1 : 0,
-            Fireplace: $("#fireplace").is(":checked") ? 1 : 0,
-            Basement: $("#basement").is(":checked") ? 1 : 0,
-        }
-    };
+            let urls = window.location.href.split("/");
+            let id = urls[5];
 
-    console.log(params);
-    let xhr = new XMLHttpRequest();
-    let url = "/property-decription/" + id;
-    xhr.open('PUT', url, false);
-    xhr.setRequestHeader("content-type", "application/json");
-    xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
-    try {
-        xhr.send(JSON.stringify(params));
-        if (xhr.status != 200) {
-            // alert('Something went wrong try again!');
-        } else {
-            var res = JSON.parse(xhr.responseText);
-            var data = JSON.parse(res).Data;
-            console.log(res);
-            if (JSON.parse(res).Success) {
-                window.scrollTo(0, 0);
-                message("Description updated successfully", "success");
-                $('#descriptionModal').modal('hide');
-                //$('.form-control').val('');
-                Swal.fire(
-                    'Good job!',
-                    JSON.parse(res).Message,
-                    'success'
-                );
+            var params = {
+                Description: {
+                    Bathroom: Number($("#bathroom").val()),
+                    Toilet: Number($("#toilet").val()),
+                    FloorLevel: Number($("#floorLevel").val()),
+                    Bedroom: Number($("#bedRoom").val()),
+                    LandSize: $("#landSize").val(),
+                    AirConditioned: $("#airConditioned").is(":checked") ? 1 : 0,
+                    Refrigerator: $("#refrigerator").is(":checked") ? 1 : 0,
+                    Parking: $("#parking").is(":checked") ? 1 : 0,
+                    SwimmingPool: $("#swimmingPool").is(":checked") ? 1 : 0,
+                    Laundry: $("#laundry").is(":checked") ? 1 : 0,
+                    Gym: $("#gym").is(":checked") ? 1 : 0,
+                    SecurityGuard: $("#securityGuard").is(":checked") ? 1 : 0,
+                    Fireplace: $("#fireplace").is(":checked") ? 1 : 0,
+                    Basement: $("#basement").is(":checked") ? 1 : 0,
+                }
+            };
+
+            let xhr = new XMLHttpRequest();
+            let url = "/property-decription/" + id;
+            xhr.open('PUT', url, false);
+            xhr.setRequestHeader("content-type", "application/json");
+            xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+            try {
+                xhr.send(JSON.stringify(params));
+                if (xhr.status != 200) {
+                    // alert('Something went wrong try again!');
+                } else {
+                    var res = JSON.parse(xhr.responseText);
+                    var data = JSON.parse(res).Data;
+                    console.log(res);
+                    if (JSON.parse(res).Success) {
+                        window.scrollTo(0, 0);
+                        //message("Description updated successfully", "success");
+                        $('#descriptionModal').modal('hide');
+                        //$('.form-control').val('');
+                        Swal.fire(
+                            'Good job!',
+                            JSON.parse(res).Message,
+                            'success'
+                        );
+                        $(".btn-update-decription").html("Submit").attr("disabled", !1);
+
+                        setTimeout(() => {
+                            location.reload();
+                        }, 2000);
+                    } else {
+                        $(".btn-update-decription").html("Submit").attr("disabled", !1);
+                        window.scrollTo(0, 0);
+                    }
+
+                }
+            } catch (err) { // instead of onerror
+                //alert("Request failed");
                 $(".btn-update-decription").html("Submit").attr("disabled", !1);
-
-                setTimeout(() => {
-                    location.reload();
-                }, 2000);
-            } else {
-                $(".btn-update-decription").html("Submit").attr("disabled", !1);
-                window.scrollTo(0, 0);
             }
-
+        } else if (
+            /* Read more about handling dismissals below */
+            result.dismiss === Swal.DismissReason.cancel
+        ) {
+            confirmPropertyUpdate.fire(
+                'Cancelled',
+                'No changes was made :)',
+                'error'
+            )
         }
-    } catch (err) { // instead of onerror
-        //alert("Request failed");
-        $(".btn-update-decription").html("Submit").attr("disabled", !1);
-    }
+    });
 });
 
 $('#btnUpload').on('click', function () {
@@ -1162,113 +1268,170 @@ $('.btn-verify').click(() => {
 });
 
 $('.btn-property-investment').on('click', () => {
-    $(".btn-property-investment").html("Processing...").attr("disabled", !0);
-    let urls = window.location.href.split("/");
-    let id = urls[5];
-    let params = {
-        propertyUniqueId: id,
-        units: 1
-    }
-    let xhr = new XMLHttpRequest();
-    let url = "/invest";
-    xhr.open('POST', url, false);
-    xhr.setRequestHeader("content-type", "application/json");
-    xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
-    try {
-        xhr.send(JSON.stringify(params));
-        if (xhr.status != 200) {
-            // alert('Something went wrong try again!');
-        } else {
-            var res = JSON.parse(xhr.responseText);
-            var data = JSON.parse(res).Data;
-            console.log(res);
-            if (JSON.parse(res).Success) {
-                window.scrollTo(0, 0);
-                //message(JSON.parse(res).Message, "success");
-                Swal.fire(
-                    'Good job!',
-                    JSON.parse(res).Message,
-                    'success'
-                );
-                $('.form-control').val('');
-                $(".btn-property-investment").html("Invest").attr("disabled", !1);
-            } else {
-                $(".btn-property-investment").html("Invest").attr("disabled", !1);
-                window.scrollTo(0, 0);
+    const confirmPropertyUpdate = Swal.mixin({
+        customClass: {
+            confirmButton: 'btn btn-success mx-2',
+            cancelButton: 'btn btn-danger'
+        },
+        buttonsStyling: false
+    })
+
+    confirmPropertyUpdate.fire({
+        title: 'Are you sure?',
+        text: "To invest this property!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, invest it!',
+        cancelButtonText: 'No, cancel!',
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $(".btn-property-investment").html("Processing...").attr("disabled", !0);
+            let urls = window.location.href.split("/");
+            let id = urls[5];
+            let params = {
+                propertyUniqueId: id,
+                units: 1
             }
-
-        }
-    } catch (err) { // instead of onerror
-        //alert("Request failed");
-        $(".btn-property-investment").html("Invest").attr("disabled", !1);
-    }
-})
-
-$(".btn-change-password").on("click", function () {
-
-    $(".btn-change-password").html("Processing...").attr("disabled", !0);
-    let t = false;
-    var e = "";
-    if (
-        ($("#password-form")
-            .find("input")
-            .each(function () {
-                $(this).prop("required") && ($(this).val() || ((t = !0), (name = $(this).attr("name")), (e += name + ", ")));
-            }))
-    )
-        if (t) message("Validation error the following field are required " + e.substring(0, e.length - 2), 'error'), window.scrollTo(0, 0), $(".btn-change-password").attr("disabled", !1).html("Reset Password");
-        else {
-            if ($("#password").val() != $("#confirm").val()) {
-                message("Password mismatch, kindly check and try again", "error");
-                return;
-            }
-
-            var a = {
-                currentPassword: $("#current").val(),
-                Password: $("#password").val(),
-                confirm: $("#confirm").val(),
-            };
-
-            
-
-            $.ajax({
-                type: "post",
-                url: "/change-password",
-                headers: { "Content-Type": "application/json" },
-                data: JSON.stringify(a),
-                success: function (t) {
-                    var res = JSON.parse(t);
-                    if (res.Success) {
-                        // message(res.Message + '. Kindly check your mail to activate your account', 'success');
+            let xhr = new XMLHttpRequest();
+            let url = "/invest";
+            xhr.open('POST', url, false);
+            xhr.setRequestHeader("content-type", "application/json");
+            xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+            try {
+                xhr.send(JSON.stringify(params));
+                if (xhr.status != 200) {
+                    // alert('Something went wrong try again!');
+                } else {
+                    var res = JSON.parse(xhr.responseText);
+                    var data = JSON.parse(res).Data;
+                    console.log(res);
+                    if (JSON.parse(res).Success) {
+                        window.scrollTo(0, 0);
+                        //message(JSON.parse(res).Message, "success");
                         Swal.fire(
                             'Good job!',
-                            res.Message,
+                            JSON.parse(res).Message,
                             'success'
-                        )
-                        $(".form-control").val(""),
-                            $("#firstName").focus(),
-                            window.scrollTo(0, 0),
-                            $(".btn-change-password").html("Reset Password").attr("disabled", !1),
-
-                            a = {};
-
+                        );
+                        $('.form-control').val('');
+                        $(".btn-property-investment").html("Invest").attr("disabled", !1);
                     } else {
-
-                        message(res.Data
-                            , 'error');
-                            window.scrollTo(0, 0);
-                            $(".btn-change-password").html("Reset Password").attr("disabled", !1);
-                        a = {};
+                        $(".btn-property-investment").html("Invest").attr("disabled", !1);
+                        window.scrollTo(0, 0);
                     }
 
-                },
-                error: function (t) {
-                    if (400 == t.status) return //alert("check your supply value and try again!"),
-                    void $(".btn-change-password").html("Reset Password").attr("disabled", !1);
-                    $(".btn-change-password").html("Reset Password").attr("disabled", !1);
-                },
-            });
+                }
+            } catch (err) { // instead of onerror
+                //alert("Request failed");
+                $(".btn-property-investment").html("Invest").attr("disabled", !1);
+            }
+        } else if (
+            /* Read more about handling dismissals below */
+            result.dismiss === Swal.DismissReason.cancel
+        ) {
+            confirmPropertyUpdate.fire(
+                'Cancelled',
+                'No changes was made :)',
+                'error'
+            )
         }
+    });
+})
+
+$(".btn-change-password").on("submit", function () {
+    const confirmPasswordChange = Swal.mixin({
+        customClass: {
+            confirmButton: 'btn btn-success mx-2',
+            cancelButton: 'btn btn-danger'
+        },
+        buttonsStyling: false
+    })
+
+    confirmPasswordChange.fire({
+        title: 'Are you sure?',
+        text: "To change your password!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, update it!',
+        cancelButtonText: 'No, cancel!',
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $(".btn-change-password").html("Processing...").attr("disabled", !0);
+            let t = false;
+            var e = "";
+            if (
+                ($("#password-form")
+                    .find("input")
+                    .each(function () {
+                        $(this).prop("required") && ($(this).val() || ((t = !0), (name = $(this).attr("name")), (e += name + ", ")));
+                    }))
+            )
+                if (t) message("Validation error the following field are required " + e.substring(0, e.length - 2), 'error'), window.scrollTo(0, 0), $(".btn-change-password").attr("disabled", !1).html("Reset Password");
+                else {
+                    if ($("#password").val() != $("#confirm").val()) {
+                        message("Password mismatch, kindly check and try again", "error");
+                        return;
+                    }
+
+                    var a = {
+                        CurrentPassword: $("#current").val(),
+                        Password: $("#password").val(),
+                        Confirm: $("#confirm").val(),
+                    };
+
+
+
+                    $.ajax({
+                        type: "post",
+                        url: "/change-password",
+                        headers: { "Content-Type": "application/json" },
+                        data: JSON.stringify(a),
+                        success: function (t) {
+                            var res = JSON.parse(t);
+                            if (res.Success) {
+                                // message(res.Message + '. Kindly check your mail to activate your account', 'success');
+                                Swal.fire(
+                                    'Good job!',
+                                    res.Message,
+                                    'success'
+                                )
+                                $(".form-control").val(""),
+                                    $("#firstName").focus(),
+                                    window.scrollTo(0, 0),
+                                    $(".btn-change-password").html("Reset Password").attr("disabled", !1),
+
+                                    a = {};
+
+                            } else {
+
+                                message(res.Data
+                                    , 'error');
+                                window.scrollTo(0, 0);
+                                $(".btn-change-password").html("Reset Password").attr("disabled", !1);
+                                a = {};
+                            }
+
+                        },
+                        error: function (t) {
+                            if (400 == t.status) return //alert("check your supply value and try again!"),
+                            void $(".btn-change-password").html("Reset Password").attr("disabled", !1);
+                            $(".btn-change-password").html("Reset Password").attr("disabled", !1);
+                        },
+                    });
+                }
+        } else if (
+            /* Read more about handling dismissals below */
+            result.dismiss === Swal.DismissReason.cancel
+        ) {
+            confirmPasswordChange.fire(
+                'Cancelled',
+                'No changes was made :)',
+                'error'
+            )
+        }
+    });
 });
 
 $(".btn-update-profile").on("click", function () {
@@ -1336,27 +1499,55 @@ $(".btn-update-profile").on("click", function () {
         }
 });
 
-$('#signout').click(() => {
-    let xhr = new XMLHttpRequest();
-    let url = "/logout";
-    xhr.open('GET', url, false);
-    xhr.setRequestHeader("content-type", "application/json");
-    xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
-    try {
+$('.logout').click(() => {
+    const confirmPropertyUpdate = Swal.mixin({
+        customClass: {
+            confirmButton: 'btn btn-success mx-2',
+            cancelButton: 'btn btn-danger'
+        },
+        buttonsStyling: false
+    })
 
-        xhr.send();
-        if (xhr.status != 200) {
-            //alert('Something went wrong try again!');
-        } else {
-            var res = JSON.parse(xhr.responseText);
-            if (res) {
-                location = '/';
+    confirmPropertyUpdate.fire({
+        title: 'Are you sure?',
+        text: "You want to logout!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes!',
+        cancelButtonText: 'No, cancel!',
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            let xhr = new XMLHttpRequest();
+            let url = "/logout";
+            xhr.open('GET', url, false);
+            xhr.setRequestHeader("content-type", "application/json");
+            xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+            try {
+
+                xhr.send();
+                if (xhr.status != 200) {
+                    //alert('Something went wrong try again!');
+                } else {
+                    var res = JSON.parse(xhr.responseText);
+                    if (res) {
+                        location = '/';
+                    }
+                }
+            } catch (err) { // instead of onerror
+                //alert("Request failed");
             }
+        } else if (
+            /* Read more about handling dismissals below */
+            result.dismiss === Swal.DismissReason.cancel
+        ) {
+            confirmPropertyUpdate.fire(
+                'Cancelled',
+                'Thanks for staying back :)',
+                'error'
+            )
         }
-    } catch (err) { // instead of onerror
-        //alert("Request failed");
-    }
-   
+    });
 });
 
 
@@ -1366,4 +1557,13 @@ const message = (msg, _class) => $('#msg').html(`<div class="alert alert-${_clas
 
 function formatToCurrency(amount) {
     return (amount).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+}
+
+const setSelectedOption = (id, value) => {
+
+    $(id + ' option').each(function () {
+        if ($(this).val() == value) {
+            $(this).prop("selected", true);
+        }
+    });
 }

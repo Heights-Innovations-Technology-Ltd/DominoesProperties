@@ -249,8 +249,8 @@ Default Btn Area Style*/
   position: relative;
   z-index: 1;
   overflow: hidden;
-  display: -ms-inline-grid;
-  display: inline-grid;
+  /*display: -ms-inline-grid;*/
+  display: inline-block;
   padding: 12px 40px;
   background-color: #006766;
 }
@@ -1666,9 +1666,11 @@ Featured Area Style
 }
 
 .single-featured-item .featured-content p {
-  position: relative;
-  padding-left: 20px;
-  margin-bottom: 12px;
+    position: relative;
+    padding-left: 20px;
+    padding-bottom: 15px;
+    margin-bottom: 12px;
+    border-bottom: 1px solid #e5e5e5;
 }
 
 .single-featured-item .featured-content p i {
@@ -1683,7 +1685,7 @@ Featured Area Style
   margin-bottom: 25px;
   padding-bottom: 25px;
   list-style-type: none;
-  border-bottom: 1px solid #e5e5e5;
+  /*border-bottom: 1px solid #e5e5e5;*/
 }
 
 .single-featured-item .featured-content ul li {
