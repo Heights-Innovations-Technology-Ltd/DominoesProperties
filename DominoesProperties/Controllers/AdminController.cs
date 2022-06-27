@@ -32,9 +32,11 @@ namespace DominoesProperties.Controllers
         private readonly IDistributedCache distributedCache;
         private readonly ICustomerRepository customerRepository;
         private readonly ILoggerManager logger;
+        private readonly IPropertyRepository propertyRepository;
+        private readonly IInvestmentRepository investmentRepository;
 
         public AdminController(IAdminRepository _adminRepository, IConfiguration _configuration, IWebHostEnvironment _environment, IDistributedCache _distributedCache,
-            ICustomerRepository _customerRepository, ILoggerManager _logger)
+            ICustomerRepository _customerRepository, ILoggerManager _logger, IPropertyRepository _propertyRepository, IInvestmentRepository _investmentRepository)
         {
             adminRepository = _adminRepository;
             configuration = _configuration;
@@ -42,6 +44,8 @@ namespace DominoesProperties.Controllers
             distributedCache = _distributedCache;
             customerRepository = _customerRepository;
             logger = _logger;
+            propertyRepository = _propertyRepository;
+            investmentRepository = _investmentRepository;
             expiryOptions = new()
             {
                 AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(20),
@@ -180,6 +184,16 @@ namespace DominoesProperties.Controllers
             adminRepository.UpdateUser(admin);
 
             response.Message = $"Password successfully changed.";
+            response.Success = true;
+            return response;
+        }
+
+        [HttpPost("dashboard")]
+        [Authorize]
+        public ApiResponse Dashboard()
+         {
+            response.Message = $"Password successfully changed.";
+            response.Data = adminRepository.AdminDashboard();
             response.Success = true;
             return response;
         }

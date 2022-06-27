@@ -113,6 +113,8 @@ namespace Models.Context
 
                 entity.Property(e => e.Address).HasColumnType("varchar(5000)");
 
+                entity.Property(e => e.BankName).HasMaxLength(200);
+
                 entity.Property(e => e.Email)
                     .IsRequired()
                     .HasMaxLength(200);
@@ -164,6 +166,9 @@ namespace Models.Context
             {
                 entity.ToTable("Description");
 
+                entity.HasIndex(e => e.PropertyId, "Description_PropertyId_uindex")
+                    .IsUnique();
+
                 entity.Property(e => e.AirConditioned).HasColumnType("bit(1)");
 
                 entity.Property(e => e.Basement).HasColumnType("bit(1)");
@@ -177,6 +182,8 @@ namespace Models.Context
                 entity.Property(e => e.Laundry).HasColumnType("bit(1)");
 
                 entity.Property(e => e.Parking).HasColumnType("bit(1)");
+
+                entity.Property(e => e.PropertyId).HasMaxLength(200);
 
                 entity.Property(e => e.Refrigerator).HasColumnType("bit(1)");
 
