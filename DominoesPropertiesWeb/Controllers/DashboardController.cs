@@ -57,10 +57,10 @@ namespace DominoesPropertiesWeb.Controllers
 
             dynamic obj = new ExpandoObject();
 
-            obj.FirstName = Convert.ToString(jObject["FirstName"]);
-            obj.LastName = Convert.ToString(jObject["LastName"]);
-            obj.Address = Convert.ToString(jObject["Address"]);
+            obj.AccountNumber = Convert.ToString(jObject["AccountNumber"]);
+            obj.BankName = Convert.ToString(jObject["BankName"]);
             obj.Phone = Convert.ToString(jObject["Phone"]);
+            obj.Address = Convert.ToString(jObject["Address"]);
 
             var res = Task.Run(() => httpContext.Put("Customer", obj));
             var data = await res.GetAwaiter().GetResult();

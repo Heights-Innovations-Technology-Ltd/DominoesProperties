@@ -103,35 +103,18 @@ namespace DominoesPropertiesWeb.Controllers
             JObject jObject = JsonConvert.DeserializeObject<JObject>(Convert.ToString(property));
             
             dynamic obj = new ExpandoObject();
-            dynamic DesObj = new ExpandoObject();
 
-            obj.Name = Convert.ToString(jObject["Name"]);
             obj.Location = Convert.ToString(jObject["Location"]);
             obj.Type = Convert.ToInt32(jObject["Type"]);
             obj.UnitPrice = Convert.ToInt32(jObject["UnitPrice"]);
-            obj.Status = Convert.ToInt32(jObject["Status"]);
-            obj.UnitAvailable = Convert.ToInt32(jObject["UnitAvailable"]);
+            obj.ClosingDate = Convert.ToInt32(jObject["ClosingDate"]);
+            obj.TotalUnits = Convert.ToInt32(jObject["UnitAvailable"]);
             obj.InterestRate = Convert.ToInt32(jObject["InterestRate"]);
             obj.Longitude = Convert.ToString(jObject["Longitude"]);
             obj.Latitude = Convert.ToString(jObject["Latitude"]);
-            obj.CreatedBy = Convert.ToString(jObject["CreatedBy"]);
-
-            DesObj.Bathroom = Convert.ToInt32(jObject["Description"]["Bathroom"]);
-            DesObj.Toilet = Convert.ToInt32(jObject["Description"]["Toilet"]);
-            DesObj.FloorLevel = Convert.ToInt32(jObject["Description"]["FloorLevel"]);
-            DesObj.Bedroom = Convert.ToInt32(jObject["Description"]["Bedroom"]);
-            DesObj.LandSize = Convert.ToString(jObject["Description"]["LandSize"]);
-            DesObj.AirConditioned = Convert.ToInt32(jObject["Description"]["AirConditioned"]);
-            DesObj.Refrigerator = Convert.ToInt32(jObject["Description"]["Refrigerator"]);
-            DesObj.Parking = Convert.ToInt32(jObject["Description"]["Parking"]);
-            DesObj.SwimmingPool = Convert.ToInt32(jObject["Description"]["SwimmingPool"]);
-            DesObj.Laundry = Convert.ToInt32(jObject["Description"]["Laundry"]);
-            DesObj.Gym = Convert.ToInt32(jObject["Description"]["Gym"]);
-            DesObj.SecurityGuard = Convert.ToInt32(jObject["Description"]["SecurityGuard"]);
-            DesObj.Fireplace = Convert.ToInt32(jObject["Description"]["Fireplace"]);
-            DesObj.Basement = Convert.ToInt32(jObject["Description"]["Basement"]);
-            obj.Description = DesObj;
-
+            //obj.TargetYield = jObject["TargetYield"] != null ? Convert.ToDecimal(jObject["TargetYield"]) : 0;
+            //obj.ProjectedGrowth = jObject["ProjectedGrowth"] != null ? Convert.ToDecimal(jObject["ProjectedGrowth"]) : 0;
+            obj.Summary = Convert.ToString(jObject["Summary"]);
 
             var res = Task.Run(() => httpContext.Put("Property/" + propertyId, obj));
             var data = await res.GetAwaiter().GetResult();

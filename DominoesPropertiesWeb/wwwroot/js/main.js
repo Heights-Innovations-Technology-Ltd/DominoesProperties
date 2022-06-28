@@ -223,6 +223,7 @@ const profile = (data, mode) => {
         $('#email').val(data.email);
         $('#phone').val(data.phone);
         $('#address').val(data.address);
+        $('#account').val(data.accountNumber);
     } else {
         $('.fullName').text(data.firstName + " " + data.lastName);
         $('.walletId').html("wallet ID ( <strong>" + data.walletId + "</strong> )");
@@ -775,7 +776,7 @@ $('.btn-update-property').click(() => {
         text: "To make changes to this property data!",
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonText: 'Yes, update it!',
+        confirmButtonText: 'Yes, continue!',
         cancelButtonText: 'No, cancel!',
         reverseButtons: true
     }).then((result) => {
@@ -805,33 +806,18 @@ $('.btn-update-property').click(() => {
             let id = urls[5];
 
             var params = {
-                Name: $("#name").val().trim(),
+                
                 Location: $("#location").val(),
                 Type: $("#types").val(),
                 UnitPrice: Number($("#price").val()),
-                Status: $("#status").val(),
+                ClosingDate: $("#date").val(),
                 UnitAvailable: Number($("#unit").val()),
-                Description: {
-                    Bathroom: Number($("#bathroom").val()),
-                    Toilet: Number($("#toilet").val()),
-                    FloorLevel: Number($("#floorLevel").val()),
-                    Bedroom: Number($("#bedRoom").val()),
-                    LandSize: $("#landSize").val(),
-                    AirConditioned: $("#airConditioned").is(":checked") ? 1 : 0,
-                    Refrigerator: $("#refrigerator").is(":checked") ? 1 : 0,
-                    Parking: $("#parking").is(":checked") ? 1 : 0,
-                    SwimmingPool: $("#swimmingPool").is(":checked") ? 1 : 0,
-                    Laundry: $("#laundry").is(":checked") ? 1 : 0,
-                    Gym: $("#gym").is(":checked") ? 1 : 0,
-                    SecurityGuard: $("#securityGuard").is(":checked") ? 1 : 0,
-                    Fireplace: $("#fireplace").is(":checked") ? 1 : 0,
-                    Basement: $("#basement").is(":checked") ? 1 : 0,
-                },
                 InterestRate: Number($("#interest").val()),
                 Longitude: Number($("#logitude").val()),
                 Latitude: Number($("#latitude").val()),
-                Desc: $("#description").val(),
-                CreatedBy: $("#createdBy").val()
+                TargetYield: Number($("#targetYield").val()),
+                ProjectedGrowth: Number($("#growth").val()),
+                Summary: $("#description").val()
 
             };
 
@@ -930,7 +916,7 @@ $('.btn-update-decription').click(() => {
         text: "To make changes to property description!",
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonText: 'Yes, update it!',
+        confirmButtonText: 'Yes, continue!',
         cancelButtonText: 'No, cancel!',
         reverseButtons: true
     }).then((result) => {
@@ -1353,7 +1339,7 @@ $(".btn-change-password").on("submit", function () {
         text: "To change your password!",
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonText: 'Yes, update it!',
+        confirmButtonText: 'Yes, continue!',
         cancelButtonText: 'No, cancel!',
         reverseButtons: true
     }).then((result) => {
@@ -1439,64 +1425,87 @@ $(".btn-update-profile").on("click", function () {
     if ($('.catch_me').val() != "") {
         return;
     }
+    const confirmPropertyUpdate = Swal.mixin({
+        customClass: {
+            confirmButton: 'btn btn-success mx-2',
+            cancelButton: 'btn btn-danger'
+        },
+        buttonsStyling: false
+    })
 
-    $(".btn-update-profile").html("Processing...").attr("disabled", !0);
-    let t = false;
-    var e = "";
-    if (
-        ($("#profile-form")
-            .find("input")
-            .each(function () {
-                $(this).prop("required") && ($(this).val() || ((t = !0), (name = $(this).attr("name")), (e += name + ", ")));
-            }))
-    )
-        if (t) message("Validation error the following field are required " + e.substring(0, e.length - 2), 'error'), window.scrollTo(0, 0), $(".btn-update-profile").attr("disabled", !1).html("Edit");
-        else {
-            var a = {
-                FirstName: $("#firstname").val(),
-                LastName: $("#lastname").val(),
-                Phone: $("#phone").val(),
-                Address: $("#address").val()
-            };
+    confirmPropertyUpdate.fire({
+        title: 'Are you sure?',
+        text: "To update your profile!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, continue!',
+        cancelButtonText: 'No, cancel!',
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $(".btn-update-profile").html("Processing...").attr("disabled", !0);
+            let t = false;
+            var e = "";
+            if (
+                ($("#profile-form")
+                    .find("input")
+                    .each(function () {
+                        $(this).prop("required") && ($(this).val() || ((t = !0), (name = $(this).attr("name")), (e += name + ", ")));
+                    }))
+            )
+                if (t) message("Validation error the following field are required " + e.substring(0, e.length - 2), 'error'), window.scrollTo(0, 0), $(".btn-update-profile").attr("disabled", !1).html("Edit");
+                else {
+                    var a = {
+                        AccountNumber: $("#account").val(),
+                        BankName: $("#bank").val(),
+                        Phone: $("#phone").val(),
+                        Address: $("#address").val()
+                    };
 
-            $.ajax({
-                type: "post",
-                url: "/update-profile",
-                headers: { "Content-Type": "application/json" },
-                data: JSON.stringify(a),
-                success: function (t) {
-                    var res = JSON.parse(t);
-                    if (res.Success) {
-                        // message(res.Message + '. Kindly check your mail to activate your account', 'success');
-                        Swal.fire(
-                            'Good job!',
-                            res.Message + '. Kindly check your mail to activate your account',
-                            'success'
-                        )
-                        $(".form-control").val(""),
-                            $("#firstName").focus(),
-                            window.scrollTo(0, 0),
-                            $(".btn-update-profile").html("Edit").attr("disabled", !1),
+                    $.ajax({
+                        type: "post",
+                        url: "/update-profile",
+                        headers: { "Content-Type": "application/json" },
+                        data: JSON.stringify(a),
+                        success: function (t) {
+                            var res = JSON.parse(t);
+                            if (res.Success) {
+                                Swal.fire(
+                                    'Good job!',
+                                    res.Message,
+                                    'success'
+                                );
+                                $("#firstName").focus();
+                                window.scrollTo(0, 0);
+                                $(".btn-update-profile").html("Edit").attr("disabled", !1);
+                                a = {};
+                            } else {
+                                message(res.Data
+                                    , 'error'),
+                                    window.scrollTo(0, 0),
+                                    $(".btn-update-profile").html("Edit").attr("disabled", !1);
+                                a = {};
+                            }
 
-                            a = {};
-
-                    } else {
-
-                        message(res.Data
-                            , 'error'),
-                            window.scrollTo(0, 0),
+                        },
+                        error: function (t) {
+                            if (400 == t.status) return //alert("check your supply value and try again!"),
+                            void $(".btn-update-profile").html("Edit").attr("disabled", !1);
                             $(".btn-update-profile").html("Edit").attr("disabled", !1);
-                        a = {};
-                    }
-
-                },
-                error: function (t) {
-                    if (400 == t.status) return //alert("check your supply value and try again!"),
-                    void $(".btn-update-profile").html("Edit").attr("disabled", !1);
-                    $(".btn-update-profile").html("Edit").attr("disabled", !1);
-                },
-            });
+                        },
+                    });
+                }
+        } else if (
+            /* Read more about handling dismissals below */
+            result.dismiss === Swal.DismissReason.cancel
+        ) {
+            confirmPropertyUpdate.fire(
+                'Cancelled',
+                'No changes was made :)',
+                'error'
+            )
         }
+    });
 });
 
 $('.logout').click(() => {
