@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
@@ -13,6 +14,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Models.Models;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Repositories.Repository;
 
 namespace DominoesProperties.Controllers
@@ -251,8 +253,8 @@ namespace DominoesProperties.Controllers
 
         [HttpPost("uploads/{propertyId}")]
         [Authorize]
-        [ValidateAntiForgeryToken]
-        public async Task<ApiResponse> UploadPassportAsync(long propertyId, [FromForm][Required(ErrorMessage = "No upload found")][MinLength(1, ErrorMessage = "Upload atleast 1 file")] List<IFormFile> passport)
+        //[ValidateAntiForgeryToken]
+        public async Task<ApiResponse> UploadPassportAsync(string propertyId, [FromForm] List<IFormFile> files)
         {
             var container = new BlobContainerClient(configuration["BlobClient:Url"], "properties");
             var createResponse = await container.CreateIfNotExistsAsync();
@@ -261,7 +263,7 @@ namespace DominoesProperties.Controllers
 
             int count = 0;
             PropertyUpload[] properties = Array.Empty<PropertyUpload>();
-            passport.ForEach(async x =>
+            files.ForEach(async x =>
             {
                 var blob = container.GetBlobClient($"{propertyId + count++}.{x.FileName[x.FileName.LastIndexOf(".")..]}");
                 using (var fileStream = x.OpenReadStream())
@@ -273,7 +275,7 @@ namespace DominoesProperties.Controllers
                 {
                     DateUploaded = DateTime.Now,
                     ImageName = (propertyId + count++).ToString(),
-                    PropertyId = propertyId,
+                    //PropertyId = propertyId,
                     Url = blob.Uri.ToString()
                 };
             });

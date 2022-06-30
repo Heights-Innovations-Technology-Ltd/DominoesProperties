@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Dynamic;
 using System.IO;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
 namespace DominoesPropertiesWeb.Controllers
@@ -179,10 +180,31 @@ namespace DominoesPropertiesWeb.Controllers
         public async Task<JsonResult> uploadDoc(string propertyId)
         {
             var json = Request.Form.Files;
+            using var client = new HttpClient();
+            using var content = new MultipartFormDataContent();
+            
+            foreach (var file in json)
+            {
+                var fileContent = new StreamContent(Request.Body);
+                fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(file.ContentType);
+                fileContent.Headers.ContentDisposition = new System.Net.Http.Headers.ContentDispositionHeaderValue("form-data")
+                {
+                    Name = file.Name,
+                    FileName = file.FileName
+                };
+                content.Add(fileContent);
+
+
+            }
+            //var requestUri = "Property/uploads/" + propertyId;
+            //client.BaseAddress = new Uri("https://localhost:44361/api/");
+            //var result = client.PostAsync(requestUri, content).Result;
+            //Console.WriteLine($"Response : {result.StatusCode}");
 
             if (json.Count > 0)
             {
-                var res = Task.Run(() => httpContext.Post("Property/uploads/" + propertyId, json));
+
+                var res = Task.Run(() => httpContext.PostUpload("Property/uploads/" + propertyId, content));
                 var data = await res.GetAwaiter().GetResult();
                 return Json(JsonConvert.SerializeObject(data));
             }

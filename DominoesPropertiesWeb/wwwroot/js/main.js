@@ -1012,48 +1012,69 @@ $('#btnUpload').on('click', function () {
         return;
     }
 
-    var data = new FormData();
-    if (files.length != 0) {
-        //var fname = files[0].name;
-       // var extension = fname.substr(fname.lastIndexOf("."))
-        //var re = /(\.jpg|\.jpeg|\.gif|\.png)$/i;
-        //if (!re.exec(extension)) {
-        //    alert("File extension not supported!");
-        //    return;
-        //}
+    
+    var formData = new FormData();
 
-        for (var index = 0; index < files.length; index++) {
-           // var name = files[index].name;
-            data.append("files", files[index]);
-        }
-       // data.append(files[0].name, files[0]);
+    for (var i = 0; i != files.length; i++) {
+        formData.append("files", files[i]);
     }
 
-    var oReq = new XMLHttpRequest();
-    oReq.open("POST", "/upload-property/" + id, false);
-    oReq.onload = function (oEvent) {
-        if (oReq.status == 200) {
-            var res = JSON.parse(oReq.responseText);
-            let data = JSON.parse(res).data;
-            console.log(res);
-            if (JSON.parse(res).success){
-
+    $.ajax(
+        {
+            //url: "https://localhost:44361/api/Property/uploads/" + id,
+            url: "/upload-property/" + id,
+            data: formData,
+            processData: false,
+            contentType: false,
+            type: "POST",
+            success: function (data) {
+                alert("Files Uploaded!");
             }
-
-            else {
-                $('#msg').html(message(data, 'error'));
-                window.scrollTo(0, 0);
-                $("#btnUpload").attr("disabled", !1).html(`Submit`);
-                params = {};
-            }
-        } else {
-            $("#btnUpload").attr("disabled", !1).html(`<i data-acorn-icon="save"></i><span>Submit</span>`);
         }
-    };
+    );
 
-    //data.append("params", JSON.stringify(params));
+    //var data = new FormData();
+    //if (files.length != 0) {
+    //    //var fname = files[0].name;
+    //   // var extension = fname.substr(fname.lastIndexOf("."))
+    //    //var re = /(\.jpg|\.jpeg|\.gif|\.png)$/i;
+    //    //if (!re.exec(extension)) {
+    //    //    alert("File extension not supported!");
+    //    //    return;
+    //    //}
 
-    oReq.send(data);
+    //    for (var index = 0; index < files.length; index++) {
+    //       // var name = files[index].name;
+    //        data.append("files", files[index]);
+    //    }
+    //   // data.append(files[0].name, files[0]);
+    //}
+
+    //var oReq = new XMLHttpRequest();
+    //oReq.open("POST", "/upload-property/" + id, false);
+    //oReq.onload = function (oEvent) {
+    //    if (oReq.status == 200) {
+    //        var res = JSON.parse(oReq.responseText);
+    //        let data = JSON.parse(res).data;
+    //        console.log(res);
+    //        if (JSON.parse(res).success){
+
+    //        }
+
+    //        else {
+    //            $('#msg').html(message(data, 'error'));
+    //            window.scrollTo(0, 0);
+    //            $("#btnUpload").attr("disabled", !1).html(`Submit`);
+    //            params = {};
+    //        }
+    //    } else {
+    //        $("#btnUpload").attr("disabled", !1).html(`<i data-acorn-icon="save"></i><span>Submit</span>`);
+    //    }
+    //};
+
+    ////data.append("params", JSON.stringify(params));
+
+    //oReq.send(data);
 });
 
 const GetInvestments = () => {
