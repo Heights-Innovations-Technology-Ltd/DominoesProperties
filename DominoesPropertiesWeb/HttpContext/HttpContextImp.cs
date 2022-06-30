@@ -146,7 +146,7 @@ namespace DominoesPropertiesWeb.HttpContext
             using (var multipartFormContent = new MultipartFormDataContent())
             {
                 //Send it
-                var result = await client.PutAsync(url + endpointURL, content);
+                var result = await client.PostAsync(url + endpointURL, content);
                 string responJsonText = await result.Content.ReadAsStringAsync();
                 if (result.IsSuccessStatusCode)
                 {

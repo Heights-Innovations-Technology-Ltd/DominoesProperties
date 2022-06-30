@@ -254,7 +254,7 @@ namespace DominoesProperties.Controllers
         [HttpPost("uploads/{propertyId}")]
         [Authorize]
         //[ValidateAntiForgeryToken]
-        public async Task<ApiResponse> UploadPassportAsync(string propertyId, [FromForm] List<IFormFile> files)
+        public async Task<ApiResponse> UploadPassportAsync(string propertyId, [FromForm][Required(ErrorMessage = "No upload found")][MinLength(1, ErrorMessage = "Upload atleast 1 file")] List<IFormFile> files)
         {
             var container = new BlobContainerClient(configuration["BlobClient:Url"], "properties");
             var createResponse = await container.CreateIfNotExistsAsync();
