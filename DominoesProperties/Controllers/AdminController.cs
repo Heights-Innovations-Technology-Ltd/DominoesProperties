@@ -22,6 +22,7 @@ namespace DominoesProperties.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = "ADMIN")]
     public class AdminController : Controller
     {
         private readonly IAdminRepository adminRepository;
@@ -200,13 +201,18 @@ namespace DominoesProperties.Controllers
 
         protected string GenerateJwtToken(string uniqueRef)
         {
+            var admin = adminRepository.GetUser(uniqueRef);
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["app_settings:Secret"]));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
             var claims = new[] {
                 new Claim(JwtRegisteredClaimNames.UniqueName, uniqueRef),
-                new Claim(JwtRegisteredClaimNames.Jti, uniqueRef)
+                new Claim(JwtRegisteredClaimNames.Jti, uniqueRef),
+                new Claim(ClaimTypes.Role, admin.RoleFkNavigation.RoleName)
             };
+
+            //ClaimsIdentity claimsIdentity = new(claims, "Token");
+            //claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, admin.RoleFkNavigation.RoleName));
 
             var token = new JwtSecurityToken(configuration["app_settings:Issuer"],
                configuration["app_settings:Issuer"], claims,

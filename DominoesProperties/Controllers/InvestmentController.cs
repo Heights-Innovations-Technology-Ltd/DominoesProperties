@@ -1,3 +1,5 @@
+using System;
+using DominoesProperties.Enums;
 using DominoesProperties.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -30,7 +32,7 @@ namespace DominoesProperties.Controllers
         }
         
         [HttpPost]
-        //[Authorize]
+        [Authorize]
         public ApiResponse Investments([FromBody] InvestmentNew investment)
         {
             var property = propertyRepository.GetProperty(investment.PropertyUniqueId);
@@ -45,7 +47,9 @@ namespace DominoesProperties.Controllers
                 CustomerId = customer.Id,
                 PropertyId = property.Id,
                 Units = investment.Units,
-                Yield = property.TargetYield
+                Yield = property.TargetYield,
+                PaymentType = PaymentType.PROPERTY_PURCHASE.ToString(),
+                TransactionRef = Guid.NewGuid().ToString()
             };
             newInvestment.YearlyInterestAmount = newInvestment.Amount * newInvestment.Yield;
             long investmentId = investmentRepository.AddInvestment(newInvestment);
@@ -56,7 +60,7 @@ namespace DominoesProperties.Controllers
                     Module = Enums.PaymentType.PROPERTY_PURCHASE,
                     InvestmentId = investmentId
                 };
-                return paymentController.InitiateTransaction(pay);
+                return paymentController.doInitPayment(pay, customer.UniqueRef);
             }
             return response;
         }

@@ -22,6 +22,7 @@ using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
 using Azure.Storage.Blobs.Models;
 using DominoesProperties.Services;
+using StackExchange.Redis;
 
 namespace DominoesProperties.Controllers
 {
@@ -96,16 +97,16 @@ namespace DominoesProperties.Controllers
         public ApiResponse Login([FromBody] Login login)
         {
             var customer = customerRepository.GetCustomer(login.Email);
+            if (customer == null || !customer.IsActive.Value || customer.IsDeleted.Value)
+            {
+                response.Success = false;
+                response.Message = "Username name not found!";
+                return response;
+            }
             if (!customer.IsVerified.Value)
             {
                 response.Success = false;
                 response.Message = "Customer account not verified, <html><a href='#'>click here</a></html> to verify your account";
-                return response;
-            }
-            if (customer == null || !customer.IsActive.Value || customer.IsDeleted.Value)
-            {
-                response.Success = false;
-                response.Message = "Username name not found, kindly check and try again";
                 return response;
             }
 
@@ -281,7 +282,7 @@ namespace DominoesProperties.Controllers
                 response.Message = "Invalid old password supplied, kindly check and try again";
                 return response;
             }
-            customer.Password = password.Password;
+            customer.Password = CommonLogic.Encrypt(password.Password);
             customerRepository.UpdateCustomer(customer);
 
             response.Message = string.Format("Password reset successful for {0}", customer.Email);

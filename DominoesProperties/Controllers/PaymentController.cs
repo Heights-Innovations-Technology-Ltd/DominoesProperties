@@ -39,13 +39,20 @@ namespace DominoesProperties.Controllers
         [Authorize]
         public ApiResponse InitiateTransaction([FromBody] Payment payment)
         {
-            var customer = customerRepository.GetCustomer(HttpContext.User.Identity.Name);
+            return doInitPayment(payment, HttpContext.User.Identity.Name);
+        }
+
+        [HttpPost("init")]
+        public ApiResponse doInitPayment(Payment payment, String user)
+        {
+            var customer = customerRepository.GetCustomer(user);
             _ = decimal.TryParse(configuration["subscription"], out decimal subscription);
             var amount = payment.Module.Equals(PaymentType.SUBSCRIPTION) ? subscription : payment.Amount;
             var transRef = Guid.NewGuid().ToString();
 
-            PaymentModel m = new() {
-                amount = amount*100,
+            PaymentModel m = new()
+            {
+                amount = amount * 100,
                 email = customer.Email,
                 reference = transRef,
                 callback = string.Format("{0}{1}/{2}", configuration["app_settings:WebEndpoint"], "verify-payment", transRef)

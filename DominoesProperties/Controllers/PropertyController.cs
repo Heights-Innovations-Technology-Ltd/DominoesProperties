@@ -163,7 +163,7 @@ namespace DominoesProperties.Controllers
         }
 
         [HttpPut("{uniqueId}")]
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         public ApiResponse Property(string uniqueId, [FromBody] UpdateProperty updateProperty)
         {
             Property property = propertyRepository.GetProperty(uniqueId);
