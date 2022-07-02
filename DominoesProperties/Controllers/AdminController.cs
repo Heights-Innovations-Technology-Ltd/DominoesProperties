@@ -211,9 +211,6 @@ namespace DominoesProperties.Controllers
                 new Claim(ClaimTypes.Role, admin.RoleFkNavigation.RoleName)
             };
 
-            //ClaimsIdentity claimsIdentity = new(claims, "Token");
-            //claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, admin.RoleFkNavigation.RoleName));
-
             var token = new JwtSecurityToken(configuration["app_settings:Issuer"],
                configuration["app_settings:Issuer"], claims,
                 expires: DateTime.Now.AddMinutes(120),
