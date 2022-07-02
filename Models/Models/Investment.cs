@@ -8,7 +8,7 @@ namespace Models.Models
 {
     public partial class Investment
     {
-        //[IgnoreDataMember]
+        [IgnoreDataMember]
         public long Id { get; set; }
         public long CustomerId { get; set; }
         public long PropertyId { get; set; }
