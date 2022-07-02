@@ -7,7 +7,11 @@ using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
 using System.Dynamic;
+using System.IO;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
 namespace DominoesPropertiesWeb.Controllers
@@ -41,6 +45,18 @@ namespace DominoesPropertiesWeb.Controllers
             return View();
         }
 
+        [HttpGet("/Property/viewproperty/{uniqueid}")]
+        public IActionResult ViewProperty()
+        {
+            return View();
+        }
+
+        [HttpGet("/Property/edit/{uniqueid}")]
+        public IActionResult Edit()
+        {
+            return View();
+        }
+
         [Route("create-property")]
         public async Task<JsonResult> CreateProperty([FromBody] dynamic property)
         {
@@ -58,7 +74,7 @@ namespace DominoesPropertiesWeb.Controllers
             obj.InterestRate = Convert.ToInt32(jObject["InterestRate"]);
             obj.Longitude = Convert.ToString(jObject["Longitude"]);
             obj.Latitude = Convert.ToString(jObject["Latitude"]);
-            obj.CreatedBy = "afolabihabeeb1@outlook.com";
+            obj.CreatedBy = Convert.ToString(jObject["CreatedBy"]);
 
             DesObj.Bathroom = Convert.ToInt32(jObject["Description"]["Bathroom"]);
             DesObj.Toilet = Convert.ToInt32(jObject["Description"]["Toilet"]);
@@ -79,9 +95,57 @@ namespace DominoesPropertiesWeb.Controllers
 
             var res = Task.Run(() => httpContext.Post("Property", obj));
             var data = await res.GetAwaiter().GetResult();
+            return Json(JsonConvert.SerializeObject(data));
+        }
+        
+        [Route("update-property/{propertyId}")]
+        public async Task<JsonResult> EditProperty([FromBody] dynamic property, string propertyId)
+        {
+            JObject jObject = JsonConvert.DeserializeObject<JObject>(Convert.ToString(property));
             
-            //await Task.WhenAll(res);
-            //var data = res.Status == TaskStatus.RanToCompletion ? res.Result : null;
+            dynamic obj = new ExpandoObject();
+
+            obj.Location = Convert.ToString(jObject["Location"]);
+            obj.Type = Convert.ToInt32(jObject["Type"]);
+            obj.UnitPrice = Convert.ToInt32(jObject["UnitPrice"]);
+            obj.ClosingDate = Convert.ToInt32(jObject["ClosingDate"]);
+            obj.TotalUnits = Convert.ToInt32(jObject["UnitAvailable"]);
+            obj.InterestRate = Convert.ToInt32(jObject["InterestRate"]);
+            obj.Longitude = Convert.ToString(jObject["Longitude"]);
+            obj.Latitude = Convert.ToString(jObject["Latitude"]);
+            //obj.TargetYield = jObject["TargetYield"] != null ? Convert.ToDecimal(jObject["TargetYield"]) : 0;
+            //obj.ProjectedGrowth = jObject["ProjectedGrowth"] != null ? Convert.ToDecimal(jObject["ProjectedGrowth"]) : 0;
+            obj.Summary = Convert.ToString(jObject["Summary"]);
+
+            var res = Task.Run(() => httpContext.Put("Property/" + propertyId, obj));
+            var data = await res.GetAwaiter().GetResult();
+            return Json(JsonConvert.SerializeObject(data));
+        }
+        
+        [Route("property-decription/{propertyId}")]
+        public async Task<JsonResult> PropertyDescription([FromBody] dynamic property, string propertyId)
+        {
+            JObject jObject = JsonConvert.DeserializeObject<JObject>(Convert.ToString(property));
+            dynamic DesObj = new ExpandoObject();
+
+            DesObj.Bathroom = Convert.ToInt32(jObject["Description"]["Bathroom"]);
+            DesObj.Toilet = Convert.ToInt32(jObject["Description"]["Toilet"]);
+            DesObj.FloorLevel = Convert.ToInt32(jObject["Description"]["FloorLevel"]);
+            DesObj.Bedroom = Convert.ToInt32(jObject["Description"]["Bedroom"]);
+            DesObj.LandSize = Convert.ToString(jObject["Description"]["LandSize"]);
+            DesObj.AirConditioned = Convert.ToInt32(jObject["Description"]["AirConditioned"]);
+            DesObj.Refrigerator = Convert.ToInt32(jObject["Description"]["Refrigerator"]);
+            DesObj.Parking = Convert.ToInt32(jObject["Description"]["Parking"]);
+            DesObj.SwimmingPool = Convert.ToInt32(jObject["Description"]["SwimmingPool"]);
+            DesObj.Laundry = Convert.ToInt32(jObject["Description"]["Laundry"]);
+            DesObj.Gym = Convert.ToInt32(jObject["Description"]["Gym"]);
+            DesObj.SecurityGuard = Convert.ToInt32(jObject["Description"]["SecurityGuard"]);
+            DesObj.Fireplace = Convert.ToInt32(jObject["Description"]["Fireplace"]);
+            DesObj.Basement = Convert.ToInt32(jObject["Description"]["Basement"]);
+
+
+            var res = Task.Run(() => httpContext.Put("Property/description/" + propertyId, DesObj));
+            var data = await res.GetAwaiter().GetResult();
             return Json(JsonConvert.SerializeObject(data));
         }
 
@@ -110,6 +174,105 @@ namespace DominoesPropertiesWeb.Controllers
             await Task.WhenAll(res);
             var data = res.Status == TaskStatus.RanToCompletion ? res.Result : null;
             return Json(JsonConvert.SerializeObject(data));
+        }
+
+
+        [Route("/filter-property")]
+        public async Task<JsonResult> GetFilterProperty([FromBody] dynamic filter)
+        {
+            var query = new Dictionary<string, string>();
+
+            JObject jObject = JsonConvert.DeserializeObject<JObject>(Convert.ToString(filter));
+            dynamic DesObj = new ExpandoObject();
+            var propertyFilter = new PropertyFilter();
+            //propertyFilter.Category = Convert.ToInt32(jObject["Category"]);
+            propertyFilter.Bathroom = Convert.ToInt32(jObject["Bathroom"]);
+            propertyFilter.Toilet = Convert.ToInt32(jObject["Toilet"]);
+            propertyFilter.Floor = Convert.ToInt32(jObject["FloorLevel"]);
+            propertyFilter.Bedroom = Convert.ToInt32(jObject["Bedroom"]);
+            propertyFilter.MinPrice = Convert.ToDecimal(jObject["MinPrice"]);
+            propertyFilter.MaxPrice = Convert.ToDecimal(jObject["MaxPrice"]);
+            propertyFilter.AirConditioned = Convert.ToBoolean(jObject["AirConditioned"]);
+            propertyFilter.Refridgerator = Convert.ToBoolean(jObject["Refrigerator"]);
+            propertyFilter.Parking = Convert.ToBoolean(jObject["Parking"]);
+            propertyFilter.SwimmingPool = Convert.ToBoolean(jObject["SwimmingPool"]);
+            propertyFilter.Laundry = Convert.ToBoolean(jObject["Laundry"]);
+            propertyFilter.Gym = Convert.ToBoolean(jObject["Gym"]);
+            propertyFilter.SecurityGuard = Convert.ToBoolean(jObject["SecurityGuard"]);
+            propertyFilter.Fireplace = Convert.ToBoolean(jObject["Fireplace"]);
+            propertyFilter.Basement = Convert.ToBoolean(jObject["Basement"]);
+
+            //if (Convert.ToInt32(jObject["Category"]) > 0) query.Add("Category", propertyFilter.Category.ToString());
+            if (Convert.ToInt32(jObject["Bathroom"]) > 0) query.Add("Bathroom", propertyFilter.Bathroom.ToString());
+            if (Convert.ToInt32(jObject["Toilet"]) > 0) query.Add("Toilet", propertyFilter.Toilet.ToString());
+            if (Convert.ToInt32(jObject["FloorLevel"]) > 0) query.Add("Floor", propertyFilter.Floor.ToString());
+            if (Convert.ToInt32(jObject["Bedroom"]) > 0) query.Add("Bedroom", propertyFilter.Bedroom.ToString());
+            if (Convert.ToDecimal(jObject["MinPrice"]) > 0) query.Add("MinPrice", propertyFilter.MinPrice.ToString());
+            if (Convert.ToDecimal(jObject["MaxPrice"]) > 0) query.Add("MaxPrice", propertyFilter.MaxPrice.ToString());
+            if (Convert.ToBoolean(jObject["AirConditioned"])) query.Add("AirConditioned", propertyFilter.AirConditioned.ToString());
+            if (Convert.ToBoolean(jObject["Refrigerator"])) query.Add("Refridgerator", propertyFilter.Refridgerator.ToString());
+            if (Convert.ToBoolean(jObject["Parking"])) query.Add("Parking", propertyFilter.Parking.ToString());
+            if (Convert.ToBoolean(jObject["SwimmingPool"])) query.Add("SwimmingPool", propertyFilter.SwimmingPool.ToString());
+            if (Convert.ToBoolean(jObject["Laundry"])) query.Add("Laundry", propertyFilter.Laundry.ToString());
+            if (Convert.ToBoolean(jObject["Gym"])) query.Add("Gym", propertyFilter.Gym.ToString());
+            if (Convert.ToBoolean(jObject["SecurityGuard"])) query.Add("SecurityGuard", propertyFilter.SecurityGuard.ToString());
+            if (Convert.ToBoolean(jObject["Fireplace"])) query.Add("Fireplace", propertyFilter.Fireplace.ToString());
+            if (Convert.ToBoolean(jObject["Basement"])) query.Add("Basement", propertyFilter.Basement.ToString());
+
+            var res = Task.Run(() => httpContext.Get("Property", query));
+            await Task.WhenAll(res);
+            var data = res.Status == TaskStatus.RanToCompletion ? res.Result : null;
+            return Json(JsonConvert.SerializeObject(data));
+        }
+
+        [HttpPost("/upload-property/{propertyId}")]
+        public async Task<JsonResult> uploadDoc(string propertyId)
+        {
+            var json = Request.Form.Files;
+            if (json.Count > 0)
+            {
+                using var content = new MultipartFormDataContent();
+
+                foreach (var file in json)
+                {
+                    var fileContent = new StreamContent(Request.Body);
+                    fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(file.ContentType);
+                    fileContent.Headers.ContentDisposition = new System.Net.Http.Headers.ContentDispositionHeaderValue("form-data")
+                    {
+                        Name = file.Name,
+                        FileName = file.FileName
+                    };
+                    content.Add(fileContent);
+
+
+                }
+                var res = Task.Run(() => httpContext.PostUpload("Property/uploads/" + propertyId, content));
+                var data = await res.GetAwaiter().GetResult();
+                return Json(JsonConvert.SerializeObject(data));
+            }
+            return Json(this.StatusCode(StatusCodes.Status204NoContent, "Empty request body"));
+        }
+
+
+        private List<string> GetUploadedFileName(HttpRequest httpRequest, string propertyId)
+        {
+            List<string> filenamelistofCustomerFiles = new();
+            foreach (var formfile in httpRequest.Form.Files)
+            {
+                if (formfile.Length > 0)
+                {
+                    string filePath = Path.Combine(hostEnvironment.WebRootPath, _config["app_settings:commodityUploads"]);
+                    if (!Directory.Exists(filePath))
+                        Directory.CreateDirectory(filePath);
+
+                    using (var stream = new FileStream(Path.Combine(filePath, propertyId + formfile.FileName), FileMode.Create))
+                    {
+                        formfile.CopyTo(stream);
+                    }
+                    filenamelistofCustomerFiles.Add(formfile.FileName);
+                }
+            }
+            return filenamelistofCustomerFiles;
         }
     }
 }

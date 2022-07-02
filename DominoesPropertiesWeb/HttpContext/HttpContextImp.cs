@@ -1,13 +1,19 @@
 ﻿using DominoesPropertiesWeb.Models;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Net.Http.Json;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace DominoesPropertiesWeb.HttpContext
 {
@@ -36,7 +42,34 @@ namespace DominoesPropertiesWeb.HttpContext
                 var token = this.session.GetString("Token");
                 client.DefaultRequestHeaders.Add("Authorization",
                     "Bearer " + token);
+
                 var result = await client.GetAsync(url + endpointURL).ConfigureAwait(false);
+
+                var responJsonText = await result.Content.ReadAsStringAsync();
+                var res = new JObject();
+                if (result.IsSuccessStatusCode)
+                {
+                    res = JsonConvert.DeserializeObject<JObject>(Convert.ToString(responJsonText));
+                    jsonObj.success = Convert.ToBoolean(res["success"]);
+                    jsonObj.data = JsonConvert.DeserializeObject<dynamic>(Convert.ToString(res["data"]));
+                }
+                else
+                {
+                    jsonObj.success = Convert.ToBoolean(res["success"]);
+                    jsonObj.data = JsonConvert.DeserializeObject<dynamic>(Convert.ToString(res["data"]));
+                }
+                return jsonObj;
+            }
+        }
+        public async Task<dynamic> Get(string endpointURL, Dictionary<string, string> query)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, url))
+            {
+                var token = this.session.GetString("Token");
+                client.DefaultRequestHeaders.Add("Authorization",
+                    "Bearer " + token);
+                var queryURL = QueryHelpers.AddQueryString(endpointURL, query);
+                var result = await client.GetAsync(url + queryURL).ConfigureAwait(false);
 
                 var responJsonText = await result.Content.ReadAsStringAsync();
                 var res = new JObject();
@@ -62,7 +95,6 @@ namespace DominoesPropertiesWeb.HttpContext
                 var token = this.session.GetString("Token");
                 client.DefaultRequestHeaders.Add("Authorization",
                     "Bearer " + token);
-
                 using (var stringContent = new StringContent(JsonConvert.SerializeObject(obj), Encoding.UTF8, "application/json"))
                 {
                     var result = await client.PostAsync(url + endpointURL, stringContent);
@@ -130,6 +162,42 @@ namespace DominoesPropertiesWeb.HttpContext
                     }
                     return jsonObj;
                 }
+            }
+        }
+
+        public async Task<dynamic> PostUpload(string endpointURL, MultipartFormDataContent content)
+        {
+            var token = this.session.GetString("Token");
+            client.DefaultRequestHeaders.Add("Authorization",
+                "Bearer " + token);
+
+            using (var multipartFormContent = new MultipartFormDataContent())
+            {
+                //Send it
+                var result = await client.PostAsync(url + endpointURL, content);
+                string responJsonText = await result.Content.ReadAsStringAsync();
+                if (result.IsSuccessStatusCode)
+                {
+                    var res = JsonConvert.DeserializeObject<dynamic>(Convert.ToString(responJsonText));
+                    var success = Convert.ToBoolean(res["success"]);
+                    if (success)
+                    {
+                        jsonObj.Success = success;
+                        jsonObj.Data = Convert.ToString(res["data"]);
+                        jsonObj.Message = Convert.ToString(res["message"]);
+                    }
+                    else
+                    {
+                        jsonObj.Success = false;
+                        jsonObj.Data = Convert.ToString(res["message"]);
+                    }
+                }
+                else
+                {
+                    var res = JsonConvert.DeserializeObject<dynamic>(Convert.ToString(responJsonText));
+                    jsonObj.Message = Convert.ToString(res["errors"]);
+                }
+                return jsonObj;
             }
         }
     }
