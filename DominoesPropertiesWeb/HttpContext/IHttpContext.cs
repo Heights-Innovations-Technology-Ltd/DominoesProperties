@@ -8,6 +8,7 @@ namespace DominoesPropertiesWeb.HttpContext
     public interface IHttpContext
     {
         Task<dynamic> Get(string endpointURL);
+        Task<dynamic> Get(string endpointURL, Dictionary<string, string> query);
         Task<dynamic> Post(string endpointURL, dynamic obj);
         Task<dynamic> Put(string endpointURL, dynamic obj);
         Task<dynamic> PostUpload(string endpointURL, MultipartFormDataContent content);

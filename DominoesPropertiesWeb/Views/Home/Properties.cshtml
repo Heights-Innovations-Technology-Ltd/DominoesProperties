@@ -4,6 +4,37 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+<title>jQuery UI Slider - Range slider</title>
+<!--Plugin CSS file with desired skin-->
+<link rel="stylesheet" href="~/css/ion.rangeSlider.min.css"/>
+
+<!--jQuery-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+<!--Plugin JavaScript file-->
+<script src="~/js/ion.rangeSlider.min.js"></script>
+<script>
+	let minPrice= 0;
+	let maxPrice= 0;
+	$(function(){
+		$("#example_id").ionRangeSlider({
+			type: "double",
+			grid: true,
+			min: 10000000,
+			max: 500000000,
+			from: 10000000,
+			to: 20000000,
+			prefix: "₦",
+
+			onChange: function (data) {
+				// fired on every range slider update
+				minPrice = data.from;
+				maxPrice =  data.to;
+			}
+		});
+	});
+</script>
+ 
 <!-- Start Page Title Area -->
 		<div class="page-title-area bg-9">
 			<div class="container">
@@ -34,61 +65,37 @@
 								<h3>Filter search</h3>
 								<form>
 									<div class="form-group">
-										<select class="form-select form-control" aria-label="Default select example">
+										<select class="form-select form-control" id="types" aria-label="Default select example">
 											<option selected>All Categories</option>
-											<option value="0">ONGOING CONSTRUCTION</option>
-											<option value="1">OPEN FOR INVESTMENT</option>
-											<option value="2">CLOSED FOR INVESTMENT</option>
-											<option value="3">RENTED OUT</option>
 										</select>
 									</div>
-									@*<div class="form-group">
-										<select class="form-select form-control" aria-label="Default select example">
-											<option selected>All Statuses</option>
-											<option value="1">House</option>
-											<option value="2">Hotel</option>
-										</select>
-									</div>*@
 									<div class="form-group">
-										<select class="form-select form-control" aria-label="Default select example">
-											<option selected>Price</option>
-											<option value="1">$2000</option>
-											<option value="2">$3000</option>
-										</select>
+										<label for="example_id">Price range:</label>
+										<input type="text" id="example_id" class="js-range-slider" name="example_name" value="" />
 									</div>
 									<div class="row">
 										<div class="col-lg-6 col-sm-6">
 											<div class="form-group">
 												<label>Bedroom</label>
-												<input type="number" class="form-control bedroom" />
+												<input type="number" class="form-control bedroom" id="bedroom" />
 											</div>
 										</div>
 										<div class="col-lg-6 col-sm-6">
 											<div class="form-group">
 												<label>Bathrooms</label>
-												<input type="number" class="form-control bathroom" />
+												<input type="number" class="form-control bathroom" id="bathroom" />
 											</div>
 										</div>
 										<div class="col-lg-6 col-sm-6">
 											<div class="form-group">
 												<label>Floors Level</label>
-												<input type="number" class="form-control floor" />
+												<input type="number" class="form-control floor" id="floor" />
 											</div>
 										</div>
 										<div class="col-lg-6 col-sm-6">
 											<div class="form-group">
 												<label>Toilet</label>
-												<input type="number" class="form-control toilet" />
-											</div>
-										</div>
-										<div class="col-lg-12 col-sm-12">
-											<div class="form-group">
-												<label>Land Size</label>
-												<select class="form-select form-control" aria-label="Default select example">
-													<option selected>Min SF</option>
-													<option value="1">1</option>
-													<option value="2">2</option>
-												</select>
+												<input type="number" class="form-control toilet" id="toilet" />
 											</div>
 										</div>
 									</div>
@@ -98,31 +105,31 @@
 											<div class="col-lg-6 col-sm-6">
 												<div class="mb-20">
 													<div class="form-check">
-														<input class="form-check-input" type="checkbox" id="flexCheckDefault">
-														<label class="form-check-label" for="flexCheckDefault">
+														<input class="form-check-input" type="checkbox" id="parking">
+														<label class="form-check-label" for="parking">
 															Parking
 														</label>
 													</div>
 													<div class="form-check">
-														<input class="form-check-input" type="checkbox" id="flexCheckDefault-2">
+														<input class="form-check-input" type="checkbox" id="refrigerator">
 														<label class="form-check-label" for="flexCheckDefault-2">
 															Refrigerator
 														</label>
 													</div>
 													<div class="form-check">
-														<input class="form-check-input" type="checkbox" id="flexCheckDefault-3">
+														<input class="form-check-input" type="checkbox" id="laundry">
 														<label class="form-check-label" for="flexCheckDefault-3">
 															Laundry
 														</label>
 													</div>
 													<div class="form-check">
-														<input class="form-check-input" type="checkbox" id="flexCheckDefault-4">
+														<input class="form-check-input" type="checkbox" id="airconditioned">
 														<label class="form-check-label" for="flexCheckDefault-4">
 															Air Conditioned
 														</label>
 													</div>
 													<div class="form-check">
-														<input class="form-check-input" type="checkbox" id="flexCheckDefault-5">
+														<input class="form-check-input" type="checkbox" id="securityguard">
 														<label class="form-check-label" for="flexCheckDefault-5">
 															Security Guard
 														</label>
@@ -135,26 +142,26 @@
 												<div class="mb-20">
 													
 													<div class="form-check">
-														<input class="form-check-input" type="checkbox" id="flexCheckDefault-8">
+														<input class="form-check-input" type="checkbox" id="swimmingpool">
 														<label class="form-check-label" for="flexCheckDefault-8">
 															Swimming Pool
 														</label>
 													</div>
 													<div class="form-check">
-														<input class="form-check-input" type="checkbox" id="flexCheckDefault-9">
+														<input class="form-check-input" type="checkbox" id="gym">
 														<label class="form-check-label" for="flexCheckDefault-9">
 															Fitness Gym
 														</label>
 													</div>
 													
 													<div class="form-check">
-														<input class="form-check-input" type="checkbox" id="flexCheckDefault-11">
+														<input class="form-check-input" type="checkbox" id="fireplace">
 														<label class="form-check-label" for="flexCheckDefault-11">
 															Fireplace
 														</label>
 													</div>
 													<div class="form-check">
-														<input class="form-check-input" type="checkbox" id="flexCheckDefault-12">
+														<input class="form-check-input" type="checkbox" id="basement">
 														<label class="form-check-label" for="flexCheckDefault-12">
 															Basement
 														</label>
@@ -162,15 +169,9 @@
 												</div>
 											</div>
 
-											<div class="col-lg-6 col-sm-6">
-												<button class="default-btn">
-													Search
-												</button>
-											</div>
-
-											<div class="col-lg-6 col-sm-6">
-												<button class="default-btn mt-20">
-													Reset All Filters
+											<div class="col-lg-12 col-sm-12">
+												<button type="button" class="default-btn btn-filter-property rounded">
+													 Search <i class="fa fa-search"></i>
 												</button>
 											</div>
 										</div>
@@ -188,13 +189,6 @@
 										<p id="property-count"></p>
 									</div>
 									<div class="col-lg-6">
-										<select class="form-select form-control" aria-label="Default select example">
-											<option selected>All Categories</option>
-											<option value="0">ONGOING CONSTRUCTION</option>
-											<option value="1">OPEN FOR INVESTMENT</option>
-											<option value="2">CLOSED FOR INVESTMENT</option>
-											<option value="3">RENTED OUT</option>
-										</select>
 									</div>
 								</div>
 							</div>
@@ -227,6 +221,7 @@
 
 		<script>
 			$(document).ready(() =>{
+				GetPropertyTypes();
 				GetProperties("client");
 			})
 		</script>

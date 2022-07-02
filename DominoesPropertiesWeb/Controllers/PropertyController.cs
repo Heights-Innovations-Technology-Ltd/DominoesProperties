@@ -176,6 +176,55 @@ namespace DominoesPropertiesWeb.Controllers
             return Json(JsonConvert.SerializeObject(data));
         }
 
+
+        [Route("/filter-property")]
+        public async Task<JsonResult> GetFilterProperty([FromBody] dynamic filter)
+        {
+            var query = new Dictionary<string, string>();
+
+            JObject jObject = JsonConvert.DeserializeObject<JObject>(Convert.ToString(filter));
+            dynamic DesObj = new ExpandoObject();
+            var propertyFilter = new PropertyFilter();
+            //propertyFilter.Category = Convert.ToInt32(jObject["Category"]);
+            propertyFilter.Bathroom = Convert.ToInt32(jObject["Bathroom"]);
+            propertyFilter.Toilet = Convert.ToInt32(jObject["Toilet"]);
+            propertyFilter.Floor = Convert.ToInt32(jObject["FloorLevel"]);
+            propertyFilter.Bedroom = Convert.ToInt32(jObject["Bedroom"]);
+            propertyFilter.MinPrice = Convert.ToDecimal(jObject["MinPrice"]);
+            propertyFilter.MaxPrice = Convert.ToDecimal(jObject["MaxPrice"]);
+            propertyFilter.AirConditioned = Convert.ToBoolean(jObject["AirConditioned"]);
+            propertyFilter.Refridgerator = Convert.ToBoolean(jObject["Refrigerator"]);
+            propertyFilter.Parking = Convert.ToBoolean(jObject["Parking"]);
+            propertyFilter.SwimmingPool = Convert.ToBoolean(jObject["SwimmingPool"]);
+            propertyFilter.Laundry = Convert.ToBoolean(jObject["Laundry"]);
+            propertyFilter.Gym = Convert.ToBoolean(jObject["Gym"]);
+            propertyFilter.SecurityGuard = Convert.ToBoolean(jObject["SecurityGuard"]);
+            propertyFilter.Fireplace = Convert.ToBoolean(jObject["Fireplace"]);
+            propertyFilter.Basement = Convert.ToBoolean(jObject["Basement"]);
+
+            //if (Convert.ToInt32(jObject["Category"]) > 0) query.Add("Category", propertyFilter.Category.ToString());
+            if (Convert.ToInt32(jObject["Bathroom"]) > 0) query.Add("Bathroom", propertyFilter.Bathroom.ToString());
+            if (Convert.ToInt32(jObject["Toilet"]) > 0) query.Add("Toilet", propertyFilter.Toilet.ToString());
+            if (Convert.ToInt32(jObject["FloorLevel"]) > 0) query.Add("Floor", propertyFilter.Floor.ToString());
+            if (Convert.ToInt32(jObject["Bedroom"]) > 0) query.Add("Bedroom", propertyFilter.Bedroom.ToString());
+            if (Convert.ToDecimal(jObject["MinPrice"]) > 0) query.Add("MinPrice", propertyFilter.MinPrice.ToString());
+            if (Convert.ToDecimal(jObject["MaxPrice"]) > 0) query.Add("MaxPrice", propertyFilter.MaxPrice.ToString());
+            if (Convert.ToBoolean(jObject["AirConditioned"])) query.Add("AirConditioned", propertyFilter.AirConditioned.ToString());
+            if (Convert.ToBoolean(jObject["Refrigerator"])) query.Add("Refridgerator", propertyFilter.Refridgerator.ToString());
+            if (Convert.ToBoolean(jObject["Parking"])) query.Add("Parking", propertyFilter.Parking.ToString());
+            if (Convert.ToBoolean(jObject["SwimmingPool"])) query.Add("SwimmingPool", propertyFilter.SwimmingPool.ToString());
+            if (Convert.ToBoolean(jObject["Laundry"])) query.Add("Laundry", propertyFilter.Laundry.ToString());
+            if (Convert.ToBoolean(jObject["Gym"])) query.Add("Gym", propertyFilter.Gym.ToString());
+            if (Convert.ToBoolean(jObject["SecurityGuard"])) query.Add("SecurityGuard", propertyFilter.SecurityGuard.ToString());
+            if (Convert.ToBoolean(jObject["Fireplace"])) query.Add("Fireplace", propertyFilter.Fireplace.ToString());
+            if (Convert.ToBoolean(jObject["Basement"])) query.Add("Basement", propertyFilter.Basement.ToString());
+
+            var res = Task.Run(() => httpContext.Get("Property", query));
+            await Task.WhenAll(res);
+            var data = res.Status == TaskStatus.RanToCompletion ? res.Result : null;
+            return Json(JsonConvert.SerializeObject(data));
+        }
+
         [HttpPost("/upload-property/{propertyId}")]
         public async Task<JsonResult> uploadDoc(string propertyId)
         {
@@ -203,6 +252,7 @@ namespace DominoesPropertiesWeb.Controllers
             }
             return Json(this.StatusCode(StatusCodes.Status204NoContent, "Empty request body"));
         }
+
 
         private List<string> GetUploadedFileName(HttpRequest httpRequest, string propertyId)
         {

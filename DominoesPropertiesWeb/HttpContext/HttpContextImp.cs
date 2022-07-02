@@ -1,5 +1,6 @@
 ﻿using DominoesPropertiesWeb.Models;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -12,6 +13,7 @@ using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace DominoesPropertiesWeb.HttpContext
 {
@@ -40,7 +42,34 @@ namespace DominoesPropertiesWeb.HttpContext
                 var token = this.session.GetString("Token");
                 client.DefaultRequestHeaders.Add("Authorization",
                     "Bearer " + token);
+
                 var result = await client.GetAsync(url + endpointURL).ConfigureAwait(false);
+
+                var responJsonText = await result.Content.ReadAsStringAsync();
+                var res = new JObject();
+                if (result.IsSuccessStatusCode)
+                {
+                    res = JsonConvert.DeserializeObject<JObject>(Convert.ToString(responJsonText));
+                    jsonObj.success = Convert.ToBoolean(res["success"]);
+                    jsonObj.data = JsonConvert.DeserializeObject<dynamic>(Convert.ToString(res["data"]));
+                }
+                else
+                {
+                    jsonObj.success = Convert.ToBoolean(res["success"]);
+                    jsonObj.data = JsonConvert.DeserializeObject<dynamic>(Convert.ToString(res["data"]));
+                }
+                return jsonObj;
+            }
+        }
+        public async Task<dynamic> Get(string endpointURL, Dictionary<string, string> query)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, url))
+            {
+                var token = this.session.GetString("Token");
+                client.DefaultRequestHeaders.Add("Authorization",
+                    "Bearer " + token);
+                var queryURL = QueryHelpers.AddQueryString(endpointURL, query);
+                var result = await client.GetAsync(url + queryURL).ConfigureAwait(false);
 
                 var responJsonText = await result.Content.ReadAsStringAsync();
                 var res = new JObject();
@@ -66,7 +95,6 @@ namespace DominoesPropertiesWeb.HttpContext
                 var token = this.session.GetString("Token");
                 client.DefaultRequestHeaders.Add("Authorization",
                     "Bearer " + token);
-
                 using (var stringContent = new StringContent(JsonConvert.SerializeObject(obj), Encoding.UTF8, "application/json"))
                 {
                     var result = await client.PostAsync(url + endpointURL, stringContent);

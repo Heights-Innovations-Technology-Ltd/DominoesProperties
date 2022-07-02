@@ -318,6 +318,56 @@ const GetProperties = (type) => {
     }
 }
 
+$('.btn-filter-property').click(() => {
+    var params = {
+        Category: $("#types").val(),
+        Bathroom: Number($("#bathroom").val()),
+        Toilet: Number($("#toilet").val()),
+        FloorLevel: Number($("#floor").val()),
+        Bedroom: Number($("#bedroom").val()),
+        AirConditioned: $("#airconditioned").is(":checked") ? 1 : 0,
+        Refrigerator: $("#refrigerator").is(":checked") ? 1 : 0,
+        Parking: $("#parking").is(":checked") ? 1 : 0,
+        SwimmingPool: $("#swimmingpool").is(":checked") ? 1 : 0,
+        Laundry: $("#laundry").is(":checked") ? 1 : 0,
+        Gym: $("#gym").is(":checked") ? 1 : 0,
+        SecurityGuard: $("#securityguard").is(":checked") ? 1 : 0,
+        Fireplace: $("#fireplace").is(":checked") ? 1 : 0,
+        Basement: $("#basement").is(":checked") ? 1 : 0,
+        MinPrice: minPrice,
+        MaxPrice: maxPrice
+    };
+
+    let xhr = new XMLHttpRequest();
+    let url = "/filter-property";
+    xhr.open('POST', url, false);
+    xhr.setRequestHeader("content-type", "application/json");
+    xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+    try {
+        xhr.send(JSON.stringify(params));
+        if (xhr.status != 200) {
+            // alert('Something went wrong try again!');
+        } else {
+            var res = JSON.parse(xhr.responseText);
+            var data = JSON.parse(res).data;
+            console.log(res);
+            if (JSON.parse(res).success) {
+                $('#property-count').html(data.length + ' Results Found')
+                propertiesTmp(data);
+            } else {
+                Swal.fire(
+                    'Opps!',
+                    'No data match your request',
+                    'error'
+                );
+            }
+
+        }
+    } catch (err) { // instead of onerror
+        //alert("Request failed");
+    }
+});
+
 const adminPropertTmp = (data) => {
     $('#properties').html('');
 
