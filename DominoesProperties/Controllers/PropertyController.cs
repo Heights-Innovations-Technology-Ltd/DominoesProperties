@@ -111,29 +111,6 @@ namespace DominoesProperties.Controllers
                 return response;
             }
             return response;
-
-            //PagedList<Property> property = propertyRepository.GetProperties(queryParams);
-            //property.ForEach(x =>
-            //{
-            //    var prop = ClassConverter.EntityToProperty(x);
-            //    prop.Description = ClassConverter.ConvertDescription(propertyRepository.GetDescriptionByPropertyId(prop.UniqueId));
-            //    properties.Add(prop);
-            //});
-
-            //(int TotalCount, int PageSize, int CurrentPage, int TotalPages, bool HasNext, bool HasPrevious) metadata = (
-            //    property.TotalCount,
-            //    property.PageSize,
-            //    property.CurrentPage,
-            //    property.TotalPages,
-            //    property.HasNext,
-            //    property.HasPrevious
-            //);
-            //Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
-            //logger.LogInfo($"Returned {property.TotalCount} queryParams from database.");
-            //response.Success = properties.Count > 0;
-            //response.Message = response.Success ? "Successfull" : "No property found";
-            //response.Data = properties;
-            //return response;
         }
 
         [HttpGet("{uniqueId}")]
@@ -149,7 +126,7 @@ namespace DominoesProperties.Controllers
         }
 
         [HttpPost]
-        [Authorize]
+        [Authorize(Roles ="ADMIN, SUPER")]
         public ApiResponse Property([FromBody] Properties properties)
         {
             Property property = ClassConverter.PropertyToEntity(properties);
@@ -163,7 +140,7 @@ namespace DominoesProperties.Controllers
         }
 
         [HttpPut("{uniqueId}")]
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "ADMIN")]
         public ApiResponse Property(string uniqueId, [FromBody] UpdateProperty updateProperty)
         {
             Property property = propertyRepository.GetProperty(uniqueId);
@@ -191,7 +168,7 @@ namespace DominoesProperties.Controllers
         }
 
         [HttpDelete("{uniqueId}")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "SUPER")]
         public ApiResponse Delete(string uniqueId)
         {
             Property property = propertyRepository.GetProperty(uniqueId);
@@ -207,7 +184,7 @@ namespace DominoesProperties.Controllers
         }
 
         [HttpPut("description/{propertyId}")]
-        [Authorize]
+        [Authorize("ADMIN, SUPER")]
         public ApiResponse UpdateDescription(string propertyId, [FromBody] PropertyDescription description)
         {
             var propDescription = propertyRepository.GetDescriptionByPropertyId(propertyId);
@@ -249,8 +226,17 @@ namespace DominoesProperties.Controllers
             return response;
         }
 
+        //[HttpGet("feature")]
+        //public ApiResponse GetFeatureProperty()
+        //{
+        //    response.Data = propertyRepository.GetProperties().Where(x => x.Status.Equals(PropertyStatus.OPEN_FOR_INVESTMENT) || x.Status.Equals(PropertyStatus.ONGOING_CONSTRUCTION));
+        //    response.Success = true;
+        //    response.Message = "Property types fetched successfully!";
+        //    return response;
+        //}
+
         [HttpPost("uploads/{propertyId}")]
-        [Authorize]
+        [Authorize("ADMIN")]
         [ValidateAntiForgeryToken]
         public async Task<ApiResponse> UploadPassportAsync(long propertyId, [FromForm][Required(ErrorMessage = "No upload found")][MinLength(1, ErrorMessage = "Upload atleast 1 file")] List<IFormFile> passport)
         {

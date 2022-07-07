@@ -75,7 +75,12 @@ namespace DominoesProperties.Helper
                 TargetYield = property.TargetYield,
                 Type = property.Type,
                 TotalUnits = property.TotalUnits,
-                UnitSold = property.UnitSold
+                UnitSold = property.UnitSold,
+                Bank = property.BankName,
+                Account = property.AccountNumber,
+                TotalPrice = property.UnitAvailable * property.UnitPrice,
+                MaxUnitPerCustomer = property.MaxUnitPerCustomer,
+                Summary = property.Summary
             };
         }
 
