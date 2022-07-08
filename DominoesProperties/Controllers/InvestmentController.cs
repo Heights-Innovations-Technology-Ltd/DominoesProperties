@@ -66,12 +66,13 @@ namespace DominoesProperties.Controllers
         }
 
         [HttpGet("{customerId}")]
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         public ApiResponse Investment(string customerId){
 
             System.Collections.Generic.List<Investment> investments = investmentRepository.GetInvestments(customerRepository.GetCustomer(customerId).Id);
             if(investments.Count > 1){
                 response.Message = "Successful";
+                response.Success = true;
                 response.Data = investments;
                 return response;
             }

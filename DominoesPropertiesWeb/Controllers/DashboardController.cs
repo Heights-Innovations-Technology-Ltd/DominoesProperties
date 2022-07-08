@@ -41,6 +41,11 @@ namespace DominoesPropertiesWeb.Controllers
             return View();
         }
 
+        public IActionResult Investments()
+        {
+            return View();
+        }
+
         [Route("get-customer")]
         public async Task<JsonResult> Customer()
         {

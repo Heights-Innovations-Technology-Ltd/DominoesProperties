@@ -22,7 +22,7 @@ namespace DominoesProperties.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "ADMIN")]
+    //[Authorize(Roles = "ADMIN")]
     public class AdminController : Controller
     {
         private readonly IAdminRepository adminRepository;

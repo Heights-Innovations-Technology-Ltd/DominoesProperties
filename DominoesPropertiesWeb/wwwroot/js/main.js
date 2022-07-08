@@ -687,7 +687,6 @@ const editSingleProperty = () => {
     }
 }
 
-
 $('.btn-property').click(() => {
     const confirmPropertyUpdate = Swal.mixin({
         customClass: {
@@ -755,7 +754,9 @@ $('.btn-property').click(() => {
                 InterestRate: Number($("#interest").val()),
                 Longitude: Number($("#logitude").val()),
                 Latitude: Number($("#latitude").val()),
-                Desc: $("#description").val()
+                Desc: $("#description").val(),
+                Account: $("#account").val(),
+                Bank: $("#bank").val()
 
             };
 
@@ -1128,8 +1129,9 @@ $('#btnUpload').on('click', function () {
 });
 
 const GetInvestments = () => {
+    let uniqueId = $('#refId').val();
     let xhr = new XMLHttpRequest();
-    let url = "/get-investments";
+    let url = "/get-investments/" + uniqueId;
     xhr.open('GET', url, false);
     xhr.setRequestHeader("content-type", "application/json");
     xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
@@ -1152,8 +1154,59 @@ const GetInvestments = () => {
         }
     } catch (err) { // instead of onerror
         //alert("Request failed");
-        $(".btn-login").html("Login").attr("disabled", !1);
     }
+}
+
+const investmentTmp = (data) => {
+    $('#investments').html('');
+
+    data.forEach(x => {
+        let res = `<div class="col-lg-6 col-md-6">
+									<div class="single-featured-item">
+                                    <a href="javascript:void(0)" onclick="propertyDetails('${x.uniqueId}')">
+										<div class="featured-img mb-0">
+											<img src="/images/featured/featured-2.jpg" alt="Image">
+										</div>
+										<div class="featured-content style-three">
+											<div class="d-flex justify-content-between">
+												<h3>
+													<a href="javascript:void(0)" onclick="propertyDetails('${x.uniqueId}')">${x.name}</a>
+												</h3>
+												 <h3 class="price">&#8358;${formatToCurrency(x.unitPrice)}</h3>
+											</div>
+											<p>
+												<i class="ri-map-pin-fill"></i>
+												${x.location}
+											</p>
+											<ul>
+												<li>
+													<i class="ri-hotel-bed-fill"></i>
+													${x.description["bedroom"]} Bed
+												</li>
+												<li>
+													<i class="ri-wheelchair-fill"></i>
+													${x.description["bathroom"]} Bath
+												</li>
+												<li>
+													<i class="ri-ruler-2-line"></i>
+													${x.description["landSize"]} Sqft
+												</li>
+                                                <li>
+													<i class="ri-wheelchair-fill"></i>
+													${x.description["toilet"]} Toilet
+												</li>
+                                                <li>
+													<i class="ri-building-2-fill"></i>
+													${x.description["floorLevel"]} Floor
+												</li>
+											</ul>
+										</div>
+                                    </a>
+									</div>
+								</div>`;
+
+        $('#invetments').append(res);
+    });
 }
 
 const GetPropertyTypes = () => {
@@ -1366,12 +1419,12 @@ $('.btn-property-investment').on('click', () => {
                     if (JSON.parse(res).Success) {
                         window.scrollTo(0, 0);
                         //message(JSON.parse(res).Message, "success");
-                        Swal.fire(
-                            'Good job!',
-                            JSON.parse(res).Message,
-                            'success'
-                        );
-                        $('.form-control').val('');
+                        //Swal.fire(
+                        //    'Good job!',
+                        //    JSON.parse(res).Message,
+                        //    'success'
+                        //);
+                        location = data;
                         $(".btn-property-investment").html("Invest").attr("disabled", !1);
                     } else {
                         $(".btn-property-investment").html("Invest").attr("disabled", !1);
@@ -1394,7 +1447,7 @@ $('.btn-property-investment').on('click', () => {
             )
         }
     });
-})
+});
 
 $(".btn-change-password").on("submit", function () {
     const confirmPasswordChange = Swal.mixin({
