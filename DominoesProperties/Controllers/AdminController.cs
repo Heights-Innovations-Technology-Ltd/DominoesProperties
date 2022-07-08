@@ -22,7 +22,6 @@ namespace DominoesProperties.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize(Roles = "ADMIN")]
     public class AdminController : Controller
     {
         private readonly IAdminRepository adminRepository;
@@ -55,6 +54,7 @@ namespace DominoesProperties.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "SUPER")]
         public async Task<ApiResponse> AdminAsync([FromHeader] string apiKey, [FromHeader] string adminUsername, [FromBody] AdminUser admin)
         {
             if(string.IsNullOrEmpty(apiKey) || !")H@McQfTjWnZr4t7w!z%C*F-JaNdRgUkXp2s5v8x/A?D(G+KbPeShVmYq3t6w9z$".Equals(apiKey))
@@ -155,7 +155,7 @@ namespace DominoesProperties.Controllers
         }
 
         [HttpDelete("{email}")]
-        [Authorize(Roles = "Admin", Policy = "Super")]
+        [Authorize(Roles = "SUPER", Policy = "Super")]
         public ApiResponse DeleteUser([EmailAddress(ErrorMessage = "Not a valid email address")] string email)
         {
             var admin = adminRepository.GetUser(email);
@@ -189,7 +189,7 @@ namespace DominoesProperties.Controllers
             return response;
         }
 
-        [HttpPost("dashboard")]
+        [HttpGet("dashboard")]
         [Authorize]
         public ApiResponse Dashboard()
          {
@@ -213,7 +213,7 @@ namespace DominoesProperties.Controllers
 
             var token = new JwtSecurityToken(configuration["app_settings:Issuer"],
                configuration["app_settings:Issuer"], claims,
-                expires: DateTime.Now.AddMinutes(120),
+                expires: DateTime.Now.AddMinutes(30),
                 signingCredentials: credentials);
 
             return new JwtSecurityTokenHandler().WriteToken(token);

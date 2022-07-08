@@ -22,7 +22,8 @@ using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
 using Azure.Storage.Blobs.Models;
 using DominoesProperties.Services;
-using StackExchange.Redis;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace DominoesProperties.Controllers
 {
@@ -39,12 +40,13 @@ namespace DominoesProperties.Controllers
         private readonly IWebHostEnvironment environment;
         private readonly IAdminRepository adminRepository;
         private readonly IEmailService emailService;
+        private readonly IInvestmentRepository investmentRepository;
         private readonly ApiResponse response = new(false, "Error performing request, contact admin");
         private readonly DistributedCacheEntryOptions expiryOptions;
 
         public CustomerController(ILoggerManager _logger, ICustomerRepository _customerRepository, IStringLocalizer<CustomerController> _stringLocalizer,
             IDistributedCache _distributedCache, IConfiguration _configuration, IApplicationSettingsRepository _applicationSettingsRepository,
-            IWebHostEnvironment _environment, IAdminRepository _adminRepository, IEmailService _emailService)
+            IWebHostEnvironment _environment, IAdminRepository _adminRepository, IEmailService _emailService, IInvestmentRepository _investmentRepository)
         {
             logger = _logger;
             customerRepository = _customerRepository;
@@ -52,6 +54,7 @@ namespace DominoesProperties.Controllers
             distributedCache = _distributedCache;
             configuration = _configuration;
             adminRepository = _adminRepository;
+            investmentRepository = _investmentRepository;
             expiryOptions = new()
             {
                 AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(20),
@@ -127,7 +130,7 @@ namespace DominoesProperties.Controllers
         }
 
         [HttpDelete]
-        [Authorize]
+        [Authorize(Roles ="SUPER, ADMIN")]
         public ApiResponse Delete()
         {
             customerRepository.DeleteCustomer(HttpContext.User.Identity.Name);
@@ -137,7 +140,7 @@ namespace DominoesProperties.Controllers
         }
 
         [HttpPut]
-        [Authorize]
+        [Authorize(Roles ="CUSTOMER")]
         public ApiResponse Update([FromBody] CustomerUpdate customer)
         {
             var uniqueRef = HttpContext.User.Identity.Name;
@@ -203,7 +206,7 @@ namespace DominoesProperties.Controllers
         }
 
         [HttpGet]
-        [Authorize]
+        [Authorize(Roles ="SUPER, ADMIN")]
         public ApiResponse Customer()
         {
             var customer = customerRepository.GetCustomer(HttpContext.User.Identity.Name);
@@ -219,8 +222,6 @@ namespace DominoesProperties.Controllers
             }
             return response;
         }
-
-
 
         [HttpGet("reset-password/{email}")]
         [AllowAnonymous]
@@ -267,7 +268,7 @@ namespace DominoesProperties.Controllers
         }
 
         [HttpPost("change-password")]
-        [Authorize]
+        [Authorize(Roles ="CUSTOMER")]
         public ApiResponse ChangePassword([FromBody] PasswordReset password)
         {
             var customer = customerRepository.GetCustomer(HttpContext.User.Identity.Name);
@@ -291,7 +292,7 @@ namespace DominoesProperties.Controllers
         }
 
         [HttpPost("passport")]
-        [Authorize]
+        [Authorize(Roles ="CUSTOMER")]
         [ValidateAntiForgeryToken]
         public async Task<ApiResponse> UploadPassportAsync([FromForm][Required][MaxLength(1 * 1024 * 1024, ErrorMessage = "Upload size cannot exceed 1MB")]  IFormFile passport)
         {
@@ -307,6 +308,32 @@ namespace DominoesProperties.Controllers
             }
             response.Message = "Passport successfully uploaded";
             response.Data = blob.Uri.ToString();
+            return response;
+        }
+
+        [HttpGet("dashboard")]
+        [Authorize(Roles ="CUSTOMER")]
+        public ApiResponse Dashboard()
+        {
+            var customer = customerRepository.GetCustomer(HttpContext.User.Identity.Name);
+            var investment = investmentRepository.GetInvestments(customer.Id);
+            Dictionary<string, int> dashboardElement = new();
+            dashboardElement.Add("Total Investment", investment.Count);
+
+            var result = (from item in investment
+                            group item by item.Property.Status into g
+                            select new InvestCat() { status = g.Key, values = g.Count() }).ToList();
+
+            var e = result.Where(x => x.status.Equals("OPEN_FOR_INVESTMENT") || x.status.Equals("ONGOING_CONSTRUCTION")).Sum(x => x.values);
+            var f = result.Where(x => x.status.Equals("CLOSED_FOR_INVESTMENT") || x.status.Equals("RENTED_OUT")).Sum(x => x.values);
+
+            dashboardElement.Add("Active Investment", e);
+            dashboardElement.Add("Closed Investment", f);
+
+            response.Message = "Succcessfull";
+            response.Success = true;
+            response.Data = dashboardElement;
+
             return response;
         }
 
@@ -365,15 +392,23 @@ namespace DominoesProperties.Controllers
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
             var claims = new[] {
-                new Claim(JwtRegisteredClaimNames.UniqueName, uniqueRef),new Claim(JwtRegisteredClaimNames.Jti, Convert.ToString(Guid.NewGuid()))
+                new Claim(JwtRegisteredClaimNames.UniqueName, uniqueRef),
+                new Claim(JwtRegisteredClaimNames.Jti, Convert.ToString(Guid.NewGuid())),
+                new Claim(ClaimTypes.Role, "CUSTOMER")
             };
 
             var token = new JwtSecurityToken(configuration["app_settings:Issuer"],
                configuration["app_settings:Issuer"], claims,
-                expires: DateTime.Now.AddMinutes(120),
+                expires: DateTime.Now.AddMinutes(10),
                 signingCredentials: credentials);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
     }
+}
+
+internal class InvestCat
+{
+    public string status { get; set; }
+    public int values { get; set; }
 }
