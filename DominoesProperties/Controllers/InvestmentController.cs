@@ -142,6 +142,7 @@ namespace DominoesProperties.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public ApiResponse Investment([FromQuery] QueryParams queryParams)
         {
             PagedList<Investment> investments = investmentRepository.GetInvestments(queryParams);
