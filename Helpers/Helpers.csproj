@@ -16,7 +16,6 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Twilio" Version="5.75.3" />
-    <PackageReference Include="Select.HtmlToPdf" Version="22.1.0" />
     <PackageReference Include="Select.HtmlToPdf.NetCore" Version="22.1.0" />
     <PackageReference Include="PayStack.Net" Version="0.7.7" />
   </ItemGroup>
