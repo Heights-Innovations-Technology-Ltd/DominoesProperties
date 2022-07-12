@@ -33,6 +33,13 @@ namespace DominoesProperties.Models
         public string Longitude { get; set; }
         public string Latitude { get; set; }
         public string TypeName { get; set; }
+        public string Summary { get; set; }
+        [Required(ErrorMessage = "Property Bank name is required")]
+        public string BankName { get; set; }
+        [Required(ErrorMessage = "Property Account number is required")]
+        public string AccountNumber { get; set; }
+        [Required(ErrorMessage = "Property max unit per customer is required")]
+        public int MaxUnitPerCustomer { get; set; }
         
         [JsonIgnore]
         public string CreatedBy { get; set; }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using Models.Context;
 using Models.Models;
 using Repositories.Repository;
@@ -21,7 +22,7 @@ namespace Repositories.Service
                 _context.SaveChanges();
                 return true;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return false;
             }
@@ -34,7 +35,7 @@ namespace Repositories.Service
 
         public Admin GetUser(string email)
         {
-            return _context.Admins.Find(email);
+            return _context.Admins.Include(x => x.RoleFkNavigation).Where(x => x.Email.Equals(email)).FirstOrDefault();
         }
 
         public List<Admin> GetUser()
@@ -47,6 +48,22 @@ namespace Repositories.Service
             _context.Admins.Update(admin);
             _context.SaveChanges();
             return admin;
+        }
+
+        public Dictionary<string, int> AdminDashboard()
+        {
+            Dictionary<string, int> figures = new();
+            var investments = _context.Investments.ToList();
+            var properties = _context.Properties.ToList();
+            var customers = _context.Customers.ToList();
+            figures.Add("Investments", investments.Count());
+            figures.Add("Properties", properties.Count());
+            figures.Add("ActiveProperties", properties.Where(x => "ONGOING_CONSTRUCTION".Equals(x.Status) || "OPEN_FOR_INVESTMENT".Equals(x.Status)).Count());
+            figures.Add("Customers", customers.Count());
+            figures.Add("NewCustomers", customers.Where(x => x.DateRegistered.Date.Equals(DateTime.Now.Date)).Count());
+            //figures.Add("ActiveInvestments", investments.Where(x => "ONGOING_CONSTRUCTION".Equals(x.Status) || "OPEN_FOR_INVESTMENT".Equals(x.Status)).Count());
+
+            return figures;
         }
     }
 }

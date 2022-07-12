@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
-using System.Net;
-using System.Net.Mail;
 using System.Reflection;
 using System.Text;
 using DominoesProperties.Controllers;
@@ -24,7 +20,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Models.Context;
-using Models.Models;
 using Newtonsoft.Json;
 using NLog;
 using Repositories.Repository;

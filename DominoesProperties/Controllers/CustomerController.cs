@@ -22,6 +22,8 @@ using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
 using Azure.Storage.Blobs.Models;
 using DominoesProperties.Services;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace DominoesProperties.Controllers
 {
@@ -38,12 +40,13 @@ namespace DominoesProperties.Controllers
         private readonly IWebHostEnvironment environment;
         private readonly IAdminRepository adminRepository;
         private readonly IEmailService emailService;
+        private readonly IInvestmentRepository investmentRepository;
         private readonly ApiResponse response = new(false, "Error performing request, contact admin");
         private readonly DistributedCacheEntryOptions expiryOptions;
 
         public CustomerController(ILoggerManager _logger, ICustomerRepository _customerRepository, IStringLocalizer<CustomerController> _stringLocalizer,
             IDistributedCache _distributedCache, IConfiguration _configuration, IApplicationSettingsRepository _applicationSettingsRepository,
-            IWebHostEnvironment _environment, IAdminRepository _adminRepository, IEmailService _emailService)
+            IWebHostEnvironment _environment, IAdminRepository _adminRepository, IEmailService _emailService, IInvestmentRepository _investmentRepository)
         {
             logger = _logger;
             customerRepository = _customerRepository;
@@ -51,6 +54,7 @@ namespace DominoesProperties.Controllers
             distributedCache = _distributedCache;
             configuration = _configuration;
             adminRepository = _adminRepository;
+            investmentRepository = _investmentRepository;
             expiryOptions = new()
             {
                 AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(20),
@@ -96,16 +100,16 @@ namespace DominoesProperties.Controllers
         public ApiResponse Login([FromBody] Login login)
         {
             var customer = customerRepository.GetCustomer(login.Email);
+            if (customer == null || !customer.IsActive.Value || customer.IsDeleted.Value)
+            {
+                response.Success = false;
+                response.Message = "Username name not found!";
+                return response;
+            }
             if (!customer.IsVerified.Value)
             {
                 response.Success = false;
                 response.Message = "Customer account not verified, <html><a href='#'>click here</a></html> to verify your account";
-                return response;
-            }
-            if (customer == null || !customer.IsActive.Value || customer.IsDeleted.Value)
-            {
-                response.Success = false;
-                response.Message = "Username name not found, kindly check and try again";
                 return response;
             }
 
@@ -126,7 +130,7 @@ namespace DominoesProperties.Controllers
         }
 
         [HttpDelete]
-        [Authorize]
+        [Authorize(Roles ="SUPER, ADMIN")]
         public ApiResponse Delete()
         {
             customerRepository.DeleteCustomer(HttpContext.User.Identity.Name);
@@ -136,8 +140,8 @@ namespace DominoesProperties.Controllers
         }
 
         [HttpPut]
-        [Authorize]
-        public ApiResponse Update([FromBody] Models.Customer customer)
+        [Authorize(Roles ="CUSTOMER")]
+        public ApiResponse Update([FromBody] CustomerUpdate customer)
         {
             var uniqueRef = HttpContext.User.Identity.Name;
             var existingCustomer = customerRepository.GetCustomer(uniqueRef);
@@ -148,8 +152,12 @@ namespace DominoesProperties.Controllers
             }
 
             existingCustomer.Address = customer.Address;
-            existingCustomer.AccountNumber = customer.AccountNumber;
             existingCustomer.Phone = customer.Phone;
+            if (existingCustomer.AccountNumber == null)
+            {
+                existingCustomer.AccountNumber = customer.AccountNumber;
+                existingCustomer.BankName = customer.BankName;
+            }
 
             response.Message = "Customer profile updated successfully!";
             response.Success = true;
@@ -198,7 +206,7 @@ namespace DominoesProperties.Controllers
         }
 
         [HttpGet]
-        [Authorize]
+        [Authorize(Roles ="SUPER, ADMIN")]
         public ApiResponse Customer()
         {
             var customer = customerRepository.GetCustomer(HttpContext.User.Identity.Name);
@@ -214,8 +222,6 @@ namespace DominoesProperties.Controllers
             }
             return response;
         }
-
-
 
         [HttpGet("reset-password/{email}")]
         [AllowAnonymous]
@@ -262,7 +268,7 @@ namespace DominoesProperties.Controllers
         }
 
         [HttpPost("change-password")]
-        [Authorize]
+        [Authorize(Roles ="CUSTOMER")]
         public ApiResponse ChangePassword([FromBody] PasswordReset password)
         {
             var customer = customerRepository.GetCustomer(HttpContext.User.Identity.Name);
@@ -277,7 +283,7 @@ namespace DominoesProperties.Controllers
                 response.Message = "Invalid old password supplied, kindly check and try again";
                 return response;
             }
-            customer.Password = password.Password;
+            customer.Password = CommonLogic.Encrypt(password.Password);
             customerRepository.UpdateCustomer(customer);
 
             response.Message = string.Format("Password reset successful for {0}", customer.Email);
@@ -286,9 +292,9 @@ namespace DominoesProperties.Controllers
         }
 
         [HttpPost("passport")]
-        [Authorize]
+        [Authorize(Roles ="CUSTOMER")]
         [ValidateAntiForgeryToken]
-        public async Task<ApiResponse> UploadPassportAsync([Required][MaxLength(1 * 1024 * 1024, ErrorMessage = "Upload size cannot exceed 1MB")]  IFormFile passport)
+        public async Task<ApiResponse> UploadPassportAsync([FromForm][Required][MaxLength(1 * 1024 * 1024, ErrorMessage = "Upload size cannot exceed 1MB")]  IFormFile passport)
         {
             var container = new BlobContainerClient(configuration["BlobClient:Url"], "passport");
             var createResponse = await container.CreateIfNotExistsAsync();
@@ -302,6 +308,32 @@ namespace DominoesProperties.Controllers
             }
             response.Message = "Passport successfully uploaded";
             response.Data = blob.Uri.ToString();
+            return response;
+        }
+
+        [HttpGet("dashboard")]
+        [Authorize(Roles ="CUSTOMER")]
+        public ApiResponse Dashboard()
+        {
+            var customer = customerRepository.GetCustomer(HttpContext.User.Identity.Name);
+            var investment = investmentRepository.GetInvestments(customer.Id);
+            Dictionary<string, int> dashboardElement = new();
+            dashboardElement.Add("Total Investment", investment.Count);
+
+            var result = (from item in investment
+                            group item by item.Property.Status into g
+                            select new InvestCat() { status = g.Key, values = g.Count() }).ToList();
+
+            var e = result.Where(x => x.status.Equals("OPEN_FOR_INVESTMENT") || x.status.Equals("ONGOING_CONSTRUCTION")).Sum(x => x.values);
+            var f = result.Where(x => x.status.Equals("CLOSED_FOR_INVESTMENT") || x.status.Equals("RENTED_OUT")).Sum(x => x.values);
+
+            dashboardElement.Add("Active Investment", e);
+            dashboardElement.Add("Closed Investment", f);
+
+            response.Message = "Succcessfull";
+            response.Success = true;
+            response.Data = dashboardElement;
+
             return response;
         }
 
@@ -360,15 +392,23 @@ namespace DominoesProperties.Controllers
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
             var claims = new[] {
-                new Claim(JwtRegisteredClaimNames.UniqueName, uniqueRef),new Claim(JwtRegisteredClaimNames.Jti, Convert.ToString(Guid.NewGuid()))
+                new Claim(JwtRegisteredClaimNames.UniqueName, uniqueRef),
+                new Claim(JwtRegisteredClaimNames.Jti, Convert.ToString(Guid.NewGuid())),
+                new Claim(ClaimTypes.Role, "CUSTOMER")
             };
 
             var token = new JwtSecurityToken(configuration["app_settings:Issuer"],
                configuration["app_settings:Issuer"], claims,
-                expires: DateTime.Now.AddMinutes(120),
+                expires: DateTime.Now.AddMinutes(10),
                 signingCredentials: credentials);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
     }
+}
+
+internal class InvestCat
+{
+    public string status { get; set; }
+    public int values { get; set; }
 }

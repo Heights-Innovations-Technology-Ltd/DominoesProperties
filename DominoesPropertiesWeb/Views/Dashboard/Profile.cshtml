@@ -15,7 +15,7 @@
 <!-- Start Dashboard Area -->
 		<div class="dashboard-area">
 			<div class="container-fluid">
-				<div class="dashboard-title-wrap">
+				<div class="dashboard-title-wrap mb-1 pb-2">
 					<div class="row align-items-center">
 						<div class="col-lg-6 col-sm-6">
 							<ul class="dashboard-page-title">
@@ -42,21 +42,47 @@
 				</div>
 
 				<div class="my-profile">
+					@*<div class="row">
+						<div class="col-md-12 d-flex justify-content-end">
+							<a href="#" class="default-btn rounded">Fund Wallet</a>
+						</div>
+					</div>*@
 					<div class="row">
-						<div class="col-lg-4">
-							<div class="my-profile-img">
-								<img src="~/images/agents/user.png" class="img-thumbnail" alt="Image">
-								
-								<a asp-controller="Dashboard" asp-action="EditProfile" class="default-btn">
-									Edit Profile
-								</a>
+						<div class="col-md-12">
+							<div class="single-interface-card">
+								<p>Your Wallet Balance</p>
+								<h2 class="walletBalance"></h2>
+								<a href="#" title="Fund Wallet"><i class="fa fa-exchange" aria-hidden="true"></i></a> 
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-4">
+							<div class="card mb-4">
+								<div class="card-body text-center">
+									<img src="~/images/agents/user.png" alt="avatar"
+										class="rounded-circle img-fluid" style="width: 150px;">
+									<h5 class="my-3 fullName"></h5>
+									<span class="badge bg-success mb-1 isActive">Acitve</span>
+									<p class="text-muted mb-4 walletId"></p>
+									<div class="d-flex justify-content-center mb-2">
+										<a asp-controller="Dashboard" asp-action="EditProfile" class="default-btn rounded">
+											Edit Profile
+										</a>
+									</div>
+								</div>
 							</div>
 						</div>
 						<div class="col-lg-8">
 							<div class="my-profile-content">
-								<ul id="profile">
+								@*<ul id="profile">
 									
-								</ul>
+								</ul>*@
+								<div class="row">
+									<div class="card mb-4" id="profile">
+										
+									</div>
+								</div>
 							</div>
 						</div>
 					</div>

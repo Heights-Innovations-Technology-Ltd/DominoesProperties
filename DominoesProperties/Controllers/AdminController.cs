@@ -32,9 +32,11 @@ namespace DominoesProperties.Controllers
         private readonly IDistributedCache distributedCache;
         private readonly ICustomerRepository customerRepository;
         private readonly ILoggerManager logger;
+        private readonly IPropertyRepository propertyRepository;
+        private readonly IInvestmentRepository investmentRepository;
 
         public AdminController(IAdminRepository _adminRepository, IConfiguration _configuration, IWebHostEnvironment _environment, IDistributedCache _distributedCache,
-            ICustomerRepository _customerRepository, ILoggerManager _logger)
+            ICustomerRepository _customerRepository, ILoggerManager _logger, IPropertyRepository _propertyRepository, IInvestmentRepository _investmentRepository)
         {
             adminRepository = _adminRepository;
             configuration = _configuration;
@@ -42,6 +44,8 @@ namespace DominoesProperties.Controllers
             distributedCache = _distributedCache;
             customerRepository = _customerRepository;
             logger = _logger;
+            propertyRepository = _propertyRepository;
+            investmentRepository = _investmentRepository;
             expiryOptions = new()
             {
                 AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(20),
@@ -50,6 +54,7 @@ namespace DominoesProperties.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "SUPER")]
         public async Task<ApiResponse> AdminAsync([FromHeader] string apiKey, [FromHeader] string adminUsername, [FromBody] AdminUser admin)
         {
             if(string.IsNullOrEmpty(apiKey) || !")H@McQfTjWnZr4t7w!z%C*F-JaNdRgUkXp2s5v8x/A?D(G+KbPeShVmYq3t6w9z$".Equals(apiKey))
@@ -150,7 +155,7 @@ namespace DominoesProperties.Controllers
         }
 
         [HttpDelete("{email}")]
-        [Authorize(Roles = "Admin", Policy = "Super")]
+        [Authorize(Roles = "SUPER", Policy = "Super")]
         public ApiResponse DeleteUser([EmailAddress(ErrorMessage = "Not a valid email address")] string email)
         {
             var admin = adminRepository.GetUser(email);
@@ -184,19 +189,31 @@ namespace DominoesProperties.Controllers
             return response;
         }
 
+        [HttpGet("dashboard")]
+        [Authorize]
+        public ApiResponse Dashboard()
+         {
+            response.Message = $"Password successfully changed.";
+            response.Data = adminRepository.AdminDashboard();
+            response.Success = true;
+            return response;
+        }
+
         protected string GenerateJwtToken(string uniqueRef)
         {
+            var admin = adminRepository.GetUser(uniqueRef);
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["app_settings:Secret"]));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
             var claims = new[] {
                 new Claim(JwtRegisteredClaimNames.UniqueName, uniqueRef),
-                new Claim(JwtRegisteredClaimNames.Jti, uniqueRef)
+                new Claim(JwtRegisteredClaimNames.Jti, uniqueRef),
+                new Claim(ClaimTypes.Role, admin.RoleFkNavigation.RoleName)
             };
 
             var token = new JwtSecurityToken(configuration["app_settings:Issuer"],
                configuration["app_settings:Issuer"], claims,
-                expires: DateTime.Now.AddMinutes(120),
+                expires: DateTime.Now.AddMinutes(30),
                 signingCredentials: credentials);
 
             return new JwtSecurityTokenHandler().WriteToken(token);

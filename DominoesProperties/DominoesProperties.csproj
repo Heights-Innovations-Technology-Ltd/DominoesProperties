@@ -79,7 +79,6 @@
     <PackageReference Include="MailKit" Version="3.3.0" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Models\" />
     <Folder Include="Helper\" />
     <Folder Include="Extensions\" />
     <Folder Include="Enums\" />
@@ -97,12 +96,6 @@
     <ProjectReference Include="..\Helpers\Helpers.csproj">
       <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Remove="nlog.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="nlog.config" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="Localization\String.cs" />

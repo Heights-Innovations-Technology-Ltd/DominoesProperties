@@ -1,0 +1,280 @@
+﻿
+@{
+    ViewData["Title"] = "ViewProperty";
+    Layout = "~/Views/Shared/_LayoutDash.cshtml";
+}
+<style>
+ul{
+	list-style:none;
+}
+</style>
+<div class="dashboard-area">
+	<div class="container-fluid">
+		<div class="dashboard-title-wrap">
+			<div class="row align-items-center">
+				<div class="col-lg-6 col-sm-6">
+					<ul class="dashboard-page-title">
+						<li>
+							<a href="/">
+								Home 
+							</a>
+						</li>
+						<li>
+							<a href="/Property">
+								Propertie
+							</a>
+						</li>
+						<li class="active">Property Details</li>
+					</ul>
+				</div>
+				<div class="col-lg-6 col-sm-6">
+							
+				</div>
+			</div>
+		</div>
+
+		<div class="add-listing">
+			<div class="single-listing-area pb-70 ">
+				<div class="container">
+					<div class="row">
+						<div id="msg"></div>
+						<div class="single-properties-item single-listing-warp mt-0">
+							<div class="row">
+								<div class="col-lg-4 col-md-4 pe-0">
+									<div class="properties-bg-img"></div>
+								</div>
+
+								<div class="col-lg-8 col-md-8 ps-0">
+									<div class="properties-content">
+										<div class="d-flex justify-content-between">
+											<a href="single-listing.html">
+												<h3 id="name"></h3>
+											</a>
+											<h3 class="price" id="price">&#8358;</h3>
+										</div>
+										<p>
+											<i class="ri-map-pin-fill"></i>
+											<span id="location"></span>
+										</p>
+										<ul class="feature-list property-feature">
+											
+										</ul>
+									
+										<ul class="user d-flex justify-content-between align-items-center">
+											<li>
+												
+												<button type="button" class="default-btn bg-primary rounded edit-property"> 
+													 <i class="fa fa-pencil text-white"></i> Property
+												</button>
+											</li>
+											<li>
+												<button type="button" class="default-btn bg-success rounded" data-bs-toggle="modal" data-bs-target="#descriptionModal">
+													 <i class="fa fa-plus-circle text-white"></i> Description
+												</button>
+											</li>
+											<li>
+												<button type="button" class="default-btn rounded" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+													<i class="fa fa-upload text-white"></i> Upload Images
+												</button>
+											</li>
+										</ul>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-lg-12">
+							<div class="properties-details-content">
+								<div class="properties-about">
+									<h3>Property Description</h3>
+									<p>Cras ultricies ligula sed magna dictum porta. Nulla quis lorem ut libero malesuada feugiat. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque velit nisi, pretium ut lacinia in, elementum id enim. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Donec velit neque, auctor sit amet aliquam vel, ullamcorper sit amet ligula. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque in ipsum id orci porta dapibus. Curabitur arcu erat accumsan id imperdiet et, porttitor at sem. Curabitur arcu erat accumsan id imperdiet et porttitor at sem.</p>
+									<p>Curabitur non nulla sit amet nisl tempus convallis quis ac lectus. Donec sollicitudin molestie malesuada. Nulla porttitor accumsan tincidunt. Praesent sapien massa, convallis a pellentesque nec, egestas non nisi. Curabitur arcu erat, accumsan id imperdiet et, porttitor at sem. Curabitur non nulla sit amet nisl tempus convallis quis ac lectus. Proin eget tortor risus. Donec rutrum congue leo eget malesuada. Pellentesque in ipsum id orci porta dapibus.</p>
+								</div>
+
+								<div class="gap-mb-50"></div>
+
+								<div class="features-content">
+									<h3>Description</h3>
+									<div class="row description">
+										
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>	
+		</div>
+	</div>
+	<!-- upload Modal -->
+	<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+	  <div class="modal-dialog modal-dialog-centered">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<h5 class="modal-title" id="staticBackdropLabel">Upload Property Images</h5>
+			<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+		  </div>
+		  <div class="modal-body">
+			  <form class="basic-informations">
+				   <div class="row">
+						<div class="col-lg-12">
+							<div class="form-group">
+								<label>Property Images</label>
+								<div class="information d-flex align-items-center">
+									<div class="file-upload-account-info">
+										<input type="file" name="fileUpload[]" id="fileUpload" multiple class="inputfile">
+										<label class="upload">
+											<i class="ri-image-add-line"></i>
+										</label>
+									</div>
+								</div>
+							</div>
+					  </div>
+					</div>
+			  </form>
+			 
+		  </div>
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+			<button type="button" class="btn btn-primary" id="btnUpload">Submit</button>
+		  </div>
+		</div>
+	  </div>
+	</div>
+	<!--end upload modal-->
+
+	<!-- description Modal -->
+	<div class="modal fade" id="descriptionModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+	  <div class="modal-dialog modal-dialog-centered modal-lg">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<h5 class="modal-title" id="staticBackdropLabel">Add | Updated Description</h5>
+			<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+		  </div>
+		  <div class="modal-body">
+			  <form class="basic-informations">
+				   <div class="row">
+						<div class="features-content">
+							<div class="row">
+								<div class="col-lg-3 col-sm-6">
+									<ul>
+										<li>
+											<div class="form-group">
+												<label>Bath Room</label>
+												<input type="number" min="1" class="form-control" id="bathroom">
+											</div>
+										</li>
+
+										<li>
+											<div class="form-group">
+												<label>Bed Room</label>
+												<input type="number" class="form-control" id="bedRoom">
+											</div>
+										</li>
+									</ul>
+								</div>
+								<div class="col-lg-3 col-sm-6">
+									<ul>
+
+										<li>
+											<div class="form-group">
+												<label>Floor Level</label>
+												<input type="number" min="1" class="form-control" id="floorLevel">
+											</div>
+										</li>
+
+										<li>
+											<div class="form-check">
+												<input type="checkbox" class="form-check-input" id="laundry">
+												<label class="form-check-label" for="laundry">Laundry</label>
+											</div>  
+										</li>
+										<li>
+											<div class="form-check">
+												<input type="checkbox" class="form-check-input" id="refrigerator">
+												<label class="form-check-label" for="refrigerator">Refrigerator</label>
+											</div>
+										</li>
+										<li>
+											<div class="form-check">
+												<input type="checkbox" class="form-check-input" id="basement">
+												<label class="form-check-label" for="basement">Basement</label>
+											</div>
+										</li>
+									</ul>
+								</div>
+								<div class="col-lg-3 col-sm-6">
+									<ul>
+										<li>
+											<div class="form-group">
+												<label>Toilet</label>
+												<input type="number" min="1" class="form-control" id="toilet">
+											</div>
+										</li>
+										<li>
+											<div class="form-check">
+												<input type="checkbox" class="form-check-input" id="parking">
+												<label class="form-check-label" for="parking">Parking</label>
+											</div>
+										</li>
+										<li>
+											<div class="form-check">
+												<input type="checkbox" class="form-check-input" id="swimmingPool">
+												<label class="form-check-label" for="swimmingPool">Swimming Pool </label>
+											</div>
+										</li>
+										<li>
+											<div class="form-check">
+												<input type="checkbox" class="form-check-input" unchecked id="fireplace">
+												<label class="form-check-label" for="fireplace">Fire place</label>
+											</div>
+										</li>
+									</ul>
+								</div>
+								<div class="col-lg-3 col-sm-6">
+									<ul>
+										<li>
+											<div class="form-group">
+												<label>Land Size</label>
+												<input type="text" class="form-control" id="landSize">
+											</div>
+										</li>
+										<li>
+											<div class="form-check">
+												<input type="checkbox" class="form-check-input" id="gym">
+												<label class="form-check-label" for="gyn">Gym</label>
+											</div>
+										</li>
+										<li>
+											<div class="form-check">
+												<input type="checkbox" class="form-check-input" id="securityGuard">
+												<label class="form-check-label" for="securityGuard">Security Guard</label>
+											</div>
+										</li>
+										<li>
+											<div class="form-check">
+												<input type="checkbox" class="form-check-input" id="airCondition">
+												<label class="form-check-label" for="airCondition">Air Conditioned</label>
+											</div>
+										</li>
+									</ul>
+								</div>
+							</div>
+						</div>
+					</div>
+			  </form>
+			 
+		  </div>
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+			<button type="button" class="btn btn-primary btn-update-decription">Submit</button>
+		  </div>
+		</div>
+	  </div>
+	</div>
+	<!--end description modal-->
+</div>
+<script>
+	$(document).ready(() =>{
+		getSingleProperty();
+	})
+</script>

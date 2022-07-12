@@ -44,9 +44,12 @@ namespace Repositories.Service
         public Customer GetCustomer(string identifier)
         {
             var customer = _context.Customers.Local.Where(x => x.Email.Equals(identifier) || x.UniqueRef.Equals(identifier)).SingleOrDefault();
-            if(customer == null)
+            if (customer == null)
             {
-                customer = _context.Customers.Include(x => x.Wallet).Where(x => x.Email.Equals(identifier) || x.UniqueRef.Equals(identifier)).SingleOrDefault();
+                customer = _context.Customers
+                    .Where(x => x.Email.Equals(identifier) || x.UniqueRef.Equals(identifier))
+                    .Include(x => x.Wallet)
+                    .SingleOrDefault();
             }
             return customer;
         }

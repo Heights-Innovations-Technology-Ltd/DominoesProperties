@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using Models.Context;
 using Models.Models;
 using Repositories.Repository;
@@ -27,7 +28,9 @@ namespace Repositories.Service
 
         public List<Investment> GetInvestments(long customerId)
         {
-            return _context.Investments.Where(x => x.CustomerId.Equals(customerId)).ToList();
+            return _context.Investments
+                .Include(x => x.Property)
+                .Where(x => x.CustomerId.Equals(customerId)).ToList();
         }
 
         public PagedList<Investment> GetInvestments(QueryParams pageParams)
