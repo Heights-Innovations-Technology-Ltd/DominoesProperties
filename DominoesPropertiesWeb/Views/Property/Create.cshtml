@@ -77,6 +77,18 @@
 									<input type="text" class="form-control" name="Interest" id="interest">
 								</div>
 							</div>
+							<div class="col-lg-6 col-md-6">
+								<div class="form-group">
+									<label>Max unit per customer</label>
+									<input type="number" min="1" class="form-control" name="maxCustomerUnit" id="maxCustomerUnit" required>
+								</div>
+							</div>
+							<div class="col-lg-6 col-md-6">
+								<div class="form-group">
+									<label>Investment Closing Date</label>
+									<input type="date" class="form-control" name="closingDate" id="closingDate">
+								</div>
+							</div>
 
 							<h3 class="mt-30">Location / Contacts</h3>
 
@@ -106,33 +118,23 @@
 								</div>
 							</div>
 
-							<h3 class="mt-30">Account Details</h3>
-
-							<div class="col-lg-6 col-md-6">
-								<div class="form-group">
-									<label>Account Number</label>
-									<input type="text" class="form-control" id="account">
-								</div>
-							</div>
-							<div class="col-lg-6 col-md-6">
-								<div class="form-group">
-									<label>Bank Name</label>
-									<input type="text" class="form-control" id="Bank">
-								</div>
-							</div>
-							@*<div class="col-lg-12">
-								<div class="form-group">
-									<label>Property Images</label>
-									<div class="information d-flex align-items-center">
-										<div class="file-upload-account-info">
-											<input type="file" name="file" id="file-2" class="inputfile">
-											<label class="upload">
-												<i class="ri-image-add-line"></i>
-											</label>
+							<div class="features-content">
+								<h3 class="mt-30">Account Details</h3>
+								<div class="row">
+									<div class="col-lg-6 col-md-6">
+										<div class="form-group">
+											<label>Account Number</label>
+											<input type="text" class="form-control" id="account" required>
+										</div>
+									</div>
+									<div class="col-lg-6 col-md-6">
+										<div class="form-group">
+											<label>Bank Name</label>
+											<input type="text" class="form-control" id="Bank" required>
 										</div>
 									</div>
 								</div>
-							</div>*@
+							</div>
 							<div class="features-content">
 								<h3>Features</h3>
 								<div class="row">

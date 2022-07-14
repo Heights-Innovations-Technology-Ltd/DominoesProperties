@@ -284,7 +284,7 @@ const profile = (data, mode) => {
 const GetProperties = (type) => {
     if ($('#isAdmin').val() == "1") {
 
-        $('.add-property').html(`<a href="/property/create" class="default-btn rounded">Add New Property</a>`);
+        $('.add-property').html(`<a href="/property/create" class="default-btn rounded"><i class="fa fa-plus"></i> New Property</a>`);
     }
     let xhr = new XMLHttpRequest();
     let url = "/get-properties";
@@ -305,6 +305,8 @@ const GetProperties = (type) => {
                 $('#property-count').html(data.length + ' Results Found')
                 if (type == "admin") {
                     adminPropertTmp(data);
+                } else if (type == "landing") {
+                    LandingPagePropertyTmp(getRandom(data, 8));
                 } else {
                     propertiesTmp(data);
                 }
@@ -465,6 +467,58 @@ const propertiesTmp = (data) => {
 											</ul>
 										</div>
 </a>
+									</div>
+								</div>`;
+
+        $('#properties').append(res);
+    });
+}
+
+const LandingPagePropertyTmp = (data) => {
+    $('#properties').html('');
+
+    data.forEach(x => {
+        let res = `<div class="col-lg-3 col-md-3 mix for-rent">
+									<div class="single-featured-item">
+                                        <a href="javascript:void(0)" onclick="propertyDetails('${x.uniqueId}')">
+										    <div class="featured-img mb-0">
+											    <img src="/images/featured/featured-2.jpg" alt="Image">
+										    </div>
+										    <div class="featured-content style-three">
+											    <div class="d-flex justify-content-between">
+												    <h3>
+													    <a href="javascript:void(0)" onclick="propertyDetails('${x.uniqueId}')">${x.name}</a>
+												    </h3>
+												     <h3 class="price">&#8358;${formatToCurrency(x.unitPrice)}</h3>
+											    </div>
+											    <p>
+												    <i class="ri-map-pin-fill"></i>
+												    ${x.location}
+											    </p>
+											    <ul>
+												    <li>
+													    <i class="ri-hotel-bed-fill"></i>
+													    ${x.description["bedroom"]} Bed
+												    </li>
+												    <li>
+													    <i class="ri-wheelchair-fill"></i>
+													    ${x.description["bathroom"]} Bath
+												    </li>
+												    <li>
+													    <i class="ri-ruler-2-line"></i>
+													    ${x.description["landSize"]} Sqft
+												    </li>
+                                                    <li>
+													    <i class="ri-wheelchair-fill"></i>
+													    ${x.description["toilet"]} Toilet
+												    </li>
+                                                    <li>
+													    <i class="ri-building-2-fill"></i>
+													    ${x.description["floorLevel"]} Floor
+												    </li>
+											    </ul>
+										    </div>
+                                        </a>
 									</div>
 								</div>`;
 
@@ -756,7 +810,9 @@ $('.btn-property').click(() => {
                 Latitude: Number($("#latitude").val()),
                 Desc: $("#description").val(),
                 Account: $("#account").val(),
-                Bank: $("#bank").val()
+                Bank: $("#bank").val(),
+                MaxUnitPerCustomer: Number($("#maxCustomerUnit").val()),
+                ClosingDate: $("#closingDate").val()
 
             };
 
@@ -1699,4 +1755,19 @@ const setSelectedOption = (id, value) => {
             $(this).prop("selected", true);
         }
     });
+}
+
+//generate random of array of n
+function getRandom(arr, n) {
+    var result = new Array(n),
+        len = arr.length,
+        taken = new Array(len);
+    if (n > len)
+        throw new RangeError("getRandom: more elements taken than available");
+    while (n--) {
+        var x = Math.floor(Math.random() * len);
+        result[n] = arr[x in taken ? taken[x] : x];
+        taken[x] = --len in taken ? taken[len] : len;
+    }
+    return result;
 }
