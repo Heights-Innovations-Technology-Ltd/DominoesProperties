@@ -39,23 +39,24 @@ namespace DominoesProperties.Controllers
         [Authorize]
         public ApiResponse InitiateTransaction([FromBody] Payment payment)
         {
-            return doInitPayment(payment, HttpContext.User.Identity.Name);
+            return DoInitPayment(payment, HttpContext.User.Identity.Name);
         }
 
         [HttpPost("init")]
-        public ApiResponse doInitPayment(Payment payment, String user)
+        public ApiResponse DoInitPayment(Payment payment, string user)
         {
             var customer = customerRepository.GetCustomer(user);
             _ = decimal.TryParse(configuration["subscription"], out decimal subscription);
             var amount = payment.Module.Equals(PaymentType.SUBSCRIPTION) ? subscription : payment.Amount;
             var transRef = Guid.NewGuid().ToString();
-
             PaymentModel m = new()
             {
                 amount = amount * 100,
                 email = customer.Email,
                 reference = transRef,
-                callback = string.Format("{0}{1}/{2}", configuration["app_settings:WebEndpoint"], "verify-payment", transRef)
+                callback = string.IsNullOrEmpty(payment.Callback)
+                ? string.Format("{0}/{1}/{2}", $"{this.Request.Scheme}://{this.Request.Host}{this.Request.PathBase}", "api/payment/verify-payment", transRef)
+                : $"{payment.Callback}/{transRef}"
             };
 
             var initResponse = payStackApi.MobileAppInitTransaction(m).Data;
@@ -74,7 +75,6 @@ namespace DominoesProperties.Controllers
         }
 
         [HttpGet("verify-payment/{reference}")]
-        [Authorize]
         public ApiResponse Subscribe(string reference)
         {
             var returns = Convert.ToString(payStackApi.VerifyTransaction(reference).Data);

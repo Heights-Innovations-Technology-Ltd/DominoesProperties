@@ -54,6 +54,8 @@
     <None Remove="MailKit" />
     <None Remove="MimeKit" />
     <None Remove="Services\" />
+    <None Remove="Google.Apis.Drive.v3" />
+    <None Remove="EmailTemplates\NewCustomer.html" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.16" />
@@ -74,9 +76,10 @@
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="6.0.6" />
     <PackageReference Include="My.Extensions.Localization.Json" Version="3.0.0" />
-    <PackageReference Include="Azure.Storage.Blobs" Version="12.12.0" />
+    <PackageReference Include="Azure.Storage.Blobs" Version="12.13.0" />
     <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.3.1" />
     <PackageReference Include="MailKit" Version="3.3.0" />
+    <PackageReference Include="Google.Apis.Drive.v3" Version="1.57.0.2684" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Helper\" />
@@ -105,6 +108,9 @@
     <Compile Update="Localize\Resources.en-GB.Designer.cs">
       <DependentUpon>Resources.en-GB.resx</DependentUpon>
     </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="EmailTemplates\NewCustomer.html" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Update="Localize\Resources.en-GB.resx">

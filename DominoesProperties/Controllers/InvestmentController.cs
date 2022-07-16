@@ -73,9 +73,10 @@ namespace DominoesProperties.Controllers
                 {
                     Amount = newInvestment.Amount,
                     Module = PaymentType.PROPERTY_PURCHASE,
-                    InvestmentId = investmentId
+                    InvestmentId = investmentId,
+                    Callback = string.Format("{0}/{1}", $"{this.Request.Scheme}://{this.Request.Host}{this.Request.PathBase}", "api/payment/verify-payment")
                 };
-                return paymentController.doInitPayment(pay, customer.UniqueRef);
+                return paymentController.DoInitPayment(pay, customer.UniqueRef);
             }
             return response;
         }
@@ -143,6 +144,7 @@ namespace DominoesProperties.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public ApiResponse Investment([FromQuery] QueryParams queryParams)
         {
             PagedList<Investment> investments = investmentRepository.GetInvestments(queryParams);
