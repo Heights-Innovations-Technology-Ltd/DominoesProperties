@@ -75,6 +75,10 @@ namespace DominoesPropertiesWeb.Controllers
             obj.Longitude = Convert.ToString(jObject["Longitude"]);
             obj.Latitude = Convert.ToString(jObject["Latitude"]);
             obj.CreatedBy = Convert.ToString(jObject["CreatedBy"]);
+            obj.AccountNumber = Convert.ToString(jObject["Account"]);
+            obj.BankName = Convert.ToString(jObject["Bank"]);
+            obj.MaxUnitPerCustomer = Convert.ToInt32(jObject["MaxUnitPerCustomer"]);
+            obj.ClosingDate = Convert.ToDateTime(jObject["ClosingDate"]);
 
             DesObj.Bathroom = Convert.ToInt32(jObject["Description"]["Bathroom"]);
             DesObj.Toilet = Convert.ToInt32(jObject["Description"]["Toilet"]);

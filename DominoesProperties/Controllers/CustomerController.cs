@@ -206,7 +206,7 @@ namespace DominoesProperties.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles ="SUPER, ADMIN")]
+        [Authorize]
         public ApiResponse Customer()
         {
             var customer = customerRepository.GetCustomer(HttpContext.User.Identity.Name);

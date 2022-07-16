@@ -6944,6 +6944,14 @@ Dark Mode Area Style
         color: #ea723d !important;
     }
 
+    [data-theme="rello_dark"] h5 {
+        color: #000 !important;
+    }
+    
+    [data-theme="rello_dark"] h6 {
+        color: #000 !important;
+    }
+
 [data-theme="rello_dark"] .navbar-area {
   background-color: rello_dark;
 }

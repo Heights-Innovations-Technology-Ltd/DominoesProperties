@@ -135,6 +135,7 @@ namespace DominoesProperties.Controllers
 
             if(investments.Count > 1){
                 response.Message = "Successful";
+                response.Success = true;
                 response.Data = investments;
                 return response;
             }
