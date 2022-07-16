@@ -318,7 +318,7 @@ namespace DominoesProperties.Controllers
             var customer = customerRepository.GetCustomer(HttpContext.User.Identity.Name);
             var investment = investmentRepository.GetInvestments(customer.Id);
             Dictionary<string, int> dashboardElement = new();
-            dashboardElement.Add("Total Investment", investment.Count);
+            dashboardElement.Add("TotalInvestment", investment.Count);
 
             var result = (from item in investment
                             group item by item.Property.Status into g
@@ -327,8 +327,8 @@ namespace DominoesProperties.Controllers
             var e = result.Where(x => x.status.Equals("OPEN_FOR_INVESTMENT") || x.status.Equals("ONGOING_CONSTRUCTION")).Sum(x => x.values);
             var f = result.Where(x => x.status.Equals("CLOSED_FOR_INVESTMENT") || x.status.Equals("RENTED_OUT")).Sum(x => x.values);
 
-            dashboardElement.Add("Active Investment", e);
-            dashboardElement.Add("Closed Investment", f);
+            dashboardElement.Add("ActiveInvestment", e);
+            dashboardElement.Add("ClosedInvestment", f);
 
             response.Message = "Succcessfull";
             response.Success = true;
