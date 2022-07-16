@@ -42,7 +42,7 @@ namespace DominoesPropertiesWeb.Controllers
             dynamic obj = new ExpandoObject();
 
             obj.PropertyUniqueId = Convert.ToString(jObject["propertyUniqueId"]);
-            obj.Units = 1;
+            obj.Units = Convert.ToInt16(jObject["units"]);
             var res = Task.Run(() => httpContext.Post("Investment", obj));
             var data = await res.GetAwaiter().GetResult();
             return Json(JsonConvert.SerializeObject(data));

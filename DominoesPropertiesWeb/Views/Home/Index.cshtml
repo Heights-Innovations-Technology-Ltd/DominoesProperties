@@ -195,23 +195,10 @@
 					<div class="section-title left-title">
 						<h2>Recent Properties</h2>
 					</div>
-					<div class="shorting-menu">
-						<button class="filter" data-filter="all">
-							All Properties
-						</button>
-			
-						<button class="filter" data-filter=".for-sale">
-							For Sale
-						</button>
-			
-						<button class="filter" data-filter=".for-rent">
-							For Rent
-						</button>
-					</div>
 				</div>
 
 				<div class="shorting">
-					<div class="row justify-content-center properties">
+					<div class="row" id="properties">
 						
 	
 						@*<div class="col-xl-3 col-md-6 mix for-sale">
@@ -473,11 +460,7 @@
 							</div>
 						</div>*@
 
-						<div class="col-lg-12 text-center">
-							<a href="listing.html" class="default-btn">
-								View All Listing
-							</a>
-						</div>
+						
 					</div>
 				</div>
 			</div>
@@ -526,31 +509,8 @@
 									<i class="ri-heart-line"></i>
 								</button>
 							</div>
-							<div class="why-choose-content">
-								<div class="d-flex justify-content-between">
-									<a href="single-listing.html">
-										<h3>House For Sale</h3>
-									</a>
-									<h3 class="price">&#8358; 300,000</h3>
-								</div>
-								<p>
-									<i class="ri-map-pin-fill"></i>
-									7755 West White Drive Carmel, NY 10555
-								</p>
-								<ul class="feature-list">
-									<li>
-										<i class="ri-hotel-bed-fill"></i>
-										4 Bed
-									</li>
-									<li>
-										<i class="ri-wheelchair-fill"></i>
-										4 Bath
-									</li>
-									<li>
-										<i class="ri-ruler-2-line"></i>
-										1050 Sqft
-									</li>
-								</ul>
+							<div class="why-choose-content property">
+								
 							</div>
 						</div>
 					</div>
@@ -1076,7 +1036,7 @@
 
 
 		<script>
-			$(() => {
+			$(document).ready(() => {
 
 				GetProperties("landing");
 			})

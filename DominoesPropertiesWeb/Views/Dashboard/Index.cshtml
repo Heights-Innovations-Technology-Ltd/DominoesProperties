@@ -60,44 +60,47 @@
 						<div class="single-interface-card">
 							<i class="ri-home-8-line"></i>
 							<p>Total Properties</p>
-							<h2>0</h2>
+							<h2 class="total-property">0</h2>
 						</div>
 					</div>
 					<div class="col-xl-4 col-sm-6">
 						<div class="single-interface-card">
 							<i class="ri-home-7-line"></i>
 							<p>Active Properties</p>
-							<h2>0</h2>
+							<h2 class="active-property">0</h2>
 						</div>
 					</div>
 					<div class="col-xl-4 col-sm-6">
 						<div class="single-interface-card">
 							<i class="ri-building-2-line"></i>
 							<p>Active Investments</p>
-							<h2>0</h2>
+							<h2 class="active-investment">0</h2>
 						</div>
 					</div>
 					<div class="col-xl-4 col-sm-6">
 						<div class="single-interface-card">
 							<i class="ri-notification-2-fill"></i>
 							<p>Payment Due Investments</p>
-							<h2>0</h2>
+							<h2 class="payment-due">0</h2>
 						</div>
 					</div>
 					<div class="col-xl-4 col-sm-6">
 						<div class="single-interface-card">
 							<i class="ri-shield-user-fill"></i>
 							<p>Total Customers</p>
-							<h2>0</h2>
+							<h2 class="total-customer">0</h2>
 						</div>
 					</div>
 					<div class="col-xl-4 col-sm-6">
 						<div class="single-interface-card">
 							<i class="ri-shield-user-line"></i>
 							<p>Inactive Customers</p>
-							<h2>0</h2>
+							<h2 class="inactive-customer">0</h2>
 						</div>
 					</div>
+					<script>
+						$(() => {GetUAdminDashboard()});
+					</script>
 				}
 				else
 				{
@@ -112,22 +115,22 @@
 					<div class="col-xl-4 col-sm-6">
 						<div class="single-interface-card">
 							<i class="ri-home-8-line"></i>
-							<p>Total Properties</p>
-							<h2>0</h2>
+							<p>Total Investments</p>
+							<h2 class="total-investment">0</h2>
 						</div>
 					</div>
 					<div class="col-xl-4 col-sm-6">
 						<div class="single-interface-card">
 							<i class="ri-home-7-line"></i>
-							<p>Active Properties</p>
-							<h2>0</h2>
+							<p>Active Investment</p>
+							<h2 class="active-investment">0</h2>
 						</div>
 					</div>
 					<div class="col-xl-4 col-sm-6">
 						<div class="single-interface-card">
 							<i class="ri-building-2-line"></i>
-							<p>Active Investments</p>
-							<h2>0</h2>
+							<p>Closed Investments</p>
+							<h2 claas="closed-investment">0</h2>
 						</div>
 					</div>
 					<div class="col-xl-4 col-sm-6">
@@ -137,6 +140,9 @@
 							<h2>0</h2>
 						</div>
 					</div>
+					<script>
+						$(() => {GetUserDashboard()});
+					</script>
 				}
 				
 			</div>
@@ -148,5 +154,6 @@
 <script>
 	$(document).ready(() => {
 		//customerDetails();
+		
 	})
 </script>

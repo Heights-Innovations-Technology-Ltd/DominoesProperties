@@ -46,6 +46,24 @@ namespace DominoesPropertiesWeb.Controllers
             return View();
         }
 
+        [Route("customer-dashboard")]
+        public async Task<JsonResult> CustomerDashboard()
+        {
+            var res = Task.Run(() => httpContext.Get("Customer/dashboard"));
+            await Task.WhenAll(res);
+            var data = res.Status == TaskStatus.RanToCompletion ? res.Result : null;
+            return Json(JsonConvert.SerializeObject(data));
+        }
+        
+        [Route("admin-dashboard")]
+        public async Task<JsonResult> AdminDashboard()
+        {
+            var res = Task.Run(() => httpContext.Get("Admin/dashboard"));
+            await Task.WhenAll(res);
+            var data = res.Status == TaskStatus.RanToCompletion ? res.Result : null;
+            return Json(JsonConvert.SerializeObject(data));
+        }
+        
         [Route("get-customer")]
         public async Task<JsonResult> Customer()
         {
@@ -89,6 +107,24 @@ namespace DominoesPropertiesWeb.Controllers
             var res = Task.Run(() => httpContext.Post("Customer/change-password", obj));
             var data = await res.GetAwaiter().GetResult();
             //await Task.WhenAll(res);
+            //var data = res.Status == TaskStatus.RanToCompletion ? res.Result : null;
+            return Json(JsonConvert.SerializeObject(data));
+        }
+
+        [Route("fund-wallet")]
+        public async Task<JsonResult> FundCustomerWallet([FromBody] dynamic amountObj)
+        {
+            JObject jObject = JsonConvert.DeserializeObject<JObject>(Convert.ToString(amountObj));
+
+            dynamic obj = new ExpandoObject();
+
+            obj.Amount = Convert.ToDecimal(jObject["Amount"]);
+            obj.Module = 2;
+
+            var res = Task.Run(() => httpContext.Post("Payment", obj));
+            var data = await res.GetAwaiter().GetResult();
+            //await Task.WhenAll(res);
+
             //var data = res.Status == TaskStatus.RanToCompletion ? res.Result : null;
             return Json(JsonConvert.SerializeObject(data));
         }
