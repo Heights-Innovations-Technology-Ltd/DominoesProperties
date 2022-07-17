@@ -83,6 +83,18 @@
 								<input type="text" class="form-control" name="Interest" id="interest">
 							</div>
 						</div>
+						<div class="col-lg-6 col-md-6">
+							<div class="form-group">
+								<label>Max unit per customer</label>
+								<input type="number" min="1" class="form-control" name="maxCustomerUnit" id="maxCustomerUnit" required>
+							</div>
+						</div>
+						<div class="col-lg-6 col-md-6">
+							<div class="form-group">
+								<label>Investment Closing Date</label>
+								<input type="date" class="form-control" name="closingDate" id="closingDate">
+							</div>
+						</div>
 
 						<h3 class="mt-30">Location / Contacts</h3>
 
@@ -111,6 +123,24 @@
 								<textarea class="form-control" id="description" rows="3"></textarea>
 							</div>
 						</div>
+
+						<div class="features-content">
+								<h3 class="mt-30">Account Details</h3>
+								<div class="row">
+									<div class="col-lg-6 col-md-6">
+										<div class="form-group">
+											<label>Account Number</label>
+											<input type="text" class="form-control" id="account" name="account" required>
+										</div>
+									</div>
+									<div class="col-lg-6 col-md-6">
+										<div class="form-group">
+											<label>Bank Name</label>
+											<input type="text" class="form-control" id="bank" name="bank" required>
+										</div>
+									</div>
+								</div>
+							</div>
 						
 						<div class="features-content">
 							<h3>Features</h3>
@@ -183,8 +213,8 @@
 											</div>
 										</li>
 										<li>
-											<div class="form-check">disabled
-												<input type="checkbox" class="form-check-input" unchecked id="fireplace">
+											<div class="form-check">
+												<input type="checkbox" class="form-check-input" disabled id="fireplace">
 												<label class="form-check-label" for="fireplace">Fire place</label>
 											</div>
 										</li>
