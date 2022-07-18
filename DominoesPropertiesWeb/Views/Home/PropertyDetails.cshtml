@@ -46,7 +46,7 @@
 										<i class="ri-map-pin-fill"></i>
 										<span id="location"></span>
 									</p>
-									<ul class="feature-list">
+									<ul class="feature-list property-feature">
 										<li>
 											<i class="ri-hotel-bed-fill"></i>
 											3 Bed
@@ -63,14 +63,14 @@
 									
 									<ul class="user d-flex justify-content-between align-items-center">
 										<li>
-											<a href="agents.html" class="agent-user">
+											<a href="javascript:void(0)" class="agent-user">
 												@*<img src="~/images/agents/agent-1.jpg" alt="Image">*@
-												<span>By Peggy Beatty</span>
+												<span class="closeDate"></span>
 											</a>
 										</li>
 										<li>
-											<button type="submit" class="default-btn btn-property-investment rounded">
-												Invest
+											<button type="button" class="default-btn rounded" data-bs-toggle="modal" data-bs-target="#exampleModalToggle">
+											  Checkout
 											</button>
 										</li>
 									</ul>
@@ -82,79 +82,16 @@
 						<div class="properties-details-content">
 							<div class="properties-about">
 								<h3>Property Description</h3>
-								<p>Cras ultricies ligula sed magna dictum porta. Nulla quis lorem ut libero malesuada feugiat. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque velit nisi, pretium ut lacinia in, elementum id enim. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Donec velit neque, auctor sit amet aliquam vel, ullamcorper sit amet ligula. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque in ipsum id orci porta dapibus. Curabitur arcu erat accumsan id imperdiet et, porttitor at sem. Curabitur arcu erat accumsan id imperdiet et porttitor at sem.</p>
-								<p>Curabitur non nulla sit amet nisl tempus convallis quis ac lectus. Donec sollicitudin molestie malesuada. Nulla porttitor accumsan tincidunt. Praesent sapien massa, convallis a pellentesque nec, egestas non nisi. Curabitur arcu erat, accumsan id imperdiet et, porttitor at sem. Curabitur non nulla sit amet nisl tempus convallis quis ac lectus. Proin eget tortor risus. Donec rutrum congue leo eget malesuada. Pellentesque in ipsum id orci porta dapibus.</p>
+								<p class="summary"></p>
+								
 							</div>
 
 							<div class="gap-mb-50"></div>
 
 							<div class="features-content">
 								<h3>Features</h3>
-								<div class="row">
-									<div class="col-lg-3 col-sm-6">
-										<ul>
-											<li>
-												<i class="ri-checkbox-line"></i>
-												Air Conditioned   
-											</li>
-											<li>
-												<i class="ri-checkbox-line"></i>
-												Laundry
-											</li>
-											<li>
-												<i class="ri-checkbox-line"></i>
-												Barbeque 
-											</li>
-										</ul>
-									</div>
-									<div class="col-lg-3 col-sm-6">
-										<ul>
-											<li>
-												<i class="ri-checkbox-line"></i>
-												Refrigerator 
-											</li>
-											<li>
-												<i class="ri-checkbox-line"></i>
-												Window Coverings
-											</li>
-											<li>
-												<i class="ri-checkbox-line"></i>
-												Grage 
-											</li>
-										</ul>
-									</div>
-									<div class="col-lg-3 col-sm-6">
-										<ul>
-											<li>
-												<i class="ri-checkbox-line"></i>
-												Parking   
-											</li>
-											<li>
-												<i class="ri-checkbox-line"></i>
-												Fitness Gym
-											</li>
-											<li>
-												<i class="ri-checkbox-line"></i>
-												Fireplace 
-											</li>
-										</ul>
-									</div>
-									<div class="col-lg-3 col-sm-6">
-										<ul>
-											<li>
-												<i class="ri-checkbox-line"></i>
-												Swimming Pool  
-											</li>
-											<li>
-												<i class="ri-checkbox-line"></i>
-												Security Garage 
-											</li>
-											<li>
-												<i class="ri-checkbox-line"></i>
-												Basement 
-											</li>
-										</ul>
-									</div>
+								<div class="row description">
+									
 								</div>
 							</div>
 							
@@ -281,7 +218,7 @@
 
 							<div class="gap-mb-50"></div>
 
-							<div class="similar-properties">
+							@*<div class="similar-properties">
 								<h3>Similar Properties</h3>
 								<div class="row">
 									<div class="col-lg-6">
@@ -391,7 +328,7 @@
 										</div>
 									</div>
 								</div>
-							</div>
+							</div>*@
 						</div>
 					</div>
 					
@@ -467,7 +404,7 @@
 							<div class="sidebar-widget recent-post">
 								<h3>Recent Posts</h3>
 								
-								<article class="item">
+								@*<article class="item">
 									<a href="single-blog.html" class="thumb">
 										<span class="fullimage cover bg-1" role="img"></span>
 									</a>
@@ -481,9 +418,9 @@
 										</span>
 										<h5>&#8358;24000</h5>
 									</div>
-								</article>
+								</article>*@
 
-								<article class="item">
+								@*<article class="item">
 									<a href="single-blog.html" class="thumb">
 										<span class="fullimage cover bg-2" role="img"></span>
 									</a>
@@ -512,16 +449,92 @@
 										</span>
 										<h5>&#8358;35000</h5>
 									</div>
-								</article>
+								</article>*@
 							</div>
 						</div>
 					</div>
 				</div>
 			</div>
+
+			<div class="modal fade" id="exampleModalToggle" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
+			  <div class="modal-dialog modal-xl modal-dialog-centered">
+				<div class="modal-content">
+				  <div class="modal-header">
+					@*<h5 class="modal-title" id="exampleModalToggleLabel">Modal 1</h5>*@
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				  </div>
+				  <div class="modal-body">
+					  <div class="row">
+						  <div class="col-md-9 mx-auto">
+							<div class="model fadeIn">
+								<div class="room">
+								  <div class="text-cover">
+									<h1 id="propertyName">Danny's House</h1>
+									<p class="price" id="checkoutPrice"> 120.00 <span>USD</span> / Unit</p>
+									<hr>
+									<p id="availableUnit">Available Unit</p>
+									<p id="closeDate">Investment End On</p>
+								  </div>
+								</div><div class="payment">
+								  <div class="receipt-box">
+									<h3>Details</h3>
+									<form>
+										<label>Quantity</label>
+										<input type="number" min="1" value="1" id="unit" class="form-control">
+										<label>Duration</label>
+										<select class="form-control" name="Property-Type" id="types" required>
+											<option>Select Duration</option>
+											<option>12 Months</option>
+											<option>24 Months</option>
+											<option>48 Months</option>
+										</select>
+										<br><br>
+										
+								  </form>
+									
+								  </div>
+								  <div class="payment-info">
+									<h3>Summary</h3>
+									<table class="table">
+									  <tr>
+										<td> <span class="checkoutPrice"></span> x <span class="unit">1</span></td>
+										<td class="total">Nill</td>
+									  </tr>
+									  <tr>
+										<td>Interest Yeild</td>
+										<td>0</td>
+									  </tr>
+									  <tr>
+										<td>Duration</td>
+										<td>12 Months</td>
+									  </tr>
+									  <tr>
+										<td>Matured Date</td>
+										<td>31-09-2022</td>
+									  </tr>
+									  <tfoot>
+										<tr>
+										  <td>Grand Total</td>
+										  <td class="groundTotal">Nill</td>
+										</tr>
+									  </tfoot>
+									</table>
+
+									<button class="default-btn btn-property-investment rounded" type="button">Continue <i class="fa fa-arrow-right"></i></button>
+								  </div>
+								</div>
+							</div>
+						  </div>
+					  </div>
+				  </div>
+				</div>
+			  </div>
+			</div>
 		</div>
 		<!-- End Single Listing Area -->
 
 		<script>
+			
 			$(document).ready(() =>{
 				getSingleProperty();
 			})

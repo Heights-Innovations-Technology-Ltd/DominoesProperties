@@ -70,7 +70,7 @@ namespace DominoesPropertiesWeb.Controllers
             obj.Type = Convert.ToInt32(jObject["Type"]);
             obj.UnitPrice = Convert.ToInt32(jObject["UnitPrice"]);
             obj.Status = Convert.ToInt32(jObject["Status"]);
-            obj.UnitAvailable = Convert.ToInt32(jObject["UnitAvailable"]);
+            obj.TotalUnits = Convert.ToInt32(jObject["UnitAvailable"]);
             obj.InterestRate = Convert.ToInt32(jObject["InterestRate"]);
             obj.Longitude = Convert.ToString(jObject["Longitude"]);
             obj.Latitude = Convert.ToString(jObject["Latitude"]);
@@ -79,6 +79,7 @@ namespace DominoesPropertiesWeb.Controllers
             obj.BankName = Convert.ToString(jObject["Bank"]);
             obj.MaxUnitPerCustomer = Convert.ToInt32(jObject["MaxUnitPerCustomer"]);
             obj.ClosingDate = Convert.ToDateTime(jObject["ClosingDate"]);
+            obj.Summary = Convert.ToString(jObject["Summary"]);
 
             DesObj.Bathroom = Convert.ToInt32(jObject["Description"]["Bathroom"]);
             DesObj.Toilet = Convert.ToInt32(jObject["Description"]["Toilet"]);
@@ -112,13 +113,16 @@ namespace DominoesPropertiesWeb.Controllers
             obj.Location = Convert.ToString(jObject["Location"]);
             obj.Type = Convert.ToInt32(jObject["Type"]);
             obj.UnitPrice = Convert.ToInt32(jObject["UnitPrice"]);
-            obj.ClosingDate = Convert.ToInt32(jObject["ClosingDate"]);
             obj.TotalUnits = Convert.ToInt32(jObject["UnitAvailable"]);
             obj.InterestRate = Convert.ToInt32(jObject["InterestRate"]);
             obj.Longitude = Convert.ToString(jObject["Longitude"]);
             obj.Latitude = Convert.ToString(jObject["Latitude"]);
             //obj.TargetYield = jObject["TargetYield"] != null ? Convert.ToDecimal(jObject["TargetYield"]) : 0;
             //obj.ProjectedGrowth = jObject["ProjectedGrowth"] != null ? Convert.ToDecimal(jObject["ProjectedGrowth"]) : 0;
+            obj.AccountNumber = Convert.ToString(jObject["Account"]);
+            obj.BankName = Convert.ToString(jObject["Bank"]);
+            obj.MaxUnitPerCustomer = Convert.ToInt32(jObject["MaxUnitPerCustomer"]);
+            obj.ClosingDate = Convert.ToDateTime(jObject["ClosingDate"]);
             obj.Summary = Convert.ToString(jObject["Summary"]);
 
             var res = Task.Run(() => httpContext.Put("Property/" + propertyId, obj));
