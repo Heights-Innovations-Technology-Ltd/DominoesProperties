@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 using DominoesProperties.Enums;
 
 namespace DominoesProperties.Models
@@ -7,6 +9,9 @@ namespace DominoesProperties.Models
     {
         public decimal Amount { get; set; }
         public PaymentType Module { get; set; }
+        [JsonIgnore]
         public long InvestmentId { get; set; }
+        [JsonIgnore]
+        public string Callback { get; set; }
     }
 }

@@ -24,6 +24,9 @@ using Newtonsoft.Json;
 using NLog;
 using Repositories.Repository;
 using Repositories.Service;
+using Microsoft.Extensions.Azure;
+using Azure.Storage.Blobs;
+using Azure.Core.Extensions;
 
 namespace DominoesProperties
 {
