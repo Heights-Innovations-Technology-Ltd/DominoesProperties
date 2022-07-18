@@ -589,7 +589,7 @@ const LandingPagePropertyTmp = (data) => {
 											    <img src="/images/featured/featured-2.jpg" alt="Image">
 										    </div>
 										    <div class="featured-content style-three">
-											    <div class="d-flex justify-content-between">
+											    <div class=" justify-content-between">
 												    <h3>
 													    <a href="javascript:void(0)" onclick="propertyDetails('${x.uniqueId}')">${x.name}</a>
 												    </h3>
@@ -692,6 +692,7 @@ const getSingleProperty = () => {
                 $('#name').html(data.name);
                 $('#price').html("&#8358; " + formatToCurrency(data.unitPrice));
                 $('#location').html(data.location);
+                $('.closeDate').html("Investment End On " + moment(data.closingDate).format('MMMM Do YYYY'));
                 $('.property-feature').html(`<li>
 												<i class="ri-hotel-bed-fill"></i>
 												${data.description["bedroom"]} Bed
@@ -712,6 +713,7 @@ const getSingleProperty = () => {
 												<i class="ri-building-2-fill"></i>
 												${data.description["floorLevel"]} Floor
 											</li>`);
+                $('.summary').text(`${data.summary}`);
 
                 $('.description').html(`
                     <div class="col-lg-3 col-sm-6">
@@ -778,6 +780,17 @@ const getSingleProperty = () => {
                 if (data.description['securityGuard']) $("#securityGuard").attr('checked', 'checked');
                 if (data.description['fireplace']) $("#fireplace").attr('checked', 'checked');
                 if (data.description['basement']) $("#basement").attr('checked', 'checked');
+
+                //checkout
+
+                $('#propertyName').text(data.name);
+                $('#checkoutPrice').html("&#8358; " + formatToCurrency(data.unitPrice) + " / Unit");
+                $('.checkoutPrice').html(formatToCurrency(data.unitPrice));
+                $('#availableUnit').html("Available Unit : " +  data.unitAvailable);
+                $('#closeDate').html("Investment End On " + moment(data.closingDate).format('MMMM Do YYYY'));
+                $('.total').html("&#8358; " + formatToCurrency(data.unitPrice));
+                let price = Number($('#price').text().replace(/[^0-9\.-]+/g, "").replace("₦", ""));
+                $('.groundTotal').html("&#8358; " + formatToCurrency(price * $('#unit').val()));
                 console.log(data);
             } else {
                 
@@ -791,6 +804,16 @@ const getSingleProperty = () => {
         $(".btn-activate").html("Activate").attr("disabled", !1);
     }
 }
+
+$('#unit').on('input', () => {
+    $('.unit').text($('#unit').val());
+    let price = Number($('#price').text().replace(/[^0-9\.-]+/g, "").replace("₦", ""));
+
+    $('.total').html("&#8358; " + formatToCurrency(price * $('#unit').val()));
+    $('.groundTotal').html("&#8358; " + formatToCurrency(price * $('#unit').val()));
+
+})
+
 
 const editSingleProperty = () => {
 
@@ -824,6 +847,10 @@ const editSingleProperty = () => {
                 $("#price").val(data.unitPrice);
                 $("#status").val();
                 $("#unit").val(data.totalUnits);
+                $("#maxCustomerUnit").val(data.maxUnitPerCustomer);
+                $("#closingDate").val(data.closingDate);
+                $("#account").val(data.accountNumber);
+                $("#bank").val(data.bankName);
 
                 $("#bathroom").val(data.description['bathroom']);
                 $("#toilet").val(data.description['toilet']);
@@ -842,7 +869,7 @@ const editSingleProperty = () => {
                 $("#interest").val(data.interestRate);
                 $("#logitude").val(data.longitude);
                 $("#latitude").val(data.latitude);
-                //$("#description").val(data.description);
+                $("#description").val(data.summary);
                 console.log(data);
             } else {
 
@@ -924,7 +951,7 @@ $('.btn-property').click(() => {
                 InterestRate: Number($("#interest").val()),
                 Longitude: Number($("#logitude").val()),
                 Latitude: Number($("#latitude").val()),
-                Desc: $("#description").val(),
+                Summary: $("#description").val(),
                 Account: $("#account").val(),
                 Bank: $("#bank").val(),
                 MaxUnitPerCustomer: Number($("#maxCustomerUnit").val()),
@@ -1040,7 +1067,11 @@ $('.btn-update-property').click(() => {
                 Latitude: Number($("#latitude").val()),
                 TargetYield: Number($("#targetYield").val()),
                 ProjectedGrowth: Number($("#growth").val()),
-                Summary: $("#description").val()
+                Account: $("#account").val(),
+                Bank: $("#bank").val(),
+                MaxUnitPerCustomer: Number($("#maxCustomerUnit").val()),
+                Summary: $("#description").val(),
+                ClosingDate: $("#closingDate").val()
 
             };
 
@@ -1551,32 +1582,31 @@ $('.btn-verify').click(() => {
 
 $('.btn-property-investment').on('click', () => {
     let price = Number($('#price').text().replace(/[^0-9\.-]+/g, "").replace("₦", ""));
-    (async () => {
+    
+    const confirmPropertyUpdate = Swal.mixin({
+        customClass: {
+            confirmButton: 'btn btn-success mx-2',
+            cancelButton: 'btn btn-danger'
+        },
+        buttonsStyling: false
+    })
 
-        const { value: unit } = await Swal.fire({
-            title: 'Quantity',
-            input: 'number',
-            inputValue: 1,
-            inputLabel: "Property Price " + $('#price').text(),
-            inputAttributes: {
-                min: 1
-            },
-            confirmButtonText: 'Continue <i class="fa fa-arrow-right"></i>',
-            showCancelButton: true,
-            inputValidator: (value) => {
-                if (!value || !Number(value)) {
-                    return 'You need to enter a valid unit'
-                }
-            }
-        })
-
-        if (unit > 0) {
+    confirmPropertyUpdate.fire({
+        title: 'Are you sure?',
+        text: "To proceed with this investment!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, invest it!',
+        cancelButtonText: 'No, cancel!',
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
             $(".btn-property-investment").html("Processing...").attr("disabled", !0);
             let urls = window.location.href.split("/");
             let id = urls[5];
             let params = {
                 propertyUniqueId: id,
-                units: unit
+                units: $('#unit').val()
             }
             let xhr = new XMLHttpRequest();
             let url = "/invest";
@@ -1602,6 +1632,11 @@ $('.btn-property-investment').on('click', () => {
                         location = data;
                         $(".btn-property-investment").html("Invest").attr("disabled", !1);
                     } else {
+                        Swal.fire(
+                            'Opps!',
+                            data,
+                            'error'
+                        );
                         $(".btn-property-investment").html("Invest").attr("disabled", !1);
                         window.scrollTo(0, 0);
                     }
@@ -1611,78 +1646,17 @@ $('.btn-property-investment').on('click', () => {
                 //alert("Request failed");
                 $(".btn-property-investment").html("Invest").attr("disabled", !1);
             }
+        } else if (
+            /* Read more about handling dismissals below */
+            result.dismiss === Swal.DismissReason.cancel
+        ) {
+            //confirmPropertyUpdate.fire(
+            //    'Cancelled',
+            //    'No changes was made :)',
+            //    'error'
+            //)
         }
-
-    })()
-    //const confirmPropertyUpdate = Swal.mixin({
-    //    customClass: {
-    //        confirmButton: 'btn btn-success mx-2',
-    //        cancelButton: 'btn btn-danger'
-    //    },
-    //    buttonsStyling: false
-    //})
-
-    //confirmPropertyUpdate.fire({
-    //    title: 'Are you sure?',
-    //    text: "To invest this property!",
-    //    icon: 'warning',
-    //    showCancelButton: true,
-    //    confirmButtonText: 'Yes, invest it!',
-    //    cancelButtonText: 'No, cancel!',
-    //    reverseButtons: true
-    //}).then((result) => {
-    //    if (result.isConfirmed) {
-    //        $(".btn-property-investment").html("Processing...").attr("disabled", !0);
-    //        let urls = window.location.href.split("/");
-    //        let id = urls[5];
-    //        let params = {
-    //            propertyUniqueId: id,
-    //            units: 1
-    //        }
-    //        let xhr = new XMLHttpRequest();
-    //        let url = "/invest";
-    //        xhr.open('POST', url, false);
-    //        xhr.setRequestHeader("content-type", "application/json");
-    //        xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
-    //        try {
-    //            xhr.send(JSON.stringify(params));
-    //            if (xhr.status != 200) {
-    //                // alert('Something went wrong try again!');
-    //            } else {
-    //                var res = JSON.parse(xhr.responseText);
-    //                var data = JSON.parse(res).Data;
-    //                console.log(res);
-    //                if (JSON.parse(res).Success) {
-    //                    window.scrollTo(0, 0);
-    //                    //message(JSON.parse(res).Message, "success");
-    //                    //Swal.fire(
-    //                    //    'Good job!',
-    //                    //    JSON.parse(res).Message,
-    //                    //    'success'
-    //                    //);
-    //                    location = data;
-    //                    $(".btn-property-investment").html("Invest").attr("disabled", !1);
-    //                } else {
-    //                    $(".btn-property-investment").html("Invest").attr("disabled", !1);
-    //                    window.scrollTo(0, 0);
-    //                }
-
-    //            }
-    //        } catch (err) { // instead of onerror
-    //            //alert("Request failed");
-    //            $(".btn-property-investment").html("Invest").attr("disabled", !1);
-    //        }
-    //    } else if (
-    //        /* Read more about handling dismissals below */
-    //        result.dismiss === Swal.DismissReason.cancel
-    //    ) {
-    //        confirmPropertyUpdate.fire(
-    //            'Cancelled',
-    //            'No changes was made :)',
-    //            'error'
-    //        )
-    //    }
-    //});
+    });
 });
 
 
