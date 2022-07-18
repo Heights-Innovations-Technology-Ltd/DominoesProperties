@@ -47,12 +47,6 @@ namespace DominoesProperties.Controllers
             
             global::Models.Models.Customer customer = customerRepository.GetCustomer(HttpContext.User.Identity.Name);
 
-            //if(investmentRepository.GetInvestments(customer.Id).Exists(x => x.PropertyId == property.Id))
-            //{
-            //    response.Message = $"You are already subscribed to the investment on this property {property.Name}";
-            //    return response;
-            //}
-
             if(investment.Units > property.MaxUnitPerCustomer)
             {
                 response.Message = $"Maximum number of investment units of {property.MaxUnitPerCustomer} allowed per customer exceeded";
@@ -87,47 +81,6 @@ namespace DominoesProperties.Controllers
             }
             return response;
         }
-
-        //[HttpPut]
-        //[Authorize(Roles="CUSTOMER")]
-        //public ApiResponse Investments([FromBody] InvestmentUpdate investmentUpdate)
-        //{
-        //    var customer = customerRepository.GetCustomer(HttpContext.User.Identity.Name);
-        //    var investment = investmentRepository.GetInvestments(customer.Id).Where(x => x.Id == investmentUpdate.InvestmentId).FirstOrDefault();
-
-        //    if (investment == null)
-        //    {
-        //        response.Message = "No such investment found for customer";
-        //        return response;
-        //    }
-
-        //    investment.Units = investment.Units + investmentUpdate.Units;
-        //    investment.Amount = investmentUpdate.Units * investment.Property.UnitPrice;
-
-        //    Investment newInvestment = new()
-        //    {
-        //        Amount = property.UnitPrice * investment.Units,
-        //        CustomerId = customer.Id,
-        //        PropertyId = property.Id,
-        //        Units = investment.Units,
-        //        Yield = property.TargetYield,
-        //        PaymentType = PaymentType.PROPERTY_PURCHASE.ToString(),
-        //        TransactionRef = Guid.NewGuid().ToString()
-        //    };
-        //    newInvestment.YearlyInterestAmount = newInvestment.Amount * newInvestment.Yield;
-        //    long investmentId = investmentRepository.AddInvestment(newInvestment);
-        //    if (investmentId != 0)
-        //    {
-        //        Payment pay = new()
-        //        {
-        //            Amount = newInvestment.Amount,
-        //            Module = PaymentType.PROPERTY_PURCHASE,
-        //            InvestmentId = investmentId
-        //        };
-        //        return paymentController.doInitPayment(pay, customer.UniqueRef);
-        //    }
-        //    return response;
-        //}
 
         [HttpGet("{customerUniqueId}")]
         [Authorize(Roles = "ADMIN, CUSTOMER")]
