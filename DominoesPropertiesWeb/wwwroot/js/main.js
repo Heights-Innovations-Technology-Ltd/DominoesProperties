@@ -589,7 +589,7 @@ const LandingPagePropertyTmp = (data) => {
 											    <img src="/images/featured/featured-2.jpg" alt="Image">
 										    </div>
 										    <div class="featured-content style-three">
-											    <div class=" justify-content-between">
+											    <div class="d-flex justify-content-between">
 												    <h3>
 													    <a href="javascript:void(0)" onclick="propertyDetails('${x.uniqueId}')">${x.name}</a>
 												    </h3>
