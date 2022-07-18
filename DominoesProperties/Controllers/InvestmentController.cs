@@ -133,7 +133,7 @@ namespace DominoesProperties.Controllers
                 x.Property = null;
             });
 
-            if(investments.Count > 1){
+            if(investments.Count >0){
                 response.Message = "Successful";
                 response.Success = true;
                 response.Data = investments;
