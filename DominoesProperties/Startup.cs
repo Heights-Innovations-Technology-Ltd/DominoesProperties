@@ -24,9 +24,6 @@ using Newtonsoft.Json;
 using NLog;
 using Repositories.Repository;
 using Repositories.Service;
-using Microsoft.Extensions.Azure;
-using Azure.Storage.Blobs;
-using Azure.Core.Extensions;
 
 namespace DominoesProperties
 {
@@ -149,9 +146,9 @@ namespace DominoesProperties
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Domino Properties v1"));
             }
+            app.UseSwagger();
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Domino Properties v1"));
             app.UseExceptionHandler(a => a.Run(async context =>
             {
                 var exceptionHandlerPathFeature = context.Features.Get<IExceptionHandlerPathFeature>();
@@ -161,6 +158,8 @@ namespace DominoesProperties
                 CommonLogic.SendExceptionEmail("Exception Occurred", "Error On Method :  " + MethodBase.GetCurrentMethod().DeclaringType.Name + " and Message : " + exception.Message + "<br> StackTrace : " + exception.StackTrace);
                 await context.Response.WriteAsync(result);
             }));
+
+            app.UseStaticFiles();
 
             app.UseCors("AllowAllHeaders");
 

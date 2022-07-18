@@ -29,7 +29,7 @@ namespace Models.Models
         public bool? IsDeleted { get; set; } = false;
         public string PassportUrl { get; set; }
         public string BankName { get; set; }
-        public DateTime DateRegistered { get; set; }
+        public DateTime DateRegistered { get; set; } = DateTime.Now;
 
         public virtual Wallet Wallet { get; set; }
         public virtual ICollection<Investment> Investments { get; set; }

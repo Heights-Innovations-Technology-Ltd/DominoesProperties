@@ -4,6 +4,7 @@ using DominoesProperties.Enums;
 using DominoesProperties.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Localization;
 using Models.Models;
 using Newtonsoft.Json;
@@ -21,8 +22,9 @@ namespace DominoesProperties.Controllers
         private readonly IInvestmentRepository investmentRepository;
         private readonly IStringLocalizer<InvestmentController> localizer;
         private readonly PaymentController paymentController;
+        private readonly IConfiguration configuration;
 
-        public InvestmentController(IPropertyRepository _propertyRepository, IStringLocalizer<InvestmentController> _localizer, 
+        public InvestmentController(IPropertyRepository _propertyRepository, IStringLocalizer<InvestmentController> _localizer, IConfiguration _configuration,
         ICustomerRepository _customerRepository, IInvestmentRepository _investmentRepository, PaymentController _paymentController)
         {
             propertyRepository = _propertyRepository;
@@ -30,6 +32,7 @@ namespace DominoesProperties.Controllers
             customerRepository = _customerRepository;
             investmentRepository = _investmentRepository;
             paymentController = _paymentController;
+            configuration = _configuration;
         }
         
         [HttpPost]
@@ -44,11 +47,11 @@ namespace DominoesProperties.Controllers
             
             global::Models.Models.Customer customer = customerRepository.GetCustomer(HttpContext.User.Identity.Name);
 
-            if(investmentRepository.GetInvestments(customer.Id).Exists(x => x.PropertyId == property.Id))
-            {
-                response.Message = $"You are already subscribed to the investment on this property {property.Name}";
-                return response;
-            }
+            //if(investmentRepository.GetInvestments(customer.Id).Exists(x => x.PropertyId == property.Id))
+            //{
+            //    response.Message = $"You are already subscribed to the investment on this property {property.Name}";
+            //    return response;
+            //}
 
             if(investment.Units > property.MaxUnitPerCustomer)
             {
@@ -66,6 +69,10 @@ namespace DominoesProperties.Controllers
                 PaymentType = PaymentType.PROPERTY_PURCHASE.ToString(),
                 TransactionRef = Guid.NewGuid().ToString()
             };
+            if(newInvestment.Amount > decimal.Parse(configuration["app_settings:PayLimit"]))
+            {
+                //TODO write offline method code here
+            }
             newInvestment.YearlyInterestAmount = newInvestment.Amount * newInvestment.Yield;
             long investmentId = investmentRepository.AddInvestment(newInvestment);
             if(investmentId != 0){
@@ -133,7 +140,7 @@ namespace DominoesProperties.Controllers
                 x.Property = null;
             });
 
-            if(investments.Count > 1){
+            if(investments.Count > 0){
                 response.Message = "Successful";
                 response.Success = true;
                 response.Data = investments;

@@ -43,6 +43,7 @@ namespace DominoesProperties.Controllers
         }
 
         [HttpPost("init")]
+        [Authorize]
         public ApiResponse DoInitPayment(Payment payment, string user)
         {
             var customer = customerRepository.GetCustomer(user);
