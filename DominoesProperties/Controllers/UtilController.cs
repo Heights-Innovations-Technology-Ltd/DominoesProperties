@@ -28,7 +28,7 @@ namespace DominoesProperties.Controllers
         private readonly ICustomerRepository customerRepository;
         private readonly IPropertyRepository propertyRepository;
         private readonly IUtilRepository utilRepository;
-        public UtilController(IConfiguration _configuration, IWebHostEnvironment _environment, IEmailService emailService, ICustomerRepository _customerRepository, 
+        public UtilController(IConfiguration _configuration, IWebHostEnvironment _environment, IEmailService emailService, ICustomerRepository _customerRepository,
         IPropertyRepository _propertyRepository, IUtilRepository _utilRepository)
         {
             configuration = _configuration;
@@ -40,22 +40,25 @@ namespace DominoesProperties.Controllers
         }
 
         [HttpPost("enquiry")]
-        [Authorize(Roles= "CUSTOMER")]
+        [Authorize(Roles = "CUSTOMER")]
         public ApiResponse Enquiry([FromBody] Enquiry enquiry)
         {
             var customer = customerRepository.GetCustomer(enquiry.CustomerUniqueReference);
-            if(customer == null){
+            if (customer == null)
+            {
                 response.Message = "Invalid customer detected, only a valid and logged in customer can make enquiry";
                 return response;
             }
 
             var property = propertyRepository.GetProperty(enquiry.PropertyReference);
-            if(property == null){
+            if (property == null)
+            {
                 response.Message = "Selected property not found";
                 return response;
             }
 
-            if(utilRepository.AddEnquiry(enquiry)){
+            if (utilRepository.AddEnquiry(enquiry))
+            {
                 response.Success = true;
                 response.Message = "Your request has been received. One of our agent will be in touch with you shortly.";
                 return response;
@@ -95,35 +98,38 @@ namespace DominoesProperties.Controllers
             PagedList<Enquiry> enqList = PagedList<Enquiry>.ToPagedList(enquiries.OrderBy(on => on.DateCreated).AsQueryable(),
                 queryParams.PageNumber, queryParams.PageSize);
 
-                (int TotalCount, int PageSize, int CurrentPage, int TotalPages, bool HasNext, bool HasPrevious) metadata2 = 
-                (
-                    enqList.TotalCount,
-                    enqList.PageSize,
-                    enqList.CurrentPage,
-                    enqList.TotalPages,
-                    enqList.HasNext,
-                    enqList.HasPrevious
-                );
+            (int TotalCount, int PageSize, int CurrentPage, int TotalPages, bool HasNext, bool HasPrevious) metadata2 =
+            (
+                enqList.TotalCount,
+                enqList.PageSize,
+                enqList.CurrentPage,
+                enqList.TotalPages,
+                enqList.HasNext,
+                enqList.HasPrevious
+            );
 
-                Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(new JObject(metadata2)));
-                response.Success = enqList.Count > 0;
-                response.Message = response.Success ? "Successfull" : "No request found";
-                response.Data = enqList;
-                return response;
+            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(new JObject(metadata2)));
+            response.Success = enqList.Count > 0;
+            response.Message = response.Success ? "Successfull" : "No request found";
+            response.Data = enqList;
+            return response;
         }
 
         [HttpPut("enquiry/{enquiryId}/{status}")]
         [Authorize(Roles = "SUPER, ADMIN")]
         public ApiResponse Enquiry(long enquiryId, string status)
         {
-            try{
+            try
+            {
                 var enquiry = utilRepository.GetEnquiry(enquiryId);
                 enquiry.Status = Enum.Parse<EnquiryStatus>(status).ToString();
                 enquiry.ClosedBy = HttpContext.User.Identity.Name;
                 response.Message = "Enquiry closed successfully";
                 response.Success = true;
                 return response;
-            }catch(Exception){
+            }
+            catch (Exception)
+            {
                 response.Message = "Error updating property enquiry";
                 return response;
             }
@@ -134,12 +140,23 @@ namespace DominoesProperties.Controllers
         public ApiResponse Enquiry(long enquiryId)
         {
             var enq = utilRepository.GetEnquiry(enquiryId);
-            if(enq != null){
-                response.Data = 
+            if (enq != null)
+            {
+                response.Data =
                 response.Success = true;
                 response.Message = "Successful";
                 return response;
             }
+            return response;
+        }
+
+        [HttpGet("location")]
+        [AllowAnonymous]
+        public ApiResponse Location()
+        {
+            response.Data = propertyRepository.Locations();
+            response.Success = true;
+            response.Message = "Successful";
             return response;
         }
 

@@ -85,5 +85,10 @@ namespace Repositories.Service
                 pageParams.PageNumber,
                 pageParams.PageSize);
         }
+
+        public List<string> Locations()
+        {
+            return _context.Properties.Select(x => x.Location).Distinct().ToList();
+        }
     }
 }

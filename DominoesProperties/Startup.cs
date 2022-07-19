@@ -112,7 +112,7 @@ namespace DominoesProperties
                         Array.Empty<string>()
                     }
                 });
-                var filePath = Path.Combine(System.AppContext.BaseDirectory, "DominoesProperties.xml");
+                var filePath = Path.Combine(string.Concat(Directory.GetCurrentDirectory()), "DominoesProperties.xml");
                 c.IncludeXmlComments(filePath);
             });
 
