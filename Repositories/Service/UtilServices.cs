@@ -13,6 +13,35 @@ namespace Repositories.Service
         {
         }
 
+        public bool AddEnquiry(Enquiry enquiry)
+        {
+            try
+            {
+                _context.Enquiries.Add(enquiry);
+                _context.SaveChanges();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public List<Enquiry> GetEnquiries()
+        {
+            return _context.Enquiries.OrderBy(x => x.DateCreated).ToList();
+        }
+
+        public Enquiry GetEnquiry(string customerIdentifier)
+        {
+            return _context.Enquiries.SingleOrDefault(x => x.CustomerUniqueReference.Equals(customerIdentifier));
+        }
+
+        public Enquiry GetEnquiry(long id)
+        {
+            return _context.Enquiries.SingleOrDefault(x => x.Id == id);
+        }
+
         public List<PropertyType> GetPropertyTypes()
         {
             var propertyTypes = _context.PropertyTypes.Local.ToList();

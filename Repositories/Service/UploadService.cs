@@ -31,6 +31,7 @@ namespace Repositories.Service
             try
             {
                 _context.PropertyUploads.AddRangeAsync(uploads);
+                _context.SaveChanges();
                 return true;
             }
             catch (Exception)

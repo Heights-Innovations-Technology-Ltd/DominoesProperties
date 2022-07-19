@@ -94,14 +94,15 @@ namespace DominoesProperties.Controllers
                 PagedList<Properties> propList = PagedList<Properties>.ToPagedList(properties.OrderBy(on => on.DateCreated).AsQueryable(),
                 queryParams.PageNumber, queryParams.PageSize);
 
-                (int TotalCount, int PageSize, int CurrentPage, int TotalPages, bool HasNext, bool HasPrevious) metadata2 = (
-                propList.TotalCount,
-                propList.PageSize,
-                propList.CurrentPage,
-                propList.TotalPages,
-                propList.HasNext,
-                propList.HasPrevious
-            );
+                (int TotalCount, int PageSize, int CurrentPage, int TotalPages, bool HasNext, bool HasPrevious) metadata2 = 
+                (
+                    propList.TotalCount,
+                    propList.PageSize,
+                    propList.CurrentPage,
+                    propList.TotalPages,
+                    propList.HasNext,
+                    propList.HasPrevious
+                );
 
                 Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata2));
                 logger.LogInfo($"Returned {propList.TotalCount} queryParams from database.");

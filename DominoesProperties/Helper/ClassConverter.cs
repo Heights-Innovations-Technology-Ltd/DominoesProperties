@@ -167,7 +167,8 @@ namespace DominoesProperties.Helper
                 Phone = customer.Phone,
                 WalletId = customer.Wallet.WalletNo,
                 WalletBalance = customer.Wallet.Balance.Value,
-                Investments = customer.Investments.ToList()
+                Investments = customer.Investments.ToList(),
+                BankName = customer.BankName
             };
         }
     }
