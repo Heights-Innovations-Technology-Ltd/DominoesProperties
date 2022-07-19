@@ -913,7 +913,7 @@ Navbar Area Style
 
 .desktop-nav .navbar .others-options .search-form .src-btn {
   position: absolute;
-  top: 17px;
+  top: 34.5px;
   right: 17px;
   background-color: transparent;
   font-size: 20px;
@@ -4313,8 +4313,7 @@ input[type=text] {
 }
 
     .table td {
-        font-size: 0.8rem;
-        font-style: italic;
+        font-size: 0.9rem;
         padding: .25rem;
         vertical-align: top;
     }

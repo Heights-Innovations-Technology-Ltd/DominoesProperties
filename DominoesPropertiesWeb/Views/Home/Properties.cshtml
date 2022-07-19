@@ -4,7 +4,6 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<title>jQuery UI Slider - Range slider</title>
 <!--Plugin CSS file with desired skin-->
 <link rel="stylesheet" href="~/css/ion.rangeSlider.min.css"/>
 
@@ -13,7 +12,15 @@
 
 <!--Plugin JavaScript file-->
 <script src="~/js/ion.rangeSlider.min.js"></script>
+
 <script>
+	$(() => {
+		if ($('#refId').val() == null || $('#refId').val() == "") {
+			location = "/Home/signin";
+			return;
+		}
+	});
+
 	let minPrice= 0;
 	let maxPrice= 0;
 	$(function(){
