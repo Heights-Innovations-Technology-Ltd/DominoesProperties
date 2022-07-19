@@ -23,16 +23,18 @@ namespace DominoesProperties.Controllers
         private readonly IPaystackRepository paystackRepository;
         private readonly ITransactionRepository transactionRepository;
         private readonly IWalletRepository walletRepository;
+        private readonly IInvestmentRepository investmentRepository;
         private readonly ApiResponse response = new(false, "Error performing request, contact admin");
         
         public PaymentController(IConfiguration _configuration, ICustomerRepository _customerRepository,
-            IPaystackRepository _paystackRepository, ITransactionRepository _transactionRepository, IWalletRepository _walletRepository)
+            IPaystackRepository _paystackRepository, ITransactionRepository _transactionRepository, IWalletRepository _walletRepository, IInvestmentRepository _investmentRepository)
         {
             configuration = _configuration;
             customerRepository = _customerRepository;
             paystackRepository = _paystackRepository;
             transactionRepository = _transactionRepository;
             walletRepository = _walletRepository;
+            investmentRepository = _investmentRepository;
         }
 
         [HttpPost]
@@ -110,6 +112,8 @@ namespace DominoesProperties.Controllers
                 wallet.LastTransactionAmount = paystack.Amount;
                 wallet.LastTransactionDate = DateTime.Now;
                 walletRepository.UpdateCustomerWallet(wallet);
+            }else if(paystack.PaymentModule.Equals(PaymentType.PROPERTY_PURCHASE)){
+                // var investment = investmentRepository.GetInvestments().Where(x => x.TransactionRef.Equals(paystack.TransactionRef));
             }
 
             response.Success = true;

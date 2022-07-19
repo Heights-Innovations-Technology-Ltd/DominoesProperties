@@ -80,7 +80,7 @@
     <PackageReference Include="Azure.Storage.Blobs" Version="12.13.0" />
     <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.3.1" />
     <PackageReference Include="MailKit" Version="3.3.0" />
-    <PackageReference Include="Google.Apis.Drive.v3" Version="1.57.0.2684" />
+    <PackageReference Include="Google.Apis.Drive.v3" Version="1.57.0.2746" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Helper\" />
