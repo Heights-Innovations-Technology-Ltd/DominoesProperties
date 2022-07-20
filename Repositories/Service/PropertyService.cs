@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Models.Models;
 using Models.Context;
@@ -84,6 +83,11 @@ namespace Repositories.Service
             return PagedList<Property>.ToPagedList(_context.Properties.Include(x => x.TypeNavigation).OrderBy(on => on.Id),
                 pageParams.PageNumber,
                 pageParams.PageSize);
+        }
+
+        public List<string> Locations()
+        {
+            return _context.Properties.Select(x => x.Location).Distinct().ToList();
         }
     }
 }

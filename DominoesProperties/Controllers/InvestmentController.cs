@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime;
 using DominoesProperties.Enums;
 using DominoesProperties.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -53,20 +54,22 @@ namespace DominoesProperties.Controllers
                 return response;
             }
 
-            Investment newInvestment = new()
-            {
-                Amount = property.UnitPrice * investment.Units,
-                CustomerId = customer.Id,
-                PropertyId = property.Id,
-                Units = investment.Units,
-                Yield = property.TargetYield,
-                PaymentType = PaymentType.PROPERTY_PURCHASE.ToString(),
-                TransactionRef = Guid.NewGuid().ToString()
-            };
-            if(newInvestment.Amount > decimal.Parse(configuration["app_settings:PayLimit"]))
+            var amount = property.UnitPrice * investment.Units;
+            if(amount > decimal.Parse(configuration["app_settings:PayLimit"]))
             {
                 //TODO write offline method code here
             }
+            Investment newInvestment = new()
+            {
+                Amount = amount,
+                CustomerId = customer.Id,
+                PropertyId = property.Id,
+                Units = investment.Units,
+                Yield = ((property.TargetYield * property.UnitPrice)/100) * investment.Units,
+                PaymentType = PaymentType.PROPERTY_PURCHASE.ToString(),
+                TransactionRef = Guid.NewGuid().ToString()
+            };
+            
             newInvestment.YearlyInterestAmount = newInvestment.Amount * newInvestment.Yield;
             long investmentId = investmentRepository.AddInvestment(newInvestment);
             if(investmentId != 0){

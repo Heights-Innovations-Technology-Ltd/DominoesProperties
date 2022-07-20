@@ -38,7 +38,6 @@ namespace DominoesProperties.Models
         public string BankName { get; set; }
         [Required(ErrorMessage = "Property Account number is required")]
         public string AccountNumber { get; set; }
-        [Required(ErrorMessage = "Property max unit per customer is required")]
         public int MaxUnitPerCustomer { get; set; }
         
         [JsonIgnore]

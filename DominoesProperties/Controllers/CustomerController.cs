@@ -153,7 +153,7 @@ namespace DominoesProperties.Controllers
 
             existingCustomer.Address = customer.Address;
             existingCustomer.Phone = customer.Phone;
-            if (existingCustomer.AccountNumber == null)
+            if (string.IsNullOrEmpty(existingCustomer.AccountNumber))
             {
                 existingCustomer.AccountNumber = customer.AccountNumber;
                 existingCustomer.BankName = customer.BankName;

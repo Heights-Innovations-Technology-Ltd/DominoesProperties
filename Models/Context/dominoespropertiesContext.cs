@@ -21,6 +21,7 @@ namespace Models.Context
         public virtual DbSet<AuditLog> AuditLogs { get; set; }
         public virtual DbSet<Customer> Customers { get; set; }
         public virtual DbSet<Description> Descriptions { get; set; }
+        public virtual DbSet<Enquiry> Enquiries { get; set; }
         public virtual DbSet<Investment> Investments { get; set; }
         public virtual DbSet<PaystackPayment> PaystackPayments { get; set; }
         public virtual DbSet<Property> Properties { get; set; }
@@ -190,6 +191,30 @@ namespace Models.Context
                 entity.Property(e => e.SecurityGuard).HasColumnType("bit(1)");
 
                 entity.Property(e => e.SwimmingPool).HasColumnType("bit(1)");
+            });
+
+            modelBuilder.Entity<Enquiry>(entity =>
+            {
+                entity.ToTable("enquiry");
+
+                entity.HasIndex(e => e.Id, "Enquiry_Id_uindex")
+                    .IsUnique();
+
+                entity.Property(e => e.CustomerUniqueReference)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.DateCreated).HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                entity.Property(e => e.Message).IsRequired();
+
+                entity.Property(e => e.PropertyReference)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.Subject)
+                    .IsRequired()
+                    .HasMaxLength(100);
             });
 
             modelBuilder.Entity<Investment>(entity =>

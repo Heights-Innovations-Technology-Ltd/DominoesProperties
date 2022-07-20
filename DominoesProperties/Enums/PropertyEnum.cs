@@ -49,4 +49,10 @@ namespace DominoesProperties.Enums
         RESET_PASSWORD,
         ACTIVATE_ACCOUNT
     }
+
+    public enum EnquiryStatus
+    {
+        NEW,
+        CLOSED
+    }
 }
