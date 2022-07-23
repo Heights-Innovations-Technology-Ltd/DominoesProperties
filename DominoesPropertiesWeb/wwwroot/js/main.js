@@ -1934,3 +1934,63 @@ function fundWallet(){
 
     })()
 }
+
+$('.btn-request').click(() => {
+    if ($('.fill-me').val() != "") {
+        return;
+    }
+
+    if ($('#msg_subject').val() == "") {
+        $('#msgSubmit').html(`<div class="alert alert-danger pt-2 pb-2" role="alert">
+            Subject can't be empty!
+            </div>`).removeClass('hidden');
+        return;
+    }
+
+    if ($('#message').val() == "") {
+        $('#msgSubmit').html(`<div class="alert alert-danger pt-2 pb-2" role="alert">
+            Message body can't be empty!
+            </div>`).removeClass('hidden');
+        return;
+    }
+    $(".btn-request").html("Processing...").attr("disabled", !0);
+    var a = {
+        Subject: $("#msg_subject").val(),
+        Message: $("#message").val()
+    };
+    
+    console.log(a);
+
+    $.ajax({
+        type: "post",
+        url: "/enquiry",
+        headers: { "Content-Type": "application/json" },
+        data: JSON.stringify(a),
+        success: function (t) {
+            var res = JSON.parse(t);
+            if (res.Success) {
+                Swal.fire(
+                    'Good job!',
+                    res.Message,
+                    'success'
+                );
+                $("#firstName").focus();
+                window.scrollTo(0, 0);
+                $(".btn-request").html("Request Information").attr("disabled", !1);
+                a = {};
+            } else {
+                message(res.Data
+                    , 'error'),
+                    window.scrollTo(0, 0),
+                    $(".btn-request").html("Request Information").attr("disabled", !1);
+                a = {};
+            }
+
+        },
+        error: function (t) {
+            if (400 == t.status) return //alert("check your supply value and try again!"),
+            void $(".btn-request").html("Request Information").attr("disabled", !1);
+            $(".btn-request").html("Request Information").attr("disabled", !1);
+        },
+    });
+})

@@ -48,12 +48,22 @@ namespace DominoesPropertiesWeb.Controllers
         [HttpGet("/Property/viewproperty/{uniqueid}")]
         public IActionResult ViewProperty()
         {
+            var isAuthAdmin = this.session.GetString("RoleFK");
+            if (isAuthAdmin == null || isAuthAdmin.Equals(string.Empty))
+            {
+                return RedirectToAction("Index", "Home");
+            }
             return View();
         }
 
         [HttpGet("/Property/edit/{uniqueid}")]
         public IActionResult Edit()
         {
+            var isAuthAdmin = this.session.GetString("RoleFK");
+            if (isAuthAdmin == null || isAuthAdmin.Equals(string.Empty))
+            {
+                return RedirectToAction("Index", "Home");
+            }
             return View();
         }
 
@@ -281,6 +291,20 @@ namespace DominoesPropertiesWeb.Controllers
                 }
             }
             return filenamelistofCustomerFiles;
+        }
+
+        [Route("/enquiry")]
+        [HttpPost]
+        public async Task<JsonResult> CustomerEnquiry([FromBody] dynamic request)
+        {
+            JObject jObject = JsonConvert.DeserializeObject<JObject>(Convert.ToString(request));
+            dynamic obj = new ExpandoObject();
+            obj.Subject = Convert.ToInt32(jObject["Subject"]);
+            obj.Message = Convert.ToInt32(jObject["Message"]);
+            var res = Task.Run(() => httpContext.Post("Util/enquiry", obj));
+            await Task.WhenAll(res);
+            var data = res.Status == TaskStatus.RanToCompletion ? res.Result : null;
+            return Json(JsonConvert.SerializeObject(data));
         }
     }
 }
