@@ -39,9 +39,12 @@ namespace DominoesProperties.Models
         [Required(ErrorMessage = "Property Account number is required")]
         public string AccountNumber { get; set; }
         public int MaxUnitPerCustomer { get; set; }
+        public string VideoLink { get; set; }
+        public object Data { get; set; }
         
         [JsonIgnore]
         public string CreatedBy { get; set; }
+        [JsonIgnore]
         public bool? IsDeleted { get; set; }
     }
 }

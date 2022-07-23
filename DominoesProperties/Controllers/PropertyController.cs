@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Azure.Storage.Blobs;
-using Azure.Storage.Blobs.Models;
+using DominoesProperties.Enums;
 using DominoesProperties.Helper;
 using DominoesProperties.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -27,6 +27,7 @@ namespace DominoesProperties.Controllers
         private readonly IConfiguration configuration;
         private readonly IUploadRepository uploadRepository;
         private readonly IAdminRepository adminRepository;
+        private readonly String[] fileExtensions = { ".jpg", ".png", ".jpeg", "gif" };
 
 
         public PropertyController(IPropertyRepository _propertyRepository, ILoggerManager _logger,
@@ -94,7 +95,7 @@ namespace DominoesProperties.Controllers
                 PagedList<Properties> propList = PagedList<Properties>.ToPagedList(properties.OrderBy(on => on.DateCreated).AsQueryable(),
                 queryParams.PageNumber, queryParams.PageSize);
 
-                (int TotalCount, int PageSize, int CurrentPage, int TotalPages, bool HasNext, bool HasPrevious) metadata2 = 
+                (int TotalCount, int PageSize, int CurrentPage, int TotalPages, bool HasNext, bool HasPrevious) metadata2 =
                 (
                     propList.TotalCount,
                     propList.PageSize,
@@ -120,6 +121,11 @@ namespace DominoesProperties.Controllers
             Property property = propertyRepository.GetProperty(uniqueId);
             Properties properties = ClassConverter.EntityToProperty(property);
             properties.Description = ClassConverter.ConvertDescription(propertyRepository.GetDescriptionByPropertyId(property.UniqueId));
+            Dictionary<string, object> Uploads = new();
+            var uploaded = uploadRepository.GetUploads(uniqueId);
+            Uploads.Add("Images", uploaded.Where(x => x.UploadType.Equals(UploadType.PICTURE.ToString())).Select(x => x.Url).ToList());
+            Uploads.Add("Document", uploaded.LastOrDefault(x => x.UploadType.Equals(UploadType.DOCUMENT.ToString())).Url);
+            properties.Data = Uploads;
             response.Success = true;
             response.Message = "Successfull";
             response.Data = properties;
@@ -127,7 +133,7 @@ namespace DominoesProperties.Controllers
         }
 
         [HttpPost]
-        //[Authorize(Roles ="ADMIN, SUPER")]
+        [Authorize(Roles ="ADMIN, SUPER")]
         public ApiResponse Property([FromBody] Properties properties)
         {
             Property property = ClassConverter.PropertyToEntity(properties);
@@ -141,7 +147,7 @@ namespace DominoesProperties.Controllers
         }
 
         [HttpPut("{uniqueId}")]
-        //[Authorize(Roles = "ADMIN")]
+        [Authorize(Roles = "ADMIN")]
         public ApiResponse Property(string uniqueId, [FromBody] UpdateProperty updateProperty)
         {
             Property property = propertyRepository.GetProperty(uniqueId);
@@ -161,6 +167,7 @@ namespace DominoesProperties.Controllers
             property.Longitude = string.IsNullOrEmpty(updateProperty.Longitude) ? property.Longitude : updateProperty.Longitude;
             property.Latitude = string.IsNullOrEmpty(updateProperty.Latitude) ? property.Latitude : updateProperty.Latitude;
             property.Summary = string.IsNullOrEmpty(updateProperty.Summary) ? property.Summary : updateProperty.Summary;
+            property.VideoLink = string.IsNullOrEmpty(updateProperty.VideoLink) ? property.VideoLink : updateProperty.VideoLink;
 
             response.Data = propertyRepository.UpdateProperty(property);
             response.Success = true;
@@ -237,41 +244,70 @@ namespace DominoesProperties.Controllers
         //}
 
         [HttpPost("uploads/{propertyId}")]
-        [Authorize("ADMIN")]
+        [Authorize(Roles = "SUPER, ADMIN")]
         [ValidateAntiForgeryToken]
-        public async Task<ApiResponse> UploadPassportAsync(long propertyId, [FromForm][Required(ErrorMessage = "No upload found")][MinLength(1, ErrorMessage = "Upload atleast 1 file")] List<IFormFile> passport)
+        public async Task<ApiResponse> UploadFile(string propertyId, [FromBody][Required(ErrorMessage = "No upload found")][MinLength(1, ErrorMessage = "Upload atleast 1 file")] List<PropertyFileUpload> passport)
         {
-            var container = new BlobContainerClient(configuration["BlobClient:Url"], "properties");
-            var createResponse = await container.CreateIfNotExistsAsync();
-            if (createResponse != null && createResponse.GetRawResponse().Status == 201)
-                await container.SetAccessPolicyAsync(PublicAccessType.Blob);
-
-            int count = 0;
-            PropertyUpload[] properties = Array.Empty<PropertyUpload>();
-            passport.ForEach(async x =>
+            List<string> errorUploads = new();
+            List<PropertyUpload> properties = new();
+            List<string> imageName = new();
+            try
             {
-                var blob = container.GetBlobClient($"{propertyId + count++}.{x.FileName[x.FileName.LastIndexOf(".")..]}");
-                using (var fileStream = x.OpenReadStream())
+                string path = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, "Uploads/Property"));
+                foreach (PropertyFileUpload prop in passport)
                 {
-                    _ = await blob.UploadAsync(fileStream, new BlobHttpHeaders { ContentType = x.ContentType });
+                    IFormFile file = prop.File;
+                    FileInfo fileInfo = new(file.FileName);
+                    if (!fileExtensions.Contains(fileInfo.Extension.ToLower()))
+                    {
+                        errorUploads.Add($"Invalid file format uploaded for {fileInfo.FullName}");
+                        continue;
+                    }
+
+                    if (file.Length > 0)
+                    {
+                        string filename = $"{propertyId.Replace("-", "")}-{DateTime.UnixEpoch}{fileInfo.Extension}";
+                        if (!Directory.Exists(path))
+                        {
+                            Directory.CreateDirectory(path);
+                        }
+                        using var fileStream = new FileStream(Path.Combine(path, filename), FileMode.Create);
+                        await file.CopyToAsync(fileStream);
+                        imageName.Add(filename);
+
+                        properties.Add(new PropertyUpload
+                        {
+                            DateUploaded = DateTime.Now,
+                            ImageName = filename,
+                            PropertyId = propertyRepository.GetProperty(propertyId).Id,
+                            Url = $"{Request.Scheme}://{Request.Host}{Request.PathBase}'Uploads/Property/'{filename}",
+                            UploadType = prop.UploadType.ToString()
+                        });
+                    }
+                    else
+                    {
+                        errorUploads.Add($"Invalid file size uploaded for {fileInfo.FullName}");
+                        continue;
+                    }
                 }
-
-                properties[count] = new PropertyUpload
+                if (uploadRepository.NewUpload(properties))
                 {
-                    DateUploaded = DateTime.Now,
-                    ImageName = (propertyId + count++).ToString(),
-                    PropertyId = propertyId,
-                    Url = blob.Uri.ToString()
-                };
-            });
-
-            if (uploadRepository.NewUpload(properties))
-            {
-                response.Success = true;
-                response.Message = "Passport successfully uploaded";
+                    response.Success = true;
+                    response.Message = "Passport successfully uploaded";
+                    response.Data = errorUploads;
+                    return response;
+                }
+                else
+                {
+                    response.Message = $"Error uploading image{(passport.Count <= 1 ? "" :"s")} and document";
+                    response.Data = errorUploads;
+                    return response;
+                }
             }
-            response.Message = "Error uploading property images";
-            return response;
+            catch (Exception ex)
+            {
+                throw new Exception("File Copy Failed", ex);
+            }
         }
     }
 }

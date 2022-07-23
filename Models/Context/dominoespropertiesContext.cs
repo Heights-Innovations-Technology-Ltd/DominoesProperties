@@ -342,6 +342,8 @@ namespace Models.Context
 
                 entity.Property(e => e.UnitPrice).HasColumnType("decimal(18,2)");
 
+                entity.Property(e => e.VideoLink).HasMaxLength(500);
+
                 entity.HasOne(d => d.CreatedByNavigation)
                     .WithMany(p => p.Properties)
                     .HasForeignKey(d => d.CreatedBy)
@@ -377,6 +379,11 @@ namespace Models.Context
                 entity.Property(e => e.Url)
                     .IsRequired()
                     .HasMaxLength(500);
+
+                entity.Property(e => e.UploadType)
+                    .IsRequired()
+                    .HasMaxLength(10)
+                    .HasDefaultValueSql("'PICTURE'");
 
                 entity.HasOne(d => d.Property)
                     .WithMany(p => p.PropertyUploads)
