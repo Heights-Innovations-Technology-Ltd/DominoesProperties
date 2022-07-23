@@ -38,6 +38,7 @@ namespace Models.Models
         public string Account { get; set; }
         public string Bank { get; set; }
         public int MaxUnitPerCustomer { get; set; } = 1000;
+        public string VideoLink { get; set; }
 
         public virtual Admin CreatedByNavigation { get; set; }
         public virtual PropertyType TypeNavigation { get; set; }

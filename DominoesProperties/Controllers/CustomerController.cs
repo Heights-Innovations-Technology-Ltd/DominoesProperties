@@ -17,10 +17,8 @@ using Helpers;
 using DominoesProperties.Enums;
 using System.IO;
 using Microsoft.AspNetCore.Hosting;
-using Azure.Storage.Blobs;
 using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
-using Azure.Storage.Blobs.Models;
 using DominoesProperties.Services;
 using System.Linq;
 using System.Collections.Generic;
@@ -43,6 +41,7 @@ namespace DominoesProperties.Controllers
         private readonly IInvestmentRepository investmentRepository;
         private readonly ApiResponse response = new(false, "Error performing request, contact admin");
         private readonly DistributedCacheEntryOptions expiryOptions;
+        private readonly String[] fileExtensions = { ".jpg", ".png", ".jpeg", "gif" };
 
         public CustomerController(ILoggerManager _logger, ICustomerRepository _customerRepository, IStringLocalizer<CustomerController> _stringLocalizer,
             IDistributedCache _distributedCache, IConfiguration _configuration, IApplicationSettingsRepository _applicationSettingsRepository,
@@ -69,7 +68,7 @@ namespace DominoesProperties.Controllers
         [Route("register")]
         public ApiResponse RegisterAsync([FromBody] Models.Customer customer)
         {
-            if(customerRepository.GetCustomer(customer.Email) != null)
+            if (customerRepository.GetCustomer(customer.Email) != null)
             {
                 response.Message = $"Customer with email {customer.Email} already exist";
                 return response;
@@ -97,7 +96,7 @@ namespace DominoesProperties.Controllers
 
         [HttpPost]
         [Route("login")]
-        public ApiResponse Login([FromBody] Login login)
+        public ApiResponse Login(Login login)
         {
             var customer = customerRepository.GetCustomer(login.Email);
             if (customer == null || !customer.IsActive.Value || customer.IsDeleted.Value)
@@ -130,7 +129,7 @@ namespace DominoesProperties.Controllers
         }
 
         [HttpDelete]
-        [Authorize(Roles ="SUPER, ADMIN")]
+        [Authorize(Roles = "SUPER, ADMIN")]
         public ApiResponse Delete()
         {
             customerRepository.DeleteCustomer(HttpContext.User.Identity.Name);
@@ -140,7 +139,7 @@ namespace DominoesProperties.Controllers
         }
 
         [HttpPut]
-        [Authorize(Roles ="CUSTOMER")]
+        [Authorize(Roles = "CUSTOMER")]
         public ApiResponse Update([FromBody] CustomerUpdate customer)
         {
             var uniqueRef = HttpContext.User.Identity.Name;
@@ -210,7 +209,8 @@ namespace DominoesProperties.Controllers
         public ApiResponse Customer()
         {
             var customer = customerRepository.GetCustomer(HttpContext.User.Identity.Name);
-            if (customer != null) {
+            if (customer != null)
+            {
                 response.Data = ClassConverter.ConvertCustomerToFullProfile(customer);
                 response.Message = "Successfuly fetch customer";
                 response.Success = true;
@@ -244,7 +244,7 @@ namespace DominoesProperties.Controllers
 
         [HttpPost("reset-password")]
         [AllowAnonymous]
-        public async Task<ApiResponse> ResetPasswordConfirm([FromBody]PasswordReset password)
+        public async Task<ApiResponse> ResetPasswordConfirm([FromBody] PasswordReset password)
         {
             var uniqueRef = await distributedCache.GetStringAsync(password.Token);
             if (!string.IsNullOrEmpty(uniqueRef))
@@ -268,11 +268,11 @@ namespace DominoesProperties.Controllers
         }
 
         [HttpPost("change-password")]
-        [Authorize(Roles ="CUSTOMER")]
+        [Authorize(Roles = "CUSTOMER")]
         public ApiResponse ChangePassword([FromBody] PasswordReset password)
         {
             var customer = customerRepository.GetCustomer(HttpContext.User.Identity.Name);
-            if(customer == null)
+            if (customer == null)
             {
                 response.Message = "Invalid username supplied";
                 return response;
@@ -291,28 +291,79 @@ namespace DominoesProperties.Controllers
             return response;
         }
 
-        [HttpPost("passport")]
-        [Authorize(Roles ="CUSTOMER")]
-        [ValidateAntiForgeryToken]
-        public async Task<ApiResponse> UploadPassportAsync([FromForm][Required][MaxLength(1 * 1024 * 1024, ErrorMessage = "Upload size cannot exceed 1MB")]  IFormFile passport)
-        {
-            var container = new BlobContainerClient(configuration["BlobClient:Url"], "passport");
-            var createResponse = await container.CreateIfNotExistsAsync();
-            if (createResponse != null && createResponse.GetRawResponse().Status == 201)
-                await container.SetAccessPolicyAsync(PublicAccessType.Blob);
-            var blob = container.GetBlobClient($"{HttpContext.User.Identity.Name}.{passport.FileName[passport.FileName.LastIndexOf(".")..]}");
+        //[HttpPost("passport")]
+        //[Authorize(Roles ="CUSTOMER")]
+        //[ValidateAntiForgeryToken]
+        //public async Task<ApiResponse> UploadPassportAsync([FromForm][Required][MaxLength(1 * 1024 * 1024, ErrorMessage = "Upload size cannot exceed 1MB")]  IFormFile passport)
+        //{
+        //    var container = new BlobContainerClient(configuration["BlobClient:Url"], "passport");
+        //    var createResponse = await container.CreateIfNotExistsAsync();
+        //    if (createResponse != null && createResponse.GetRawResponse().Status == 201)
+        //        await container.SetAccessPolicyAsync(PublicAccessType.Blob);
+        //    var blob = container.GetBlobClient($"{HttpContext.User.Identity.Name}.{passport.FileName[passport.FileName.LastIndexOf(".")..]}");
 
-            using (var fileStream = passport.OpenReadStream())
+        //    using (var fileStream = passport.OpenReadStream())
+        //    {
+        //        await blob.UploadAsync(fileStream, new BlobHttpHeaders { ContentType = passport.ContentType });
+        //    }
+        //    response.Message = "Passport successfully uploaded";
+        //    response.Data = blob.Uri.ToString();
+        //    return response;
+        //}
+
+        [HttpPost("passport")]
+        [Authorize(Roles = "CUSTOMER")]
+        [ValidateAntiForgeryToken]
+        public async Task<ApiResponse> UploadFile([FromForm][Required(ErrorMessage = "A valid picture image is required")][MaxLength(1 * 1024 * 1024, ErrorMessage = "Upload size cannot exceed 1MB")] IFormFile file)
+        {
+            try
             {
-                await blob.UploadAsync(fileStream, new BlobHttpHeaders { ContentType = passport.ContentType });
+                if (file.Length > 0)
+                {
+                    string ext = new FileInfo(file.FileName).Extension.ToLower();
+                    if (!fileExtensions.Contains(ext))
+                    {
+                        response.Message = "Invalid file type uploaded";
+                        return response;
+                    }
+
+                    string path = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, "Uploads/Passport"));
+                    string filename = $"{HttpContext.User.Identity.Name}{ext}";
+
+                    if (!Directory.Exists(path))
+                    {
+                        Directory.CreateDirectory(path);
+                    }
+                    using (var fileStream = new FileStream(Path.Combine(path, filename), FileMode.Create))
+                    {
+                        await file.CopyToAsync(fileStream);
+                    }
+
+                    var cust = customerRepository.GetCustomer(HttpContext.User.Identity.Name);
+                    cust.PassportUrl = $"{Request.Scheme}://{Request.Host}{Request.PathBase}'Uploads/Property/'{filename}";
+                    if (customerRepository.UpdateCustomer(cust) != null)
+                    {
+                        response.Success = true;
+                        response.Message = "Passport uploaded successfully";
+                        return response;
+                    }
+                    response.Message = "Error Uploading passport photo";
+                    return response;
+                }
+                else
+                {
+                    response.Message = "Invalid file uploaded";
+                    return response;
+                }
             }
-            response.Message = "Passport successfully uploaded";
-            response.Data = blob.Uri.ToString();
-            return response;
+            catch (Exception)
+            {
+                return response;
+            }
         }
 
         [HttpGet("dashboard")]
-        [Authorize(Roles ="CUSTOMER")]
+        [Authorize(Roles = "CUSTOMER")]
         public ApiResponse Dashboard()
         {
             var customer = customerRepository.GetCustomer(HttpContext.User.Identity.Name);
@@ -321,8 +372,8 @@ namespace DominoesProperties.Controllers
             dashboardElement.Add("TotalInvestment", investment.Count);
 
             var result = (from item in investment
-                            group item by item.Property.Status into g
-                            select new InvestCat() { status = g.Key, values = g.Count() }).ToList();
+                          group item by item.Property.Status into g
+                          select new InvestCat() { status = g.Key, values = g.Count() }).ToList();
 
             var e = result.Where(x => x.status.Equals("OPEN_FOR_INVESTMENT") || x.status.Equals("ONGOING_CONSTRUCTION")).Sum(x => x.values);
             var f = result.Where(x => x.status.Equals("CLOSED_FOR_INVESTMENT") || x.status.Equals("RENTED_OUT")).Sum(x => x.values);

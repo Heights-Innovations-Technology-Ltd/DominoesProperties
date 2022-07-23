@@ -55,4 +55,10 @@ namespace DominoesProperties.Enums
         NEW,
         CLOSED
     }
+
+    public enum UploadType
+    {
+        PICTURE,
+        DOCUMENT
+    }
 }

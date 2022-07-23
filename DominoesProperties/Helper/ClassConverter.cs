@@ -80,7 +80,8 @@ namespace DominoesProperties.Helper
                 Account = property.AccountNumber,
                 TotalPrice = property.UnitAvailable * property.UnitPrice,
                 MaxUnitPerCustomer = property.MaxUnitPerCustomer,
-                Summary = property.Summary
+                Summary = property.Summary,
+                VideoLink = property.VideoLink
             };
         }
 
@@ -106,7 +107,8 @@ namespace DominoesProperties.Helper
                 TotalUnits = property.TotalUnits,
                 UnitSold = property.UnitSold,
                 TypeName = property.TypeNavigation.Name,
-                Summary = property.Summary
+                Summary = property.Summary,
+                VideoLink = property.VideoLink
             };
         }
 

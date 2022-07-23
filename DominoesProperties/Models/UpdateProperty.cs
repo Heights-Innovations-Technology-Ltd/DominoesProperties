@@ -16,5 +16,7 @@ namespace DominoesProperties.Models
         public string Longitude { get; set; }
         public string Latitude { get; set; }
         public string Summary { get; set; }
+        public string VideoLink { get; set; }
+
     }
 }

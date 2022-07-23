@@ -26,7 +26,7 @@ namespace Repositories.Service
             return _context.PropertyUploads.Where(x => x.PropertyId.Equals(propertyId)).ToList();
         }
 
-        public bool NewUpload(PropertyUpload[] uploads)
+        public bool NewUpload(List<PropertyUpload> uploads)
         {
             try
             {
