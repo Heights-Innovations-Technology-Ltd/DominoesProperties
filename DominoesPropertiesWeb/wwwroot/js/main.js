@@ -360,7 +360,7 @@ const profile = (data, mode) => {
 const GetProperties = (type) => {
     if ($('#isAdmin').val() == "1") {
 
-        $('.add-property').html(`<a href="/property/create" class="default-btn rounded"><i class="fa fa-plus"></i> New Property</a>`);
+        $('.add-property').html(`<a href="/property/create" class="default-btn "><i class="fa fa-plus"></i> New Property</a>`);
     }
     let xhr = new XMLHttpRequest();
     let url = "/get-properties";
@@ -658,7 +658,7 @@ const propertyDetails = (id) => {
     //        icon: 'info',
     //        title: 'Oops...',
     //        text: 'Property details can only be view by subscribed users, kindly subscribe to get full access ',
-    //        footer: `<a href="javascript:void(0)" class="default-btn rounded" onclick="onSubscribe()">Subcribe Now</a>`
+    //        footer: `<a href="javascript:void(0)" class="default-btn " onclick="onSubscribe()">Subcribe Now</a>`
     //    })
     //    return;
     //}

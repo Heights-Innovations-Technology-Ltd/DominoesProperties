@@ -2798,6 +2798,12 @@ Footer Area Style
   margin-bottom: 20px;
 }
 
+.single-footer-widget h2 {
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: #fff;
+}
+
 .single-footer-widget .contact-info {
   padding-left: 0;
   margin-bottom: 0;
@@ -2852,21 +2858,21 @@ Footer Area Style
 
 .single-footer-widget .newsletter-form .form-control {
   background-color: transparent;
-  border: 1px solid #006766;
+  border: 1px solid #fff;
 }
 
 .single-footer-widget .newsletter-form .submit-btn {
-  position: absolute;
-  top: 0;
-  right: 0;
-  background-color: #006766;
-  height: 55px;
-  width: 70px;
-  color: #ffffff;
-  font-size: 20px;
-  -webkit-transition: all ease 0.5s;
-  transition: all ease 0.5s;
-  line-height: 56px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: #ea723d;
+    height: 55px;
+    width: 70px;
+    color: #ffffff;
+    font-size: 20px;
+    -webkit-transition: all ease 0.5s;
+    transition: all ease 0.5s;
+    line-height: 56px;
 }
 
 .single-footer-widget .newsletter-form .submit-btn:hover {
