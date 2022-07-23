@@ -333,6 +333,15 @@ const profile = (data, mode) => {
 					</div>
 				</div>
 				<hr>
+                <div class="row">
+					<div class="col-sm-3">
+					<h6 class="mb-0">Bank Name</h6>
+					</div>
+					<div class="col-sm-9">
+					<p class="text-muted mb-0">${data.bankName}</p>
+					</div>
+				</div>
+				<hr>
 				<div class="row">
 					<div class="col-sm-3">
 					<h6 class="mb-0">Address</h6>
@@ -351,7 +360,7 @@ const profile = (data, mode) => {
 const GetProperties = (type) => {
     if ($('#isAdmin').val() == "1") {
 
-        $('.add-property').html(`<a href="/property/create" class="default-btn rounded"><i class="fa fa-plus"></i> New Property</a>`);
+        $('.add-property').html(`<a href="/property/create" class="default-btn "><i class="fa fa-plus"></i> New Property</a>`);
     }
     let xhr = new XMLHttpRequest();
     let url = "/get-properties";
@@ -649,7 +658,7 @@ const propertyDetails = (id) => {
     //        icon: 'info',
     //        title: 'Oops...',
     //        text: 'Property details can only be view by subscribed users, kindly subscribe to get full access ',
-    //        footer: `<a href="javascript:void(0)" class="default-btn rounded" onclick="onSubscribe()">Subcribe Now</a>`
+    //        footer: `<a href="javascript:void(0)" class="default-btn " onclick="onSubscribe()">Subcribe Now</a>`
     //    })
     //    return;
     //}
@@ -1275,7 +1284,6 @@ $('#btnUpload').on('click', function () {
 
     $.ajax(
         {
-            //url: "https://localhost:44361/api/Property/uploads/" + id,
             url: "/upload-property/" + id,
             data: formData,
             processData: false,
@@ -1286,49 +1294,6 @@ $('#btnUpload').on('click', function () {
             }
         }
     );
-
-    //var data = new FormData();
-    //if (files.length != 0) {
-    //    //var fname = files[0].name;
-    //   // var extension = fname.substr(fname.lastIndexOf("."))
-    //    //var re = /(\.jpg|\.jpeg|\.gif|\.png)$/i;
-    //    //if (!re.exec(extension)) {
-    //    //    alert("File extension not supported!");
-    //    //    return;
-    //    //}
-
-    //    for (var index = 0; index < files.length; index++) {
-    //       // var name = files[index].name;
-    //        data.append("files", files[index]);
-    //    }
-    //   // data.append(files[0].name, files[0]);
-    //}
-
-    //var oReq = new XMLHttpRequest();
-    //oReq.open("POST", "/upload-property/" + id, false);
-    //oReq.onload = function (oEvent) {
-    //    if (oReq.status == 200) {
-    //        var res = JSON.parse(oReq.responseText);
-    //        let data = JSON.parse(res).data;
-    //        console.log(res);
-    //        if (JSON.parse(res).success){
-
-    //        }
-
-    //        else {
-    //            $('#msg').html(message(data, 'error'));
-    //            window.scrollTo(0, 0);
-    //            $("#btnUpload").attr("disabled", !1).html(`Submit`);
-    //            params = {};
-    //        }
-    //    } else {
-    //        $("#btnUpload").attr("disabled", !1).html(`<i data-acorn-icon="save"></i><span>Submit</span>`);
-    //    }
-    //};
-
-    ////data.append("params", JSON.stringify(params));
-
-    //oReq.send(data);
 });
 
 const GetInvestments = () => {
@@ -1371,7 +1336,7 @@ const investmentTmp = (data) => {
 											<img src="/images/featured/featured-2.jpg" alt="Image">
 										</div>
 										<div class="featured-content style-three">
-											<div class="d-flex justify-content-between">
+											<div class="d-flex btn-subscribejustify-content-between">
 												<h3>
 													<a href="javascript:void(0)" onclick="propertyDetails('${x.uniqueId}')">${x.name}</a>
 												</h3>
@@ -1493,15 +1458,15 @@ $('.btn-activate').click(() => {
     }
 });
 
-$('#property-link').click(() => {
-    if ($('#refId').val() == null || $('#refId').val() == "") {
-        location = "/Home/signin";
-        return;
-    }
-    location = "/Home/properties";
-});
+//$('#property-link').click(() => {
+//    if ($('#refId').val() == null || $('#refId').val() == "") {
+//        location = "/Home/signin";
+//        return;
+//    }
+//    location = "/Home/properties";
+//});
 
-const onSubscribe = () => {
+$('.btn-subscribe').click(() => {
     $(".btn-subscribe").html("Loading...").attr("disabled", !0);
     let xhr = new XMLHttpRequest();
     let url = "/subscribe";
@@ -1535,7 +1500,7 @@ const onSubscribe = () => {
         //alert("Request failed");
         $(".btn-subscribe").html("Subscribe to get full access").attr("disabled", !1);
     }
-};
+});
 
 $('.btn-verify').click(() => {
 
@@ -1969,3 +1934,63 @@ function fundWallet(){
 
     })()
 }
+
+$('.btn-request').click(() => {
+    if ($('.fill-me').val() != "") {
+        return;
+    }
+
+    if ($('#msg_subject').val() == "") {
+        $('#msgSubmit').html(`<div class="alert alert-danger pt-2 pb-2" role="alert">
+            Subject can't be empty!
+            </div>`).removeClass('hidden');
+        return;
+    }
+
+    if ($('#message').val() == "") {
+        $('#msgSubmit').html(`<div class="alert alert-danger pt-2 pb-2" role="alert">
+            Message body can't be empty!
+            </div>`).removeClass('hidden');
+        return;
+    }
+    $(".btn-request").html("Processing...").attr("disabled", !0);
+    var a = {
+        Subject: $("#msg_subject").val(),
+        Message: $("#message").val()
+    };
+    
+    console.log(a);
+
+    $.ajax({
+        type: "post",
+        url: "/enquiry",
+        headers: { "Content-Type": "application/json" },
+        data: JSON.stringify(a),
+        success: function (t) {
+            var res = JSON.parse(t);
+            if (res.Success) {
+                Swal.fire(
+                    'Good job!',
+                    res.Message,
+                    'success'
+                );
+                $("#firstName").focus();
+                window.scrollTo(0, 0);
+                $(".btn-request").html("Request Information").attr("disabled", !1);
+                a = {};
+            } else {
+                message(res.Data
+                    , 'error'),
+                    window.scrollTo(0, 0),
+                    $(".btn-request").html("Request Information").attr("disabled", !1);
+                a = {};
+            }
+
+        },
+        error: function (t) {
+            if (400 == t.status) return //alert("check your supply value and try again!"),
+            void $(".btn-request").html("Request Information").attr("disabled", !1);
+            $(".btn-request").html("Request Information").attr("disabled", !1);
+        },
+    });
+})

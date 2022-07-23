@@ -343,31 +343,9 @@
 										<div class="row">
 											<div class="col-lg-12 col-sm-6">
 												<div class="form-group">
-													<label>Name*</label>
-													<input type="text" name="name" id="name" class="form-control" required data-error="Please enter your name">
-													<div class="help-block with-errors"></div>
-												</div>
-											</div>
-				
-											<div class="col-lg-12 col-sm-6">
-												<div class="form-group">
-													<label>Email*</label>
-													<input type="email" name="email" id="email" class="form-control" required data-error="Please enter your email">
-													<div class="help-block with-errors"></div>
-												</div>
-											</div>
-		
-											<div class="col-lg-12 col-sm-6">
-												<div class="form-group">
-													<label>Your Phone No</label>
-													<input type="text" name="phone_number" id="phone_number" required data-error="Please enter your number" class="form-control">
-													<div class="help-block with-errors"></div>
-												</div>
-											</div>
-				
-											<div class="col-lg-12 col-sm-6">
-												<div class="form-group">
 													<label>Your Subject</label>
+													<input type="hidden" class="fill-me" />
+													
 													<input type="text" name="msg_subject" id="msg_subject" class="form-control" required data-error="Please enter your subject">
 													<div class="help-block with-errors"></div>
 												</div>
@@ -384,18 +362,19 @@
 											<div class="col-lg-12 col-md-12">
 												<div class="d-flex justify-content-between align-items-center">
 													<div class="">
-														<button type="submit" class="default-btn">
+														<button type="button" class="default-btn btn-request">
 															Request Information
 														</button>
-														<div id="msgSubmit" class="h3 text-center hidden"></div>
+														@*<div id="msgSubmit" class="h3 text-center hidden"></div>*@
 														<div class="clearfix"></div>
 													</div>
 													<div class="call">
-														<a href="tell:+1-719-504-1984">
-															<i class="ri-phone-fill"></i>
+														<a href="https://api.whatsapp.com/send?phone=2348144911799&text=I'm%20interested%20in%20your%20property%20for%20sale" target="_blank">
+															<i class="fa fa-whatsapp" aria-hidden="true"></i>
 														</a>
 													</div>
 												</div>
+												<div id="msgSubmit" class="h3 text-center hidden"></div>
 											</div>
 										</div>
 									</form>
@@ -481,15 +460,6 @@
 									<form>
 										<label>Quantity</label>
 										<input type="number" min="1" value="1" id="unit" class="form-control">
-										<label>Duration</label>
-										<select class="form-control" name="Property-Type" id="types" required>
-											<option>Select Duration</option>
-											<option>12 Months</option>
-											<option>24 Months</option>
-											<option>48 Months</option>
-										</select>
-										<br><br>
-										
 								  </form>
 									
 								  </div>
@@ -500,18 +470,14 @@
 										<td> <span class="checkoutPrice"></span> x <span class="unit">1</span></td>
 										<td class="total">Nill</td>
 									  </tr>
-									  <tr>
+									  @*<tr>
 										<td>Interest Yeild</td>
 										<td>0</td>
-									  </tr>
-									  <tr>
-										<td>Duration</td>
-										<td>12 Months</td>
-									  </tr>
-									  <tr>
+									  </tr>*@
+									  @*<tr>
 										<td>Matured Date</td>
 										<td>31-09-2022</td>
-									  </tr>
+									  </tr>*@
 									  <tfoot>
 										<tr>
 										  <td>Grand Total</td>

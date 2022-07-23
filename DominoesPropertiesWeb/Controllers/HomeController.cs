@@ -57,6 +57,11 @@ namespace DominoesPropertiesWeb.Controllers
 
         public IActionResult Properties()
         {
+            var userAuth = this.session.GetString("Token");
+            if(userAuth == null || userAuth.Equals(string.Empty))
+            {
+                return RedirectToAction("SignIn", "Home");
+            }
             return View();
         }
 
