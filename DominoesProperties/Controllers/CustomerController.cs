@@ -18,7 +18,6 @@ using DominoesProperties.Enums;
 using System.IO;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using System.ComponentModel.DataAnnotations;
 using DominoesProperties.Services;
 using System.Linq;
 using System.Collections.Generic;
@@ -314,8 +313,9 @@ namespace DominoesProperties.Controllers
         [HttpPost("passport")]
         [Authorize(Roles = "CUSTOMER")]
         [ValidateAntiForgeryToken]
-        public async Task<ApiResponse> UploadFile([FromForm][Required(ErrorMessage = "A valid picture image is required")][MaxLength(1 * 1024 * 1024, ErrorMessage = "Upload size cannot exceed 1MB")] IFormFile file)
+        public async Task<ApiResponse> UploadFile([FromBody] IFormFile file)
         {
+            //[Required(ErrorMessage = "A valid picture image is required")][MaxLength(1 * 1024 * 1024, ErrorMessage = "Upload size cannot exceed 1MB")] IFormFile file
             try
             {
                 if (file.Length > 0)
