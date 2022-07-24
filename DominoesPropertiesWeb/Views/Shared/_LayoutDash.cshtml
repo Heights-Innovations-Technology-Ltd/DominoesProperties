@@ -77,8 +77,8 @@
 					<div class="mobile-responsive-menu">
 						<div class="logo">
 							<a href="index-2.html">
-								<img src="~/images/logo.png" class="main-logo" alt="Dominoes logo">
-								<img src="~/images/white-logo.png" class="white-logo" alt="Dominoes logo">
+								<img src="~/images/Logo-WHT.png" class="main-logo" alt="Dominoes logo">
+								<img src="~/images/Logo-WHT.png" class="white-logo" alt="Dominoes logo">
 							</a>
 						</div>
 					</div>
@@ -89,8 +89,8 @@
 				<div class="container-fluid">
 					<nav class="navbar navbar-expand-md navbar-light">
 						<a class="navbar-brand" href="index-2.html">
-							<img src="~/images/logo.png" class="main-logo" alt="logo">
-							<img src="~/images/white-logo.png" class="white-logo" alt="logo">
+							<img src="~/images/Logo-WHT.png" class="main-logo" style="width:150px; height:52px;" alt="logo">
+							<img src="~/images/Logo-WHT.png" class="white-logo" style="width:150px;" alt="logo">
 						</a>
 
 						<div class="collapse navbar-collapse mean-menu" id="navbarSupportedContent">
@@ -102,8 +102,8 @@
 									</a>
 								</li>
 								<li class="nav-item">
-									<a  href="javascript:void(0)" class="nav-link" id="property-link">
-										Properties            
+									<a asp-controller="Home" asp-action="properties" class="nav-link" id="property-links">
+										Properties
 									</a>
 								</li>
 								<li class="nav-item">
@@ -147,12 +147,7 @@
 														</a>
 													</li>
 												}
-												<li>
-													<a href="edit-profile.html">
-														<i class="ri-settings-2-line"></i>
-														Setting
-													</a>
-												</li>
+												
 												<li>
 													<a href="javascript:void(0)" class="logout">
 														<i class="ri-logout-box-r-line"></i>
@@ -249,32 +244,32 @@
 			<ul>
 				@if(isAdmin != null && isAdmin != ""){
 					<li>
-						<a href="/Dashboard" class="active">
+						<a href="/Dashboard" class="active" id="dashboard-link">
 							<i class="ri-dashboard-line"></i>
 							Dashboard
 						</a>
 					</li>
 					<li>
-						<a asp-controller="Property" asp-action="Index">
+						<a asp-controller="Property" asp-action="Index" id="property-link">
 							<i class="ri-building-2-fill"></i>
 							Properties
 						</a>
 					</li>
 					<li>
-						<a asp-controller="Investment" asp-action="Index">
+						<a asp-controller="Investment" asp-action="Index" id="investments-link">
 							<i class="ri-building-line"></i>
 							Investments
 						</a>
 					</li>
 				}else{
 					<li>
-						<a href="/Dashboard" class="active">
+						<a href="/Dashboard" class="active" id="dashboard-link">
 							<i class="ri-dashboard-line"></i>
 							Dashboard
 						</a>
 					</li>
 					<li>
-						<a asp-controller="Dashboard" asp-action="Profile">
+						<a asp-controller="Dashboard" asp-action="Profile" id="profile-link">
 							<i class="ri-user-line"></i>
 							My Profile
 						</a>
@@ -286,7 +281,7 @@
 						</a>
 					</li>*@
 					<li>
-						<a asp-controller="Dashboard" asp-action="Investments">
+						<a asp-controller="Dashboard" asp-action="Investments" id="investments-link">
 							<i class="ri-building-2-line"></i>
 							Investments
 						</a>
@@ -348,6 +343,18 @@
 		<script src="~/js/ajaxchimp.min.js"></script>
 		<script src="~/js/custom.js"></script>
 		<script src="~/js/main.js"></script>
+		<script>
+			$(document).ready(function(){
+				var pathname = window.location.pathname;
+				
+				 $('li a').each(function() {
+					if ($(this).attr('href') == pathname) {
+						$('li a').removeClass("active");
+						$(this).addClass('active');
+					}
+				});
+			});
+		</script>
 		@await RenderSectionAsync("Scripts", required: false)
     </body>
 </html>

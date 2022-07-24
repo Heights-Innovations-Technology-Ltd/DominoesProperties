@@ -70,8 +70,8 @@
 					<div class="mobile-responsive-menu">
 						<div class="logo">
 							<a href="index-2.html">
-								<img src="~/images/logo.png" class="main-logo" alt="Dominoes logo">
-								<img src="~/images/white-logo.png" class="white-logo" alt="Dominoes logo">
+								<img src="~/images/Logo-WHT.png" class="main-logo" alt="Dominoes logo">
+								<img src="~/images/Logo-WHT.png" class="white-logo" alt="Dominoes logo">
 							</a>
 						</div>
 					</div>
@@ -82,8 +82,8 @@
 				<div class="container-fluid">
 					<nav class="navbar navbar-expand-md navbar-light">
 						<a class="navbar-brand" href="index-2.html">
-							<img src="~/images/logo.png" class="main-logo" alt="logo">
-							<img src="~/images/white-logo.png" class="white-logo" alt="logo">
+							<img src="~/images/Logo-WHT.png" class="main-logo" style="width:150px;" alt="logo">
+							<img src="~/images/Logo-WHT.png" class="white-logo" style="width:150px;" alt="logo">
 						</a>
 
 						<div class="collapse navbar-collapse mean-menu" id="navbarSupportedContent">
@@ -98,12 +98,12 @@
 
 							<ul class="navbar-nav m-auto">
 								<li class="nav-item">
-									<a href="/" class="nav-link active">
+									<a href="/" class="nav-link active" id="home-link">
 										Home            
 									</a>
 								</li>
 								<li class="nav-item">
-									<a href="javascript:void(0)" class="nav-link" id="property-link">
+									<a asp-controller="Home" asp-action="properties" class="nav-link" id="property-links">
 										Properties
 									</a>
 								</li>
@@ -153,12 +153,6 @@
 															</a>
 														</li>
 													}
-													<li>
-														<a href="edit-profile.html">
-															<i class="ri-settings-2-line"></i>
-															Setting
-														</a>
-													</li>
 													<li>
 														<a href="javascript:void(0)" class="logout">
 															<i class="ri-logout-box-r-line"></i>
@@ -243,77 +237,6 @@
 			</div>
 		</div>
 		<!-- End Navbar Area -->
-		@if(!true)
-		{
-			<!-- Start Sidebar Area -->
-			<div class="dashboard-sidebar-menu">
-				<h3>Deborah Roderick</h3>
-
-				<ul>
-					<li>
-						<a href="dashboard.html" class="active">
-							<i class="ri-dashboard-line"></i>
-							Dashboard
-						</a>
-					</li>
-					<li>
-						<a href="my-profile.html">
-							<i class="ri-user-line"></i>
-							My Profile
-						</a>
-					</li>
-					<li>
-						<a href="edit-profile.html">
-							<i class="ri-image-edit-line"></i>
-							Edit Profile
-						</a>
-					</li>
-					<li>
-						<a href="add-listing.html">
-							<i class="ri-list-check"></i>
-							Add Listing
-						</a>
-					</li>
-					<li>
-						<a href="message.html">
-							<i class="ri-messenger-line"></i>
-							Message
-						</a>
-					</li>
-					<li>
-						<a href="agents-list.html">
-							<i class="ri-customer-service-line"></i>
-							Agents List
-						</a>
-					</li>
-					<li>
-						<a href="my-listings.html">
-							<i class="ri-play-list-add-line"></i>
-							My Listings
-						</a>
-					</li>
-					<li>
-						<a href="booking.html">
-							<i class="ri-dashboard-line"></i>
-							Booking
-						</a>
-					</li>
-					<li>
-						<a href="reviews.html">
-							<i class="ri-star-fill"></i>
-							Reviews
-						</a>
-					</li>
-					<li>
-						<a href="index-2.html">
-							<i class="ri-logout-circle-r-line"></i>
-							Log Out
-						</a>
-					</li>
-				</ul>
-			</div>
-			<!-- End Sidebar Area -->
-		}
 	
     <div class="">
         <main role="main" class="pb-3">
@@ -328,8 +251,8 @@
 					<div class="col-lg-3 col-sm-6">
 						<div class="single-footer-widget wow animate__animated animate__fadeInUp delay-0-2s">
 							<a href="index-2.html">
-								<img src="~/images/logo.png" class="main-logo" alt="Dominoes logo">
-								<img src="~/images/white-logo.png" class="white-logo" alt="Dominoes logo">
+								<img src="~/images/Logo-WHT.png" class="main-logo" alt="Dominoes logo">
+								<img src="~/images/Logo-WHT.png" class="white-logo" alt="Dominoes logo">
 							</a>
 
 							<p>We are a great agency for buying and selling your property with confidence. So you can easily buy and sell through our company.</p>
@@ -351,7 +274,7 @@
 								</li>
 								<li>
 									<i class="ri-mail-fill"></i>
-									<a href="https://templates.envytheme.com/cdn-cgi/l/email-protection#d6bfb8b0b996b1bbb7bfbaf8b5b9bb"><span class="__cf_email__" data-cfemail="8ce5e2eae3ccebe1ede5e0a2efe3e1">[email&#160;protected]</span></a>
+									<a href="javascript:void(0)"><span class="__cf_email__" data-cfemail="8ce5e2eae3ccebe1ede5e0a2efe3e1">[email&#160;protected]</span></a>
 								</li>
 							</ul>
 						</div>
@@ -409,15 +332,13 @@
 			<div class="container">
 				<div class="row align-items-center">
 					<div class="col-lg-6 wow animate__animated animate__fadeInLeft delay-0-2s">
-						<p>Copyright @@ <span id="year"></span> All Rights Reserved by <a href="https://envytheme.com/" target="_blank">Dominoes Properties</a></p>
+						<p>Copyright @@ <span id="year"></span> All Rights Reserved by <a href="javascript:void(0)">Dominoes Properties</a></p>
 					</div>
 					<div class="col-lg-6">
 						<div class="language wow animate__animated animate__fadeInRight delay-0-2s">
 							<select class="form-select" aria-label="Default select example">
 								<option selected>Language</option>
 								<option value="1">English</option>
-								<option value="2">Arabic</option>
-								<option value="3">Germany</option>
 							</select>
 							<i class="ri-global-line"></i>
 						</div>
@@ -489,6 +410,21 @@
 		<script src="~/js/ajaxchimp.min.js"></script>
 		<script src="~/js/custom.js"></script>
 		<script src="~/js/main.js"></script>
+
+		<script>
+			$(document).ready(function(){
+				var pathname = window.location.pathname;
+				console.log(pathname);
+				console.log($(this).attr('href'));
+
+				 $('.navbar-nav li a').each(function() {
+					if ($(this).attr('href') == pathname) {
+						$('.navbar-nav li a').removeClass("active");
+						$(this).addClass('active');
+					}
+				});
+			});
+		</script>
 		@await RenderSectionAsync("Scripts", required: false)
     </body>
 </html>
