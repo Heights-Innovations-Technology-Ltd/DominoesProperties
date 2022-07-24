@@ -245,12 +245,13 @@ namespace DominoesProperties.Controllers
 
         [HttpPost("uploads/{propertyId}")]
         [Authorize(Roles = "SUPER, ADMIN")]
-        public ApiResponse UploadFile(string propertyId, [FromBody][Required(ErrorMessage = "No upload found")][MinLength(1, ErrorMessage = "Upload atleast 1 file")] List<PropertyUpload> passport)
+        public ApiResponse UploadFile(string propertyId, [FromBody][Required(ErrorMessage = "No upload found")][MinLength(1, ErrorMessage = "Upload atleast 1 file")] List<PropertyFileUpload> passport)
         {
             try
             {
+                List<PropertyUpload> propertyUploads = new();
                 var property = propertyRepository.GetProperty(propertyId);
-                if(property == null)
+                if (property == null)
                 {
                     response.Message = "Invalid property selected";
                     return response;
@@ -259,9 +260,18 @@ namespace DominoesProperties.Controllers
                 bool isError = false;
                 passport.ForEach(x =>
                 {
-                    x.PropertyId = property.Id;
-                    if (string.IsNullOrEmpty(x.ImageName) || string.IsNullOrEmpty(x.UploadType) || string.IsNullOrEmpty(x.Url))
+                    if (!string.IsNullOrEmpty(x.ImageName) || !string.IsNullOrEmpty(x.Url))
                     {
+                        propertyUploads.Add(new PropertyUpload
+                        {
+                            DateUploaded = x.DateUploaded,
+                            ImageName = x.ImageName,
+                            PropertyId = property.Id,
+                            UploadType = x.UploadType.ToString(),
+                            Url = x.Url
+                        });
+                    }
+                    else {
                         response.Message = "One or more upload data is incorrect, kindly check and try aagin";
                         isError = true;
                     }
@@ -271,7 +281,7 @@ namespace DominoesProperties.Controllers
                 {
                     return response;
                 }
-                if (uploadRepository.NewUpload(passport))
+                if (uploadRepository.NewUpload(propertyUploads))
                 {
                     response.Success = true;
                     response.Message = "Passport successfully uploaded";

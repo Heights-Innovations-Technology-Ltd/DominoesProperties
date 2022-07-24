@@ -119,7 +119,9 @@ namespace DominoesProperties
             });
 
             #region Connection String
-            services.AddDbContext<dominoespropertiesContext>(opts => opts.UseMySQL(Configuration.GetConnectionString("DominoProps_String")));
+            services.AddDbContext<dominoespropertiesContext>(opts =>
+                opts.UseMySQL(Configuration.GetConnectionString("DominoProps_String"))
+            );
             #endregion
             services.Configure<EmailSettings>(Configuration.GetSection("EmailSettings"));
 
@@ -151,10 +153,6 @@ namespace DominoesProperties
                                  .AllowAnyMethod();
                       });
             });
-
-            services.AddSingleton<IFileProvider>(new PhysicalFileProvider(
-            Path.Combine(Directory.GetCurrentDirectory(), "wwwroot")));
-                services.AddMvc();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
