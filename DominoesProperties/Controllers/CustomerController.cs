@@ -21,6 +21,7 @@ using Microsoft.AspNetCore.Http;
 using DominoesProperties.Services;
 using System.Linq;
 using System.Collections.Generic;
+using StackExchange.Redis;
 
 namespace DominoesProperties.Controllers
 {
@@ -31,7 +32,8 @@ namespace DominoesProperties.Controllers
         private readonly ILoggerManager logger;
         private readonly ICustomerRepository customerRepository;
         private readonly IStringLocalizer<CustomerController> localizer;
-        private readonly IDistributedCache distributedCache;
+        private readonly IConnectionMultiplexer distributedCache;
+
         private readonly IConfiguration configuration;
         private readonly IApplicationSettingsRepository applicationSettingsRepository;
         private readonly IWebHostEnvironment environment;
@@ -39,11 +41,10 @@ namespace DominoesProperties.Controllers
         private readonly IEmailService emailService;
         private readonly IInvestmentRepository investmentRepository;
         private readonly ApiResponse response = new(false, "Error performing request, contact admin");
-        private readonly DistributedCacheEntryOptions expiryOptions;
-        private readonly String[] fileExtensions = { ".jpg", ".png", ".jpeg", "gif" };
+        private readonly string[] fileExtensions = { ".jpg", ".png", ".jpeg", "gif" };
 
         public CustomerController(ILoggerManager _logger, ICustomerRepository _customerRepository, IStringLocalizer<CustomerController> _stringLocalizer,
-            IDistributedCache _distributedCache, IConfiguration _configuration, IApplicationSettingsRepository _applicationSettingsRepository,
+            IConnectionMultiplexer _distributedCache, IConfiguration _configuration, IApplicationSettingsRepository _applicationSettingsRepository,
             IWebHostEnvironment _environment, IAdminRepository _adminRepository, IEmailService _emailService, IInvestmentRepository _investmentRepository)
         {
             logger = _logger;
@@ -53,11 +54,6 @@ namespace DominoesProperties.Controllers
             configuration = _configuration;
             adminRepository = _adminRepository;
             investmentRepository = _investmentRepository;
-            expiryOptions = new()
-            {
-                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(20),
-                SlidingExpiration = TimeSpan.FromMinutes(15)
-            };
             applicationSettingsRepository = _applicationSettingsRepository;
             environment = _environment;
             emailService = _emailService;
@@ -177,7 +173,7 @@ namespace DominoesProperties.Controllers
             }
             else
             {
-                response.Message = "Invalid username supplied";
+                response.Message = "Error sending activation link";
                 return response;
             }
         }
@@ -187,7 +183,8 @@ namespace DominoesProperties.Controllers
         [AllowAnonymous]
         public async Task<ApiResponse> Activate(string token)
         {
-            var uniqueRef = await distributedCache.GetStringAsync(token);
+            var db = distributedCache.GetDatabase();
+            var uniqueRef = await db.StringGetAsync(token);
             if (!string.IsNullOrEmpty(uniqueRef))
             {
                 var customer = customerRepository.GetCustomer(uniqueRef);
@@ -245,7 +242,8 @@ namespace DominoesProperties.Controllers
         [AllowAnonymous]
         public async Task<ApiResponse> ResetPasswordConfirm([FromBody] PasswordReset password)
         {
-            var uniqueRef = await distributedCache.GetStringAsync(password.Token);
+            var db = distributedCache.GetDatabase();
+            var uniqueRef = await db.StringGetAsync(password.Token);
             if (!string.IsNullOrEmpty(uniqueRef))
             {
                 var customer = customerRepository.GetCustomer(uniqueRef);
@@ -290,76 +288,25 @@ namespace DominoesProperties.Controllers
             return response;
         }
 
-        //[HttpPost("passport")]
-        //[Authorize(Roles ="CUSTOMER")]
-        //[ValidateAntiForgeryToken]
-        //public async Task<ApiResponse> UploadPassportAsync([FromForm][Required][MaxLength(1 * 1024 * 1024, ErrorMessage = "Upload size cannot exceed 1MB")]  IFormFile passport)
-        //{
-        //    var container = new BlobContainerClient(configuration["BlobClient:Url"], "passport");
-        //    var createResponse = await container.CreateIfNotExistsAsync();
-        //    if (createResponse != null && createResponse.GetRawResponse().Status == 201)
-        //        await container.SetAccessPolicyAsync(PublicAccessType.Blob);
-        //    var blob = container.GetBlobClient($"{HttpContext.User.Identity.Name}.{passport.FileName[passport.FileName.LastIndexOf(".")..]}");
-
-        //    using (var fileStream = passport.OpenReadStream())
-        //    {
-        //        await blob.UploadAsync(fileStream, new BlobHttpHeaders { ContentType = passport.ContentType });
-        //    }
-        //    response.Message = "Passport successfully uploaded";
-        //    response.Data = blob.Uri.ToString();
-        //    return response;
-        //}
-
         [HttpPost("passport")]
         [Authorize(Roles = "CUSTOMER")]
-        [ValidateAntiForgeryToken]
-        public async Task<ApiResponse> UploadFile([FromBody] IFormFile file)
+        public ApiResponse UploadFile([FromBody] string UploadUrl)
         {
-            //[Required(ErrorMessage = "A valid picture image is required")][MaxLength(1 * 1024 * 1024, ErrorMessage = "Upload size cannot exceed 1MB")] IFormFile file
-            try
+            var customer = customerRepository.GetCustomer(HttpContext.User.Identity.Name);
+            if(customer == null)
             {
-                if (file.Length > 0)
-                {
-                    string ext = new FileInfo(file.FileName).Extension.ToLower();
-                    if (!fileExtensions.Contains(ext))
-                    {
-                        response.Message = "Invalid file type uploaded";
-                        return response;
-                    }
-
-                    string path = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, "Uploads/Passport"));
-                    string filename = $"{HttpContext.User.Identity.Name}{ext}";
-
-                    if (!Directory.Exists(path))
-                    {
-                        Directory.CreateDirectory(path);
-                    }
-                    using (var fileStream = new FileStream(Path.Combine(path, filename), FileMode.Create))
-                    {
-                        await file.CopyToAsync(fileStream);
-                    }
-
-                    var cust = customerRepository.GetCustomer(HttpContext.User.Identity.Name);
-                    cust.PassportUrl = $"{Request.Scheme}://{Request.Host}{Request.PathBase}'Uploads/Property/'{filename}";
-                    if (customerRepository.UpdateCustomer(cust) != null)
-                    {
-                        response.Success = true;
-                        response.Message = "Passport uploaded successfully";
-                        return response;
-                    }
-                    response.Message = "Error Uploading passport photo";
-                    return response;
-                }
-                else
-                {
-                    response.Message = "Invalid file uploaded";
-                    return response;
-                }
-            }
-            catch (Exception)
-            {
+                response.Message = "Customer not found, please login with your credentials and try again";
                 return response;
             }
+            customer.PassportUrl = UploadUrl;
+            if(customerRepository.UpdateCustomer(customer) != null)
+            {
+                response.Success = true;
+                response.Message = "Passport successfully uploaded";
+                return response;
+            }
+            response.Message = "Error uploading passport photo, please try again later";
+            return response;
         }
 
         [HttpGet("dashboard")]
@@ -415,7 +362,8 @@ namespace DominoesProperties.Controllers
                             break;
                     }
 
-                    await distributedCache.SetStringAsync(token, uniqueRef, expiryOptions);
+                    var db = distributedCache.GetDatabase();
+                    await db.StringSetAsync(token, uniqueRef, TimeSpan.FromMinutes(15));
 
                     EmailData emailData = new()
                     {

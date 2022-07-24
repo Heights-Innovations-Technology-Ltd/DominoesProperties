@@ -133,7 +133,7 @@ namespace DominoesProperties.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles ="ADMIN, SUPER")]
+        [Authorize(Roles = "ADMIN, SUPER")]
         public ApiResponse Property([FromBody] Properties properties)
         {
             Property property = ClassConverter.PropertyToEntity(properties);
@@ -245,62 +245,41 @@ namespace DominoesProperties.Controllers
 
         [HttpPost("uploads/{propertyId}")]
         [Authorize(Roles = "SUPER, ADMIN")]
-        [ValidateAntiForgeryToken]
-        public async Task<ApiResponse> UploadFile(string propertyId, [FromBody][Required(ErrorMessage = "No upload found")][MinLength(1, ErrorMessage = "Upload atleast 1 file")] List<PropertyFileUpload> passport)
+        public ApiResponse UploadFile(string propertyId, [FromBody][Required(ErrorMessage = "No upload found")][MinLength(1, ErrorMessage = "Upload atleast 1 file")] List<PropertyUpload> passport)
         {
-            List<string> errorUploads = new();
-            List<PropertyUpload> properties = new();
-            List<string> imageName = new();
             try
             {
-                string path = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, "Uploads/Property"));
-                foreach (PropertyFileUpload prop in passport)
+                var property = propertyRepository.GetProperty(propertyId);
+                if(property == null)
                 {
-                    IFormFile file = prop.File;
-                    FileInfo fileInfo = new(file.FileName);
-                    if (!fileExtensions.Contains(fileInfo.Extension.ToLower()))
-                    {
-                        errorUploads.Add($"Invalid file format uploaded for {fileInfo.FullName}");
-                        continue;
-                    }
-
-                    if (file.Length > 0)
-                    {
-                        string filename = $"{propertyId.Replace("-", "")}-{DateTime.UnixEpoch}{fileInfo.Extension}";
-                        if (!Directory.Exists(path))
-                        {
-                            Directory.CreateDirectory(path);
-                        }
-                        using var fileStream = new FileStream(Path.Combine(path, filename), FileMode.Create);
-                        await file.CopyToAsync(fileStream);
-                        imageName.Add(filename);
-
-                        properties.Add(new PropertyUpload
-                        {
-                            DateUploaded = DateTime.Now,
-                            ImageName = filename,
-                            PropertyId = propertyRepository.GetProperty(propertyId).Id,
-                            Url = $"{Request.Scheme}://{Request.Host}{Request.PathBase}'Uploads/Property/'{filename}",
-                            UploadType = prop.UploadType.ToString()
-                        });
-                    }
-                    else
-                    {
-                        errorUploads.Add($"Invalid file size uploaded for {fileInfo.FullName}");
-                        continue;
-                    }
+                    response.Message = "Invalid property selected";
+                    return response;
                 }
-                if (uploadRepository.NewUpload(properties))
+
+                bool isError = false;
+                passport.ForEach(x =>
+                {
+                    x.PropertyId = property.Id;
+                    if (string.IsNullOrEmpty(x.ImageName) || string.IsNullOrEmpty(x.UploadType) || string.IsNullOrEmpty(x.Url))
+                    {
+                        response.Message = "One or more upload data is incorrect, kindly check and try aagin";
+                        isError = true;
+                    }
+                });
+
+                if (isError)
+                {
+                    return response;
+                }
+                if (uploadRepository.NewUpload(passport))
                 {
                     response.Success = true;
                     response.Message = "Passport successfully uploaded";
-                    response.Data = errorUploads;
                     return response;
                 }
                 else
                 {
-                    response.Message = $"Error uploading image{(passport.Count <= 1 ? "" :"s")} and document";
-                    response.Data = errorUploads;
+                    response.Message = $"Error uploading property image and document";
                     return response;
                 }
             }

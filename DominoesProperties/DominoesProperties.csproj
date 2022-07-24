@@ -57,6 +57,7 @@
     <None Remove="Google.Apis.Drive.v3" />
     <None Remove="EmailTemplates\NewCustomer.html" />
     <None Remove="DominoesProperties.xml" />
+    <None Remove="Resources\Uploads\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.16" />
@@ -77,10 +78,8 @@
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="6.0.6" />
     <PackageReference Include="My.Extensions.Localization.Json" Version="3.0.0" />
-    <PackageReference Include="Azure.Storage.Blobs" Version="12.13.0" />
     <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.3.1" />
     <PackageReference Include="MailKit" Version="3.3.0" />
-    <PackageReference Include="Google.Apis.Drive.v3" Version="1.57.0.2746" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Helper\" />
@@ -89,6 +88,7 @@
     <Folder Include="Resources\" />
     <Folder Include="EmailTemplates\" />
     <Folder Include="Services\" />
+    <Folder Include="Resources\Uploads\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Models\Models.csproj">

@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -24,6 +25,7 @@ using Newtonsoft.Json;
 using NLog;
 using Repositories.Repository;
 using Repositories.Service;
+using StackExchange.Redis;
 
 namespace DominoesProperties
 {
@@ -120,11 +122,22 @@ namespace DominoesProperties
             services.AddDbContext<dominoespropertiesContext>(opts => opts.UseMySQL(Configuration.GetConnectionString("DominoProps_String")));
             #endregion
             services.Configure<EmailSettings>(Configuration.GetSection("EmailSettings"));
-            services.AddStackExchangeRedisCache(options =>
+
+            var deltaBackOffMilliseconds = Convert.ToInt32(TimeSpan.FromSeconds(5).TotalMilliseconds);
+            var maxDeltaBackOffMilliseconds = Convert.ToInt32(TimeSpan.FromSeconds(20).TotalMilliseconds);
+            var configurationOptions = new ConfigurationOptions
             {
-                options.Configuration = Configuration.GetSection("Redis").GetValue<String>("Host");
-                options.InstanceName = Configuration.GetSection("Redis").GetValue<String>("InstanceName");
-            });
+                EndPoints = { $"{Configuration.GetValue<string>("Redis:Host")}:{Configuration.GetValue<int>("Redis:Port")}" },
+                Ssl = Configuration.GetValue<bool>("Redis:Ssl"),
+                AbortOnConnectFail = false,
+                ConnectRetry = 5,
+                ReconnectRetryPolicy = new ExponentialRetry(deltaBackOffMilliseconds, maxDeltaBackOffMilliseconds),
+                ConnectTimeout = 3000,
+                DefaultDatabase = 0,
+                AllowAdmin = true
+             };
+            var multiplexer = ConnectionMultiplexer.Connect(configurationOptions);
+            services.AddSingleton<IConnectionMultiplexer>(multiplexer);
 
             services.ConfigureNLogService();
 
@@ -138,6 +151,10 @@ namespace DominoesProperties
                                  .AllowAnyMethod();
                       });
             });
+
+            services.AddSingleton<IFileProvider>(new PhysicalFileProvider(
+            Path.Combine(Directory.GetCurrentDirectory(), "wwwroot")));
+                services.AddMvc();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -158,6 +175,12 @@ namespace DominoesProperties
                 CommonLogic.SendExceptionEmail("Exception Occurred", "Error On Method :  " + MethodBase.GetCurrentMethod().DeclaringType.Name + " and Message : " + exception.Message + "<br> StackTrace : " + exception.StackTrace);
                 await context.Response.WriteAsync(result);
             }));
+
+            app.UseStaticFiles(new StaticFileOptions()
+            {
+                FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), @"Resources")),
+                RequestPath = new PathString("/Resources")
+            });
 
             app.UseStaticFiles();
 

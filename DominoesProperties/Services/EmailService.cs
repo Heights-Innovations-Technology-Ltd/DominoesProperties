@@ -51,7 +51,7 @@ namespace DominoesProperties.Services
             catch (Exception ex)
             {
                 //Log Exception Details
-                logger.LogError(ex.Message);
+                logger.LogError(ex.StackTrace);
                 return false;
             }
         }
@@ -60,12 +60,12 @@ namespace DominoesProperties.Services
         {
             try
             {
-                MimeMessage emailMessage = new MimeMessage();
+                MimeMessage emailMessage = new();
 
-                MailboxAddress emailFrom = new MailboxAddress(_emailSettings.Name, _emailSettings.EmailId);
+                MailboxAddress emailFrom = new(_emailSettings.Name, _emailSettings.EmailId);
                 emailMessage.From.Add(emailFrom);
 
-                MailboxAddress emailTo = new MailboxAddress(emailData.EmailToName, emailData.EmailToId);
+                MailboxAddress emailTo = new(emailData.EmailToName, emailData.EmailToId);
                 emailMessage.To.Add(emailTo);
 
                 emailMessage.Subject = emailData.EmailSubject;
@@ -104,7 +104,7 @@ namespace DominoesProperties.Services
             catch (Exception ex)
             {
                 //Log Exception Details
-                logger.LogError(ex.Message);
+                logger.LogError(ex.StackTrace);
                 return false;
             }
         }
