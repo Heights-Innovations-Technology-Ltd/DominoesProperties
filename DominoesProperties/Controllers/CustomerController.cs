@@ -363,7 +363,7 @@ namespace DominoesProperties.Controllers
                     }
 
                     var db = distributedCache.GetDatabase();
-                    await db.StringSetAsync(token, uniqueRef, TimeSpan.FromMinutes(15));
+                    _ = await db.StringSetAsync(token, uniqueRef, TimeSpan.FromMinutes(15));
 
                     EmailData emailData = new()
                     {
