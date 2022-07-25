@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DominoesPropertiesWeb.HttpContext;
+using DominoesPropertiesWeb.Repository;
+using DominoesPropertiesWeb.Service;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -27,6 +28,7 @@ namespace DominoesPropertiesWeb
         {
             services.AddControllersWithViews();
             services.AddTransient<IHttpContext, HttpContextImp>();
+            services.AddTransient<IUploadsRepository, UploadService>();
             services.Configure<CookiePolicyOptions>(options =>
             {
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.
