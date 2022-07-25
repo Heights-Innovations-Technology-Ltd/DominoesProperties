@@ -165,7 +165,7 @@ namespace DominoesProperties.Controllers
         public ApiResponse SendActivationLink(string uniqueRef)
         {
             ApplicationSetting setting = applicationSettingsRepository.GetApplicationSettingsByName("EmailNotification");
-            if (ActivationLink(uniqueRef, ValidationModule.ACTIVATE_ACCOUNT, setting).IsCompleted)
+            if (ActivationLink(uniqueRef, ValidationModule.ACTIVATE_ACCOUNT, setting).Result)
             {
                 response.Message = "Activation link successfully generated and sent to customer email, kindly check your email to activate account";
                 response.Success = true;
@@ -363,7 +363,7 @@ namespace DominoesProperties.Controllers
                     }
 
                     var db = distributedCache.GetDatabase();
-                    await db.StringSetAsync(token, uniqueRef, TimeSpan.FromMinutes(15));
+                    _ = await db.StringSetAsync(token, uniqueRef, TimeSpan.FromMinutes(15));
 
                     EmailData emailData = new()
                     {
