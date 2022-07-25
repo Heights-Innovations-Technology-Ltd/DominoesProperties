@@ -64,9 +64,9 @@
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="5.0.16" />
     <PackageReference Include="MimeKit" Version="3.3.0" />
-    <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="6.3.1" />
-    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.3.1" />
-    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.3.1" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="6.4.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.4.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.4.0" />
     <PackageReference Include="MySql.EntityFrameworkCore" Version="5.0.13" />
     <PackageReference Include="MySql.Data" Version="8.0.29" />
     <PackageReference Include="MySqlConnector" Version="2.1.11" />
@@ -76,9 +76,9 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="6.0.6" />
+    <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="6.0.7" />
     <PackageReference Include="My.Extensions.Localization.Json" Version="3.0.0" />
-    <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.3.1" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.4.0" />
     <PackageReference Include="MailKit" Version="3.3.0" />
   </ItemGroup>
   <ItemGroup>
