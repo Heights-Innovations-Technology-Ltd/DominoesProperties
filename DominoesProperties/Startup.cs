@@ -136,8 +136,10 @@ namespace DominoesProperties
                 ReconnectRetryPolicy = new ExponentialRetry(deltaBackOffMilliseconds, maxDeltaBackOffMilliseconds),
                 ConnectTimeout = 3000,
                 DefaultDatabase = 0,
-                AllowAdmin = true
-             };
+                AllowAdmin = true,
+                Password = Configuration.GetValue<string>("Redis:Password"),
+                User = "default"
+            };
             var multiplexer = ConnectionMultiplexer.Connect(configurationOptions);
             services.AddSingleton<IConnectionMultiplexer>(multiplexer);
 
