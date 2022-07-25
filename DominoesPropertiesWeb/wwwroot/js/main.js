@@ -701,7 +701,7 @@ const getSingleProperty = () => {
                 $('#name').html(data.name);
                 $('#price').html("&#8358; " + formatToCurrency(data.unitPrice));
                 $('#location').html(data.location);
-                $('.closeDate').html("Investment End On " + moment(data.closingDate).format('MMMM Do YYYY'));
+                $('.closeDate').html("Available Unit " + data.unitAvailable);
                 $('.property-feature').html(`<li>
 												<i class="ri-hotel-bed-fill"></i>
 												${data.description["bedroom"]} Bed
@@ -722,7 +722,10 @@ const getSingleProperty = () => {
 												<i class="ri-building-2-fill"></i>
 												${data.description["floorLevel"]} Floor
 											</li>`);
-                $('.summary').text(`${data.summary}`);
+                data.summary != null ? 
+                $('.summary').html(`
+                    <h3>Property Description</h3>
+					<p class="summary">${data.summary}</p>`) : '';
 
                 $('.description').html(`
                     <div class="col-lg-3 col-sm-6">
@@ -1264,14 +1267,20 @@ $('#btnUpload').on('click', function () {
     var e = "";
     let urls = window.location.href.split("/");
     let id = urls[5];
-    $("#btnUpload").attr("disabled", !0).html(`Processing...`)
-    
+    console.log($('#uploadType').val());
+    if ($('#uploadType').val() == "") {
+        $('.msg').html(message("Upload type must be selected", "error"));
+        return;
+    }
+    $('.msg').html('');
+    $("#btnUpload").attr("disabled", !0).html(`Processing...`);
+    var uploadType = $('#uploadType').val();
     var fileUpload = $("#fileUpload").get(0);
 
     var files = fileUpload.files;
 
     if (files.length == 0) {
-        $('#msg').html(message("Property image is required!", 'error'));
+        $('.msg').html(message("Property image is required!", 'error'));
         return;
     }
 
@@ -1281,6 +1290,8 @@ $('#btnUpload').on('click', function () {
     for (var i = 0; i != files.length; i++) {
         formData.append("files", files[i]);
     }
+
+    formData.append("uploadType", uploadType);
 
     $.ajax(
         {

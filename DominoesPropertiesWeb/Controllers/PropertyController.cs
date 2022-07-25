@@ -246,6 +246,9 @@ namespace DominoesPropertiesWeb.Controllers
         [HttpPost("/upload-property/{propertyId}")]
         public async Task<JsonResult> uploadDoc(string propertyId)
         {
+            var obj = Request.Form["uploadType"];
+
+            JObject jObject = JsonConvert.DeserializeObject<JObject>(Convert.ToString(obj));
             var json = Request.Form.Files;
             if (json.Count > 0)
             {
@@ -258,7 +261,8 @@ namespace DominoesPropertiesWeb.Controllers
                     fileContent.Headers.ContentDisposition = new System.Net.Http.Headers.ContentDispositionHeaderValue("form-data")
                     {
                         Name = file.Name,
-                        FileName = file.FileName
+                        FileName = file.FileName,
+                        //UploadType = Convert.ToInt32(jObject[""])
                     };
                     content.Add(fileContent);
 
