@@ -60,7 +60,7 @@ namespace DominoesProperties.Controllers
                 email = customer.Email,
                 reference = string.IsNullOrEmpty(payment.InvestmentId) ? transRef : payment.InvestmentId,
                 callback = string.IsNullOrEmpty(payment.Callback)
-                ? string.Format("{0}/{1}", $"{this.Request.Scheme}://{this.Request.Host}{this.Request.PathBase}", "api/payment/verify-payment")
+                ? string.Format("{0}/{1}", $"{Request.Scheme}://{Request.Host}{Request.PathBase}", "api/payment/verify-payment")
                 : $"{payment.Callback}"
             };
 
@@ -95,7 +95,7 @@ namespace DominoesProperties.Controllers
             if (string.IsNullOrWhiteSpace(returns))
             {
                 logger.LogError("Unsuccessful transaction, try again later");
-                return Redirect("http://tallertalk-001-site1.itempurl.com/api/property");
+                return Redirect(configuration["app_settings:WebEndpoint"]);
             }
 
             JObject jObject = JsonConvert.DeserializeObject<JObject>(returns);
@@ -141,14 +141,13 @@ namespace DominoesProperties.Controllers
 
                 logger.LogError($"{transaction.TransactionRef} : {reference} : {paystack.Status}");
                 logger.LogError($"{paystack.TransactionRef} : Payment successfully done");
-                return Redirect("http://tallertalk-001-site1.itempurl.com/api/property");
-                //return response;
+                return Redirect(configuration["app_settings:WebEndpoint"]);
             }
             catch (Exception ex)
             {
                 logger.LogError(ex.StackTrace);
                 logger.LogError("Error verifying transaction status, we will re-confirm and get back to you");
-                return Redirect("http://tallertalk-001-site1.itempurl.com/api/property");
+                return Redirect(configuration["app_settings:WebEndpoint"]);
             }
         }
     }
