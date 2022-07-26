@@ -80,7 +80,8 @@ namespace DominoesProperties.Controllers
                 response.Message = "Successfully initialized payment link";
                 response.Data = Convert.ToString(jObject["authorization_url"]);
                 return response;
-            }catch(Exception e)
+            }
+            catch (Exception e)
             {
                 logger.LogError(e.StackTrace);
                 response.Message = "Error verifying transaction status, we will re-confirm and get back to you";
@@ -103,7 +104,7 @@ namespace DominoesProperties.Controllers
             try
             {
                 PaystackPayment paystack = paystackRepository.GetPaystack(reference);
-                paystack.Channel = Convert.ToString(jObject["channel"]); 
+                paystack.Channel = Convert.ToString(jObject["channel"]);
                 paystack.Status = Convert.ToString(jObject["status"]);
                 paystack.Payload = CommonLogic.Encrypt(returns);
                 paystack.Date = Convert.ToDateTime(jObject["transaction_date"]);
@@ -141,7 +142,7 @@ namespace DominoesProperties.Controllers
 
                 logger.LogError($"{transaction.TransactionRef} : {reference} : {paystack.Status}");
                 logger.LogError($"{paystack.TransactionRef} : Payment successfully done");
-                return Redirect(configuration["app_settings:WebEndpoint"]);
+                return Redirect($"{configuration["app_settings:WebEndpoint"]}?status={paystack.Status}");
             }
             catch (Exception ex)
             {

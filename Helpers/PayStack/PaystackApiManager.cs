@@ -559,10 +559,9 @@ namespace Helpers
 
                 return responseModel;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-
-                throw ex;
+                throw;
             }
         }
 
