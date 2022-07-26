@@ -429,7 +429,7 @@ namespace Models.Context
 
                 entity.Property(e => e.ResponsePayload).HasColumnType("varchar(5000)");
 
-                entity.Property(e => e.Status).HasMaxLength(20);
+                entity.Property(e => e.Status).HasMaxLength(50);
 
                 entity.Property(e => e.TransactionDate).HasDefaultValueSql("CURRENT_TIMESTAMP");
 

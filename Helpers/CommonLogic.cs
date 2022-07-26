@@ -76,10 +76,10 @@ namespace Helpers
             18,52,86,120,144,171,205,239
         };
             byKey = System.Text.Encoding.UTF8.GetBytes("Dominoes");
-            DESCryptoServiceProvider des = new DESCryptoServiceProvider();
+            DESCryptoServiceProvider des = new();
             byte[] inputByteArray = System.Text.Encoding.UTF8.GetBytes(strText);
-            MemoryStream ms = new MemoryStream();
-            CryptoStream cs = new CryptoStream(ms, des.CreateEncryptor(byKey, IV), CryptoStreamMode.Write);
+            MemoryStream ms = new();
+            CryptoStream cs = new(ms, des.CreateEncryptor(byKey, IV), CryptoStreamMode.Write);
             cs.Write(inputByteArray, 0, inputByteArray.Length);
             cs.FlushFinalBlock();
             string encryptedString = Convert.ToBase64String(ms.ToArray());
@@ -113,8 +113,8 @@ namespace Helpers
             byKey = System.Text.Encoding.UTF8.GetBytes("Dominoes");
             DESCryptoServiceProvider des = new DESCryptoServiceProvider();
             inputByteArray = Convert.FromBase64String(stringToDecrypt);
-            MemoryStream ms = new MemoryStream();
-            CryptoStream cs = new CryptoStream(ms, des.CreateDecryptor(byKey, IV), CryptoStreamMode.Write);
+            MemoryStream ms = new();
+            CryptoStream cs = new(ms, des.CreateDecryptor(byKey, IV), CryptoStreamMode.Write);
             cs.Write(inputByteArray, 0, inputByteArray.Length);
             cs.FlushFinalBlock();
             System.Text.Encoding encoding = System.Text.Encoding.UTF8;
@@ -168,7 +168,7 @@ namespace Helpers
         {
             int _min = 10000000;
             int _max = 99999999;
-            Random _rdm = new Random();
+            Random _rdm = new();
             var plainTextBytes = _rdm.Next(_min, _max);
             string random = Convert.ToString(plainTextBytes);
             return string.Format("{0}{1}", type, random.Substring(0, 8));
@@ -184,7 +184,7 @@ namespace Helpers
         {
             int _min = 1000;
             int _max = 9999;
-            Random _rdm = new Random();
+            Random _rdm = new();
             var plainTextBytes = _rdm.Next(_min, _max);
             string random = Convert.ToString(plainTextBytes);
             return string.Format("{0}{1}", type, random.Substring(0, 4));
@@ -485,7 +485,7 @@ namespace Helpers
         {
             int _min = 1000;
             int _max = 9999;
-            Random _rdm = new Random();
+            Random _rdm = new();
             return _rdm.Next(_min, _max);
         }
 
