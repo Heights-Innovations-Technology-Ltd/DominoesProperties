@@ -55,8 +55,8 @@ namespace DominoesPropertiesWeb.HttpContext
                 }
                 else
                 {
-                    jsonObj.success = Convert.ToBoolean(res["success"]);
-                    jsonObj.data = JsonConvert.DeserializeObject<dynamic>(Convert.ToString(res["data"]));
+                    jsonObj.Success = false;
+                    jsonObj.Message = result.StatusCode;
                 }
                 return jsonObj;
             }
@@ -81,8 +81,8 @@ namespace DominoesPropertiesWeb.HttpContext
                 }
                 else
                 {
-                    jsonObj.success = Convert.ToBoolean(res["success"]);
-                    jsonObj.data = JsonConvert.DeserializeObject<dynamic>(Convert.ToString(res["data"]));
+                    jsonObj.Success = false;
+                    jsonObj.Message = result.StatusCode;
                 }
                 return jsonObj;
             }
@@ -119,8 +119,8 @@ namespace DominoesPropertiesWeb.HttpContext
                     }
                     else
                     {
-                        var res = JsonConvert.DeserializeObject<dynamic>(Convert.ToString(responJsonText));
-                        jsonObj.Message = Convert.ToString(res["errors"]);
+                        jsonObj.Success = false;
+                        jsonObj.Message = result.StatusCode;
                     }
                     return jsonObj;
                 }
@@ -157,8 +157,8 @@ namespace DominoesPropertiesWeb.HttpContext
                     }
                     else
                     {
-                        var res = JsonConvert.DeserializeObject<dynamic>(Convert.ToString(responJsonText));
-                        jsonObj.Message = Convert.ToString(res["errors"]);
+                        jsonObj.Success = false;
+                        jsonObj.Message = result.StatusCode;
                     }
                     return jsonObj;
                 }
@@ -194,8 +194,8 @@ namespace DominoesPropertiesWeb.HttpContext
                 }
                 else
                 {
-                    var res = JsonConvert.DeserializeObject<dynamic>(Convert.ToString(responJsonText));
-                    jsonObj.Message = Convert.ToString(res["errors"]);
+                    jsonObj.Success = false;
+                    jsonObj.Message = result.StatusCode;
                 }
                 return jsonObj;
             }

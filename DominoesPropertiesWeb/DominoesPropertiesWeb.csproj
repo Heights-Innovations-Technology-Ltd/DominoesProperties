@@ -28,4 +28,8 @@
     <None Remove="Repository\" />
     <None Remove="Services\" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Repositories\Repositories.csproj" />
+  </ItemGroup>
 </Project>

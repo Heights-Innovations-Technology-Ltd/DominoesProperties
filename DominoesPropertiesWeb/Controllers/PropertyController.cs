@@ -1,5 +1,6 @@
 ﻿using DominoesPropertiesWeb.HttpContext;
 using DominoesPropertiesWeb.Models;
+using DominoesPropertiesWeb.Repository;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -22,21 +23,28 @@ namespace DominoesPropertiesWeb.Controllers
         private readonly ISession session;
 
         private readonly IHttpContext httpContext;
+        private readonly IUploadsRepository _uploadRepository;
         private readonly IWebHostEnvironment hostEnvironment;
 
         string url = string.Empty;
         dynamic jsonObj = new JObject();
 
-        public PropertyController(IConfiguration config, IHttpContextAccessor httpContextAccessor, IHttpContext httpContext, IWebHostEnvironment hostEnvironment)
+        public PropertyController(IConfiguration config, IHttpContextAccessor httpContextAccessor, IHttpContext httpContext, IWebHostEnvironment hostEnvironment, IUploadsRepository uploadRepository)
         {
             _config = config;
             this.session = httpContextAccessor.HttpContext.Session;
             this.httpContext = httpContext;
             this.hostEnvironment = hostEnvironment;
             url = _config["Base_URL"];
+            _uploadRepository = uploadRepository;
         }
         public IActionResult Index()
         {
+            var isAuthAdmin = this.session.GetString("RoleFK");
+            if (isAuthAdmin == null || isAuthAdmin.Equals(string.Empty))
+            {
+                return RedirectToAction("Index", "Home");
+            }
             return View();
         }
 
@@ -247,28 +255,37 @@ namespace DominoesPropertiesWeb.Controllers
         public async Task<JsonResult> uploadDoc(string propertyId)
         {
             var obj = Request.Form["uploadType"];
-
             JObject jObject = JsonConvert.DeserializeObject<JObject>(Convert.ToString(obj));
             var json = Request.Form.Files;
             if (json.Count > 0)
             {
-                using var content = new MultipartFormDataContent();
-
+                //using var content = new MultipartFormDataContent();
+                List<PropertyFileUpload> fileUploads = new List<PropertyFileUpload>();
                 foreach (var file in json)
                 {
-                    var fileContent = new StreamContent(Request.Body);
-                    fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(file.ContentType);
-                    fileContent.Headers.ContentDisposition = new System.Net.Http.Headers.ContentDispositionHeaderValue("form-data")
-                    {
-                        Name = file.Name,
-                        FileName = file.FileName,
-                        //UploadType = Convert.ToInt32(jObject[""])
-                    };
-                    content.Add(fileContent);
+                    #region old implementation
+                    //var fileContent = new StreamContent(Request.Body);
+                    //fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(file.ContentType);
+                    //fileContent.Headers.ContentDisposition = new System.Net.Http.Headers.ContentDispositionHeaderValue("form-data")
+                    //{
+                    //    Name = file.Name,
+                    //    FileName = file.FileName,
+                    //    //UploadType = Convert.ToInt32(jObject[""])
+                    //};
+                    //content.Add(fileContent);
+                    #endregion
 
+                    var upload = new PropertyFileUpload
+                    {
+                        File = file,
+                        UploadType = (UploadType)Convert.ToInt32(jObject["uploadType"])
+                    };
+                    fileUploads.Add(upload);
 
                 }
-                var res = Task.Run(() => httpContext.PostUpload("Property/uploads/" + propertyId, content));
+                var uploadResponse = _uploadRepository.UploadPropertyImages(fileUploads, propertyId, Request);
+
+                var res = Task.Run(() => httpContext.Post("Property/uploads/" + propertyId, uploadResponse));
                 var data = await res.GetAwaiter().GetResult();
                 return Json(JsonConvert.SerializeObject(data));
             }

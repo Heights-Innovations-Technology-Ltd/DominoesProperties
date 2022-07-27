@@ -329,7 +329,7 @@ const profile = (data, mode) => {
 					<h6 class="mb-0">Account Number</h6>
 					</div>
 					<div class="col-sm-9">
-					<p class="text-muted mb-0">${data.accountNumber}</p>
+					<p class="text-muted mb-0">${data.accountNumber == null ? 'Not yet set' : data.accountNumber}</p>
 					</div>
 				</div>
 				<hr>
@@ -338,7 +338,7 @@ const profile = (data, mode) => {
 					<h6 class="mb-0">Bank Name</h6>
 					</div>
 					<div class="col-sm-9">
-					<p class="text-muted mb-0">${data.bankName}</p>
+					<p class="text-muted mb-0">${data.bankName == null ? 'Not yet set' : data.bankName}</p>
 					</div>
 				</div>
 				<hr>
@@ -375,12 +375,19 @@ const GetProperties = (type) => {
         } else {
             var res = JSON.parse(xhr.responseText);
             var data = JSON.parse(res).data;
-
+            console.log(res);
             if (JSON.parse(res).success) {
-                console.log(data);
-                $('#property-count').html(data.length + ' Results Found')
+                console.log(JSON.parse(res).success);
+                $('#property-count').html(data.length + ' Results Found');
+                
                 if (type == "admin") {
+                    console.log('here');
                     adminPropertTmp(data);
+                    //if (data.length > 0) {
+                    //    
+                    //} else {
+                    //    $('#properties').html("<p class='text-center'>Empty propety found, kindly proceed to creat one</p>");
+                    //}
                 } else if (type == "landing") {
                     LandingPagePropertyTmp(data.slice(0, 7));
                     var i = getRandom(data, 1);
@@ -423,6 +430,9 @@ const GetProperties = (type) => {
                     propertiesTmp(data);
                 }
             } else {
+                if (type == "admin" && data.length == 0) {
+                    $('#properties').html("<p class='text-center'>Empty property found, kindly proceed to create one</p>");
+                    } 
                 window.scrollTo(0, 0);
             }
 
@@ -493,7 +503,7 @@ const adminPropertTmp = (data) => {
 											<img src="/images/featured/featured-2.jpg" alt="Image">
 										</div>
 										<div class="featured-content style-three">
-											<div class="d-flex justify-content-between">
+											<div class="justify-content-between">
 												<h3>
 													<a href="/property/viewproperty/${x.uniqueId}">${x.name}</a>
 												</h3>
@@ -545,7 +555,7 @@ const propertiesTmp = (data) => {
 											<img src="/images/featured/featured-2.jpg" alt="Image">
 										</div>
 										<div class="featured-content style-three">
-											<div class="d-flex justify-content-between">
+											<div class="justify-content-between">
 												<h3>
 													<a href="javascript:void(0)" onclick="propertyDetails('${x.uniqueId}')">${x.name}</a>
 												</h3>
@@ -1001,6 +1011,13 @@ $('.btn-property').click(() => {
                             location.reload();
                         }, 2000);
                     } else {
+                        var err = JSON.parse(res).Message;
+                        console.log(err);
+                        Swal.fire(
+                            'Opps!',
+                            err == "401" ? "You don't have permission to perform this action" : "Something went wrong, admin has been contacted",
+                            'error'
+                        );
                         $(".btn-property").html("Submit").attr("disabled", !1);
                         window.scrollTo(0, 0);
                     }
@@ -1277,6 +1294,10 @@ $('#btnUpload').on('click', function () {
     var uploadType = $('#uploadType').val();
     var fileUpload = $("#fileUpload").get(0);
 
+    let params = {
+        "uploadType": uploadType
+    }
+
     var files = fileUpload.files;
 
     if (files.length == 0) {
@@ -1291,7 +1312,7 @@ $('#btnUpload').on('click', function () {
         formData.append("files", files[i]);
     }
 
-    formData.append("uploadType", uploadType);
+    formData.append("uploadType", JSON.stringify(params));
 
     $.ajax(
         {
@@ -1608,9 +1629,10 @@ $('.btn-property-investment').on('click', () => {
                         location = data;
                         $(".btn-property-investment").html("Invest").attr("disabled", !1);
                     } else {
+                        var err = JSON.parse(res).Message;
                         Swal.fire(
                             'Opps!',
-                            data,
+                            err == "Forbiden" ?  "You don't have permission to perform this action" :  "Something went wrong, admin has been contacted",
                             'error'
                         );
                         $(".btn-property-investment").html("Invest").attr("disabled", !1);
