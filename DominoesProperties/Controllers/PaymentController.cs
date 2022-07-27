@@ -92,11 +92,13 @@ namespace DominoesProperties.Controllers
         [HttpGet("verify-payment")]
         public RedirectResult Subscribe([FromQuery] string reference)
         {
+            string url = $"{Request.HttpContext.Request.Scheme}://{Request.HttpContext.Request.Host}{Request.HttpContext.Request.PathBase}";
             var returns = Convert.ToString(payStackApi.VerifyTransaction(reference).Data);
             if (string.IsNullOrWhiteSpace(returns))
             {
                 logger.LogError("Unsuccessful transaction, try again later");
-                return Redirect(configuration["app_settings:WebEndpoint"]);
+                //return Redirect(configuration["app_settings:WebEndpoint"]);
+                return Redirect(url);
             }
 
             JObject jObject = JsonConvert.DeserializeObject<JObject>(returns);
@@ -142,13 +144,15 @@ namespace DominoesProperties.Controllers
 
                 logger.LogError($"{transaction.TransactionRef} : {reference} : {paystack.Status}");
                 logger.LogError($"{paystack.TransactionRef} : Payment successfully done");
-                return Redirect($"{configuration["app_settings:WebEndpoint"]}?status={paystack.Status}");
+                //return Redirect($"{configuration["app_settings:WebEndpoint"]}?status={paystack.Status}");
+                return Redirect($"{url}?status={paystack.Status}");
             }
             catch (Exception ex)
             {
                 logger.LogError(ex.StackTrace);
                 logger.LogError("Error verifying transaction status, we will re-confirm and get back to you");
-                return Redirect(configuration["app_settings:WebEndpoint"]);
+                //return Redirect(configuration["app_settings:WebEndpoint"]);
+                return Redirect(url);
             }
         }
     }
