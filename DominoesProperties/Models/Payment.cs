@@ -8,7 +8,7 @@ namespace DominoesProperties.Models
         public decimal Amount { get; set; }
         public PaymentType Module { get; set; }
         [JsonIgnore]
-        public long InvestmentId { get; set; }
+        public string InvestmentId { get; set; }
         [JsonIgnore]
         public string Callback { get; set; }
     }

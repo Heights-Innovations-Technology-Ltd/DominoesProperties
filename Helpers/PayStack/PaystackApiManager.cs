@@ -105,7 +105,7 @@ namespace Helpers
         {
             try
             {
-                var httpWebRequest = (System.Net.HttpWebRequest)WebRequest.Create(BankListAPI);
+                var httpWebRequest = (HttpWebRequest)WebRequest.Create(BankListAPI);
                 httpWebRequest.Headers.Add("Authorization", "Bearer " + TestKey);
 
                 httpWebRequest.ContentType = "application/json";
@@ -133,7 +133,7 @@ namespace Helpers
         {
             try
             {
-                var httpWebRequest = (System.Net.HttpWebRequest)WebRequest.Create(string.Format(CurrencyApi, currency));
+                var httpWebRequest = (HttpWebRequest)WebRequest.Create(string.Format(CurrencyApi, currency));
 
                 httpWebRequest.ContentType = "application/json";
                 httpWebRequest.Method = "GET";
@@ -164,11 +164,11 @@ namespace Helpers
         /// <returns></returns>
         public ResponseModel CheckBankAccountNumber(string accountNumber, string bankCode)
         {
-            ResponseModel responseModel = new ResponseModel();
+            ResponseModel responseModel = new();
             if (!string.IsNullOrEmpty(accountNumber) && !string.IsNullOrEmpty(bankCode))
             {
 
-                var httpWebRequest = (System.Net.HttpWebRequest)WebRequest.Create(string.Format(ResovleAccountNumberAPI, accountNumber, bankCode));
+                var httpWebRequest = (HttpWebRequest)WebRequest.Create(string.Format(ResovleAccountNumberAPI, accountNumber, bankCode));
                 httpWebRequest.Headers.Add("Authorization", "Bearer " + TestKey);
                 httpWebRequest.Method = "GET";
 
@@ -266,7 +266,7 @@ namespace Helpers
             if (string.IsNullOrEmpty(customer_code))
             {
                 //create customer 
-                string inputJson = JsonConvert.SerializeObject(new { email = email, first_name = firstname, last_name = lastname, phone = phone });
+                string inputJson = JsonConvert.SerializeObject(new PropsJson(email, firstname, lastname, phone));
                 responseModel = CallApi(postCreateCustomer, "POST", null, inputJson);
                 if (responseModel.Status)
                 {
@@ -317,7 +317,7 @@ namespace Helpers
                 if (!responseModel.Status)
                 {
                     //if that customer code deleted from paystack then create that customer 
-                    string inputJsoncreatecustomer = JsonConvert.SerializeObject(new { email = email, first_name = firstname, last_name = lastname, phone = phone });
+                    string inputJsoncreatecustomer = JsonConvert.SerializeObject(new PropsJson(email, firstname, lastname, phone));
                     responseModel = CallApi(postCreateCustomer, "POST", parameter, inputJsoncreatecustomer);
                     if (responseModel.Status)
                     {
@@ -442,7 +442,7 @@ namespace Helpers
         public bool CheckPaystackBalance(decimal amount)
         {
             string[] parameter = { };
-            ResponseModel responseModel = new ResponseModel();
+            ResponseModel responseModel = new();
             responseModel = CallApi(getCheckBalance, "GET", parameter);
             List<CheckBalanceList> checkBalanceLists = JsonConvert.DeserializeObject<List<CheckBalanceList>>(Convert.ToString(responseModel.Data));
             if (checkBalanceLists != null && checkBalanceLists.Count > 0)
@@ -462,7 +462,7 @@ namespace Helpers
         public decimal GetPaystackBalance()
         {
             string[] parameter = { };
-            ResponseModel responseModel = new ResponseModel();
+            ResponseModel responseModel = new();
             responseModel = CallApi(getCheckBalance, "GET", parameter);
             List<CheckBalanceList> checkBalanceLists = JsonConvert.DeserializeObject<List<CheckBalanceList>>(Convert.ToString(responseModel.Data));
             if (checkBalanceLists != null && checkBalanceLists.Count > 0)
@@ -493,7 +493,7 @@ namespace Helpers
 
             try
             {
-                ResponseModel responseModel = new ResponseModel();
+                ResponseModel responseModel = new();
                 string inputJson = string.Empty;
                 if (IsCard)
                 {
@@ -546,7 +546,7 @@ namespace Helpers
         {
             try
             {
-                ResponseModel responseModel = new ResponseModel();
+                ResponseModel responseModel = new();
                 string inputJson = string.Empty;
                 var parameters = new
                 {
@@ -559,10 +559,9 @@ namespace Helpers
 
                 return responseModel;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-
-                throw ex;
+                throw;
             }
         }
 
@@ -570,7 +569,7 @@ namespace Helpers
         {
             try
             {
-                ResponseModel responseModel = new ResponseModel();
+                ResponseModel responseModel = new();
                 string[] parameter = { reference };
                 responseModel = CallApi(getVerfiyTransaction, "GET", parameter);
 
@@ -609,7 +608,7 @@ namespace Helpers
         {
             try
             {
-                ResponseModel responseModel = new ResponseModel();
+                ResponseModel responseModel = new();
                 string inputJson = string.Empty;
                 var parameters = new
                 {
@@ -654,11 +653,11 @@ namespace Helpers
         /// <returns></returns>
         private bool Transferreceipntexits(string transferreceipntcode)
         {
-            ResponseModel responseModel = new ResponseModel();
+            ResponseModel responseModel = new();
             bool yesorno = false;
             string[] parameter = { };
             responseModel = CallApi(getCheckrecipientcode, "GET", parameter);
-            List<RecipientsModel> recipientsModels = new List<RecipientsModel>();
+            List<RecipientsModel> recipientsModels = new();
             recipientsModels = JsonConvert.DeserializeObject<List<RecipientsModel>>(Convert.ToString(responseModel.Data));
             var obj = recipientsModels.FirstOrDefault(x => x.recipient_code == transferreceipntcode && !x.is_deleted);
             if (obj != null)
@@ -707,12 +706,12 @@ namespace Helpers
         /// <returns></returns>
         private ResponseModel CallApi(string api, string apitype, string[] args = null, string inputjson = null)
         {
-            ResponseModel responseModel = new ResponseModel();
+            ResponseModel responseModel = new();
             try
             {
                 if (apitype.Equals("GET"))
                 {
-                    var httpWebRequest = (System.Net.HttpWebRequest)WebRequest.Create(string.Format(api, args));
+                    var httpWebRequest = (HttpWebRequest)WebRequest.Create(string.Format(api, args));
                     httpWebRequest.Headers.Add("Authorization", "Bearer " + TestKey);
                     httpWebRequest.Method = apitype;
 
@@ -734,7 +733,7 @@ namespace Helpers
                 }
                 else
                 {
-                    var httpWebRequest = (System.Net.HttpWebRequest)WebRequest.Create(api);
+                    var httpWebRequest = (HttpWebRequest)WebRequest.Create(api);
                     httpWebRequest.Headers.Add("Authorization", "Bearer " + TestKey);
                     httpWebRequest.Method = apitype;
                     httpWebRequest.ContentType = "application/json";
@@ -748,7 +747,7 @@ namespace Helpers
                     }
                     using (WebResponse response1 = (HttpWebResponse)httpWebRequest.GetResponse())
                     {
-                        using (StreamReader reader = new StreamReader(response1.GetResponseStream(), Encoding.UTF8))
+                        using (StreamReader reader = new(response1.GetResponseStream(), Encoding.UTF8))
                         {
                             var respo = reader.ReadToEnd();
                             responseModel = JsonConvert.DeserializeObject<ResponseModel>(respo);
@@ -775,4 +774,6 @@ namespace Helpers
 
 
     }
+
+    internal record PropsJson(string Email, string First_name, string Last_name, string Phone);
 }

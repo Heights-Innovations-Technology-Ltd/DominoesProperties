@@ -65,20 +65,19 @@ namespace DominoesProperties.Controllers
                 CustomerId = customer.Id,
                 PropertyId = property.Id,
                 Units = investment.Units,
-                Yield = ((property.TargetYield * property.UnitPrice)/100) * investment.Units,
+                YearlyInterestAmount = (property.TargetYield * property.UnitPrice)/100 * investment.Units,
+                Yield = property.TargetYield,
                 PaymentType = PaymentType.PROPERTY_PURCHASE.ToString(),
                 TransactionRef = Guid.NewGuid().ToString()
             };
             
-            newInvestment.YearlyInterestAmount = newInvestment.Amount * newInvestment.Yield;
-            long investmentId = investmentRepository.AddInvestment(newInvestment);
-            if(investmentId != 0){
+            if(investmentRepository.AddInvestment(newInvestment) != 0){
                 Payment pay = new()
                 {
                     Amount = newInvestment.Amount,
                     Module = PaymentType.PROPERTY_PURCHASE,
-                    InvestmentId = investmentId,
-                    Callback = string.Format("{0}/{1}", $"{this.Request.Scheme}://{this.Request.Host}{this.Request.PathBase}", "api/payment/verify-payment")
+                    InvestmentId = newInvestment.TransactionRef,
+                    Callback = string.Format("{0}/{1}", $"{Request.Scheme}://{Request.Host}{Request.PathBase}", "api/payment/verify-payment")
                 };
                 return paymentController.DoInitPayment(pay, customer.UniqueRef);
             }

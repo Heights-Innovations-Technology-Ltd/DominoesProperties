@@ -15,7 +15,7 @@ namespace Repositories.Service
 
         public PaystackPayment GetPaystack(string reference)
         {
-            return _context.PaystackPayments.Where(x => x.TransactionRef.Equals(reference)).FirstOrDefault();
+            return _context.PaystackPayments.Where(x => x.PaystackRef.Equals(reference)).FirstOrDefault();
         }
 
         public void NewPayment(PaystackPayment paystack)
