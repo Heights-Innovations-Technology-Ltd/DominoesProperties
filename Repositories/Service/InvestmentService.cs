@@ -33,6 +33,13 @@ namespace Repositories.Service
                 .Where(x => x.CustomerId.Equals(customerId)).ToList();
         }
 
+        public Investment GetNewInvestments(string transactionRef)
+        {
+            return _context.Investments
+                .Include(x => x.Property)
+                .Where(x => x.TransactionRef.Equals(transactionRef)).FirstOrDefault();
+        }
+
         public PagedList<Investment> GetInvestments(QueryParams pageParams)
         {
             return PagedList<Investment>.ToPagedList(_context.Investments.OrderBy(on => on.Id),

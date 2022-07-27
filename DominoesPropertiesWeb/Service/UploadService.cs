@@ -7,7 +7,6 @@ using DominoesPropertiesWeb.Models;
 using DominoesPropertiesWeb.Repository;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Configuration;
 
 namespace DominoesPropertiesWeb.Service
 {
@@ -27,7 +26,7 @@ namespace DominoesPropertiesWeb.Service
             string url = "";
             try
             {
-                string path = Path.GetFullPath(Path.Combine(hostEnvironment.WebRootPath, "Uploads/Passport"));
+                string path = Path.GetFullPath(Path.Combine(hostEnvironment.WebRootPath, "uploads/passport"));
                 if (!Directory.Exists(path))
                 {
                     Directory.CreateDirectory(path);
@@ -66,7 +65,7 @@ namespace DominoesPropertiesWeb.Service
             List<PropertyUpload> properties = new();
             try
             {
-                string path = Path.GetFullPath(Path.Combine(hostEnvironment.WebRootPath, "Uploads/Property"));
+                string path = Path.GetFullPath(Path.Combine(hostEnvironment.WebRootPath, "uploads/property"));
                 if (!Directory.Exists(path))
                 {
                     Directory.CreateDirectory(path);

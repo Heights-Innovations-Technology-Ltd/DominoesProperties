@@ -11,5 +11,6 @@ namespace Repositories.Repository
         List<Investment> GetInvestments(long customerId);
         PagedList<Investment> GetInvestments(QueryParams queryParams);
         Investment GetInvestment(long investmentId);
+        Investment GetNewInvestments(string transactionRef);
     }
 }

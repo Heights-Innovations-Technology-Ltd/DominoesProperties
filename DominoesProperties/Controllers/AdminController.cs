@@ -108,6 +108,12 @@ namespace DominoesProperties.Controllers
         public ApiResponse Login([FromBody] Login login)
         {
             Admin admin = adminRepository.GetUser(login.Email);
+            if(admin == null)
+            {
+                response.Success = false;
+                response.Message = $"Invalid username {login.Email} or password supplied";
+                return response;
+            }
             if (!admin.IsActive.Value)
             {
                 response.Success = false;
