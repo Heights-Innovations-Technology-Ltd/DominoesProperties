@@ -97,8 +97,7 @@ namespace DominoesProperties.Controllers
             if (string.IsNullOrWhiteSpace(returns))
             {
                 logger.LogError("Unsuccessful transaction, try again later");
-                //return Redirect(configuration["app_settings:WebEndpoint"]);
-                return Redirect($"{url}?status=error");
+                return Redirect($"{configuration["app_settings:WebEndpoint"]}?reference={reference}status=error");
             }
 
             JObject jObject = JsonConvert.DeserializeObject<JObject>(returns);
@@ -124,7 +123,7 @@ namespace DominoesProperties.Controllers
 
                 transactionRepository.NewTransaction(transaction);
 
-                if (paystack.PaymentModule.Equals(PaymentType.FUND_WALLET))
+                if (paystack.PaymentModule.Equals(PaymentType.FUND_WALLET.ToString()))
                 {
                     Wallet wallet = walletRepository.GetCustomerWallet(transaction.CustomerId);
                     wallet.Balance += paystack.Amount;
@@ -144,15 +143,13 @@ namespace DominoesProperties.Controllers
 
                 logger.LogError($"{transaction.TransactionRef} : {reference} : {paystack.Status}");
                 logger.LogError($"{paystack.TransactionRef} : Payment successfully done");
-                //return Redirect($"{configuration["app_settings:WebEndpoint"]}?status={paystack.Status}");
-                return Redirect($"{url}?status={paystack.Status}");
+                return Redirect($"{configuration["app_settings:WebEndpoint"]}?status={paystack.Status}");
             }
             catch (Exception ex)
             {
                 logger.LogError(ex.StackTrace);
                 logger.LogError("Error verifying transaction status, we will re-confirm and get back to you");
-                //return Redirect(configuration["app_settings:WebEndpoint"]);
-                return Redirect($"{url}?status=error");
+                return Redirect($"{configuration["app_settings:WebEndpoint"]}?reference={reference}status=error");
             }
         }
     }
