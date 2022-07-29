@@ -92,11 +92,10 @@ namespace DominoesProperties.Controllers
         [HttpGet("verify-payment")]
         public RedirectResult Subscribe([FromQuery] string reference)
         {
-            string url = $"{Request.HttpContext.Request.Scheme}://{Request.HttpContext.Request.Host}{Request.HttpContext.Request.PathBase}";
             var returns = Convert.ToString(payStackApi.VerifyTransaction(reference).Data);
             if (string.IsNullOrWhiteSpace(returns))
             {
-                logger.LogError("Unsuccessful transaction, try again later");
+                logger.LogError($"{DateTime.Now} : Payment : verify-payment: {reference} | Unsuccessful transaction for reference");
                 return Redirect($"{configuration["app_settings:WebEndpoint"]}?reference={reference}status=error");
             }
 
@@ -134,6 +133,7 @@ namespace DominoesProperties.Controllers
                 else if (paystack.PaymentModule.Equals(PaymentType.PROPERTY_PURCHASE.ToString()))
                 {
                     var investment = investmentRepository.GetNewInvestments(paystack.TransactionRef);
+                    investment.Status = paystack.Status.ToLower().Equals("success") ? "COMPLETED" : "DECLINED";
                     investment.Property.UnitAvailable = investment.Property.UnitAvailable - investment.Units;
                     investment.Property.UnitSold = investment.Property.UnitSold + investment.Units;
                     investment.Property.Status = PropertyStatus.CLOSED_FOR_INVESTMENT.ToString();
@@ -148,7 +148,7 @@ namespace DominoesProperties.Controllers
             catch (Exception ex)
             {
                 logger.LogError(ex.StackTrace);
-                logger.LogError("Error verifying transaction status, we will re-confirm and get back to you");
+                logger.LogError($"{DateTime.Now} : Payment : verify-payment: {reference} | rror verifying transaction status");
                 return Redirect($"{configuration["app_settings:WebEndpoint"]}?reference={reference}status=error");
             }
         }

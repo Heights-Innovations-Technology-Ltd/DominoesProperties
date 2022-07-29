@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Runtime;
 using DominoesProperties.Enums;
 using DominoesProperties.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -68,7 +67,8 @@ namespace DominoesProperties.Controllers
                 YearlyInterestAmount = (property.TargetYield * property.UnitPrice)/100 * investment.Units,
                 Yield = property.TargetYield,
                 PaymentType = PaymentType.PROPERTY_PURCHASE.ToString(),
-                TransactionRef = Guid.NewGuid().ToString()
+                TransactionRef = Guid.NewGuid().ToString(),
+                Status = "PENDING"
             };
             
             if(investmentRepository.AddInvestment(newInvestment) != 0){
