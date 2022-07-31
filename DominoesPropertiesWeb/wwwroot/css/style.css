@@ -162,6 +162,9 @@ body {
     font-style: normal;
     font-weight: normal;
     color: #757575;
+    -moz-transform: scale(0.9, 0.9); /* Moz-browsers */
+    zoom: 0.9; /* Other non-webkit browsers */
+    zoom: 90%; /* Webkit browsers */
 }
 
 a {
@@ -203,6 +206,10 @@ button:focus {
 .d-table {
   width: 100%;
   height: 100%;
+}
+
+.canvas-img {
+    border: 1px solid #e3e9ed;
 }
 
 .d-table-cell {
@@ -1362,20 +1369,21 @@ Banner Area Style
 }
 
 .banner-content .top-title {
-  color: #006766;
-  margin-bottom: 15px;
-  display: block;
+    color: #006766;
+    margin-bottom: 15px;
+    display: block;
+    font-size: 20px;
 }
 
 .banner-content h1 {
-  font-size: 90px;
+  font-size: 85px;
   margin-bottom: 30px;
   font-weight: 800;
 }
 
 .banner-content p {
   margin-bottom: 40px;
-  font-size: 18px;
+  font-size: 20px;
   max-width: 600px;
 }
 
@@ -4245,7 +4253,7 @@ label {
 .room {
     width: 50%;
     height: 100%;
-    background: url(https://images.unsplash.com/photo-1470274038469-958113db2384?auto=format&fit=crop&w=1875&q=80) no-repeat center center;
+    background: url('/images/3bedrm-house-plan-C.jpg') no-repeat center center;
     background-size: cover;
     display: inline-block;
     vertical-align: top;

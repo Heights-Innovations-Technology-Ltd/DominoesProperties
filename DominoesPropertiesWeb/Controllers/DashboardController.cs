@@ -38,16 +38,31 @@ namespace DominoesPropertiesWeb.Controllers
 
         public IActionResult Profile()
         {
+            var userAuth = this.session.GetString("Token");
+            if (userAuth == null || userAuth.Equals(string.Empty))
+            {
+                return RedirectToAction("SignIn", "Home");
+            }
             return View();
         }
 
         public IActionResult EditProfile()
         {
+            var userAuth = this.session.GetString("Token");
+            if (userAuth == null || userAuth.Equals(string.Empty))
+            {
+                return RedirectToAction("SignIn", "Home");
+            }
             return View();
         }
 
         public IActionResult Investments()
         {
+            var isAuthAdmin = this.session.GetString("Token");
+            if (isAuthAdmin == null || isAuthAdmin.Equals(string.Empty))
+            {
+                return RedirectToAction("SignIn", "Home");
+            }
             return View();
         }
 

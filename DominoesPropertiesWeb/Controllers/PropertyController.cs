@@ -320,11 +320,14 @@ namespace DominoesPropertiesWeb.Controllers
         {
             JObject jObject = JsonConvert.DeserializeObject<JObject>(Convert.ToString(request));
             dynamic obj = new ExpandoObject();
-            obj.Subject = Convert.ToInt32(jObject["Subject"]);
-            obj.Message = Convert.ToInt32(jObject["Message"]);
+            obj.Subject = Convert.ToString(jObject["Subject"]);
+            obj.Message = Convert.ToString(jObject["Message"]);
+            obj.CustomerUniqueReference = Convert.ToString(jObject["CustomerRef"]);
+            obj.PropertyReference = Convert.ToString(jObject["PropertyRef"]);
             var res = Task.Run(() => httpContext.Post("Util/enquiry", obj));
-            await Task.WhenAll(res);
-            var data = res.Status == TaskStatus.RanToCompletion ? res.Result : null;
+            var data = await res.GetAwaiter().GetResult();
+            // await Task.WhenAll(res);
+            //var data = res.Status == TaskStatus.RanToCompletion ? res.Result : null;
             return Json(JsonConvert.SerializeObject(data));
         }
     }

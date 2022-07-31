@@ -105,11 +105,8 @@ $('.btn-login').click(() => {
         } else {
             var res = JSON.parse(xhr.responseText);
             var data = JSON.parse(res).data;
-            console.log(data);
-          
             if (JSON.parse(res).success) {
-                console.log(data);
-                location = "/Dashboard";
+                window.location.replace('/dashboard');
                 $(".btn-login").html("Login").attr("disabled", !1);
                 $(".form-control").val("");
             } else {
@@ -157,18 +154,14 @@ $('.btn-adminlogin').click(() => {
     xhr.setRequestHeader("content-type", "application/json");
     xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
     try {
-
         xhr.send(JSON.stringify(params));
         if (xhr.status != 200) {
             // alert('Something went wrong try again!');
         } else {
             var res = JSON.parse(xhr.responseText);
             var data = JSON.parse(res).data;
-            console.log(data);
-          
             if (JSON.parse(res).success) {
-                console.log(data);
-                location = "/Dashboard";
+                window.location.replace('/dashboard');
                 $(".btn-login").html("Login").attr("disabled", !1);
                 $(".form-control").val("");
             } else {
@@ -178,7 +171,6 @@ $('.btn-adminlogin').click(() => {
                 $(".btn-login").html("Login").attr("disabled", !1);
 
             }
-
         }
     } catch (err) { // instead of onerror
         //alert("Request failed");
@@ -187,14 +179,12 @@ $('.btn-adminlogin').click(() => {
 });
 
 const GetUserProfile = (mode) => {
-    
     let xhr = new XMLHttpRequest();
     let url = "/get-customer";
     xhr.open('GET', url, false);
     xhr.setRequestHeader("content-type", "application/json");
     xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
     try {
-
         xhr.send();
         if (xhr.status != 200) {
             // alert('Something went wrong try again!');
@@ -203,13 +193,11 @@ const GetUserProfile = (mode) => {
             var data = JSON.parse(res).data;
 
             if (JSON.parse(res).success) {
-                console.log(data);
                 profile(data,mode);
                
             } else {
                 window.scrollTo(0, 0);
             }
-
         }
     } catch (err) { // instead of onerror
         //alert("Request failed");
@@ -217,27 +205,22 @@ const GetUserProfile = (mode) => {
 }
 
 const GetUserDashboard = () => {
-    
     let xhr = new XMLHttpRequest();
     let url = "/customer-dashboard";
     xhr.open('GET', url, false);
     xhr.setRequestHeader("content-type", "application/json");
     xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
     try {
-
         xhr.send();
         if (xhr.status != 200) {
             // alert('Something went wrong try again!');
         } else {
             var res = JSON.parse(xhr.responseText);
             var data = JSON.parse(res).data;
-
             if (JSON.parse(res).success) {
-                console.log(data);
                 $('.total-investment').text(data.TotalInvestment);
                 $('.active-investment').text(data.ActiveInvestment);
                 $('.closed-investment').text(data.ClosedInvestment);
-               
             } else {
                 window.scrollTo(0, 0);
             }
@@ -249,7 +232,6 @@ const GetUserDashboard = () => {
 }
 
 const GetUAdminDashboard = () => {
-    
     let xhr = new XMLHttpRequest();
     let url = "/admin-dashboard";
     xhr.open('GET', url, false);
@@ -265,7 +247,6 @@ const GetUAdminDashboard = () => {
             var data = JSON.parse(res).data;
 
             if (JSON.parse(res).success) {
-                console.log(data);
                 $('.total-property').text(data.TotalProperty);
                 $('.total-investment').text(data.TotalInvestment);
                 $('.active-investment').text(data.ActiveInvestment);
@@ -276,7 +257,6 @@ const GetUAdminDashboard = () => {
             } else {
                 window.scrollTo(0, 0);
             }
-
         }
     } catch (err) { // instead of onerror
         //alert("Request failed");
@@ -291,6 +271,8 @@ const profile = (data, mode) => {
         $('#phone').val(data.phone);
         $('#address').val(data.address);
         $('#account').val(data.accountNumber);
+    }else if (mode == "dashboard") {
+        $('#walletBalance').html('&#8358; ' + data.walletBalance);
     } else {
         $('.fullName').text(data.firstName + " " + data.lastName);
         $('.walletId').html("wallet ID ( <strong>" + data.walletId + "</strong> )");
@@ -375,19 +357,11 @@ const GetProperties = (type) => {
         } else {
             var res = JSON.parse(xhr.responseText);
             var data = JSON.parse(res).data;
-            console.log(res);
             if (JSON.parse(res).success) {
-                console.log(JSON.parse(res).success);
                 $('#property-count').html(data.length + ' Results Found');
                 
                 if (type == "admin") {
-                    console.log('here');
                     adminPropertTmp(data);
-                    //if (data.length > 0) {
-                    //    
-                    //} else {
-                    //    $('#properties').html("<p class='text-center'>Empty propety found, kindly proceed to creat one</p>");
-                    //}
                 } else if (type == "landing") {
                     LandingPagePropertyTmp(data.slice(0, 7));
                     var i = getRandom(data, 1);
@@ -424,8 +398,7 @@ const GetProperties = (type) => {
 									${i[0].description["floorLevel"]} Floor
 								</li>
 						    </ul>
-                       `)
-                    console.log(i);
+                       `);
                 } else {
                     propertiesTmp(data);
                 }
@@ -474,7 +447,6 @@ $('.btn-filter-property').click(() => {
         } else {
             var res = JSON.parse(xhr.responseText);
             var data = JSON.parse(res).data;
-            console.log(res);
             if (JSON.parse(res).success) {
                 $('#property-count').html(data.length + ' Results Found')
                 propertiesTmp(data);
@@ -659,7 +631,7 @@ const LandingPagePropertyTmp = (data) => {
 const propertyDetails = (id) => {
 
     if ($('#refId').val() == null || $('#refId').val() == "") {
-        location = "/Home/signin";
+        window.location.replace('/Home/signin');
         return;
     }
 
@@ -673,22 +645,22 @@ const propertyDetails = (id) => {
     //    return;
     //}
 
-    location = '/Home/PropertyDetails/' + id;
+    window.location.replace('/Home/PropertyDetails/' + id);
 }
 
 $('.edit-property').click(() => {
     let urls = window.location.href.split("/");
     let id = urls[5];
     let url = `/property/edit/${id}`;
-    location = url;
+    window.location.replace(url);
 });
 
 const getSingleProperty = () => {
 
-    //if ($('#isSubcribed').val() == "False" && $('#refId').val() != "") {
-    //    location = '/Dashboard/Profile';
-    //    return;
-    //}
+    if ($('#isSubcribed').val() == "False" && $('#refId').val() != "") {
+        location = '/Dashboard/Profile';
+        return;
+    }
     
     let urls = window.location.href.split("/");
     let id = urls[5];
@@ -809,15 +781,14 @@ const getSingleProperty = () => {
                 $('#checkoutPrice').html("&#8358; " + formatToCurrency(data.unitPrice) + " / Unit");
                 $('.checkoutPrice').html(formatToCurrency(data.unitPrice));
                 $('#availableUnit').html("Available Unit : " +  data.unitAvailable);
-                $('#closeDate').html("Investment End On " + moment(data.closingDate).format('MMMM Do YYYY'));
+                //$('#closeDate').html("Investment End On " + moment(data.closingDate).format('MMMM Do YYYY'));
                 $('.total').html("&#8358; " + formatToCurrency(data.unitPrice));
                 let price = Number($('#price').text().replace(/[^0-9\.-]+/g, "").replace("₦", ""));
                 $('.groundTotal').html("&#8358; " + formatToCurrency(price * $('#unit').val()));
-                console.log(data);
+                $('.yield').html(data.targetYield + "<sup>%</sup>");
             } else {
                 
                 window.scrollTo(0, 0);
-                //console.log(data);
             }
 
         }
@@ -839,10 +810,10 @@ $('#unit').on('input', () => {
 
 const editSingleProperty = () => {
 
-    //if ($('#isSubcribed').val() == "False" && $('#refId').val() != "") {
-    //    location = '/Dashboard/Profile';
-    //    return;
-    //}
+    if ($('#isSubcribed').val() == "False" && $('#refId').val() != "") {
+        window.location.replace('/Dashboard/Profile/');
+        return;
+    }
 
     let urls = window.location.href.split("/");
     let id = urls[5];
@@ -892,11 +863,9 @@ const editSingleProperty = () => {
                 $("#logitude").val(data.longitude);
                 $("#latitude").val(data.latitude);
                 $("#description").val(data.summary);
-                console.log(data);
             } else {
 
                 window.scrollTo(0, 0);
-                //console.log(data);
             }
 
         }
@@ -981,7 +950,6 @@ $('.btn-property').click(() => {
 
             };
 
-            console.log(params);
             let xhr = new XMLHttpRequest();
             let url = "/create-property";
             xhr.open('POST', url, false);
@@ -995,10 +963,8 @@ $('.btn-property').click(() => {
                     var res = JSON.parse(xhr.responseText);
                     var data = JSON.parse(res).Data;
                     var Message = JSON.parse(res).Message;
-                    console.log(res);
                     if (JSON.parse(res).Success) {
                         window.scrollTo(0, 0);
-                        //message(JSON.parse(res).Message, "success");
                         $('.form-control').val('');
                         $(".btn-property").html("Submit").attr("disabled", !1);
                         Swal.fire(
@@ -1012,7 +978,6 @@ $('.btn-property').click(() => {
                         }, 2000);
                     } else {
                         var err = JSON.parse(res).Message;
-                        console.log(err);
                         Swal.fire(
                             'Opps!',
                             err == "401" ? "You don't have permission to perform this action" : "Something went wrong, admin has been contacted",
@@ -1104,7 +1069,6 @@ $('.btn-update-property').click(() => {
 
             };
 
-            console.log(params);
             let xhr = new XMLHttpRequest();
             let url = "/update-property/" + id;
             xhr.open('PUT', url, false);
@@ -1117,20 +1081,14 @@ $('.btn-update-property').click(() => {
                 } else {
                     var res = JSON.parse(xhr.responseText);
                     var data = JSON.parse(res).Data;
-                    console.log(res);
                     if (JSON.parse(res).Success) {
                         window.scrollTo(0, 0);
-                        //message(JSON.parse(res).Message, "success");
-                        //$('.form-control').val('');
                         $(".btn-update-property").html("Edit").attr("disabled", !1);
                         Swal.fire(
                             'Good job!',
                             JSON.parse(res).Message,
                             'success'
                         );
-                        //setTimeout(() => {
-                        //    location.reload();
-                        //}, 2000);
                     } else {
                         $(".btn-update-property").html("Edit").attr("disabled", !1);
                         window.scrollTo(0, 0);
@@ -1152,37 +1110,6 @@ $('.btn-update-property').click(() => {
             )
         }
     });
-
-    //const confirmPropertyUpdate = Swal.mixin({
-    //    customClass: {
-    //        confirmButton: 'btn btn-success',
-    //        cancelButton: 'btn btn-danger'
-    //    },
-    //    buttonsStyling: false
-    //})
-
-    //confirmPropertyUpdate.fire({
-    //    title: 'Are you sure?',
-    //    text: "To make changes to this property data!",
-    //    icon: 'warning',
-    //    showCancelButton: true,
-    //    confirmButtonText: 'Yes, update it!',
-    //    cancelButtonText: 'No, cancel!',
-    //    reverseButtons: true
-    //}).then((result) => {
-    //    if (result.isConfirmed) {
-
-    //    } else if (
-    //        /* Read more about handling dismissals below */
-    //        result.dismiss === Swal.DismissReason.cancel
-    //    ) {
-    //        confirmPropertyUpdate.fire(
-    //            'Cancelled',
-    //            'No changes was made :)',
-    //            'error'
-    //        )
-    //    }
-    //});
 });
 
 $('.btn-update-decription').click(() => {
@@ -1240,12 +1167,9 @@ $('.btn-update-decription').click(() => {
                 } else {
                     var res = JSON.parse(xhr.responseText);
                     var data = JSON.parse(res).Data;
-                    console.log(res);
                     if (JSON.parse(res).Success) {
                         window.scrollTo(0, 0);
-                        //message("Description updated successfully", "success");
                         $('#descriptionModal').modal('hide');
-                        //$('.form-control').val('');
                         Swal.fire(
                             'Good job!',
                             JSON.parse(res).Message,
@@ -1284,7 +1208,6 @@ $('#btnUpload').on('click', function () {
     var e = "";
     let urls = window.location.href.split("/");
     let id = urls[5];
-    console.log($('#uploadType').val());
     if ($('#uploadType').val() == "") {
         $('.msg').html(message("Upload type must be selected", "error"));
         return;
@@ -1345,7 +1268,6 @@ const GetInvestments = () => {
             var data = JSON.parse(res).data;
 
             if (JSON.parse(res).success) {
-                console.log(data);
                 investmentTmp(data);
             } else {
                 window.scrollTo(0, 0);
@@ -1359,55 +1281,130 @@ const GetInvestments = () => {
 
 const investmentTmp = (data) => {
     $('#investments').html('');
-
+    let i = {
+        yearlyInterest: 0,
+        amount: 0
+    };
+   
     data.forEach(x => {
-        let res = `<div class="col-lg-6 col-md-6">
-									<div class="single-featured-item">
-                                    <a href="javascript:void(0)" onclick="propertyDetails('${x.uniqueId}')">
-										<div class="featured-img mb-0">
-											<img src="/images/featured/featured-2.jpg" alt="Image">
-										</div>
-										<div class="featured-content style-three">
-											<div class="d-flex btn-subscribejustify-content-between">
-												<h3>
-													<a href="javascript:void(0)" onclick="propertyDetails('${x.uniqueId}')">${x.name}</a>
-												</h3>
-												 <h3 class="price">&#8358;${formatToCurrency(x.unitPrice)}</h3>
-											</div>
-											<p>
-												<i class="ri-map-pin-fill"></i>
-												${x.location}
-											</p>
-											<ul>
-												<li>
-													<i class="ri-hotel-bed-fill"></i>
-													${x.description["bedroom"]} Bed
-												</li>
-												<li>
-													<i class="ri-wheelchair-fill"></i>
-													${x.description["bathroom"]} Bath
-												</li>
-												<li>
-													<i class="ri-ruler-2-line"></i>
-													${x.description["landSize"]} Sqft
-												</li>
-                                                <li>
-													<i class="ri-wheelchair-fill"></i>
-													${x.description["toilet"]} Toilet
-												</li>
-                                                <li>
-													<i class="ri-building-2-fill"></i>
-													${x.description["floorLevel"]} Floor
-												</li>
-											</ul>
-										</div>
-                                    </a>
-									</div>
-								</div>`;
+        i = {
+            yearlyInterest: x.yearlyInterestAmount + x.amount,
+            amount: x.amount
+        };
 
-        $('#invetments').append(res);
+        var investmentDate = moment(x.paymentDate).subtract(10, 'days').calendar();
+        var maturedDate = new Date(investmentDate);
+        maturedDate.setMonth(maturedDate.getMonth() + 11);
+
+        const ctx = document.getElementsByClassName('myChart' + x.transactionRef);
+        let res = `<div class="col-lg-4 col-md-4">
+					    <div class="single-featured-item">
+						    <div class="canvas-img" mb-0 p-4">
+							   <canvas class="myChart${x.transactionRef}" width="400" height="400"></canvas>
+						    </div>
+						    <div class="featured-content style-three">
+							    <div class="justify-content-between">
+                                     <h3>
+									    Investment <small class="float-end">${x.property}</small>
+								    </h3>
+								    <h3>
+									    Yearly Interest <small class="float-end">${x.yield}<sup>%</sup></small>
+								    </h3>
+									<h3>
+                                        Amount Invest <small class="price float-end"><sup>&#8358;</sup>${formatToCurrency(x.amount)}</small>
+                                    </h3>
+                                    <h3>
+									    Yearly Return <small class="price float-end"><sup>&#8358;</sup>${formatToCurrency(x.yearlyInterestAmount)}</small>
+								    </h3>
+                                    <h3>
+									    Unit <small class="float-end">${x.units}</small>
+								    </h3>
+                                    <p class="p-0" style="border-bottom:none">
+								        Investment Date
+                                        <small class="float-end">${moment(x.paymentDate).format('MMMM Do YYYY')}</small>
+							        </p>
+                                    <p class="p-0" style="border-bottom:none">
+								        Matured Date
+                                        <small class="float-end">${moment(maturedDate).format('MMMM Do YYYY')}</small>
+							        </p>
+							    </div>
+						    </div>
+					    </div>
+				    </div>`;
+        $('#investments').append(res);
+        myChart(i, ctx);
     });
 }
+
+
+
+const myChart = (i, ctx) => new Chart(ctx, {
+    type: 'pie',
+    data: {
+        labels: [
+            'Amount',
+            'Yearly Interest'
+        ],
+        datasets: [{
+            label: 'Investment',
+            data: [i.amount, i.yearlyInterest],
+            backgroundColor: [
+                'rgb(234, 114, 61)',
+                'rgb(0, 103, 102)',
+            ],
+            hoverOffset: 2
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                labels: {
+                    generateLabels: function (chart) {
+                        // Get the default label list
+                        const original = Chart.overrides.pie.plugins.legend.labels.generateLabels;
+                        const labelsOriginal = original.call(this, chart);
+
+                        // Build an array of colors used in the datasets of the chart
+                        let datasetColors = chart.data.datasets.map(function (e) {
+                            return e.backgroundColor;
+                        });
+                        datasetColors = datasetColors.flat();
+
+                        // Modify the color and hide state of each label
+                        labelsOriginal.forEach(label => {
+                            // There are twice as many labels as there are datasets. This converts the label index into the corresponding dataset index
+                            label.datasetIndex = (label.index - label.index % 2) / 2;
+
+                            // The hidden state must match the dataset's hidden state
+                            label.hidden = !chart.isDatasetVisible(label.datasetIndex);
+
+                            // Change the color to match the dataset
+                            label.fillStyle = datasetColors[label.index];
+                        });
+
+                        return labelsOriginal;
+                    }
+                },
+                onClick: function (mouseEvent, legendItem, legend) {
+                    // toggle the visibility of the dataset from what it currently is
+                    legend.chart.getDatasetMeta(
+                        legendItem.datasetIndex
+                    ).hidden = legend.chart.isDatasetVisible(legendItem.datasetIndex);
+                    legend.chart.update();
+                }
+            },
+            tooltip: {
+                callbacks: {
+                    label: function (context) {
+                        const labelIndex = (context.datasetIndex * 2) + context.dataIndex;
+                        return context.chart.data.labels[labelIndex] + ': ' + context.formattedValue;
+                    }
+                }
+            }
+        }
+    },
+});
 
 const GetPropertyTypes = () => {
     let xhr = new XMLHttpRequest();
@@ -1425,7 +1422,6 @@ const GetPropertyTypes = () => {
             var data = JSON.parse(res).data;
 
             if (JSON.parse(res).success) {
-                console.log(data);
                 $('#types').html(`<option lable="&nbsp">Select Type </option>`);
                 data.forEach(x => {
                     $('#types').append(`<option value="${x.id}">${x.name} </option>`);
@@ -1471,16 +1467,30 @@ $('.btn-activate').click(() => {
 
             if (JSON.parse(res).Success) {
                 $('.btn-activate').css('display', 'none').removeClass('.btn-activate');
-                $('.active-title').html(`${messages}. Kindly proceed to login into your account`);
-                setTimeout(() => {
-                    location = '/Home/signin';
-                }, 3000);
-                console.log(data);
+                //$('.active-title').html(`${messages}. Kindly proceed to login into your account`);
+                const confirmPropertyUpdate = Swal.mixin({
+                    customClass: {
+                        confirmButton: 'btn btn-success mx-2'
+                    },
+                    buttonsStyling: false
+                })
+
+                confirmPropertyUpdate.fire({
+                    title: 'Well done',
+                    text: `${messages}. Kindly proceed to login into your account`,
+                    icon: 'success',
+                    showCancelButton: false,
+                    confirmButtonText: 'Yes!',
+                    reverseButtons: true
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.replace('/Home/signin');
+                    }
+                });
             } else {
                 $(".btn-activate").html("Activate").attr("disabled", !1);
                 window.scrollTo(0, 0);
                 message(messages, 'error');
-                console.log(data);
             }
 
         }
@@ -1489,14 +1499,6 @@ $('.btn-activate').click(() => {
         $(".btn-activate").html("Activate").attr("disabled", !1);
     }
 });
-
-//$('#property-link').click(() => {
-//    if ($('#refId').val() == null || $('#refId').val() == "") {
-//        location = "/Home/signin";
-//        return;
-//    }
-//    location = "/Home/properties";
-//});
 
 $('.btn-subscribe').click(() => {
     $(".btn-subscribe").html("Loading...").attr("disabled", !0);
@@ -1519,12 +1521,10 @@ $('.btn-subscribe').click(() => {
                 location = data;
                 //window.open(data, "Dominoes Society", "status=1,toolbar=1");
                 $(".btn-subscribe").html("Subscribe to get full access").attr("disabled", !1);
-                console.log(data);
             } else {
                 $(".btn-subscribe").html("Subscribe to get full access").attr("disabled", !1);
                 window.scrollTo(0, 0);
                 message(data, 'error');
-                console.log(data);
             }
 
         }
@@ -1538,11 +1538,8 @@ $('.btn-verify').click(() => {
 
     let urls = window.location.href.split("/");
     let token = urls[5].split("?")[0];
-    console.log(token);
 
     $(".btn-verify").html("Processing...").attr("disabled", !0);
-
-    
     let xhr = new XMLHttpRequest();
     let url = "/verifypayment/" + token;
     xhr.open('GET', url, false);
@@ -1555,19 +1552,34 @@ $('.btn-verify').click(() => {
             // alert('Something went wrong try again!');
         } else {
             var res = JSON.parse(xhr.responseText);
-            console.log(res);
             var data = JSON.parse(res).Data;
 
             if (JSON.parse(res).Success) {
                 $('.btn-verify').css('display', 'none').removeClass('.btn-verify');
-                $('.active-title').html(`${messages}. Kindly proceed to login into your account`);
-               
-                console.log(data);
+                const confirmPropertyUpdate = Swal.mixin({
+                    customClass: {
+                        confirmButton: 'btn btn-success mx-2'
+                    },
+                    buttonsStyling: false
+                })
+
+                confirmPropertyUpdate.fire({
+                    title: 'Well done',
+                    text: `${messages}. Kindly proceed to login into your account`,
+                    icon: 'success',
+                    showCancelButton: false,
+                    confirmButtonText: 'Yes!',
+                    reverseButtons: true
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.replace('/Home/signIn');
+                    }
+                });
+                //$('.active-title').html(`${messages}. Kindly proceed to login into your account`);
             } else {
                 $(".btn-verify").html("Verify").attr("disabled", !1);
                 window.scrollTo(0, 0);
                 $('.active-title').html(`<span class="text-danger">Payment verification failed, kindly contact administrator</span>`);
-                console.log(data);
             }
 
         }
@@ -1617,15 +1629,8 @@ $('.btn-property-investment').on('click', () => {
                 } else {
                     var res = JSON.parse(xhr.responseText);
                     var data = JSON.parse(res).Data;
-                    console.log(res);
                     if (JSON.parse(res).Success) {
                         window.scrollTo(0, 0);
-                        //message(JSON.parse(res).Message, "success");
-                        //Swal.fire(
-                        //    'Good job!',
-                        //    JSON.parse(res).Message,
-                        //    'success'
-                        //);
                         location = data;
                         $(".btn-property-investment").html("Invest").attr("disabled", !1);
                     } else {
@@ -1873,7 +1878,7 @@ $('.logout').click(() => {
                 } else {
                     var res = JSON.parse(xhr.responseText);
                     if (res) {
-                        location = '/';
+                        window.location.replace('/');
                     }
                 }
             } catch (err) { // instead of onerror
@@ -1927,15 +1932,14 @@ function getRandom(arr, n) {
 
 function fundWallet(){
     (async () => {
-
         const { value: amount } = await Swal.fire({
-            title: 'Enter An Amount',
-            input: 'text',
-            //inputLabel: 'Enter An Amount',
+            title: 'Add Cash',
+            input: 'number',
+            inputLabel: 'How Much',
             showCancelButton: true,
             inputValidator: (value) => {
-                if (!value || !Number(value)) {
-                    return 'You need to enter a valid amount'
+                if (!value) {
+                    return 'Valid amount is required!'
                 }
             }
         })
@@ -1955,7 +1959,6 @@ function fundWallet(){
                 } else {
                     var res = JSON.parse(xhr.responseText);
                     var data = JSON.parse(res).Data;
-                    console.log(data);
                     if (res) {
                         location = data;
                     }
@@ -1986,13 +1989,16 @@ $('.btn-request').click(() => {
             </div>`).removeClass('hidden');
         return;
     }
+
     $(".btn-request").html("Processing...").attr("disabled", !0);
+    let urls = window.location.href.split("/");
+    let token = urls[5];
     var a = {
         Subject: $("#msg_subject").val(),
-        Message: $("#message").val()
+        Message: $("#message").val(),
+        PropertyRef: token,
+        CustomerRef: $("#refId").val(),
     };
-    
-    console.log(a);
 
     $.ajax({
         type: "post",
@@ -2007,7 +2013,8 @@ $('.btn-request').click(() => {
                     res.Message,
                     'success'
                 );
-                $("#firstName").focus();
+                $(".form-control").val('');
+
                 window.scrollTo(0, 0);
                 $(".btn-request").html("Request Information").attr("disabled", !1);
                 a = {};
@@ -2026,4 +2033,33 @@ $('.btn-request').click(() => {
             $(".btn-request").html("Request Information").attr("disabled", !1);
         },
     });
-})
+});
+
+const confirmTransaction = () => {
+    let urls = window.location.href.split("/");
+    let token = urls[3].split("?")[1];
+    if (token != undefined) {
+        if (token.includes("success")) {
+
+            const confirmPropertyUpdate = Swal.mixin({
+                customClass: {
+                    confirmButton: 'btn btn-success mx-2'
+                },
+                buttonsStyling: false
+            })
+
+            confirmPropertyUpdate.fire({
+                title: 'Well done',
+                text: "Congratulation your transaction was success, kindly proceed to your dashboard to verify",
+                icon: 'success',
+                showCancelButton: false,
+                confirmButtonText: 'Yes!',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.replace('/dashboard');
+                }
+            });
+        }
+    }
+}
