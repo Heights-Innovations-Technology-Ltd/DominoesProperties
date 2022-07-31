@@ -47,7 +47,7 @@ namespace DominoesPropertiesWeb.Controllers
             await Task.WhenAll(res);
             var data = res.Status == TaskStatus.RanToCompletion ? res.Result : null;
 
-            bool success = Convert.ToBoolean(data["Success"]);
+            bool success = Convert.ToBoolean(data["success"]);
 
             if (success)
             {
@@ -57,12 +57,12 @@ namespace DominoesPropertiesWeb.Controllers
                 this.session.SetString("IsActive", (string)resObj["isActive"]);
                 this.session.SetString("Token", (string)data["TokenObj"]);
                 jsonObj.success = success;
-                jsonObj.data = data["Message"];
+                jsonObj.data = data["message"];
             }
             else
             {
                 jsonObj.success = success;
-                jsonObj.data = data["Data"];
+                jsonObj.data = data["data"];
             }
             return Json(JsonConvert.SerializeObject(jsonObj));
         }

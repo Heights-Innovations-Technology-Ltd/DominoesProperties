@@ -51,12 +51,13 @@ namespace DominoesPropertiesWeb.HttpContext
                 {
                     res = JsonConvert.DeserializeObject<JObject>(Convert.ToString(responJsonText));
                     jsonObj.success = Convert.ToBoolean(res["success"]);
-                    jsonObj.data = JsonConvert.DeserializeObject<dynamic>(Convert.ToString(res["data"]));
+                    var data = JsonConvert.DeserializeObject<dynamic>(Convert.ToString(res["data"]));
+                    jsonObj.data = data != null ? data : Convert.ToString(res["message"]);
                 }
                 else
                 {
-                    jsonObj.success = Convert.ToBoolean(res["success"]);
-                    jsonObj.data = JsonConvert.DeserializeObject<dynamic>(Convert.ToString(res["data"]));
+                    jsonObj.success = false;
+                    jsonObj.message = result.StatusCode;
                 }
                 return jsonObj;
             }
@@ -81,8 +82,8 @@ namespace DominoesPropertiesWeb.HttpContext
                 }
                 else
                 {
-                    jsonObj.success = Convert.ToBoolean(res["success"]);
-                    jsonObj.data = JsonConvert.DeserializeObject<dynamic>(Convert.ToString(res["data"]));
+                    jsonObj.success = false;
+                    jsonObj.message = result.StatusCode;
                 }
                 return jsonObj;
             }
@@ -105,22 +106,22 @@ namespace DominoesPropertiesWeb.HttpContext
                         var success = Convert.ToBoolean(res["success"]);
                         if (success)
                         {
-                            jsonObj.Success = success;
-                            jsonObj.Data = Convert.ToString(res["data"]);
-                            jsonObj.Message = Convert.ToString(res["message"]);
+                            jsonObj.success = success;
+                            jsonObj.data = Convert.ToString(res["data"]);
+                            jsonObj.message = Convert.ToString(res["message"]);
                         }
                         else
                         {
-                            jsonObj.Success = success;
-                            jsonObj.Data = Convert.ToString(res["message"]);
+                            jsonObj.success = success;
+                            jsonObj.data = Convert.ToString(res["message"]);
                         }
 
                         if (result.Headers.Contains("access_token")) { jsonObj.TokenObj = result.Headers.GetValues("access_token").First(); }
                     }
                     else
                     {
-                        var res = JsonConvert.DeserializeObject<dynamic>(Convert.ToString(responJsonText));
-                        jsonObj.Message = Convert.ToString(res["errors"]);
+                        jsonObj.success = false;
+                        jsonObj.message = result.StatusCode;
                     }
                     return jsonObj;
                 }
@@ -145,20 +146,20 @@ namespace DominoesPropertiesWeb.HttpContext
                         var success = Convert.ToBoolean(res["success"]);
                         if (success)
                         {
-                            jsonObj.Success = success;
-                            jsonObj.Data = Convert.ToString(res["data"]);
-                            jsonObj.Message = Convert.ToString(res["message"]);
+                            jsonObj.success = success;
+                            jsonObj.data = Convert.ToString(res["data"]);
+                            jsonObj.message = Convert.ToString(res["message"]);
                         }
                         else
                         {
-                            jsonObj.Success = false;
-                            jsonObj.Data = Convert.ToString(res["message"]);
+                            jsonObj.success = false;
+                            jsonObj.data = Convert.ToString(res["message"]);
                         }
                     }
                     else
                     {
-                        var res = JsonConvert.DeserializeObject<dynamic>(Convert.ToString(responJsonText));
-                        jsonObj.Message = Convert.ToString(res["errors"]);
+                        jsonObj.success = false;
+                        jsonObj.message = result.StatusCode;
                     }
                     return jsonObj;
                 }
@@ -182,20 +183,20 @@ namespace DominoesPropertiesWeb.HttpContext
                     var success = Convert.ToBoolean(res["success"]);
                     if (success)
                     {
-                        jsonObj.Success = success;
-                        jsonObj.Data = Convert.ToString(res["data"]);
-                        jsonObj.Message = Convert.ToString(res["message"]);
+                        jsonObj.success = success;
+                        jsonObj.data = Convert.ToString(res["data"]);
+                        jsonObj.message = Convert.ToString(res["message"]);
                     }
                     else
                     {
-                        jsonObj.Success = false;
-                        jsonObj.Data = Convert.ToString(res["message"]);
+                        jsonObj.success = false;
+                        jsonObj.data = Convert.ToString(res["message"]);
                     }
                 }
                 else
                 {
-                    var res = JsonConvert.DeserializeObject<dynamic>(Convert.ToString(responJsonText));
-                    jsonObj.Message = Convert.ToString(res["errors"]);
+                    jsonObj.success = false;
+                    jsonObj.message = result.StatusCode;
                 }
                 return jsonObj;
             }
