@@ -98,11 +98,11 @@ namespace DominoesPropertiesWeb.Controllers
             await Task.WhenAll(res);
             var data = res.Status == TaskStatus.RanToCompletion ? res.Result : null;
 
-            bool success = Convert.ToBoolean(data["Success"]);
+            bool success = Convert.ToBoolean(data["success"]);
 
             if (success)
             {
-                var resObj = JsonConvert.DeserializeObject<JObject>(Convert.ToString(data["Data"]));
+                var resObj = JsonConvert.DeserializeObject<JObject>(Convert.ToString(data["data"]));
                 this.session.SetString("Firstname", (string)resObj["firstName"]);
                 this.session.SetString("Lastname", (string)resObj["lastName"]);
                 this.session.SetString("ReferenceId", (string)resObj["uniqueReference"]);
@@ -114,12 +114,12 @@ namespace DominoesPropertiesWeb.Controllers
                 this.session.SetString("WalletBalance", (string)resObj["walletBalance"]);
                 this.session.SetString("Token", (string)data["TokenObj"]);
                 jsonObj.success = success;
-                jsonObj.data = data["Message"];
+                jsonObj.data = data["message"];
             }
             else
             {
                 jsonObj.success = success;
-                jsonObj.data = data["Data"];
+                jsonObj.data = data["data"];
             }
             return Json(JsonConvert.SerializeObject(jsonObj));
         }
@@ -164,8 +164,16 @@ namespace DominoesPropertiesWeb.Controllers
         [Route("/verifypayment/{token}")]
         public async Task<JsonResult> Verify(string token)
         {
-            
             var res = Task.Run(() => httpContext.Get("Payment/verify-payment/" + token ));
+            await Task.WhenAll(res);
+            var data = res.Status == TaskStatus.RanToCompletion ? res.Result : null;
+            return Json(JsonConvert.SerializeObject(data));
+        }
+        
+        [Route("/reset-password/{email}")]
+        public async Task<JsonResult> ResetPassword(string email)
+        {
+            var res = Task.Run(() => httpContext.Get("/Customer/reset-password/" + email ));
             await Task.WhenAll(res);
             var data = res.Status == TaskStatus.RanToCompletion ? res.Result : null;
             return Json(JsonConvert.SerializeObject(data));

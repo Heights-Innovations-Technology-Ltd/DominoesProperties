@@ -35,11 +35,11 @@
             data: JSON.stringify(a),
             success: function (t) {
                 var res = JSON.parse(t);
-                if (res.Success) {
+                if (res.success) {
                    // message(res.Message + '. Kindly check your mail to activate your account', 'success');
                     Swal.fire(
                         'Good job!',
-                        res.Message + '. Kindly check your mail to activate your account',
+                        res.message + '. Kindly check your mail to activate your account',
                         'success'
                     )
                     $(".form-control").val(""),
@@ -51,7 +51,7 @@
 
                 } else {
                    
-                    message(res.Data
+                    message(res.data
                         , 'error'),
                         window.scrollTo(0, 0),
                         $(".btn-register").html("Register").attr("disabled", !1);
@@ -74,7 +74,7 @@ $('.btn-login').click(() => {
         return;
     }
 
-    $(".btn-login").html("Processing...").attr("disabled", !0);
+    
     let t = false;
     var e = "";
     if (
@@ -87,7 +87,7 @@ $('.btn-login').click(() => {
     )
         
     if (t) message("Validation error the following field are required " + e.substring(0, e.length - 2), 'error'), window.scrollTo(0, 0), $(".btn-login").attr("disabled", !1).html("Login");
-
+    $(".btn-login").html("Processing...").attr("disabled", !0);
     var params = {
         Email: $("#logEmail").val().trim(),
         Password: $("#logPassword").val()
@@ -635,15 +635,15 @@ const propertyDetails = (id) => {
         return;
     }
 
-    //if ($('#isSubcribed').val() == "False" && $('#refId').val() != "") {
-    //    Swal.fire({
-    //        icon: 'info',
-    //        title: 'Oops...',
-    //        text: 'Property details can only be view by subscribed users, kindly subscribe to get full access ',
-    //        footer: `<a href="javascript:void(0)" class="default-btn " onclick="onSubscribe()">Subcribe Now</a>`
-    //    })
-    //    return;
-    //}
+    if ($('#isSubcribed').val() == "False" && $('#refId').val() != "") {
+        Swal.fire({
+            icon: 'info',
+            title: 'Oops...',
+            text: 'Property details can only be view by subscribed users, kindly subscribe to get full access ',
+            footer: `<a href="javascript:void(0)" class="default-btn " onclick="onSubscribe()">Subcribe Now</a>`
+        })
+        return;
+    }
 
     window.location.replace('/Home/PropertyDetails/' + id);
 }
@@ -961,15 +961,15 @@ $('.btn-property').click(() => {
                     // alert('Something went wrong try again!');
                 } else {
                     var res = JSON.parse(xhr.responseText);
-                    var data = JSON.parse(res).Data;
-                    var Message = JSON.parse(res).Message;
-                    if (JSON.parse(res).Success) {
+                    var data = JSON.parse(res).data;
+                    var Message = JSON.parse(res).message;
+                    if (JSON.parse(res).success) {
                         window.scrollTo(0, 0);
                         $('.form-control').val('');
                         $(".btn-property").html("Submit").attr("disabled", !1);
                         Swal.fire(
                             'Good job!',
-                            Message,
+                            message,
                             'success'
                         );
 
@@ -977,7 +977,7 @@ $('.btn-property').click(() => {
                             location.reload();
                         }, 2000);
                     } else {
-                        var err = JSON.parse(res).Message;
+                        var err = JSON.parse(res).message;
                         Swal.fire(
                             'Opps!',
                             err == "401" ? "You don't have permission to perform this action" : "Something went wrong, admin has been contacted",
@@ -1080,13 +1080,13 @@ $('.btn-update-property').click(() => {
                     // alert('Something went wrong try again!');
                 } else {
                     var res = JSON.parse(xhr.responseText);
-                    var data = JSON.parse(res).Data;
-                    if (JSON.parse(res).Success) {
+                    var data = JSON.parse(res).data;
+                    if (JSON.parse(res).success) {
                         window.scrollTo(0, 0);
                         $(".btn-update-property").html("Edit").attr("disabled", !1);
                         Swal.fire(
                             'Good job!',
-                            JSON.parse(res).Message,
+                            JSON.parse(res).message,
                             'success'
                         );
                     } else {
@@ -1166,13 +1166,13 @@ $('.btn-update-decription').click(() => {
                     // alert('Something went wrong try again!');
                 } else {
                     var res = JSON.parse(xhr.responseText);
-                    var data = JSON.parse(res).Data;
-                    if (JSON.parse(res).Success) {
+                    var data = JSON.parse(res).data;
+                    if (JSON.parse(res).success) {
                         window.scrollTo(0, 0);
                         $('#descriptionModal').modal('hide');
                         Swal.fire(
                             'Good job!',
-                            JSON.parse(res).Message,
+                            JSON.parse(res).message,
                             'success'
                         );
                         $(".btn-update-decription").html("Submit").attr("disabled", !1);
@@ -1462,10 +1462,10 @@ $('.btn-activate').click(() => {
             // alert('Something went wrong try again!');
         } else {
             var res = JSON.parse(xhr.responseText);
-            var data = JSON.parse(res).Data;
-            var messages = JSON.parse(res).Message;
+            var data = JSON.parse(res).data;
+            var messages = JSON.parse(res).message;
 
-            if (JSON.parse(res).Success) {
+            if (JSON.parse(res).success) {
                 $('.btn-activate').css('display', 'none').removeClass('.btn-activate');
                 //$('.active-title').html(`${messages}. Kindly proceed to login into your account`);
                 const confirmPropertyUpdate = Swal.mixin({
@@ -1515,9 +1515,9 @@ $('.btn-subscribe').click(() => {
             // alert('Something went wrong try again!');
         } else {
             var res = JSON.parse(xhr.responseText);
-            var data = JSON.parse(res).Data;
+            var data = JSON.parse(res).data;
 
-            if (JSON.parse(res).Success) {
+            if (JSON.parse(res).success) {
                 location = data;
                 //window.open(data, "Dominoes Society", "status=1,toolbar=1");
                 $(".btn-subscribe").html("Subscribe to get full access").attr("disabled", !1);
@@ -1552,9 +1552,9 @@ $('.btn-verify').click(() => {
             // alert('Something went wrong try again!');
         } else {
             var res = JSON.parse(xhr.responseText);
-            var data = JSON.parse(res).Data;
+            var data = JSON.parse(res).data;
 
-            if (JSON.parse(res).Success) {
+            if (JSON.parse(res).success) {
                 $('.btn-verify').css('display', 'none').removeClass('.btn-verify');
                 const confirmPropertyUpdate = Swal.mixin({
                     customClass: {
@@ -1628,13 +1628,13 @@ $('.btn-property-investment').on('click', () => {
                     // alert('Something went wrong try again!');
                 } else {
                     var res = JSON.parse(xhr.responseText);
-                    var data = JSON.parse(res).Data;
-                    if (JSON.parse(res).Success) {
+                    var data = JSON.parse(res).data;
+                    if (JSON.parse(res).success) {
                         window.scrollTo(0, 0);
                         location = data;
                         $(".btn-property-investment").html("Invest").attr("disabled", !1);
                     } else {
-                        var err = JSON.parse(res).Message;
+                        var err = JSON.parse(res).message;
                         Swal.fire(
                             'Opps!',
                             err == "Forbiden" ?  "You don't have permission to perform this action" :  "Something went wrong, admin has been contacted",
@@ -1714,11 +1714,11 @@ $(".btn-change-password").on("submit", function () {
                         data: JSON.stringify(a),
                         success: function (t) {
                             var res = JSON.parse(t);
-                            if (res.Success) {
-                                // message(res.Message + '. Kindly check your mail to activate your account', 'success');
+                            if (res.success) {
+                                // message(res.message + '. Kindly check your mail to activate your account', 'success');
                                 Swal.fire(
                                     'Good job!',
-                                    res.Message,
+                                    res.message,
                                     'success'
                                 )
                                 $(".form-control").val(""),
@@ -1730,7 +1730,7 @@ $(".btn-change-password").on("submit", function () {
 
                             } else {
 
-                                message(res.Data
+                                message(res.data
                                     , 'error');
                                 window.scrollTo(0, 0);
                                 $(".btn-change-password").html("Reset Password").attr("disabled", !1);
@@ -1807,10 +1807,10 @@ $(".btn-update-profile").on("click", function () {
                         data: JSON.stringify(a),
                         success: function (t) {
                             var res = JSON.parse(t);
-                            if (res.Success) {
+                            if (res.success) {
                                 Swal.fire(
                                     'Good job!',
-                                    res.Message,
+                                    res.message,
                                     'success'
                                 );
                                 $("#firstName").focus();
@@ -1818,7 +1818,7 @@ $(".btn-update-profile").on("click", function () {
                                 $(".btn-update-profile").html("Edit").attr("disabled", !1);
                                 a = {};
                             } else {
-                                message(res.Data
+                                message(res.data
                                     , 'error'),
                                     window.scrollTo(0, 0),
                                     $(".btn-update-profile").html("Edit").attr("disabled", !1);
@@ -1958,7 +1958,7 @@ function fundWallet(){
                     //alert('Something went wrong try again!');
                 } else {
                     var res = JSON.parse(xhr.responseText);
-                    var data = JSON.parse(res).Data;
+                    var data = JSON.parse(res).data;
                     if (res) {
                         location = data;
                     }
@@ -2007,10 +2007,10 @@ $('.btn-request').click(() => {
         data: JSON.stringify(a),
         success: function (t) {
             var res = JSON.parse(t);
-            if (res.Success) {
+            if (res.success) {
                 Swal.fire(
                     'Good job!',
-                    res.Message,
+                    res.message,
                     'success'
                 );
                 $(".form-control").val('');
@@ -2019,7 +2019,7 @@ $('.btn-request').click(() => {
                 $(".btn-request").html("Request Information").attr("disabled", !1);
                 a = {};
             } else {
-                message(res.Data
+                message(res.data
                     , 'error'),
                     window.scrollTo(0, 0),
                     $(".btn-request").html("Request Information").attr("disabled", !1);
@@ -2063,3 +2063,49 @@ const confirmTransaction = () => {
         }
     }
 }
+
+function forgetPassword() {
+
+    (async () => {
+        
+        const { value: email } = await Swal.fire({
+            title: 'Forget password?',
+            input: 'email',
+            inputLabel: 'Enter your email address',
+            inputPlaceholder: 'Enter your email address'
+        })
+
+        if (email) {
+            let xhr = new XMLHttpRequest();
+            let url = "/reset-password/" + email;
+            xhr.open('GET', url, false);
+            xhr.setRequestHeader("content-type", "application/json");
+            xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+            try {
+                xhr.send();
+                if (xhr.status != 200) {
+                    //alert('Something went wrong try again!');
+                } else {
+                    var res = JSON.parse(xhr.responseText);
+                    console.log(res);
+                    var data = JSON.parse(res).data;
+                    if (JSON.parse(res).success) {
+                        Swal.fire(
+                            'Good job!',
+                             data,
+                            'success'
+                        );
+                    } else {
+                        Swal.fire(
+                            'Opps!',
+                             data,
+                            'error'
+                        );
+                    }
+                }
+            } catch (err) { // instead of onerror
+                //alert("Request failed");
+            }
+        }
+    })()
+};

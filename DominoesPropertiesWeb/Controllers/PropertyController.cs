@@ -326,8 +326,6 @@ namespace DominoesPropertiesWeb.Controllers
             obj.PropertyReference = Convert.ToString(jObject["PropertyRef"]);
             var res = Task.Run(() => httpContext.Post("Util/enquiry", obj));
             var data = await res.GetAwaiter().GetResult();
-            // await Task.WhenAll(res);
-            //var data = res.Status == TaskStatus.RanToCompletion ? res.Result : null;
             return Json(JsonConvert.SerializeObject(data));
         }
     }

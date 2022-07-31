@@ -415,9 +415,6 @@
 		<script>
 			$(document).ready(function(){
 				var pathname = window.location.pathname;
-				console.log(pathname);
-				console.log($(this).attr('href'));
-
 				 $('.navbar-nav li a').each(function() {
 					if ($(this).attr('href') == pathname) {
 						$('.navbar-nav li a').removeClass("active");
