@@ -20,6 +20,8 @@ namespace Models.Models
         public string PaymentType { get; set; }
         public decimal? YearlyInterestAmount { get; set; }
         public string TransactionRef { get; set; }
+        public string Status { get; set; }
+
 
         public virtual Customer Customer { get; set; }
         public virtual Property Property { get; set; }
