@@ -1788,8 +1788,9 @@ Featured Area Style
 
 .single-featured-item .featured-content .price {
   font-family: "BRFirma", sans-serif;
-  font-size: 24px;
+  font-size: 14px;
   color: #ea723d;
+  font-weight:600;
 }
 
 .single-featured-item .featured-content p {

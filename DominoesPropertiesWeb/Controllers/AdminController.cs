@@ -51,7 +51,7 @@ namespace DominoesPropertiesWeb.Controllers
 
             if (success)
             {
-                var resObj = JsonConvert.DeserializeObject<JObject>(Convert.ToString(data["Data"]));
+                var resObj = JsonConvert.DeserializeObject<JObject>(Convert.ToString(data["data"]));
                 this.session.SetString("Email", (string)resObj["email"]);
                 this.session.SetString("RoleFK", (string)resObj["roleFk"]);
                 this.session.SetString("IsActive", (string)resObj["isActive"]);

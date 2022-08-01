@@ -74,7 +74,6 @@ $('.btn-login').click(() => {
         return;
     }
 
-    
     let t = false;
     var e = "";
     if (
@@ -130,7 +129,7 @@ $('.btn-adminlogin').click(() => {
         return;
     }
 
-    $(".btn-login").html("Processing...").attr("disabled", !0);
+    $(".btn-adminlogin").html("Processing...").attr("disabled", !0);
     let t = false;
     var e = "";
     if (
@@ -162,19 +161,22 @@ $('.btn-adminlogin').click(() => {
             var data = JSON.parse(res).data;
             if (JSON.parse(res).success) {
                 window.location.replace('/dashboard');
-                $(".btn-login").html("Login").attr("disabled", !1);
+                $(".btn-adminlogin").html("Login").attr("disabled", !1);
                 $(".form-control").val("");
             } else {
                 window.scrollTo(0, 0);
-                message(data
-                    , 'error');
-                $(".btn-login").html("Login").attr("disabled", !1);
+                Swal.fire(
+                    'Opps!',
+                    data,
+                    'error'
+                );
+                $(".btn-adminlogin").html("Login").attr("disabled", !1);
 
             }
         }
     } catch (err) { // instead of onerror
         //alert("Request failed");
-        $(".btn-login").html("Login").attr("disabled", !1);
+        $(".btn-adminlogin").html("Login").attr("disabled", !1);
     }
 });
 
@@ -785,7 +787,8 @@ const getSingleProperty = () => {
                 $('.total').html("&#8358; " + formatToCurrency(data.unitPrice));
                 let price = Number($('#price').text().replace(/[^0-9\.-]+/g, "").replace("₦", ""));
                 $('.groundTotal').html("&#8358; " + formatToCurrency(price * $('#unit').val()));
-                $('.yield').html(data.targetYield + "<sup>%</sup>");
+                $('.interest').html(data.targetYield + "<sup>%</sup>");
+                $('.yield').html(data.targetYield);
             } else {
                 
                 window.scrollTo(0, 0);
@@ -1303,30 +1306,69 @@ const investmentTmp = (data) => {
 							   <canvas class="myChart${x.transactionRef}" width="400" height="400"></canvas>
 						    </div>
 						    <div class="featured-content style-three">
-							    <div class="justify-content-between">
-                                     <h3>
-									    Investment <small class="float-end">${x.property}</small>
-								    </h3>
-								    <h3>
-									    Yearly Interest <small class="float-end">${x.yield}<sup>%</sup></small>
-								    </h3>
-									<h3>
-                                        Amount Invest <small class="price float-end"><sup>&#8358;</sup>${formatToCurrency(x.amount)}</small>
-                                    </h3>
-                                    <h3>
-									    Yearly Return <small class="price float-end"><sup>&#8358;</sup>${formatToCurrency(x.yearlyInterestAmount)}</small>
-								    </h3>
-                                    <h3>
-									    Unit <small class="float-end">${x.units}</small>
-								    </h3>
-                                    <p class="p-0" style="border-bottom:none">
-								        Investment Date
-                                        <small class="float-end">${moment(x.paymentDate).format('MMMM Do YYYY')}</small>
-							        </p>
-                                    <p class="p-0" style="border-bottom:none">
-								        Matured Date
-                                        <small class="float-end">${moment(maturedDate).format('MMMM Do YYYY')}</small>
-							        </p>
+							    <div>
+                                     <div class="row">
+                                        <div class="col-md-4">
+                                            <h3 style="font-size:14px; font-weight:normal;">
+									            Investment 
+								            </h3>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <small class="float-end">${x.property}</small>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-8">
+                                            <h3 style="font-size:14px; font-weight:normal;">
+									            Projected Interest
+								            </h3>
+                                        </div>
+                                        <div class="col-md-4">
+                                           <small class="float-end">${x.yield}<sup>%</sup></small>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <h3 style="font-size:14px; font-weight:normal;">
+									           Amount
+								            </h3>
+                                        </div>
+                                        <div class="col-md-8">
+                                           <small class="price float-end"><sup>&#8358;</sup>${formatToCurrency(x.amount)}</small>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <h3 style="font-size:14px; font-weight:normal;">
+									         Projected Yield
+								            </h3>
+                                        </div>
+                                        <div class="col-md-8">
+                                          <small class="price float-end"><sup>&#8358;</sup>${formatToCurrency(x.yearlyInterestAmount)}/yrs</small>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <h3 style="font-size:14px; font-weight:normal;">
+									         Unit
+								            </h3>
+                                        </div>
+                                        <div class="col-md-8">
+                                          <small class="float-end">${x.units}</small>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <h3 style="font-size:14px; font-weight:normal;">
+									            Date
+								            </h3>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <small class="float-end">${moment(x.paymentDate).format('MMMM Do YYYY')}</small>
+                                        </div>
+                                    </div>
 							    </div>
 						    </div>
 					    </div>
@@ -1343,7 +1385,7 @@ const myChart = (i, ctx) => new Chart(ctx, {
     data: {
         labels: [
             'Amount',
-            'Yearly Interest'
+            ' Projected Yield'
         ],
         datasets: [{
             label: 'Investment',
@@ -1704,9 +1746,6 @@ $(".btn-change-password").on("submit", function () {
                         Password: $("#password").val(),
                         Confirm: $("#confirm").val(),
                     };
-
-
-
                     $.ajax({
                         type: "post",
                         url: "/change-password",
