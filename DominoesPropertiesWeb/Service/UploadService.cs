@@ -43,7 +43,7 @@ namespace DominoesPropertiesWeb.Service
                         using var fileStream = new FileStream(Path.Combine(path, filename), FileMode.Create);
                         await file.CopyToAsync(fileStream);
 
-                        url = $"{request.HttpContext.Request.Scheme}://{request.HttpContext.Request.Host}{request.HttpContext.Request.PathBase}'uploads/passport/'{filename}";
+                        url = $"{request.HttpContext.Request.Scheme}://{request.HttpContext.Request.Host}{request.HttpContext.Request.PathBase}/Uploads/Passport/{filename}";
                     }
             }
             catch (Exception ex)
@@ -81,8 +81,9 @@ namespace DominoesPropertiesWeb.Service
                     }
                     if (file.Length > 0)
                     {
-                        string filename = $"{propertyId.Replace("-", "")}-{DateTime.UnixEpoch}{fileInfo.Extension}";
-                        
+                        var dateTime = DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss").Replace("/", "").Replace(":","").Replace(" ", "");
+                        string filename = $"{propertyId.Replace("-", "")}-{dateTime}{fileInfo.Extension}";
+
                         using var fileStream = new FileStream(Path.Combine(path, filename), FileMode.Create);
                         await file.CopyToAsync(fileStream);
 
@@ -90,7 +91,7 @@ namespace DominoesPropertiesWeb.Service
                         {
                             DateUploaded = Dated,
                             ImageName = filename,
-                            Url = $"{request.HttpContext.Request.Scheme}://{request.HttpContext.Request.Host}{request.HttpContext.Request.PathBase}'uploads/property/'{filename}",
+                            Url = $"{request.HttpContext.Request.Scheme}://{request.HttpContext.Request.Host}{request.HttpContext.Request.PathBase}/Uploads/Property/{filename}",
                             UploadType = prop.UploadType.ToString()
                         });
                     }

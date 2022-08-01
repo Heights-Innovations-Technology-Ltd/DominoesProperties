@@ -24,6 +24,7 @@
 		<script src="~/js/jquery.min.js"></script>
 		<script src="~/js/sweetalert.min.js"></script>
 		 <script src="~/js/moment.js"></script>
+		 <script src="~/js/chart.min.js"></script>
 		
 		<!-- Favicon -->
 		<link rel="icon" type="image/png" href="~/images/favicon.png">
@@ -104,7 +105,7 @@
 								</li>
 								<li class="nav-item">
 									<a asp-controller="Home" asp-action="properties" class="nav-link" id="property-links">
-										Properties
+										Investments
 									</a>
 								</li>
 								<li class="nav-item">
@@ -248,7 +249,7 @@
 		<div class="footer-area bg-color-f9fcff pt-100 pb-70">
 			<div class="container">
 				<div class="row">
-					<div class="col-lg-3 col-sm-6">
+					<div class="col-lg-4 col-sm-6">
 						<div class="single-footer-widget wow animate__animated animate__fadeInUp delay-0-2s">
 							<a href="index-2.html">
 								<img src="~/images/Logo-WHT.png" class="main-logo" alt="Dominoes logo">
@@ -259,7 +260,7 @@
 						</div>
 					</div>
 
-					<div class="col-lg-3 col-sm-6">
+					<div class="col-lg-4 col-sm-6">
 						<div class="single-footer-widget wow animate__animated animate__fadeInUp delay-0-4s">
 							<h3>Contacts Info</h3>
 
@@ -280,7 +281,7 @@
 						</div>
 					</div>
 
-					<div class="col-lg-3 col-sm-6">
+					<div class="col-lg-4 col-sm-6">
 						<div class="single-footer-widget wow animate__animated animate__fadeInUp delay-0-6s">
 							<h3>Helpful Links</h3>
 
@@ -306,7 +307,7 @@
 						</div>
 					</div>
 
-					<div class="col-lg-3 col-sm-6">
+					@*<div class="col-lg-3 col-sm-6">
 						<div class="single-footer-widget wow animate__animated animate__fadeInUp delay-0-8s">
 							<h3>Newsletter</h3>
 							<p>Stay Informed through our newsletter & get offers any time!</p>
@@ -321,7 +322,7 @@
 								<div id="validator-newsletter" class="form-result"></div>
 							</form>	
 						</div>
-					</div>
+					</div>*@
 				</div>
 			</div>
 		</div>
@@ -414,9 +415,6 @@
 		<script>
 			$(document).ready(function(){
 				var pathname = window.location.pathname;
-				console.log(pathname);
-				console.log($(this).attr('href'));
-
 				 $('.navbar-nav li a').each(function() {
 					if ($(this).attr('href') == pathname) {
 						$('.navbar-nav li a').removeClass("active");

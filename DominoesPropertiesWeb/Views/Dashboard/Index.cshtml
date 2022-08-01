@@ -109,7 +109,7 @@
 							
 							<p>Wallet</p>
 							<h2 id="walletBalance">&#8358;0</h2>
-							<a href="#"><i class="fa fa-exchange"></i></a>
+							<a href="javascript:void(0)" onclick="fundWallet()" title="Fund Wallet"><i class="fa fa-exchange" aria-hidden="true"></i></a> 
 						</div>
 					</div>
 					<div class="col-xl-4 col-sm-6">
@@ -153,7 +153,6 @@
 
 <script>
 	$(document).ready(() => {
-		//customerDetails();
-		
+		GetUserProfile('dashboard');
 	})
 </script>
