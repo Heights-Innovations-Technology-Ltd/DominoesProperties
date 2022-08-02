@@ -685,7 +685,7 @@ const getSingleProperty = () => {
                 $('#name').html(data.name);
                 $('#price').html("&#8358; " + formatToCurrency(data.unitPrice));
                 $('#location').html(data.location);
-                $('.closeDate').html("Available Unit " + data.unitAvailable);
+                $('.closeDate').html("Available Units: <strong>" + data.unitAvailable +"</strong>");
                 $('.property-feature').html(`<li>
 												<i class="ri-hotel-bed-fill"></i>
 												${data.description["bedroom"]} Bed
@@ -782,7 +782,7 @@ const getSingleProperty = () => {
                 $('#propertyName').text(data.name);
                 $('#checkoutPrice').html("&#8358; " + formatToCurrency(data.unitPrice) + " / Unit");
                 $('.checkoutPrice').html(formatToCurrency(data.unitPrice));
-                $('#availableUnit').html("Available Unit : " +  data.unitAvailable);
+                $('#availableUnit').html("Available Unit: " +  data.unitAvailable);
                 //$('#closeDate').html("Investment End On " + moment(data.closingDate).format('MMMM Do YYYY'));
                 $('.total').html("&#8358; " + formatToCurrency(data.unitPrice));
                 let price = Number($('#price').text().replace(/[^0-9\.-]+/g, "").replace("₦", ""));
@@ -1300,7 +1300,7 @@ const investmentTmp = (data) => {
         maturedDate.setMonth(maturedDate.getMonth() + 11);
 
         const ctx = document.getElementsByClassName('myChart' + x.transactionRef);
-        let res = `<div class="col-lg-4 col-md-4">
+        let res = `<div class="col-lg-3 col-md-3">
 					    <div class="single-featured-item">
 						    <div class="canvas-img" mb-0 p-4">
 							   <canvas class="myChart${x.transactionRef}" width="400" height="400"></canvas>
@@ -1314,7 +1314,7 @@ const investmentTmp = (data) => {
 								            </h3>
                                         </div>
                                         <div class="col-md-8">
-                                            <small class="float-end">${x.property}</small>
+                                            <small class="float-end">${x.propertyId}</small>
                                         </div>
                                     </div>
 
@@ -1466,7 +1466,7 @@ const GetPropertyTypes = () => {
             if (JSON.parse(res).success) {
                 $('#types').html(`<option lable="&nbsp">Select Type </option>`);
                 data.forEach(x => {
-                    $('#types').append(`<option value="${x.id}">${x.name} </option>`);
+                    $('#types').append(`<option value="${x.id}">${x.name.replace("_", " ")} </option>`);
                 });
             } else {
                 window.scrollTo(0, 0);
@@ -1972,13 +1972,13 @@ function getRandom(arr, n) {
 function fundWallet(){
     (async () => {
         const { value: amount } = await Swal.fire({
-            title: 'Add Cash',
+            title: 'Fund Wallet',
             input: 'number',
-            inputLabel: 'How Much',
+            inputLabel: 'Amount',
             showCancelButton: true,
             inputValidator: (value) => {
                 if (!value) {
-                    return 'Valid amount is required!'
+                    return 'Input amount'
                 }
             }
         })
