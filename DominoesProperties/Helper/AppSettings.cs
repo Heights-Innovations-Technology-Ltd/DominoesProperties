@@ -1,5 +1,4 @@
-﻿using System;
-namespace DominoesProperties.Helper
+﻿namespace DominoesProperties.Helper
 {
     public class AppSettings
     {
