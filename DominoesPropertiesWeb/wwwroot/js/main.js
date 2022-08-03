@@ -1303,7 +1303,8 @@ const investmentTmp = (data) => {
         let res = `<div class="col-lg-3 col-md-3">
 					    <div class="single-featured-item">
 						    <div class="canvas-img" mb-0 p-4">
-							   <canvas class="myChart${x.transactionRef}" width="400" height="400"></canvas>
+                                <img src="/images/featured/featured-2.jpg" alt="Image">
+							  
 						    </div>
 						    <div class="featured-content style-three">
 							    <div>
@@ -1360,12 +1361,12 @@ const investmentTmp = (data) => {
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <div class="col-md-6">
+                                        <div class="col-md-4">
                                             <h3 style="font-size:14px; font-weight:normal;">
 									            Date
 								            </h3>
                                         </div>
-                                        <div class="col-md-6">
+                                        <div class="col-md-8">
                                             <small class="float-end">${moment(x.paymentDate).format('MMMM Do YYYY')}</small>
                                         </div>
                                     </div>
@@ -1374,13 +1375,14 @@ const investmentTmp = (data) => {
 					    </div>
 				    </div>`;
         $('#investments').append(res);
-        myChart(i, ctx);
+        //myChart(i, ctx);
     });
 }
 
 
 
 const myChart = (i, ctx) => new Chart(ctx, {
+    /*< canvas class= "myChart${x.transactionRef}" width = "400" height = "400" ></canvas >*/
     type: 'pie',
     data: {
         labels: [
