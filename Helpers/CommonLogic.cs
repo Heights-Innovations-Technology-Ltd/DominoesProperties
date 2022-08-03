@@ -27,11 +27,11 @@ namespace Helpers
         /// <summary>
         /// The local email 1
         /// </summary>
-        public const string LocalEmail_1 = "jcobsmofe@gmail.com";
+        public const string LocalEmail_1 = "tech@realestatedominoes.com";
         /// <summary>
         /// The local email 2
         /// </summary>
-        public const string LocalEmail_2 = "cse080123@gmail.com";
+        public const string LocalEmail_2 = "admin@realestatedominoes.com";
         /// <summary>
         /// The local email 3
         /// </summary>
@@ -39,7 +39,7 @@ namespace Helpers
         /// <summary>
         /// The production email 1
         /// </summary>
-        public const string ProductionEmail_1 = "jcobsmofe@gmail.com";
+        public const string ProductionEmail_1 = "lerato@realestatedominoes.com";
         /// <summary>
         /// The production email 2
         /// </summary>
@@ -136,7 +136,7 @@ namespace Helpers
 
             var messageResponse = MessageResource.Create(
                 body: message,
-                from: new Twilio.Types.PhoneNumber("+18472609769"), //+15005550006 -test phone number
+                from: new Twilio.Types.PhoneNumber("+2348094822156"),
                 to: new Twilio.Types.PhoneNumber(toPhone)
             );
 
@@ -383,7 +383,7 @@ namespace Helpers
         {
             try
             {
-                string devEmail = "jcobsmofe@gmail.com";
+                string devEmail = "tech@realestatedominoes.com";
                 MailMessage mail;
                 if (emailRequest.Settings != null)
                 {
@@ -405,19 +405,12 @@ namespace Helpers
                 mail.Bcc.Add(LocalEmail_2);
                 SmtpClient client = new()
                 {
-                    //UseDefaultCredentials = false,
-                    //Credentials = new NetworkCredential("aojinadu@demotekglobal.com", "Oluwabusayomi1"),
-                    //Port = 465,
-                    //EnableSsl = true,
-                    //DeliveryMethod = SmtpDeliveryMethod.Network,
-                    //Host = "demotekglobal.com"
-
                     UseDefaultCredentials = false,
-                    Credentials = new NetworkCredential("laila.abshire20@ethereal.email", "qC65VDTRhFfzTYmWWB"),
-                    Port = 587,
+                    Credentials = new NetworkCredential("admin@realestatedominoes.com", "Dominoes@2022"),
+                    Port = 465,
                     EnableSsl = true,
                     DeliveryMethod = SmtpDeliveryMethod.Network,
-                    Host = "smtp.ethereal.email",
+                    Host = "mail.realestatedominoes.com",
                     Timeout = 60000
                 };
 
@@ -457,16 +450,15 @@ namespace Helpers
                 mail.CC.Add("aojinadu@demotekglobal.com");
                 SmtpClient client = new SmtpClient();
                 client.UseDefaultCredentials = false;
-                client.Credentials = new NetworkCredential("aojinadu@demotekglobal.com", "Oluwabusayomi1");
-                client.Port = 587;
+                client.Credentials = new NetworkCredential("admin@realestatedominoes.com", "Dominoes@2022");
+                client.Port = 465;
                 client.EnableSsl = true;
                 client.DeliveryMethod = SmtpDeliveryMethod.Network;
-                client.Host = "demotekglobal.com";
+                client.Host = "mail.realestatedominoes.com";
                 mail.Subject = subject;
                 mail.Body = body;
                 mail.IsBodyHtml = true;
                 client.Send(mail);
-
             }
             catch (Exception ex)
             {
