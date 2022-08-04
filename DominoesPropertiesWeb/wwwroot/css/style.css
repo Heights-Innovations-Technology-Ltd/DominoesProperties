@@ -378,7 +378,7 @@ Default Btn Area Style*/
   /*display: -ms-inline-grid;*/
   display: inline-block;
   padding: 12px 40px;
-  background-color: #0f1515;
+  background-color: #334155;
 }
 
 .default-btn.active {
@@ -400,7 +400,7 @@ Default Btn Area Style*/
 Read More Btn Area Style*/
 .read-more {
   font-size: 15px;
-  color: #0f1515;
+  color: #334155;
   background-color: transparent;
   -webkit-transition: all ease 0.5s;
   transition: all ease 0.5s;
@@ -413,7 +413,7 @@ Read More Btn Area Style*/
 }
 
 .read-more:hover {
-  color: #0f1515;
+  color: #334155;
   letter-spacing: 1px;
 }
 
@@ -428,7 +428,7 @@ Section Title Area Style*/
 
 .section-title .top-title {
   font-size: 14px;
-  color: #0f1515;
+  color: #334155;
   display: block;
   margin-bottom: 15px;
   font-weight: 500;
@@ -440,7 +440,7 @@ Section Title Area Style*/
 }
 
 .section-title h2 span {
-  color: #0f1515;
+  color: #334155;
 }
 
 .section-title h2:last-child {
@@ -453,11 +453,11 @@ Section Title Area Style*/
 }
 
 .section-title p span {
-  color: #0f1515;
+  color: #334155;
 }
 
 .section-title.white-title span {
-  color: #0f1515;
+  color: #334155;
 }
 
 .section-title.white-title h2 {
@@ -493,6 +493,7 @@ Navbar Area Style
 ======================================================*/
 .navbar-area {
     position: relative;
+    /*background-color: #f59e0b;*/
     background-color: rgb(208, 90, 21);
     padding-top: 15px;
     padding-bottom: 15px;
@@ -594,7 +595,7 @@ Navbar Area Style
     }
 
     .desktop-nav .navbar .navbar-nav .nav-item a:hover, .desktop-nav .navbar .navbar-nav .nav-item a:focus, .desktop-nav .navbar .navbar-nav .nav-item a.active {
-        color: #0f1515;
+        color: #334155;
     }
 
 .desktop-nav .navbar .navbar-nav .nav-item a i {
@@ -613,7 +614,7 @@ Navbar Area Style
 }
 
     .desktop-nav .navbar .navbar-nav .nav-item:hover a, .desktop-nav .navbar .navbar-nav .nav-item:focus a, .desktop-nav .navbar .navbar-nav .nav-item.active a {
-        color: #0f1515;
+        color: #334155;
     }
 
 .desktop-nav .navbar .navbar-nav .nav-item .dropdown-menu {
@@ -799,7 +800,7 @@ Navbar Area Style
 }
 
 .desktop-nav .navbar .navbar-nav .nav-item .dropdown-menu li .dropdown-menu li .dropdown-menu li .dropdown-menu li.active a {
-  color: #0f1515;
+  color: #334155;
 }
 
 .desktop-nav .navbar .navbar-nav .nav-item .dropdown-menu li .dropdown-menu li .dropdown-menu li .dropdown-menu li:hover .dropdown-menu {
@@ -809,7 +810,7 @@ Navbar Area Style
 }
 
 .desktop-nav .navbar .navbar-nav .nav-item .dropdown-menu li .dropdown-menu li .dropdown-menu li.active a {
-  color: #0f1515;
+  color: #334155;
 }
 
 .desktop-nav .navbar .navbar-nav .nav-item .dropdown-menu li .dropdown-menu li .dropdown-menu li:hover .dropdown-menu {
@@ -819,7 +820,7 @@ Navbar Area Style
 }
 
 .desktop-nav .navbar .navbar-nav .nav-item .dropdown-menu li .dropdown-menu li.active a {
-  color: #0f1515;
+  color: #334155;
 }
 
 .desktop-nav .navbar .navbar-nav .nav-item .dropdown-menu li .dropdown-menu li:hover .dropdown-menu {
@@ -829,7 +830,7 @@ Navbar Area Style
 }
 
 .desktop-nav .navbar .navbar-nav .nav-item .dropdown-menu li.active a {
-  color: #0f1515;
+  color: #334155;
 }
 
 .desktop-nav .navbar .navbar-nav .nav-item .dropdown-menu li:hover .dropdown-menu {
@@ -994,7 +995,7 @@ Navbar Area Style
 }
 
 .desktop-nav .navbar .others-options .dropdown .dropdown-menu li a.active {
-  color: #0f1515;
+  color: #334155;
 }
 
 .desktop-nav .navbar .others-options .dropdown .dropdown-menu li a i {
@@ -1004,7 +1005,7 @@ Navbar Area Style
 }
 
 .desktop-nav .navbar .others-options .dropdown .dropdown-menu li a:hover {
-  color: #0f1515;
+  color: #334155;
 }
 
 .desktop-nav .navbar .others-options .dropdown .dropdown-menu.notif {
@@ -1025,7 +1026,7 @@ Navbar Area Style
 }
 
 .desktop-nav .navbar .others-options .dropdown .dropdown-menu.notif li a i {
-  color: #0f1515;
+  color: #334155;
 }
 
 .desktop-nav .navbar .others-options .dropdown .dropdown-menu.notif li p {
@@ -1033,7 +1034,7 @@ Navbar Area Style
 }
 
 .desktop-nav .navbar .others-options .dropdown .dropdown-menu.notif li:hover a {
-  color: #0f1515;
+  color: #334155;
 }
 
 .mobile-responsive-nav {
@@ -1100,11 +1101,11 @@ Others Option For Responsive Area Style
   margin: 0 2px;
   -webkit-transition: all ease 0.5s;
   transition: all ease 0.5s;
-  background-color: #0f1515;
+  background-color: #334155;
 }
 
 .others-option-for-responsive .dot-menu:hover .inner .circle {
-  background-color: #0f1515;
+  background-color: #334155;
 }
 
 .others-option-for-responsive .container {
@@ -1282,7 +1283,7 @@ Others Option For Responsive Area Style
 }
 
 .others-option-for-responsive .others-options .dropdown .dropdown-menu li a.active {
-  color: #0f1515;
+  color: #334155;
 }
 
 .others-option-for-responsive .others-options .dropdown .dropdown-menu li a i {
@@ -1292,7 +1293,7 @@ Others Option For Responsive Area Style
 }
 
 .others-option-for-responsive .others-options .dropdown .dropdown-menu li a:hover {
-  color: #0f1515;
+  color: #334155;
 }
 
 .others-option-for-responsive .others-options .dropdown .dropdown-menu.notif {
@@ -1313,7 +1314,7 @@ Others Option For Responsive Area Style
 }
 
 .others-option-for-responsive .others-options .dropdown .dropdown-menu.notif li a i {
-  color: #0f1515;
+  color: #334155;
 }
 
 .others-option-for-responsive .others-options .dropdown .dropdown-menu.notif li p {
@@ -1321,7 +1322,7 @@ Others Option For Responsive Area Style
 }
 
 .others-option-for-responsive .others-options .dropdown .dropdown-menu.notif li:hover a {
-  color: #0f1515;
+  color: #334155;
 }
 
 /*
@@ -1369,7 +1370,7 @@ Banner Area Style
 }
 
 .banner-content .top-title {
-    color: #0f1515;
+    color: #334155;
     margin-bottom: 15px;
     display: block;
     font-size: 20px;
@@ -1439,12 +1440,12 @@ Banner Area Style
 }
 
 .banner-rent-sale-form .rent-sale-form .nav .nav-item .nav-link:hover {
-  background-color: #0f1515;
+  background-color: #334155;
   color: #ffffff;
 }
 
 .banner-rent-sale-form .rent-sale-form .nav .nav-item .nav-link.active {
-  background-color: #0f1515;
+  background-color: #334155;
   color: #ffffff;
 }
 
@@ -1497,7 +1498,7 @@ Banner Area Style
 }
 
 .banner-rent-sale-form .all-agents a {
-  color: #0f1515;
+  color: #334155;
 }
 
 .banner-rent-sale-form .all-agents a:hover {
@@ -1805,7 +1806,7 @@ Featured Area Style
   position: absolute;
   top: 0;
   left: 0;
-  color: #0f1515;
+  color: #334155;
 }
 
 .single-featured-item .featured-content ul {
@@ -1826,7 +1827,7 @@ Featured Area Style
 }
 
 .single-featured-item .featured-content ul li i {
-  color: #0f1515;
+  color: #334155;
   font-size: 18px;
   position: relative;
   top: 3px;
@@ -1849,7 +1850,7 @@ Featured Area Style
 .single-featured-item .featured-content.style-three {
   background-color: #ffffff;
   padding: 20px;
-  border: 1px solid #959ea4;
+  border: 1px solid #cbd5e1;
 }
 
 .featured-slide.owl-carousel .owl-item img {
@@ -1866,8 +1867,8 @@ Featured Area Style
 
 .featured-slide.owl-theme .owl-nav .owl-prev, .featured-slide.owl-theme .owl-nav .owl-next {
   background-color: transparent;
-  color: #0f1515;
-  border: 1px solid #0f1515;
+  color: #334155;
+  border: 1px solid #334155;
   width: 60px;
   height: 50px;
   line-height: 50px;
@@ -1911,8 +1912,8 @@ Featured Area Style
 
 .featured-slide-three.owl-theme .owl-nav .owl-prev, .featured-slide-three.owl-theme .owl-nav .owl-next {
   background-color: transparent;
-  color: #0f1515;
-  border: 1px solid #0f1515;
+  color: #334155;
+  border: 1px solid #334155;
   width: 60px;
   height: 50px;
   line-height: 50px;
@@ -1997,7 +1998,7 @@ Properties Area Style
   position: absolute;
   top: 0;
   left: 0;
-  color: #0f1515;
+  color: #334155;
 }
 
 .single-properties-item .properties-content .feature-list {
@@ -2018,7 +2019,7 @@ Properties Area Style
 }
 
 .single-properties-item .properties-content .feature-list li i {
-  color: #0f1515;
+  color: #334155;
   font-size: 18px;
   position: relative;
   top: 3px;
@@ -2076,10 +2077,10 @@ Properties Area Style
 
 .properties-filter .shorting-menu .filter {
   background-color: transparent;
-  border: 1px solid #0f1515;
+  border: 1px solid #334155;
   padding: 10px 20px;
   margin-right: 15px;
-  color: #0f1515;
+  color: #334155;
   -webkit-transition: all ease 0.5s;
   transition: all ease 0.5s;
 }
@@ -2089,12 +2090,12 @@ Properties Area Style
 }
 
 .properties-filter .shorting-menu .filter:hover {
-  background-color: #0f1515;
+  background-color: #334155;
   color: #ffffff;
 }
 
 .properties-filter .shorting-menu .filter.active {
-  background-color: #0f1515;
+  background-color: #334155;
   color: #ffffff;
 }
 
@@ -2132,7 +2133,7 @@ Why Choose Area Style
   width: 80px;
   height: 80px;
   line-height: 94px;
-  background-color: #0f1515;
+  background-color: #334155;
   color: #ffffff;
   font-size: 40px;
   text-align: center;
@@ -2185,7 +2186,7 @@ Why Choose Area Style
   position: absolute;
   top: 20px;
   right: 20px;
-  color: #0f1515;
+  color: #334155;
   background-color: transparent;
   -webkit-transition: all ease 0.5s;
   transition: all ease 0.5s;
@@ -2235,7 +2236,7 @@ Why Choose Area Style
   position: absolute;
   top: 0;
   left: 0;
-  color: #0f1515;
+  color: #334155;
 }
 
 .single-why-choose-item .why-choose-content .feature-list {
@@ -2256,7 +2257,7 @@ Why Choose Area Style
 }
 
 .single-why-choose-item .why-choose-content .feature-list li i {
-  color: #0f1515;
+  color: #334155;
   font-size: 18px;
   position: relative;
   top: 3px;
@@ -2386,7 +2387,7 @@ Agents Area Style
 }
 
 .single-agents .agents-content h3 a:hover {
-  color: #0f1515;
+  color: #334155;
 }
 
 .single-agents .agents-content .team-social {
@@ -2404,7 +2405,7 @@ Agents Area Style
   color: #ffffff;
   z-index: 1;
   display: inline-block;
-  background-color: #0f1515;
+  background-color: #334155;
 }
 
 .single-agents .agents-content .team-social ul {
@@ -2423,7 +2424,7 @@ Agents Area Style
   width: 40px;
   height: 40px;
   line-height: 40px;
-  background-color: #0f1515;
+  background-color: #334155;
   color: #ffffff;
   font-size: 18px;
   text-align: center;
@@ -2503,7 +2504,7 @@ Agents Area Style
   position: absolute;
   top: 0;
   left: 0;
-  color: #0f1515;
+  color: #334155;
   font-size: 18px;
 }
 
@@ -2526,8 +2527,8 @@ Agents Area Style
 
 .agents-slide.owl-theme .owl-nav .owl-prev, .agents-slide.owl-theme .owl-nav .owl-next {
   background-color: transparent;
-  color: #0f1515;
-  border: 1px solid #0f1515;
+  color: #334155;
+  border: 1px solid #334155;
   width: 60px;
   height: 50px;
   line-height: 50px;
@@ -2558,8 +2559,8 @@ Discover Area Style
 
 .discover-slide.owl-theme .owl-nav .owl-prev, .discover-slide.owl-theme .owl-nav .owl-next {
   background-color: transparent;
-  color: #0f1515;
-  border: 1px solid #0f1515;
+  color: #334155;
+  border: 1px solid #334155;
   width: 60px;
   height: 50px;
   line-height: 50px;
@@ -2621,7 +2622,7 @@ Client Area Style
 }
 
 .client-say-slide.owl-theme .owl-dots .owl-dot.active span {
-  background-color: #0f1515;
+  background-color: #334155;
 }
 
 .client-say-content {
@@ -2666,7 +2667,7 @@ Client Area Style
   right: 50px;
   line-height: 1;
   font-size: 30px;
-  color: #0f1515;
+  color: #334155;
   background: rgba(0, 103, 102, 0.2);
   width: 60px;
   height: 60px;
@@ -2718,7 +2719,7 @@ Client Area Style
   height: 50px;
   line-height: 50px;
   text-align: center;
-  color: #0f1515;
+  color: #334155;
   display: inline-block;
   font-size: 30px;
   border-radius: 50px;
@@ -2791,6 +2792,7 @@ App Area Style
 Footer Area Style
 ======================================================*/
 .single-footer-widget {
+    display:block;
   margin-bottom: 30px;
 }
 
@@ -2833,7 +2835,7 @@ Footer Area Style
   position: absolute;
   top: 1px;
   left: 0;
-  color: #0f1515;
+  color: #334155;
 }
 
 .single-footer-widget .help-link {
@@ -2856,7 +2858,7 @@ Footer Area Style
   position: absolute;
   top: -1px;
   left: -7px;
-  color: #0f1515;
+  color: #334155;
   font-size: 20px;
 }
 
@@ -2902,7 +2904,7 @@ Copy Right Area Style
 }
 
 .copy-right-area p a {
-  color: #0f1515;
+  color: #334155;
 }
 
 .copy-right-area p a:hover {
@@ -2969,7 +2971,7 @@ Network Area Style
 
 .network-btn .default-btn {
   background-color: #ffffff;
-  color: #0f1515;
+  color: #334155;
 }
 
 .network-btn .default-btn:hover {
@@ -3047,7 +3049,7 @@ Pricing Area Style
 .single-pricing h1 {
   font-size: 40px;
   margin-bottom: 25px;
-  color: #0f1515;
+  color: #334155;
 }
 
 .single-pricing h1 sup {
@@ -3086,7 +3088,7 @@ Pricing Area Style
 }
 
 .single-pricing ul li .ri-check-line {
-  color: #0f1515;
+  color: #334155;
 }
 
 .single-pricing ul li .ri-close-line {
@@ -3094,7 +3096,7 @@ Pricing Area Style
 }
 
 .single-pricing:hover {
-  border-color: #0f1515;
+  border-color: #334155;
 }
 
 .pricing-switch {
@@ -3119,7 +3121,7 @@ Pricing Area Style
 }
 
 .pricing-switch .toggler--is-active {
-  color: #0f1515;
+  color: #334155;
 }
 
 .pricing-switch .b {
@@ -3165,7 +3167,7 @@ Pricing Area Style
   top: 2px;
   bottom: 2px;
   right: 57.5%;
-  background-color: #0f1515;
+  background-color: #334155;
   border-radius: 36px;
   z-index: 1;
   -webkit-transition: 0.25s cubic-bezier(0.785, 0.135, 0.15, 0.86);
@@ -3245,7 +3247,7 @@ Page Title Area Style
 }
 
 .page-title-content ul li a:hover {
-  color: #0f1515;
+  color: #334155;
 }
 
 .page-title-content ul li::before {
@@ -3331,8 +3333,8 @@ Rello About Area Style
   top: 0;
   left: 0;
   font-size: 50px;
-  color: #0f1515;
-  border: 1px solid #0f1515;
+  color: #334155;
+  border: 1px solid #334155;
   background-color: #f1f8f9;
   width: 70px;
   height: 70px;
@@ -3386,7 +3388,7 @@ Gallery Area Style
   text-align: center;
   background-color: #ffffff;
   line-height: 45px;
-  color: #0f1515;
+  color: #334155;
   border-radius: 50px;
   font-size: 20px;
 }
@@ -3408,7 +3410,7 @@ Gallery Area Style
 .gallery-filter .shorting-menu .filter {
   background-color: transparent;
   margin-right: 15px;
-  color: #0f1515;
+  color: #334155;
   -webkit-transition: all ease 0.5s;
   transition: all ease 0.5s;
 }
@@ -3454,7 +3456,7 @@ Main Contact Area Style
 }
 
 .contact-form .form-group .form-control:focus {
-  border-color: #0f1515;
+  border-color: #334155;
 }
 
 .contact-form .form-group .form-control::-webkit-input-placeholder {
@@ -3531,14 +3533,14 @@ Main Contact Area Style
 }
 
 .contacts-info .address li a:hover {
-  color: #0f1515;
+  color: #334155;
 }
 
 .contacts-info .address li .icon {
   position: absolute;
   top: -7px;
   left: 0;
-  color: #0f1515;
+  color: #334155;
   font-size: 20px;
 }
 
@@ -3574,7 +3576,7 @@ Main Contact Area Style
 }
 
 .contacts-info .address li ul li a {
-  background-color: #0f1515;
+  background-color: #334155;
   width: 30px;
   height: 30px;
   line-height: 30px;
@@ -3696,7 +3698,7 @@ Blog Area CSS
 .single-blog ul li i {
   position: relative;
   top: 3px;
-  color: #0f1515;
+  color: #334155;
   margin-right: 5px;
 }
 
@@ -3718,7 +3720,7 @@ Blog Area CSS
 }
 
 .single-blog:hover h3 a {
-  color: #0f1515;
+  color: #334155;
 }
 
 .widget-sidebar .sidebar-widget {
@@ -3791,7 +3793,7 @@ Blog Area CSS
   left: 0;
   width: 10px;
   height: 10px;
-  background-color: #0f1515;
+  background-color: #334155;
   border-radius: 50px;
 }
 
@@ -3857,7 +3859,7 @@ Blog Area CSS
 .widget-sidebar .sidebar-widget.recent-post .item .info .date i {
   position: relative;
   top: 2px;
-  color: #0f1515;
+  color: #334155;
 }
 
 .widget-sidebar .sidebar-widget.recent-post .item .info h5 {
@@ -3893,9 +3895,9 @@ Blog Area CSS
 }
 
 .widget-sidebar .sidebar-widget.tags ul li a:hover {
-  background-color: #0f1515;
+  background-color: #334155;
   color: #ffffff;
-  border-color: #0f1515;
+  border-color: #334155;
 }
 
 .widget-sidebar .sidebar-widget.agent-form .form-group {
@@ -3956,17 +3958,17 @@ Blog Area CSS
 
 .widget-sidebar .sidebar-widget.agent-contact .call a {
   display: inline-block;
-  border: 1px solid #0f1515;
+  border: 1px solid #334155;
   height: 48px;
   width: 48px;
   line-height: 48px;
   font-size: 20px;
-  color: #0f1515;
+  color: #334155;
   text-align: center;
 }
 
 .widget-sidebar .sidebar-widget.agent-contact .call a:hover {
-  background-color: #0f1515;
+  background-color: #334155;
   color: #ffffff;
 }
 
@@ -4044,7 +4046,7 @@ Blog Details Area CSS
   line-height: 50px;
   text-align: center;
   background-color: rgba(0, 103, 102, 0.1);
-  color: #0f1515;
+  color: #334155;
   border-radius: 50px;
   font-size: 30px;
 }
@@ -4097,7 +4099,7 @@ Blog Details Area CSS
   width: 30px;
   height: 30px;
   line-height: 30px;
-  background-color: #0f1515;
+  background-color: #334155;
   color: #ffffff;
   display: inline-block;
   text-align: center;
@@ -4137,13 +4139,13 @@ Blog Details Area CSS
   line-height: 30px;
   background-color: rgba(0, 103, 102, 0.1);
   border-radius: 50px;
-  color: #0f1515;
+  color: #334155;
   -webkit-transition: all ease 0.5s;
   transition: all ease 0.5s;
 }
 
 .blog-details-content .tag-sshare .share-opt ul li a:hover i {
-  background-color: #0f1515;
+  background-color: #334155;
   color: #ffffff;
 }
 
@@ -4215,7 +4217,7 @@ label {
 
 .model {
     width: auto;
-    height: 700px;
+    height: auto;
     background: white;
     /*   font-size: 0; */
     color: white;
@@ -4254,7 +4256,7 @@ label {
 .room {
     width: 50%;
     height: 100%;
-    background: url('/images/3bedrm-house-plan-C.jpg') no-repeat center center;
+    /*background: url('/images/3bedrm-house-plan-C.jpg') no-repeat center center;*/
     background-size: cover;
     display: inline-block;
     vertical-align: top;
@@ -4287,10 +4289,11 @@ label {
         }
 
 .payment {
-    width: 50%;
+    width: 90%;
     height: 100%;
     color: #34495e;
     display: inline-block;
+    text-align: left;
 }
 
 .receipt-box {
@@ -4375,7 +4378,7 @@ FAQ Area Style
   background-color: transparent;
   border: none;
   position: relative;
-  color: #0f1515;
+  color: #334155;
 }
 
 .faq-page-area .tabs-wrap .nav-tabs .nav-link.active::before {
@@ -4386,7 +4389,7 @@ FAQ Area Style
   right: 0;
   width: 100%;
   height: 2px;
-  border-bottom: 2px solid #0f1515;
+  border-bottom: 2px solid #334155;
 }
 
 .accordion-item {
@@ -4396,7 +4399,7 @@ FAQ Area Style
 }
 
 .accordion-item .accordion-body {
-  border: 1px solid #0f1515;
+  border: 1px solid #334155;
   border-top: none;
   border-radius: 0 0 5px 5px;
   padding: 15px;
@@ -4404,7 +4407,7 @@ FAQ Area Style
 }
 
 .accordion-item .accordion-body a {
-  color: #0f1515;
+  color: #334155;
 }
 
 .accordion-item .accordion-body ul {
@@ -4427,7 +4430,7 @@ FAQ Area Style
   width: 11px;
   height: 11px;
   line-height: 10px;
-  background-color: #0f1515;
+  background-color: #334155;
 }
 
 .accordion-item .accordion-body ul li:last-child {
@@ -4435,7 +4438,7 @@ FAQ Area Style
 }
 
 .accordion-button {
-  border: 1px solid #0f1515;
+  border: 1px solid #334155;
   border-radius: 5px;
   font-weight: 600;
   padding-left: 50px;
@@ -4451,7 +4454,7 @@ FAQ Area Style
   -webkit-box-shadow: none;
           box-shadow: none;
   border-radius: 5px 5px 0 0;
-  background-color: #0f1515;
+  background-color: #334155;
   color: #ffffff;
 }
 
@@ -4674,7 +4677,7 @@ Agent Details Area Style
   top: 0;
   left: 0;
   font-size: 18px;
-  color: #0f1515;
+  color: #334155;
 }
 
 .single-agents-details .deborah-wrap .listing-wrap {
@@ -4723,23 +4726,23 @@ Agent Details Area Style
 
 .agents-details-content .nav-tabs .nav-link {
   display: inline-block;
-  color: #0f1515;
+  color: #334155;
   border: none;
   padding: 0;
   margin-right: 20px;
   font-size: 16px;
-  border: 1px solid #0f1515;
+  border: 1px solid #334155;
   border-radius: 0;
   padding: 12px 25px;
 }
 
 .agents-details-content .nav-tabs .nav-link:hover {
-  background-color: #0f1515;
+  background-color: #334155;
   color: #ffffff;
 }
 
 .agents-details-content .nav-tabs .nav-link.active {
-  background-color: #0f1515;
+  background-color: #334155;
   color: #ffffff;
 }
 
@@ -4792,7 +4795,7 @@ Agent Details Area Style
   -webkit-box-shadow: none !important;
           box-shadow: none !important;
   border: 4px;
-  background-color: #0f1515;
+  background-color: #334155;
 }
 
 .agents-details-content .product-review-form .review-comments {
@@ -4932,7 +4935,7 @@ Property Single Area Style
   position: absolute;
   top: 0;
   left: 0;
-  color: #0f1515;
+  color: #334155;
 }
 
 .properties-details-content .video-img .video-wrap {
@@ -4972,7 +4975,7 @@ Property Single Area Style
 }
 
 .properties-details-content .mortgage-calculator .form-group .form-control:focus {
-  border-color: #0f1515;
+  border-color: #334155;
 }
 
 .properties-details-content .mortgage-calculator .form-group .form-select {
@@ -5019,7 +5022,7 @@ Property Single Area Style
   left: 0;
   height: 12px;
   width: 85%;
-  background-color: #0f1515;
+  background-color: #334155;
 }
 
 .properties-details-content .mortgage-calculator .monthly-count .bar::after {
@@ -5053,7 +5056,7 @@ Property Single Area Style
   left: 0;
   width: 10px;
   height: 10px;
-  background-color: #0f1515;
+  background-color: #334155;
   border-radius: 50px;
 }
 
@@ -5158,7 +5161,7 @@ Property Single Area Style
 }
 
 .properties-details-content .review-form .form-group .form-control:focus {
-  border-color: #0f1515;
+  border-color: #334155;
 }
 
 /* 
@@ -5216,7 +5219,7 @@ Main Content Text Style
   position: absolute;
   top: -6px;
   left: 0;
-  color: #0f1515;
+  color: #334155;
   font-size: 25px;
 }
 
@@ -5229,7 +5232,7 @@ Main Content Text Style
 }
 
 .main-content-text ol li::marker {
-  color: #0f1515;
+  color: #334155;
 }
 
 .main-content-text ol li:last-child {
@@ -5237,7 +5240,7 @@ Main Content Text Style
 }
 
 .main-content-text a {
-  color: #0f1515;
+  color: #334155;
 }
 
 .main-content-text a:hover {
@@ -5319,8 +5322,8 @@ Coming Soon Area Style
 }
 
 .coming-soon-content #timer div {
-  border: 4px solid #0f1515;
-  color: #0f1515;
+  border: 4px solid #334155;
+  color: #334155;
   width: 100px;
   height: 105px;
   border-radius: 5px;
@@ -5382,7 +5385,7 @@ Coming Soon Area Style
   height: 2px;
   -webkit-transition: all ease 0.5s;
   transition: all ease 0.5s;
-  background: #0f1515;
+  background: #334155;
 }
 
 .coming-soon-content form .form-group .input-newsletter {
@@ -5425,7 +5428,7 @@ Coming Soon Area Style
 }
 
 .coming-soon-content form .form-group .input-newsletter:focus {
-  border-color: #0f1515;
+  border-color: #334155;
   outline: 0 !important;
 }
 
@@ -5519,7 +5522,7 @@ Dashboard Area Style
 }
 
 .dashboard-sidebar-menu ul li a i {
-  color: #0f1515;
+  color: #334155;
   position: relative;
   top: 3px;
   margin-right: 5px;
@@ -5529,7 +5532,7 @@ Dashboard Area Style
 
 .dashboard-sidebar-menu ul li a:hover {
   color: #ffffff;
-  background-color: #0f1515;
+  background-color: #334155;
 }
 
 .dashboard-sidebar-menu ul li a:hover i {
@@ -5538,7 +5541,7 @@ Dashboard Area Style
 
 .dashboard-sidebar-menu ul li a.active {
   color: #ffffff;
-  background-color: #0f1515;
+  background-color: #334155;
 }
 
 .dashboard-sidebar-menu ul li a.active i {
@@ -5586,7 +5589,7 @@ Dashboard Area Style
 }
 
 .dashboard-title-wrap .dashboard-page-title li.active {
-  color: #0f1515;
+  color: #334155;
 }
 
 .dashboard-title-wrap .dashboard-src-form .form-group {
@@ -5613,7 +5616,7 @@ Dashboard Area Style
 }
 
 .dashboard-title-wrap .dashboard-src-form .form-group .src-btn:hover i {
-  color: #0f1515;
+  color: #334155;
 }
 
 .single-interface-card {
@@ -5629,7 +5632,7 @@ Dashboard Area Style
 
 .single-interface-card h2 {
   font-size: 40px;
-  color: #0f1515;
+  color: #334155;
   font-family: "BRFirma", sans-serif;
   font-weight: 600;
   margin-bottom: 0;
@@ -5637,7 +5640,7 @@ Dashboard Area Style
 
 .single-interface-card i {
   background-color: #f8fafb;
-  color: #0f1515;
+  color: #334155;
   width: 80px;
   height: 80px;
   line-height: 80px;
@@ -5682,7 +5685,7 @@ My Profile Area Style
   height: 40px;
   line-height: 40px;
   text-align: center;
-  background-color: #0f1515;
+  background-color: #334155;
   color: #ffffff;
   display: inline-block;
 }
@@ -5750,7 +5753,7 @@ Edit profile Area Style
 }
 
 .edit-profile .information .file-upload-account-info .inputfile + label {
-  color: #0f1515;
+  color: #334155;
   background: rgba(0, 103, 102, 0.05);
   margin-bottom: 0;
   -webkit-transition: all ease 0.5s;
@@ -5759,7 +5762,7 @@ Edit profile Area Style
   position: relative;
   height: 55px;
   text-align: center;
-  border: 1px solid #0f1515;
+  border: 1px solid #334155;
   font-size: 16px;
 }
 
@@ -5770,7 +5773,7 @@ Edit profile Area Style
 }
 
 .edit-profile .information .file-upload-account-info .inputfile:focus + label, .edit-profile .information .file-upload-account-info .inputfile + label:hover {
-  color: #0f1515;
+  color: #334155;
 }
 
 .edit-profile .information .file-upload-account-info .inputfile + label {
@@ -5932,7 +5935,7 @@ Add Listing Area Style
 }
 
 .add-listing .basic-informations .information .file-upload-account-info .inputfile + label {
-  color: #0f1515;
+  color: #334155;
   background: #ffffff;
   margin-bottom: 0;
   -webkit-transition: all ease 0.5s;
@@ -5955,7 +5958,7 @@ Add Listing Area Style
 }
 
 .add-listing .basic-informations .information .file-upload-account-info .inputfile:focus + label, .add-listing .basic-informations .information .file-upload-account-info .inputfile + label:hover {
-  color: #0f1515;
+  color: #334155;
 }
 
 .add-listing .basic-informations .information .file-upload-account-info .inputfile + label {
@@ -6001,7 +6004,7 @@ Add Listing Area Style
   position: absolute;
   top: 0;
   left: 0;
-  color: #0f1515;
+  color: #334155;
 }
 
 .add-listing .rooms {
@@ -6176,7 +6179,7 @@ Review Area Style
 }
 
 .single-review .review-date .date i {
-  color: #0f1515;
+  color: #334155;
   font-size: 20px;
   position: relative;
   top: 5px;
@@ -6197,7 +6200,7 @@ Review Area Style
 .single-review .dropdown button i {
   font-size: 18px;
   font-weight: 600;
-  color: #0f1515;
+  color: #334155;
 }
 
 .single-review .dropdown .dropdown-menu {
@@ -6240,7 +6243,7 @@ Review Area Style
 }
 
 .single-review .dropdown .dropdown-menu li a.active {
-  color: #0f1515;
+  color: #334155;
 }
 
 .single-review .dropdown .dropdown-menu li a i {
@@ -6250,7 +6253,7 @@ Review Area Style
 }
 
 .single-review .dropdown .dropdown-menu li a:hover {
-  color: #0f1515;
+  color: #334155;
 }
 
 .single-review .dropdown .dropdown-menu.notif {
@@ -6271,7 +6274,7 @@ Review Area Style
 }
 
 .single-review .dropdown .dropdown-menu.notif li a i {
-  color: #0f1515;
+  color: #334155;
 }
 
 .single-review .dropdown .dropdown-menu.notif li p {
@@ -6279,7 +6282,7 @@ Review Area Style
 }
 
 .single-review .dropdown .dropdown-menu.notif li:hover a {
-  color: #0f1515;
+  color: #334155;
 }
 
 .single-review .client {
@@ -6347,7 +6350,7 @@ Message Area Style
 .message .message-wrap .dropdown button i {
   font-size: 18px;
   font-weight: 600;
-  color: #0f1515;
+  color: #334155;
 }
 
 .message .message-wrap .dropdown .dropdown-menu {
@@ -6390,7 +6393,7 @@ Message Area Style
 }
 
 .message .message-wrap .dropdown .dropdown-menu li a.active {
-  color: #0f1515;
+  color: #334155;
 }
 
 .message .message-wrap .dropdown .dropdown-menu li a i {
@@ -6400,7 +6403,7 @@ Message Area Style
 }
 
 .message .message-wrap .dropdown .dropdown-menu li a:hover {
-  color: #0f1515;
+  color: #334155;
 }
 
 .message .message-wrap .dropdown .dropdown-menu.notif {
@@ -6421,7 +6424,7 @@ Message Area Style
 }
 
 .message .message-wrap .dropdown .dropdown-menu.notif li a i {
-  color: #0f1515;
+  color: #334155;
 }
 
 .message .message-wrap .dropdown .dropdown-menu.notif li p {
@@ -6429,7 +6432,7 @@ Message Area Style
 }
 
 .message .message-wrap .dropdown .dropdown-menu.notif li:hover a {
-  color: #0f1515;
+  color: #334155;
 }
 
 .message .message-wrap .chat-user {
@@ -6589,7 +6592,7 @@ Message Area Style
 }
 
 .message .user-list ul li:hover h4 {
-  color: #0f1515;
+  color: #334155;
 }
 
 /*====================================================
@@ -6691,7 +6694,7 @@ Go Top Style*/
   cursor: pointer;
   right: 3%;
   top: 87%;
-  background-color: #0f1515;
+  background-color: #334155;
   z-index: 4;
   width: 40px;
   text-align: center;
@@ -6732,7 +6735,7 @@ Go Top Style*/
   width: 100%;
   height: 100%;
   z-index: -1;
-  background-color: #0f1515;
+  background-color: #334155;
   opacity: 0;
   visibility: hidden;
   -webkit-transition: 0.5s;
@@ -6741,7 +6744,7 @@ Go Top Style*/
 
 .go-top:hover {
   color: #ffffff;
-  background-color: #0f1515;
+  background-color: #334155;
 }
 
 .go-top:hover::before {
@@ -6802,7 +6805,7 @@ Video wave Style*/
   line-height: 80px;
   text-align: center;
   border-radius: 0;
-  color: #0f1515;
+  color: #334155;
   position: relative;
   z-index: 1;
   background-color: rgba(0, 103, 102, 0.8);
@@ -6924,7 +6927,7 @@ Page-navigation Area Style*/
 
 .pagination-area .page-numbers:hover {
   color: #ffffff;
-  background-color: #0f1515;
+  background-color: #334155;
 }
 
 .pagination-area .page-numbers i {
@@ -6938,8 +6941,8 @@ Page-navigation Area Style*/
 
 .pagination-area .page-numbers.current {
   color: #ffffff;
-  border-color: #0f1515;
-  background-color: #0f1515;
+  border-color: #334155;
+  background-color: #334155;
 }
 
 /*
@@ -7162,7 +7165,7 @@ Dark Mode Area Style
 }
 
 [data-theme="rello_dark"] .desktop-nav .navbar .navbar-nav .nav-item a:hover, [data-theme="rello_dark"] .desktop-nav .navbar .navbar-nav .nav-item a:focus, [data-theme="rello_dark"] .desktop-nav .navbar .navbar-nav .nav-item a.active {
-  color: #0f1515 !important;
+  color: #334155 !important;
 }
 
 [data-theme="rello_dark"] .page-title-area::before {
@@ -7468,11 +7471,11 @@ Dark Mode Area Style
 }
 
 [data-theme="rello_dark"] .properties-filter .shorting-menu .filter:hover {
-  border-color: #0f1515;
+  border-color: #334155;
 }
 
 [data-theme="rello_dark"] .properties-filter .shorting-menu .filter.active {
-  border-color: #0f1515;
+  border-color: #334155;
 }
 
 [data-theme="rello_dark"] .pricing-switch .toggler {
