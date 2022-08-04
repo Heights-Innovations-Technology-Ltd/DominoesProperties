@@ -657,6 +657,7 @@ $('.edit-property').click(() => {
     window.location.replace(url);
 });
 
+let singleData;
 const getSingleProperty = () => {
 
     if ($('#isSubcribed').val() == "False" && $('#refId').val() != "") {
@@ -679,9 +680,9 @@ const getSingleProperty = () => {
         } else {
             var res = JSON.parse(xhr.responseText);
             var data = JSON.parse(res).data;
-
+            console.log(data);
             if (JSON.parse(res).success) {
-
+                singleData = data;
                 $('#name').html(data.name);
                 $('#price').html("&#8358; " + formatToCurrency(data.unitPrice));
                 $('#location').html(data.location);
@@ -777,18 +778,27 @@ const getSingleProperty = () => {
                 if (data.description['fireplace']) $("#fireplace").attr('checked', 'checked');
                 if (data.description['basement']) $("#basement").attr('checked', 'checked');
 
+                if (data.videoLink != null) {
+                    $('.video-link').hmtl(`<h3>Property Video</h3>
+								<div class="video-wrap">
+									<img src="~/images/video-img.jpg" alt="Image">
+
+									<div class="video-button">
+										<a href="https://www.youtube.com/watch?v=Qj59_LGUBvE" class="video-btn popup-youtube">
+											<i class="ri-play-fill"></i>
+										</a>
+									</div>
+								</div>`);
+                }
+                console.log(data.data["Document"]);
+                if (data.data["Document"].length > 0) {
+                    $('.floor-plan').hmtl(`<h3>Floor Plans</h3>
+								<img src="~/images/map-img.jpg" alt="Image">`);
+                }
+
                 //checkout
 
-                $('#propertyName').text(data.name);
-                $('#checkoutPrice').html("&#8358; " + formatToCurrency(data.unitPrice) + " / Unit");
-                $('.checkoutPrice').html(formatToCurrency(data.unitPrice));
-                $('#availableUnit').html("Available Unit: " +  data.unitAvailable);
-                //$('#closeDate').html("Investment End On " + moment(data.closingDate).format('MMMM Do YYYY'));
-                $('.total').html("&#8358; " + formatToCurrency(data.unitPrice));
-                let price = Number($('#price').text().replace(/[^0-9\.-]+/g, "").replace("₦", ""));
-                $('.groundTotal').html("&#8358; " + formatToCurrency(price * $('#unit').val()));
-                $('.interest').html(data.targetYield + "<sup>%</sup>");
-                $('.yield').html(data.targetYield);
+               
             } else {
                 
                 window.scrollTo(0, 0);
@@ -801,14 +811,34 @@ const getSingleProperty = () => {
     }
 }
 
-$('#unit').on('input', () => {
+const calUnit =  () => {
     $('.unit').text($('#unit').val());
     let price = Number($('#price').text().replace(/[^0-9\.-]+/g, "").replace("₦", ""));
 
     $('.total').html("&#8358; " + formatToCurrency(price * $('#unit').val()));
     $('.groundTotal').html("&#8358; " + formatToCurrency(price * $('#unit').val()));
+    var projectYield = (singleData.targetYield / 100) * price;
+    $('.yield').html(projectYield * $('#unit').val());
 
-})
+};
+
+function openModal() {
+    Swal.fire({
+        template: '#my-template'
+    });
+
+    $('.swal2-styled').css('display', 'none');
+    //$('#propertyName').text(singleData.name);
+    $('#checkoutPrice').html("&#8358; " + formatToCurrency(singleData.unitPrice) + " / Unit");
+    $('.checkoutPrice').html(formatToCurrency(singleData.unitPrice));
+    $('#availableUnit').html("Available Unit: " + singleData.unitAvailable);
+    //$('#closeDate').html("Investment End On " + moment(data.closingDate).format('MMMM Do YYYY'));
+    $('.total').html("&#8358; " + formatToCurrency(singleData.unitPrice));
+    let price = Number($('#price').text().replace(/[^0-9\.-]+/g, "").replace("₦", ""));
+    $('.groundTotal').html("&#8358; " + formatToCurrency(price * $('#unit').val()));
+    $('.interest').html(singleData.targetYield + "<sup>%</sup>");
+    $('.yield').html((singleData.targetYield / 100) * price);
+}
 
 
 const editSingleProperty = () => {
@@ -1633,7 +1663,7 @@ $('.btn-verify').click(() => {
     }
 });
 
-$('.btn-property-investment').on('click', () => {
+const propertyInvestment =  () => {
     let price = Number($('#price').text().replace(/[^0-9\.-]+/g, "").replace("₦", ""));
     
     const confirmPropertyUpdate = Swal.mixin({
@@ -1704,7 +1734,7 @@ $('.btn-property-investment').on('click', () => {
             //)
         }
     });
-});
+};
 
 
 $(".btn-change-password").on("submit", function () {

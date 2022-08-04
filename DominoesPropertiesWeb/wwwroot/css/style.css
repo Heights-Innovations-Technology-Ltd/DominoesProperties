@@ -2792,6 +2792,7 @@ App Area Style
 Footer Area Style
 ======================================================*/
 .single-footer-widget {
+    display:block;
   margin-bottom: 30px;
 }
 
@@ -4216,7 +4217,7 @@ label {
 
 .model {
     width: auto;
-    height: 700px;
+    height: auto;
     background: white;
     /*   font-size: 0; */
     color: white;
@@ -4255,7 +4256,7 @@ label {
 .room {
     width: 50%;
     height: 100%;
-    background: url('/images/3bedrm-house-plan-C.jpg') no-repeat center center;
+    /*background: url('/images/3bedrm-house-plan-C.jpg') no-repeat center center;*/
     background-size: cover;
     display: inline-block;
     vertical-align: top;
@@ -4288,10 +4289,11 @@ label {
         }
 
 .payment {
-    width: 50%;
+    width: 90%;
     height: 100%;
     color: #34495e;
     display: inline-block;
+    text-align: left;
 }
 
 .receipt-box {
