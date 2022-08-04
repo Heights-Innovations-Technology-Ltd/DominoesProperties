@@ -24,6 +24,7 @@
 		<script src="~/js/jquery.min.js"></script>
 		<script src="~/js/sweetalert.min.js"></script>
 		 <script src="~/js/moment.js"></script>
+		 <script src="~/js/chart.min.js"></script>
 		
 		<!-- Favicon -->
 		<link rel="icon" type="image/png" href="~/images/favicon.png">
@@ -104,7 +105,7 @@
 								</li>
 								<li class="nav-item">
 									<a asp-controller="Home" asp-action="properties" class="nav-link" id="property-links">
-										Properties
+										Investments
 									</a>
 								</li>
 								<li class="nav-item">
@@ -172,7 +173,7 @@
 			</div>
 
 			<!-- Start Dark Mode Area -->
-			<div class="switch-wrapper">
+			@*<div class="switch-wrapper">
 				<div class="container-fluid">
 					<div class="switch-btn">
 						<label>
@@ -188,7 +189,7 @@
 						</label>
 					</div>
 				</div>
-			</div>
+			</div>*@
 			<!-- End Dark Mode Area -->
 
 			<div class="others-option-for-responsive">
@@ -245,12 +246,12 @@
     </div>
 
 	<!-- Start Footer Area -->
-		<div class="footer-area bg-color-f9fcff pt-100 pb-70">
+		<div class="footer-area bg-color-f9fcff pt-100 pb-70" style="display:block !important;visibility:visible;animation-name:auto;">
 			<div class="container">
 				<div class="row">
 					<div class="col-lg-3 col-sm-6">
-						<div class="single-footer-widget wow animate__animated animate__fadeInUp delay-0-2s">
-							<a href="index-2.html">
+						<div class="single-footer-widget animate__animated animate__fadeInUp delay-0-2s">
+							<a href="#">
 								<img src="~/images/Logo-WHT.png" class="main-logo" alt="Dominoes logo">
 								<img src="~/images/Logo-WHT.png" class="white-logo" alt="Dominoes logo">
 							</a>
@@ -260,7 +261,7 @@
 					</div>
 
 					<div class="col-lg-3 col-sm-6">
-						<div class="single-footer-widget wow animate__animated animate__fadeInUp delay-0-4s">
+						<div class="single-footer-widget  animate__animated animate__fadeInUp delay-0-4s">
 							<h3>Contacts Info</h3>
 
 							<ul class="contact-info">
@@ -281,7 +282,7 @@
 					</div>
 
 					<div class="col-lg-3 col-sm-6">
-						<div class="single-footer-widget wow animate__animated animate__fadeInUp delay-0-6s">
+						<div class="single-footer-widget" >
 							<h3>Helpful Links</h3>
 
 							<ul class="help-link">
@@ -307,11 +308,11 @@
 					</div>
 
 					<div class="col-lg-3 col-sm-6">
-						<div class="single-footer-widget wow animate__animated animate__fadeInUp delay-0-8s">
+						<div class="single-footer-widget">
 							<h3>Newsletter</h3>
 							<p>Stay Informed through our newsletter & get offers any time!</p>
 
-							<form class="newsletter-form" data-toggle="validator">
+							@*<form class="newsletter-form" data-toggle="validator">
 								<input type="email" class="form-control" placeholder="Your email address" name="EMAIL" required autocomplete="off">
 	
 								<button class="submit-btn" type="submit">
@@ -319,7 +320,7 @@
 								</button>
 	
 								<div id="validator-newsletter" class="form-result"></div>
-							</form>	
+							</form>	*@
 						</div>
 					</div>
 				</div>
@@ -331,11 +332,11 @@
 		<div class="copy-right-area">
 			<div class="container">
 				<div class="row align-items-center">
-					<div class="col-lg-6 wow animate__animated animate__fadeInLeft delay-0-2s">
+					<div class="col-lg-6  ">
 						<p>Copyright @@ <span id="year"></span> All Rights Reserved by <a href="javascript:void(0)">Dominoes Properties</a></p>
 					</div>
 					<div class="col-lg-6">
-						<div class="language wow animate__animated animate__fadeInRight delay-0-2s">
+						<div class="language animate__animated animate__fadeInRight delay-0-2s">
 							<select class="form-select" aria-label="Default select example">
 								<option selected>Language</option>
 								<option value="1">English</option>
@@ -348,52 +349,12 @@
 		</div>
 		<!-- End Copyright Area -->
 
-		<!-- Start subscribe modal-->
-		<div class="modal fade" id="subscribeModal" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
-			<div class="modal-dialog modal-dialog-centered">
-				<div class="modal-content">
-					<div class="modal-header">
-						<h5 class="modal-title" id="exampleModalToggleLabel">Warning!!!</h5>
-						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-					</div>
-					<div class="modal-body">
-						Property details can only be view by subscribed users, kindly subscribe to get full access 
-					</div>
-					<div class="modal-footer">
-						<button class="btn btn-primary btn-subscribe" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal" data-bs-dismiss="modal">Subcribe</button>
-					</div>
-				</div>
-			</div>
-		</div>
-		<!-- End Subscribe Modal-->
-		 <!-- Start signout modal-->
-		<div class="modal fade" id="signoutModal" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
-			<div class="modal-dialog modal-dialog-centered">
-				<div class="modal-content">
-					<div class="modal-header">
-						<h5 class="modal-title" id="exampleModalToggleLabel">Warning!!!</h5>
-						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-					</div>
-					<div class="modal-body">
-						Are you sure you want to logout?
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-						<button type="button" class="btn btn-primary" id="signout">Logout</button>
-					</div>
-				</div>
-			</div>
-		</div>
-		<!-- End Signout Modal-->
-
 		<!-- Start Go Top Area -->
 		<div class="go-top">
 			<i class="ri-arrow-up-s-fill"></i>
 			<i class="ri-arrow-up-s-fill"></i>
 		</div>
 		<!-- End Go Top Area -->
-
-        
 
         <!-- Links of JS File -->
         @*<script data-cfasync="false" src="../../cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>*@
@@ -414,9 +375,6 @@
 		<script>
 			$(document).ready(function(){
 				var pathname = window.location.pathname;
-				console.log(pathname);
-				console.log($(this).attr('href'));
-
 				 $('.navbar-nav li a').each(function() {
 					if ($(this).attr('href') == pathname) {
 						$('.navbar-nav li a').removeClass("active");

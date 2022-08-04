@@ -342,20 +342,22 @@ namespace DominoesProperties.Controllers
             {
                 try
                 {
-                    string token = "", html = "", subject = "";
-
+                    string token = "", html = "", subject = "", filePath="";
+                    string url = string.Format("{0}{1}/{2}?value={3}", configuration["app_settings:WebEndpoint"], validationModule.ToString().ToLower(), token, "customer");
                     switch (validationModule)
                     {
                         case ValidationModule.ACTIVATE_ACCOUNT:
                             token = CommonLogic.GetUniqueRefNumber("AT");
-                            string url = string.Format("{0}{1}/{2}?value={3}", configuration["app_settings:WebEndpoint"], validationModule.ToString().ToLower(), token, "customer");
-                            string filePath = Path.Combine(environment.ContentRootPath, @"EmailTemplates\NewCustomer.html");
+                            filePath = Path.Combine(environment.ContentRootPath, @"EmailTemplates\NewCustomer.html");
                             html = System.IO.File.ReadAllText(filePath.Replace(@"\", "/"));
                             html = html.Replace("{name}", string.Format("{0} {1}", customer.FirstName, customer.LastName)).Replace("{link}", url);
                             subject = "Real Estate Dominoes - New Customer Account Activation";
                             break;
                         case ValidationModule.RESET_PASSWORD:
                             token = CommonLogic.GetUniqueRefNumber("RS");
+                            filePath = Path.Combine(environment.ContentRootPath, @"EmailTemplates\PasswordReset.html");
+                            html = System.IO.File.ReadAllText(filePath.Replace(@"\", "/"));
+                            html = html.Replace("{name}", string.Format("{0} {1}", customer.FirstName, customer.LastName)).Replace("{link}", url);
                             subject = "Real Estate Dominoes - Reset Account Password";
                             break;
                         default:

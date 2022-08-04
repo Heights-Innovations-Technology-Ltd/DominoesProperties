@@ -1,5 +1,4 @@
-﻿using System;
-namespace DominoesProperties.Enums
+﻿namespace DominoesProperties.Enums
 {
     public enum PropertyEnum
     {

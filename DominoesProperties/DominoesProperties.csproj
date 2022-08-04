@@ -58,6 +58,7 @@
     <None Remove="EmailTemplates\NewCustomer.html" />
     <None Remove="DominoesProperties.xml" />
     <None Remove="Resources\Uploads\" />
+    <None Remove="EmailTemplates\NewCustomer %28copy%29.html" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.16" />
@@ -113,6 +114,7 @@
   <ItemGroup>
     <EmbeddedResource Include="EmailTemplates\NewCustomer.html" />
     <EmbeddedResource Include="DominoesProperties.xml" />
+    <EmbeddedResource Include="EmailTemplates\PasswordReset.html" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Update="Localize\Resources.en-GB.resx">

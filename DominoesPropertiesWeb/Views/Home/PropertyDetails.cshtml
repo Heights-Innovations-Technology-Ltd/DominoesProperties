@@ -12,8 +12,8 @@
 					
 					<ul>
 						<li>
-							<a href="index-2.html">
-								Home 
+							<a href="/Home/Properties">
+								Properties 
 							</a>
 						</li>
 
@@ -69,9 +69,12 @@
 											</a>
 										</li>
 										<li>
-											<button type="button" class="default-btn rounded" data-bs-toggle="modal" data-bs-target="#exampleModalToggle">
+											<button type="button" class="default-btn rounded" onclick="openModal()">
 											  Checkout
 											</button>
+											@*<button type="button" class="default-btn rounded" data-bs-toggle="modal" data-bs-target="#exampleModalToggle">
+											  Checkout
+											</button>*@
 										</li>
 									</ul>
 								</div>
@@ -80,9 +83,8 @@
 					</div>
 					<div class="col-lg-8">
 						<div class="properties-details-content">
-							<div class="properties-about">
-								<h3>Property Description</h3>
-								<p class="summary"></p>
+							<div class="properties-about summary">
+								
 								
 							</div>
 
@@ -97,238 +99,17 @@
 							
 							<div class="gap-mb-20"></div>
 
-							<div class="video-img">
-								<h3>Property Video</h3>
-								<div class="video-wrap">
-									<img src="~/images/video-img.jpg" alt="Image">
-
-									<div class="video-button">
-										<a href="https://www.youtube.com/watch?v=Qj59_LGUBvE" class="video-btn popup-youtube">
-											<i class="ri-play-fill"></i>
-										</a>
-									</div>
-								</div>
+							<div class="video-img video-link">
+								
 							</div>
 
 							<div class="gap-mb-50"></div>
 
-							<div class="video-img">
-								<h3>Floor Plans</h3>
-								<img src="~/images/map-img.jpg" alt="Image">
+							<div class="video-img floor-plan">
+								
 							</div>
 
 							<div class="gap-mb-50"></div>
-
-							@*<div class="mortgage-calculator">
-								<div class="row">
-									<div class="col-lg-8">
-										<h3>Mortgage Calculator</h3>
-										<form>
-											<div class="row">
-												<div class="col-lg-6 col-sm-6">
-													<div class="form-group">
-														<label>Total Amount</label>
-														<input type="text" class="form-control" placeholder="&#8358;100000">
-													</div>
-												</div>
-												<div class="col-lg-6 col-sm-6">
-													<div class="form-group">
-														<label>Down Payment</label>
-														<input type="text" class="form-control" placeholder="&#8358;90000">
-													</div>
-												</div>
-												<div class="col-lg-6 col-sm-6">
-													<div class="form-group">
-														<label>Interest Rate</label>
-														<input type="text" class="form-control" placeholder="2.5%">
-													</div>
-												</div>
-												<div class="col-lg-6 col-sm-6">
-													<div class="form-group">
-														<label>Loan Terms (Years)</label>
-														<select class="form-select form-control" aria-label="Default select example">
-															<option selected>12</option>
-															<option value="1">14</option>
-															<option value="2">17</option>
-															<option value="3">20</option>
-														</select>
-													</div>
-												</div>
-												<div class="col-lg-6 col-sm-6">
-													<div class="form-group">
-														<label>Property Tax</label>
-														<input type="text" class="form-control" placeholder="&#8358;1000">
-													</div>
-												</div>
-												<div class="col-lg-6 col-sm-6">
-													<div class="form-group">
-														<label>Home Insurance</label>
-														<input type="text" class="form-control" placeholder="&#8358;100">
-													</div>
-												</div>
-												<div class="col-lg-6 col-sm-6">
-													<div class="form-group mb-0">
-														<label>PMI</label>
-														<input type="text" class="form-control" placeholder="&#8358;0">
-													</div>
-												</div>
-												<div class="col-lg-6 col-sm-6">
-													<button type="submit" class="default-btn">
-														Invest
-													</button>
-												</div>
-											</div>
-										</form>
-									</div>
-
-									<div class="col-lg-4">
-										<div class="monthly-count">
-											<h2>&#8358;171.66</h2>
-											<p>Monthly Estimated Mortgage</p>
-											<span class="bar"></span>
-											<ul>
-												<li>
-													Principal & Interest
-													<span>&#8358;80.00</span>
-												</li>
-												<li>
-													Property Tax
-													<span>&#8358;83.33</span>
-												</li>
-												<li>
-													Home Insurance
-													<span>&#8358;8.33</span>
-												</li>
-												<li>
-													PMI
-													<span>&#8358;0.00</span>
-												</li>
-											</ul>
-										</div>
-									</div>
-								</div>
-							</div>*@
-
-							<div class="gap-mb-50"></div>
-
-							<div class="map-location">
-								<h3>Location Map</h3>
-								<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d14375.832948433375!2d-80.26409426900993!3d25.738894638352154!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x88d9b7e816048625%3A0xce85b49262b93dfc!2s7755%20Grand%20Ave!5e0!3m2!1sen!2sbd!4v1644836559762!5m2!1sen!2sbd"></iframe>
-							</div>
-
-							<div class="gap-mb-50"></div>
-
-							@*<div class="similar-properties">
-								<h3>Similar Properties</h3>
-								<div class="row">
-									<div class="col-lg-6">
-										<div class="single-featured-item wow animate__animated animate__fadeInUp delay-0-2s">
-											<div class="featured-img">
-												<img src="~/images/featured/featured-1.jpg" alt="Image">
-												<span>Rent</span>
-												<ul class="d-flex justify-content-between">
-													<li>
-														<i class="ri-star-fill"></i>
-														<i class="ri-star-fill"></i>
-														<i class="ri-star-fill"></i>
-														<i class="ri-star-fill"></i>
-														<i class="ri-star-half-line"></i>
-													</li>
-													<li>
-														<button type="submit">
-															<i class="ri-heart-line"></i>
-														</button>
-													</li>
-												</ul>
-											</div>
-											<div class="featured-content">
-												<div class="d-flex justify-content-between">
-													<h3>
-														<a href="single-listing.html">House For Rent</a>
-													</h3>
-													<h3 class="price">&#8358; 600,000</h3>
-												</div>
-												<p>
-													<i class="ri-map-pin-fill"></i>
-													77 Morris St. Ridgewood, NJ 67655
-												</p>
-												<ul>
-													<li>
-														<i class="ri-hotel-bed-fill"></i>
-														5 Bed
-													</li>
-													<li>
-														<i class="ri-wheelchair-fill"></i>
-														5 Bath
-													</li>
-													<li>
-														<i class="ri-ruler-2-line"></i>
-														1000 Sqft
-													</li>
-												</ul>
-					
-												<a href="agents.html" class="agent-user">
-													<img src="~/images/agents/agent-5.jpg" alt="Image">
-													<span>By Darlene Small</span>
-												</a>
-											</div>
-										</div>
-									</div>
-									<div class="col-lg-6">
-										<div class="single-featured-item wow animate__animated animate__fadeInUp delay-0-4s">
-											<div class="featured-img">
-												<img src="~/images/featured/featured-2.jpg" alt="Image">
-												<span>Sale</span>
-												<ul class="d-flex justify-content-between">
-													<li>
-														<i class="ri-star-fill"></i>
-														<i class="ri-star-fill"></i>
-														<i class="ri-star-fill"></i>
-														<i class="ri-star-fill"></i>
-														<i class="ri-star-half-line"></i>
-													</li>
-													<li>
-														<button type="submit">
-															<i class="ri-heart-line"></i>
-														</button>
-													</li>
-												</ul>
-											</div>
-											<div class="featured-content">
-												<div class="d-flex justify-content-between">
-													<h3>
-														<a href="single-listing.html">House For Sall</a>
-													</h3>
-													<h3 class="price">&#8358; 900,000</h3>
-												</div>
-												<p>
-													<i class="ri-map-pin-fill"></i>
-													7788 Randall Mill Drive Waldorf, MD 22666
-												</p>
-												<ul>
-													<li>
-														<i class="ri-hotel-bed-fill"></i>
-														6 Bed
-													</li>
-													<li>
-														<i class="ri-wheelchair-fill"></i>
-														5 Bath
-													</li>
-													<li>
-														<i class="ri-ruler-2-line"></i>
-														1200 Sqft
-													</li>
-												</ul>
-					
-												<a href="agents.html" class="agent-user">
-													<img src="~/images/agents/agent-6.jpg" alt="Image">
-													<span>By Florence Prada</span>
-												</a>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>*@
 						</div>
 					</div>
 					
@@ -380,10 +161,10 @@
 									</form>
 								</div>
 							</div>
-							<div class="sidebar-widget recent-post">
+							@*<div class="sidebar-widget recent-post">
 								<h3>Recent Posts</h3>
 								
-								@*<article class="item">
+								<article class="item">
 									<a href="single-blog.html" class="thumb">
 										<span class="fullimage cover bg-1" role="img"></span>
 									</a>
@@ -397,9 +178,9 @@
 										</span>
 										<h5>&#8358;24000</h5>
 									</div>
-								</article>*@
+								</article>
 
-								@*<article class="item">
+								<article class="item">
 									<a href="single-blog.html" class="thumb">
 										<span class="fullimage cover bg-2" role="img"></span>
 									</a>
@@ -428,79 +209,62 @@
 										</span>
 										<h5>&#8358;35000</h5>
 									</div>
-								</article>*@
-							</div>
+								</article>
+							</div>*@
 						</div>
 					</div>
 				</div>
 			</div>
-
-			<div class="modal fade" id="exampleModalToggle" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
-			  <div class="modal-dialog modal-xl modal-dialog-centered">
-				<div class="modal-content">
-				  <div class="modal-header">
-					@*<h5 class="modal-title" id="exampleModalToggleLabel">Modal 1</h5>*@
-					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-				  </div>
-				  <div class="modal-body">
-					  <div class="row">
-						  <div class="col-md-9 mx-auto">
-							<div class="model fadeIn">
-								<div class="room">
-								  <div class="text-cover">
-									<h1 id="propertyName">Danny's House</h1>
-									<p class="price" id="checkoutPrice"> 120.00 <span>USD</span> / Unit</p>
-									<hr>
-									<p id="availableUnit">Available Unit</p>
-									<p id="closeDate">Investment End On</p>
-								  </div>
-								</div><div class="payment">
-								  <div class="receipt-box">
-									<h3>Details</h3>
-									<form>
-										<label>Quantity</label>
-										<input type="number" min="1" value="1" id="unit" class="form-control">
-								  </form>
+			<template id="my-template">
+				<swal-html>
+					<div class="model fadeIn">
+						<div class="payment">
+							<div class="receipt-box">
+							<h3>Details</h3>
+							<form>
+								<label>Quantity</label>
+								<input type="number" min="1" value="1" id="unit" oninput="calUnit()" class="form-control">
+							</form>
 									
-								  </div>
-								  <div class="payment-info">
-									<h3>Summary</h3>
-									<table class="table">
-									  <tr>
-										<td> <span class="checkoutPrice"></span> x <span class="unit">1</span></td>
-										<td class="total">Nill</td>
-									  </tr>
-									  @*<tr>
-										<td>Interest Yeild</td>
-										<td>0</td>
-									  </tr>*@
-									  @*<tr>
-										<td>Matured Date</td>
-										<td>31-09-2022</td>
-									  </tr>*@
-									  <tfoot>
-										<tr>
-										  <td>Grand Total</td>
-										  <td class="groundTotal">Nill</td>
-										</tr>
-									  </tfoot>
-									</table>
-
-									<button class="default-btn btn-property-investment rounded" type="button">Continue <i class="fa fa-arrow-right"></i></button>
-								  </div>
-								</div>
 							</div>
-						  </div>
-					  </div>
-				  </div>
-				</div>
-			  </div>
-			</div>
+							<div class="payment-info">
+							<h3>Summary</h3>
+							<table class="table">
+								<tr>
+								<td> <span class="checkoutPrice"></span> x <span class="unit">1</span></td>
+								<td class="total">Nill</td>
+								</tr>
+								<tr>
+								<td>Projected Interest</td>
+								<td class="interest">0</td>
+								</tr>
+								<tr>
+								<td>Projected Yield</td>
+								<td class="yield">0</td>
+								</tr>
+								@* <tr>
+								<td>Matured Date</td>
+								<td>31-09-2022</td>
+								</tr>*@
+								<tfoot>
+								<tr>
+									<td>Grand Total</td>
+									<td class="groundTotal">Nill</td>
+								</tr>
+								</tfoot>
+							</table>
+
+							<button class="default-btn  rounded" type="button" onclick="propertyInvestment()">Continue <i class="fa fa-arrow-right"></i></button>
+							</div>
+						</div>
+					</div>
+				  </swal-html>
+			</template>
 		</div>
 		<!-- End Single Listing Area -->
 
 		<script>
-			
+
 			$(document).ready(() =>{
 				getSingleProperty();
 			})
