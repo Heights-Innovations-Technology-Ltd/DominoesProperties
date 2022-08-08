@@ -33,6 +33,11 @@ namespace Repositories.Service
                 .Where(x => x.CustomerId.Equals(customerId)).ToList();
         }
 
+        public List<Investment> GetPropertyInvestments(long propertyId)
+        {
+            return _context.Investments.Where(x => x.PropertyId.Equals(propertyId)).ToList();
+        }
+
         public Investment GetNewInvestments(string transactionRef)
         {
             return _context.Investments

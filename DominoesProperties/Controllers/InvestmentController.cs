@@ -111,6 +111,27 @@ namespace DominoesProperties.Controllers
             return response;
         }
 
+        [HttpGet("property/{propertyUniqueId}")]
+        [Authorize(Roles = "ADMIN")]
+        public ApiResponse PropertyInvestment(string propertyUniqueId)
+        {
+            List<Investment> investments = investmentRepository.GetPropertyInvestments(propertyRepository.GetProperty(propertyUniqueId).Id);
+            investments.ForEach(x =>
+            {
+                x.Property = null;
+            });
+
+            if (investments.Count > 0)
+            {
+                response.Message = "Successful";
+                response.Success = true;
+                response.Data = investments;
+                return response;
+            }
+            response.Message = "No record found";
+            return response;
+        }
+
         [HttpGet]
         [Authorize]
         public ApiResponse Investment([FromQuery] QueryParams queryParams)
