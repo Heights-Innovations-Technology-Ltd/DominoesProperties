@@ -85,7 +85,7 @@
     <Folder Include="Helper\" />
     <Folder Include="Extensions\" />
     <Folder Include="Enums\" />
-    <Folder Include="EmailTemplates\" />
+    <Folder Include="Resources\" />
     <Folder Include="Services\" />
   </ItemGroup>
   <ItemGroup>
@@ -107,15 +107,6 @@
     <EmbeddedResource Include="DominoesProperties.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="EmailTemplates\Enquiry.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="EmailTemplates\NewCustomer.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="EmailTemplates\PasswordReset.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Localize\Resources.en-GB.Designer.cs">
@@ -123,12 +114,5 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="DominoesProperties.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Update="Localize\Resources.en-GB.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.en-GB.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
   </ItemGroup>
 </Project>

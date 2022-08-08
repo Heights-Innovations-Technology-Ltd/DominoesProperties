@@ -190,25 +190,26 @@ namespace DominoesProperties.Controllers
                 var customer = customerRepository.GetCustomer(uniqueRef);
                 customer.IsVerified = true;
                 customer.IsActive = true;
-                if(customerRepository.UpdateCustomer(customer) != null);
-
-                string filePath = Path.Combine(environment.ContentRootPath, @"EmailTemplates\welcome.html");
-                string html = System.IO.File.ReadAllText(filePath.Replace(@"\", "/"));
-                html = html.Replace("{FIRSTNAME}", string.Format("{0} {1}", customer.FirstName, customer.LastName)).Replace("{webroot}", configuration["app_settings:WebEndpoint"]); ;
-
-                EmailData emailData = new()
+                if (customerRepository.UpdateCustomer(customer) != null)
                 {
-                    EmailBody = html,
-                    EmailSubject = "Welcome!",
-                    EmailToId = customer.Email,
-                    EmailToName = customer.FirstName
-                };
-                emailService.SendEmail(emailData);
+                    string filePath = Path.Combine(environment.ContentRootPath, @"EmailTemplates\welcome.html");
+                    string html = System.IO.File.ReadAllText(filePath.Replace(@"\", "/"));
+                    html = html.Replace("{FIRSTNAME}", string.Format("{0} {1}", customer.FirstName, customer.LastName)).Replace("{webroot}", configuration["app_settings:WebEndpoint"]); ;
 
-                response.Message = string.Format("Customer account {0} successfully activated", customer.Email);
-                response.Success = true;
-                response.Data = ClassConverter.ConvertCustomerToProfile(customer);
-                return response;
+                    EmailData emailData = new()
+                    {
+                        EmailBody = html,
+                        EmailSubject = "Welcome!",
+                        EmailToId = customer.Email,
+                        EmailToName = customer.FirstName
+                    };
+                    emailService.SendEmail(emailData);
+
+                    response.Message = string.Format("Customer account {0} successfully activated", customer.Email);
+                    response.Success = true;
+                    response.Data = ClassConverter.ConvertCustomerToProfile(customer);
+                    return response;
+                }
             }
             return response;
         }
