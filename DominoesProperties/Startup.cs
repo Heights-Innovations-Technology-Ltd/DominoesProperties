@@ -176,12 +176,6 @@ namespace DominoesProperties
                 await context.Response.WriteAsync(result);
             }));
 
-            app.UseStaticFiles(new StaticFileOptions()
-            {
-                FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), @"Resources")),
-                RequestPath = new PathString("/Resources")
-            });
-
             app.UseStaticFiles();
 
             app.UseCors("AllowAllHeaders");
