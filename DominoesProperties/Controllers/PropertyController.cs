@@ -122,7 +122,7 @@ namespace DominoesProperties.Controllers
             Properties properties = ClassConverter.EntityToProperty(property);
             properties.Description = ClassConverter.ConvertDescription(propertyRepository.GetDescriptionByPropertyId(property.UniqueId));
             Dictionary<string, object> Uploads = new();
-            var uploaded = uploadRepository.GetUploads(uniqueId);
+            var uploaded = uploadRepository.GetUploads(property.Id);
             Uploads.Add("Images", uploaded.Where(x => x.UploadType.Equals(UploadType.PICTURE.ToString())).Select(x => x.Url).ToList());
             Uploads.Add("Document", uploaded.Where(x => x.UploadType.Equals(UploadType.DOCUMENT.ToString())).Select(x => x.Url).ToList());
             properties.Data = Uploads;
@@ -249,7 +249,7 @@ namespace DominoesProperties.Controllers
         {
             try
             {
-                List<PropertyUpload> propertyUploads = new();
+                List<Propertyupload> propertyUploads = new();
                 var property = propertyRepository.GetProperty(propertyId);
                 if (property == null)
                 {
@@ -262,7 +262,7 @@ namespace DominoesProperties.Controllers
                 {
                     if (!string.IsNullOrEmpty(x.ImageName) || !string.IsNullOrEmpty(x.Url))
                     {
-                        propertyUploads.Add(new PropertyUpload
+                        propertyUploads.Add(new Propertyupload
                         {
                             DateUploaded = x.DateUploaded,
                             ImageName = x.ImageName,

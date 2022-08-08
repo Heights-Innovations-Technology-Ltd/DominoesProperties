@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Serialization;
 
 #nullable disable
@@ -11,7 +12,7 @@ namespace Models.Models
         public Admin()
         {
             Properties = new HashSet<Property>();
-            PropertyImages = new HashSet<PropertyUpload>();
+            PropertyImages = new HashSet<Propertyupload>();
         }
 
         public string Email { get; set; }
@@ -27,6 +28,7 @@ namespace Models.Models
         [IgnoreDataMember]
         public virtual ICollection<Property> Properties { get; set; }
         [IgnoreDataMember]
-        public virtual ICollection<PropertyUpload> PropertyImages { get; set; }
+        [NotMapped]
+        public virtual ICollection<Propertyupload> PropertyImages { get; set; }
     }
 }

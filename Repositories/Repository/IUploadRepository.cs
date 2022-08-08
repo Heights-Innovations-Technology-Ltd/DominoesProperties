@@ -6,8 +6,8 @@ namespace Repositories.Repository
 {
     public interface IUploadRepository
     {
-        bool NewUpload(List<PropertyUpload> uploads);
-        List<PropertyUpload> GetUploads(string propertyId);
+        bool NewUpload(List<Propertyupload> uploads);
+        List<Propertyupload> GetUploads(long propertyId);
         void DeleteUpload(long uploadId);
     }
 }
