@@ -58,6 +58,14 @@
     <None Remove="MimeKit" />
     <None Remove="Services\" />
     <None Remove="Google.Apis.Drive.v3" />
+    <None Remove="EmailTemplates\enquiry.html" />
+    <None Remove="EmailTemplates\investment-update.html" />
+    <None Remove="EmailTemplates\password-reset.html" />
+    <None Remove="EmailTemplates\wallet.html" />
+    <None Remove="EmailTemplates\welcome.html" />
+    <None Remove="EmailTemplates\investment.html" />
+    <None Remove="EmailTemplates\subscription.html" />
+    <None Remove="EmailTemplates\activation.html" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.16" />
@@ -114,5 +122,31 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="EmailTemplates\enquiry.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="EmailTemplates\investment-update.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="EmailTemplates\password-reset.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="EmailTemplates\wallet.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="EmailTemplates\welcome.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="EmailTemplates\investment.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="EmailTemplates\subscription.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="EmailTemplates\activation.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 </Project>
