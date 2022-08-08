@@ -31,6 +31,11 @@ namespace DominoesPropertiesWeb.Controllers
 
         public IActionResult Index()
         {
+            var userAuth = this.session.GetString("Token");
+            if (userAuth == null || userAuth.Equals(string.Empty))
+            {
+                return RedirectToAction("SignIn", "Home");
+            }
             return View();
         }
 
@@ -52,6 +57,15 @@ namespace DominoesPropertiesWeb.Controllers
         public async Task<JsonResult> GetCustomerInvestments(string customerId)
         {
             var res = Task.Run(() => httpContext.Get($"Investment/{customerId}"));
+            await Task.WhenAll(res);
+            var data = res.Status == TaskStatus.RanToCompletion ? res.Result : null;
+            return Json(JsonConvert.SerializeObject(data));
+        }
+        
+        [Route("/get-investments")]
+        public async Task<JsonResult> GetAllInvestments()
+        {
+            var res = Task.Run(() => httpContext.Get($"Investment"));
             await Task.WhenAll(res);
             var data = res.Status == TaskStatus.RanToCompletion ? res.Result : null;
             return Json(JsonConvert.SerializeObject(data));
