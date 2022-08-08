@@ -194,7 +194,7 @@ namespace DominoesProperties.Controllers
 
                 string filePath = Path.Combine(environment.ContentRootPath, @"EmailTemplates\welcome.html");
                 string html = System.IO.File.ReadAllText(filePath.Replace(@"\", "/"));
-                html = html.Replace("{FIRSTNAME}", string.Format("{0} {1}", customer.FirstName, customer.LastName));
+                html = html.Replace("{FIRSTNAME}", string.Format("{0} {1}", customer.FirstName, customer.LastName)).Replace("{webroot}", configuration["app_settings:WebEndpoint"]); ;
 
                 EmailData emailData = new()
                 {
@@ -238,7 +238,7 @@ namespace DominoesProperties.Controllers
         {
             ApplicationSetting settings = applicationSettingsRepository.GetApplicationSettingsByName("EmailNotification");
 
-            if (ActivationLink(email, ValidationModule.RESET_PASSWORD, settings).IsCompleted)
+            if (ActivationLink(email, ValidationModule.RESET_PASSWORD, settings).Result.Equals(true))
             {
                 response.Message = string.Format("Password reset link successfully sent to {0}", email);
                 response.Success = true;
@@ -356,21 +356,21 @@ namespace DominoesProperties.Controllers
                 try
                 {
                     string token = "", html = "", subject = "", filePath="";
-                    string url = string.Format("{0}{1}/{2}?value={3}", configuration["app_settings:WebEndpoint"], validationModule.ToString().ToLower(), token, "customer");
+                    string url = string.Format("{0}{1}{2}?value={3}", configuration["app_settings:WebEndpoint"], validationModule.ToString().ToLower(), token, "customer");
                     switch (validationModule)
                     {
                         case ValidationModule.ACTIVATE_ACCOUNT:
                             token = CommonLogic.GetUniqueRefNumber("AT");
                             filePath = Path.Combine(environment.ContentRootPath, @"EmailTemplates\activation.html");
                             html = System.IO.File.ReadAllText(filePath.Replace(@"\", "/"));
-                            html = html.Replace("{FIRSTNAME}", string.Format("{0} {1}", customer.FirstName, customer.LastName)).Replace("{LINK}", url);
+                            html = html.Replace("{FIRSTNAME}", string.Format("{0} {1}", customer.FirstName, customer.LastName)).Replace("{LINK}", url).Replace("{webroot}", configuration["app_settings:WebEndpoint"]);
                             subject = "Real Estate Dominoes - Account Activation";
                             break;
                         case ValidationModule.RESET_PASSWORD:
                             token = CommonLogic.GetUniqueRefNumber("RS");
-                            filePath = Path.Combine(environment.ContentRootPath, @"EmailTemplates\PasswordReset.html");
+                            filePath = Path.Combine(environment.ContentRootPath, @"EmailTemplates\password-reset.html");
                             html = System.IO.File.ReadAllText(filePath.Replace(@"\", "/"));
-                            html = html.Replace("{name}", string.Format("{0} {1}", customer.FirstName, customer.LastName)).Replace("{link}", url);
+                            html = html.Replace("{FIRSTNAME}", string.Format("{0} {1}", customer.FirstName, customer.LastName)).Replace("{LINK}", url).Replace("{webroot}", configuration["app_settings:WebEndpoint"]);
                             subject = "Real Estate Dominoes - Reset Account Password";
                             break;
                         default:

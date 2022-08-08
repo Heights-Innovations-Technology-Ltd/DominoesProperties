@@ -156,7 +156,7 @@ namespace DominoesProperties.Controllers
 
                         filePath = Path.Combine(environment.ContentRootPath, @"EmailTemplates\investment-update.html");
                         html = System.IO.File.ReadAllText(filePath.Replace(@"\", "/"));
-                        html = html.Replace("{I-NAME}", investment.Property.Name);
+                        html = html.Replace("{I-NAME}", investment.Property.Name).Replace("{webroot}", configuration["app_settings:WebEndpoint"]); ;
 
                         emailData = new()
                         {
@@ -172,7 +172,7 @@ namespace DominoesProperties.Controllers
                     filePath = Path.Combine(environment.ContentRootPath, @"EmailTemplates\investment.html");
                     html = System.IO.File.ReadAllText(filePath.Replace(@"\", "/"));
                     html = html.Replace("{FIRSTNAME}", string.Format("{0} {1}", customer.FirstName, customer.LastName)).Replace("{I-NAME}", investment.Property.Name);
-                    html = html.Replace("{I-UNITS}", investment.Units.ToString()).Replace("{I-PRICE}", investment.Property.UnitPrice.ToString()).Replace("{I-TOTAL}", paystack.Amount.ToString()).Replace("{I-DATE}", investment.PaymentDate.ToString());
+                    html = html.Replace("{I-UNITS}", investment.Units.ToString()).Replace("{I-PRICE}", investment.Property.UnitPrice.ToString()).Replace("{I-TOTAL}", paystack.Amount.ToString()).Replace("{I-DATE}", investment.PaymentDate.ToString()).Replace("{webroot}", configuration["app_settings:WebEndpoint"]); ;
 
                     emailData = new()
                     {
@@ -204,7 +204,7 @@ namespace DominoesProperties.Controllers
         {
             string filePath = Path.Combine(environment.ContentRootPath, @"EmailTemplates\"+Filename);
             string html = System.IO.File.ReadAllText(filePath.Replace(@"\", "/"));
-            html = html.Replace("{FIRSTNAME}", string.Format("{0} {1}", FirstName, LastName)).Replace("{SUM}", sum.ToString());
+            html = html.Replace("{FIRSTNAME}", string.Format("{0} {1}", FirstName, LastName)).Replace("{SUM}", sum.ToString()).Replace("{webroot}", configuration["app_settings:WebEndpoint"]); ;
 
             EmailData emailData = new()
             {

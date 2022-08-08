@@ -24,6 +24,7 @@
     <Folder Include="Service\" />
     <Folder Include="wwwroot\uploads\" />
     <Folder Include="wwwroot\uploads\email\" />
+    <Folder Include="wwwroot\images\email\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -33,5 +34,6 @@
   <ItemGroup>
     <Content Remove="wwwroot\uploads\" />
     <Content Remove="wwwroot\uploads\email\" />
+    <Content Remove="wwwroot\images\email\" />
   </ItemGroup>
 </Project>
