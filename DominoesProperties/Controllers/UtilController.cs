@@ -62,9 +62,8 @@ namespace DominoesProperties.Controllers
                 response.Success = true;
                 response.Message = "Your request has been received. One of our agent will be in touch with you shortly.";
 
-                string filePath = Path.Combine(environment.ContentRootPath, @"EmailTemplates\Enquiry.html");
+                string filePath = Path.Combine(environment.ContentRootPath, @"EmailTemplates\enquiry.html");
                 string html = System.IO.File.ReadAllText(filePath.Replace(@"\", "/"));
-                html = html.Replace("{name}", customer.FirstName);
 
                 _ = _emailService.SendEmail(new EmailData
                 {
