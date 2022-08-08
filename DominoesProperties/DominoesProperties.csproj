@@ -55,7 +55,6 @@
     <None Remove="MimeKit" />
     <None Remove="Services\" />
     <None Remove="Google.Apis.Drive.v3" />
-    <None Remove="EmailTemplates\NewCustomer.html" />
     <None Remove="DominoesProperties.xml" />
     <None Remove="Resources\Uploads\" />
     <None Remove="EmailTemplates\NewCustomer %28copy%29.html" />
@@ -112,7 +111,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="EmailTemplates\NewCustomer.html" />
     <EmbeddedResource Include="DominoesProperties.xml" />
     <EmbeddedResource Include="EmailTemplates\PasswordReset.html" />
   </ItemGroup>

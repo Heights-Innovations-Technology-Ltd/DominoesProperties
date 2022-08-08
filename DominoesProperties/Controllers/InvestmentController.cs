@@ -47,6 +47,12 @@ namespace DominoesProperties.Controllers
             
             global::Models.Models.Customer customer = customerRepository.GetCustomer(HttpContext.User.Identity.Name);
 
+            if(investment.Units > property.UnitAvailable)
+            {
+                response.Message = $"Not enough investment units available, only {property.UnitAvailable} units available for purchase";
+                return response;
+            }
+
             if(investment.Units > property.MaxUnitPerCustomer)
             {
                 response.Message = $"Maximum number of investment units of {property.MaxUnitPerCustomer} allowed per customer exceeded";

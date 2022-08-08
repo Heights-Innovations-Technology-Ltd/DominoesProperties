@@ -190,7 +190,20 @@ namespace DominoesProperties.Controllers
                 var customer = customerRepository.GetCustomer(uniqueRef);
                 customer.IsVerified = true;
                 customer.IsActive = true;
-                customerRepository.UpdateCustomer(customer);
+                if(customerRepository.UpdateCustomer(customer) != null);
+
+                string filePath = Path.Combine(environment.ContentRootPath, @"EmailTemplates\welcome.html");
+                string html = System.IO.File.ReadAllText(filePath.Replace(@"\", "/"));
+                html = html.Replace("{FIRSTNAME}", string.Format("{0} {1}", customer.FirstName, customer.LastName));
+
+                EmailData emailData = new()
+                {
+                    EmailBody = html,
+                    EmailSubject = "Welcome!",
+                    EmailToId = customer.Email,
+                    EmailToName = customer.FirstName
+                };
+                emailService.SendEmail(emailData);
 
                 response.Message = string.Format("Customer account {0} successfully activated", customer.Email);
                 response.Success = true;
@@ -348,10 +361,10 @@ namespace DominoesProperties.Controllers
                     {
                         case ValidationModule.ACTIVATE_ACCOUNT:
                             token = CommonLogic.GetUniqueRefNumber("AT");
-                            filePath = Path.Combine(environment.ContentRootPath, @"EmailTemplates\NewCustomer.html");
+                            filePath = Path.Combine(environment.ContentRootPath, @"EmailTemplates\activation.html");
                             html = System.IO.File.ReadAllText(filePath.Replace(@"\", "/"));
-                            html = html.Replace("{name}", string.Format("{0} {1}", customer.FirstName, customer.LastName)).Replace("{link}", url);
-                            subject = "Real Estate Dominoes - New Customer Account Activation";
+                            html = html.Replace("{FIRSTNAME}", string.Format("{0} {1}", customer.FirstName, customer.LastName)).Replace("{LINK}", url);
+                            subject = "Real Estate Dominoes - Account Activation";
                             break;
                         case ValidationModule.RESET_PASSWORD:
                             token = CommonLogic.GetUniqueRefNumber("RS");
