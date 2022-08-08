@@ -11,7 +11,7 @@ namespace Models.Models
         public Property()
         {
             Investments = new HashSet<Investment>();
-            PropertyUploads = new HashSet<PropertyUpload>();
+            PropertyUploads = new HashSet<Propertyupload>();
         }
 
         public long Id { get; set; }
@@ -43,6 +43,6 @@ namespace Models.Models
         public virtual Admin CreatedByNavigation { get; set; }
         public virtual PropertyType TypeNavigation { get; set; }
         public virtual ICollection<Investment> Investments { get; set; }
-        public virtual ICollection<PropertyUpload> PropertyUploads { get; set; }
+        public virtual ICollection<Propertyupload> PropertyUploads { get; set; }
     }
 }

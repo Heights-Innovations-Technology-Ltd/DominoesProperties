@@ -47,6 +47,12 @@ namespace DominoesProperties.Controllers
             
             global::Models.Models.Customer customer = customerRepository.GetCustomer(HttpContext.User.Identity.Name);
 
+            if(investment.Units > property.UnitAvailable)
+            {
+                response.Message = $"Not enough investment units available, only {property.UnitAvailable} units available for purchase";
+                return response;
+            }
+
             if(investment.Units > property.MaxUnitPerCustomer)
             {
                 response.Message = $"Maximum number of investment units of {property.MaxUnitPerCustomer} allowed per customer exceeded";
@@ -96,6 +102,27 @@ namespace DominoesProperties.Controllers
             });
 
             if(investments.Count > 0){
+                response.Message = "Successful";
+                response.Success = true;
+                response.Data = investments;
+                return response;
+            }
+            response.Message = "No record found";
+            return response;
+        }
+
+        [HttpGet("property/{propertyUniqueId}")]
+        [Authorize(Roles = "ADMIN")]
+        public ApiResponse PropertyInvestment(string propertyUniqueId)
+        {
+            List<Investment> investments = investmentRepository.GetPropertyInvestments(propertyRepository.GetProperty(propertyUniqueId).Id);
+            investments.ForEach(x =>
+            {
+                x.Property = null;
+            });
+
+            if (investments.Count > 0)
+            {
                 response.Message = "Successful";
                 response.Success = true;
                 response.Data = investments;

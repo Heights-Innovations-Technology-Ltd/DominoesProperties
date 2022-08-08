@@ -26,7 +26,7 @@ namespace Models.Context
         public virtual DbSet<PaystackPayment> PaystackPayments { get; set; }
         public virtual DbSet<Property> Properties { get; set; }
         public virtual DbSet<PropertyType> PropertyTypes { get; set; }
-        public virtual DbSet<PropertyUpload> PropertyUploads { get; set; }
+        public virtual DbSet<Propertyupload> PropertyUploads { get; set; }
         public virtual DbSet<Role> Roles { get; set; }
         public virtual DbSet<Transaction> Transactions { get; set; }
         public virtual DbSet<Wallet> Wallets { get; set; }
@@ -367,28 +367,37 @@ namespace Models.Context
                     .HasMaxLength(200);
             });
 
-            modelBuilder.Entity<PropertyUpload>(entity =>
+            modelBuilder.Entity<Propertyupload>(entity =>
             {
-                entity.HasIndex(e => e.PropertyId, "PropertyUploads_Property_Id_fk");
+                entity.ToTable("propertyuploads");
 
-                entity.HasIndex(e => e.Url, "PropertyUploads_Url_uindex")
+                entity.HasIndex(e => e.Id, "propertyuploads_Id_uindex")
                     .IsUnique();
 
-                entity.Property(e => e.ImageName).HasMaxLength(100);
+                entity.HasIndex(e => e.Url, "propertyuploads_Url_uindex")
+                    .IsUnique();
 
-                entity.Property(e => e.Url)
-                    .IsRequired()
-                    .HasMaxLength(500);
+                entity.HasIndex(e => e.PropertyId, "propertyuploads_property_Id_fk");
+
+                entity.Property(e => e.AdminEmail).HasMaxLength(200);
+
+                entity.Property(e => e.DateUploaded).HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                entity.Property(e => e.ImageName).HasMaxLength(100);
 
                 entity.Property(e => e.UploadType)
                     .IsRequired()
                     .HasMaxLength(10)
                     .HasDefaultValueSql("'PICTURE'");
 
+                entity.Property(e => e.Url)
+                    .IsRequired()
+                    .HasMaxLength(500);
+
                 entity.HasOne(d => d.Property)
                     .WithMany(p => p.PropertyUploads)
                     .HasForeignKey(d => d.PropertyId)
-                    .HasConstraintName("PropertyUploads_Property_Id_fk");
+                    .HasConstraintName("propertyuploads_property_Id_fk");
             });
 
             modelBuilder.Entity<Role>(entity =>

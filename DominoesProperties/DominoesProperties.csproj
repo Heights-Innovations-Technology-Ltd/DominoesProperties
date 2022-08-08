@@ -42,7 +42,6 @@
     <None Remove="StackExchange.Redis.Extensions.AspNetCore" />
     <None Remove="StackExchange.Redis.Extensions.MsgPack" />
     <None Remove="Localization.AspNetCore.TagHelpers" />
-    <None Remove="Resources\" />
     <None Remove="FluentEmail.Core" />
     <None Remove="FluentEmail.Smtp" />
     <None Remove="Resources\Controller\" />
@@ -55,9 +54,7 @@
     <None Remove="MimeKit" />
     <None Remove="Services\" />
     <None Remove="Google.Apis.Drive.v3" />
-    <None Remove="EmailTemplates\NewCustomer.html" />
     <None Remove="DominoesProperties.xml" />
-    <None Remove="Resources\Uploads\" />
     <None Remove="EmailTemplates\NewCustomer %28copy%29.html" />
   </ItemGroup>
   <ItemGroup>
@@ -86,10 +83,8 @@
     <Folder Include="Helper\" />
     <Folder Include="Extensions\" />
     <Folder Include="Enums\" />
-    <Folder Include="Resources\" />
     <Folder Include="EmailTemplates\" />
     <Folder Include="Services\" />
-    <Folder Include="Resources\Uploads\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Models\Models.csproj">
@@ -112,9 +107,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="EmailTemplates\NewCustomer.html" />
     <EmbeddedResource Include="DominoesProperties.xml" />
-    <EmbeddedResource Include="EmailTemplates\PasswordReset.html" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Update="Localize\Resources.en-GB.resx">
