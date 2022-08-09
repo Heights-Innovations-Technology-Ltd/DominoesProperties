@@ -48,7 +48,6 @@
     <None Remove="Localization.AspNetCore.TagHelpers" />
     <None Remove="FluentEmail.Core" />
     <None Remove="FluentEmail.Smtp" />
-    <None Remove="Resources\Controller\" />
     <None Remove="Templates\" />
     <None Remove="FluentEmail.Razor" />
     <None Remove="My.Extensions.Localization.Json" />
@@ -93,7 +92,6 @@
     <Folder Include="Helper\" />
     <Folder Include="Extensions\" />
     <Folder Include="Enums\" />
-    <Folder Include="Resources\" />
     <Folder Include="Services\" />
   </ItemGroup>
   <ItemGroup>
@@ -122,6 +120,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Remove="Resources\**" />
+    <Content Remove="Resources\**" />
+    <EmbeddedResource Remove="Resources\**" />
+    <None Remove="Resources\**" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="EmailTemplates\enquiry.html">
