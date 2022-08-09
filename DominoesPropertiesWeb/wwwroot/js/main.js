@@ -247,12 +247,13 @@ const GetUAdminDashboard = () => {
         } else {
             var res = JSON.parse(xhr.responseText);
             var data = JSON.parse(res).data;
-
+            console.log(data);
             if (JSON.parse(res).success) {
-                $('.total-property').text(data.TotalProperty);
+                $('.total-property').text(data.Properties);
+                $('.active-property').text(data.ActiveProperties);
                 $('.total-investment').text(data.TotalInvestment);
-                $('.active-investment').text(data.ActiveInvestment);
-                $('.total-customer').text(data.TotalCustomer);
+                $('.active-investment').text(data.Investments);
+                $('.total-customer').text(data.Customers);
                 $('.inactive-customer').text(data.InactiveCustomer);
                 $('.payment-due').text(data.DuePayment);
                
@@ -1312,6 +1313,33 @@ const GetInvestments = () => {
     }
 }
 
+const GetAllInvestments = () => {
+    let xhr = new XMLHttpRequest();
+    let url = "/get-investments";
+    xhr.open('GET', url, false);
+    xhr.setRequestHeader("content-type", "application/json");
+    xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+    try {
+
+        xhr.send();
+        if (xhr.status != 200) {
+            // alert('Something went wrong try again!');
+        } else {
+            var res = JSON.parse(xhr.responseText);
+            var data = JSON.parse(res).data;
+            console.log(data);
+            if (JSON.parse(res).success) {
+                adminInvestmentsTmp(data);
+            } else {
+                window.scrollTo(0, 0);
+            }
+
+        }
+    } catch (err) { // instead of onerror
+        //alert("Request failed");
+    }
+}
+
 const investmentTmp = (data) => {
     $('#investments').html('');
     let i = {
@@ -1409,7 +1437,102 @@ const investmentTmp = (data) => {
     });
 }
 
+const adminInvestmentsTmp = (data) => {
+    $('#investments').html('');
+    let i = {
+        yearlyInterest: 0,
+        amount: 0
+    };
+   
+    data.forEach(x => {
+        i = {
+            yearlyInterest: x.yearlyInterestAmount + x.amount,
+            amount: x.amount
+        };
 
+        var investmentDate = moment(x.paymentDate).subtract(10, 'days').calendar();
+        var maturedDate = new Date(investmentDate);
+        maturedDate.setMonth(maturedDate.getMonth() + 11);
+
+        const ctx = document.getElementsByClassName('myChart' + x.transactionRef);
+        let res = `<div class="col-lg-3 col-md-3">
+					    <div class="single-featured-item">
+						    <div class="canvas-img" mb-0 p-4">
+                                <img src="/images/featured/featured-2.jpg" alt="Image">
+							  
+						    </div>
+						    <div class="featured-content style-three">
+							    <div>
+                                     <div class="row">
+                                        <div class="col-md-4">
+                                            <h3 style="font-size:14px; font-weight:normal;">
+									            Investment 
+								            </h3>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <small class="float-end">${x.propertyId}</small>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-8">
+                                            <h3 style="font-size:14px; font-weight:normal;">
+									            Projected Interest
+								            </h3>
+                                        </div>
+                                        <div class="col-md-4">
+                                           <small class="float-end">${x.yield}<sup>%</sup></small>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <h3 style="font-size:14px; font-weight:normal;">
+									           Amount
+								            </h3>
+                                        </div>
+                                        <div class="col-md-8">
+                                           <small class="price float-end"><sup>&#8358;</sup>${formatToCurrency(x.amount)}</small>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <h3 style="font-size:14px; font-weight:normal;">
+									         Projected Yield
+								            </h3>
+                                        </div>
+                                        <div class="col-md-8">
+                                          <small class="price float-end"><sup>&#8358;</sup>${formatToCurrency(x.yearlyInterestAmount)}/yrs</small>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <h3 style="font-size:14px; font-weight:normal;">
+									         Unit
+								            </h3>
+                                        </div>
+                                        <div class="col-md-8">
+                                          <small class="float-end">${x.units}</small>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <h3 style="font-size:14px; font-weight:normal;">
+									            Date
+								            </h3>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <small class="float-end">${moment(x.paymentDate).format('MMMM Do YYYY')}</small>
+                                        </div>
+                                    </div>
+							    </div>
+						    </div>
+					    </div>
+				    </div>`;
+        $('#investments').append(res);
+        //myChart(i, ctx);
+    });
+}
 
 const myChart = (i, ctx) => new Chart(ctx, {
     /*< canvas class= "myChart${x.transactionRef}" width = "400" height = "400" ></canvas >*/

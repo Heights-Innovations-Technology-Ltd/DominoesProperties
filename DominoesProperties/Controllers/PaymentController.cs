@@ -188,8 +188,8 @@ namespace DominoesProperties.Controllers
                     sendMail(customer.Email, customer.FirstName, customer.LastName, "subscription.html", "Congratulations!, You are in and have access to co-invest with us");
                 }
 
-                logger.LogError($"{transaction.TransactionRef} : {reference} : {paystack.Status}");
-                logger.LogError($"{paystack.TransactionRef} : Payment successfully done");
+                logger.LogInfo($"{transaction.TransactionRef} : {reference} : {paystack.Status}");
+                logger.LogInfo($"{paystack.TransactionRef} : Payment successfully done");
                 return Redirect($"{configuration["app_settings:WebEndpoint"]}?status={paystack.Status}");
             }
             catch (Exception ex)
