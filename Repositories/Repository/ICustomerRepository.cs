@@ -10,5 +10,6 @@ namespace Repositories.Repository
         List<Customer> GetCustomers();
         void DeleteCustomer(string uniqueReference);
         Customer UpdateCustomer(Customer customer);
+        Customer GetCustomer(long id);
     }
 }

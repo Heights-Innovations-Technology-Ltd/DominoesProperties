@@ -172,5 +172,22 @@ namespace DominoesProperties.Helper
                 BankName = customer.BankName
             };
         }
+
+        internal static Models.InvestmentView ConvertInvestmentForView(Investment inv)
+        {
+            return new Models.InvestmentView
+            {
+                Id = inv.Id,
+                CustomerId = inv.CustomerId,
+                PropertyId = inv.PropertyId,
+                Units = inv.Units,
+                PaymentDate = inv.PaymentDate,
+                Amount = inv.Amount,
+                Yield = inv.Yield,
+                YearlyInterestAmount = inv.YearlyInterestAmount,
+                TransactionRef = inv.TransactionRef,
+                Status = inv.Status
+    };
+        }
     }
 }
