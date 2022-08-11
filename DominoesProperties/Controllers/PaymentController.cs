@@ -165,6 +165,7 @@ namespace DominoesProperties.Controllers
                             EmailToId = customer.Email,
                             EmailToName = customer.FirstName
                         };
+                        //TODO send broadcast
                     }
                     
                     investmentRepository.UpdateInvestment(investment);

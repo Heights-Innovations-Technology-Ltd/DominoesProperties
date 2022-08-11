@@ -57,5 +57,53 @@ namespace Repositories.Service
             _context.Investments.Update(investment);
             _context.SaveChanges();
         }
+
+        public List<char> GetUsersOnInvestment(long propertyId)
+        {
+            return _context.Investments.Where(x => x.PropertyId == propertyId).Distinct().SelectMany(x => x.Customer.Email).ToList();
+        }
+
+        public bool AddInvestmentFromWallet(Investment investment)
+        {
+            using var tt = _context.Database.BeginTransaction();
+            try
+            {
+                var wallet = _context.Wallets.Where(x => x.CustomerId == investment.CustomerId).FirstOrDefault();
+                wallet.Balance -= investment.Amount;
+                wallet.LastTransactionDate = DateTime.Now;
+                wallet.LastTransactionAmount = -investment.Amount;
+                _context.Wallets.Update(wallet);
+
+                Transaction transaction = new();
+                transaction.Amount = investment.Amount;
+                transaction.Channel = "wallet";
+                transaction.CustomerId = investment.CustomerId;
+                transaction.Module = "PROPERTY_PURCHASE";
+                transaction.Status = "success";
+                transaction.TransactionRef = investment.TransactionRef;
+                transaction.TransactionType = "CR";
+                _context.Transactions.Add(transaction);
+
+                investment.Status = "COMPLETED";
+                Property property = _context.Properties.Where(x => x.Id == investment.PropertyId).FirstOrDefault();
+                property.UnitAvailable -= investment.Units;
+                property.UnitSold += investment.Units;
+
+                if (property.UnitAvailable == 0)
+                {
+                    property.Status = "CLOSED_FOR_INVESTMENT";
+                }
+                _context.Properties.Update(property);
+                _context.Investments.Add(investment);
+
+                tt.Commit();
+                return true;
+            }
+            catch (Exception)
+            {
+                tt.Rollback();
+                return false;
+            }
+        }
     }
 }

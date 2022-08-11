@@ -13,5 +13,7 @@ namespace Repositories.Repository
         Investment GetInvestment(long investmentId);
         Investment GetNewInvestments(string transactionRef);
         List<Investment> GetPropertyInvestments(long propertyId);
+        bool AddInvestmentFromWallet(Investment investment);
+        List<char> GetUsersOnInvestment(long propertyId);
     }
 }

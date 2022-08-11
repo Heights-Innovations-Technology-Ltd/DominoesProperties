@@ -1,15 +1,21 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using DominoesProperties.Enums;
 using DominoesProperties.Helper;
 using DominoesProperties.Models;
+using DominoesProperties.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Localization;
+using Models.Context;
 using Models.Models;
 using Newtonsoft.Json;
 using Repositories.Repository;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+using Transaction = Microsoft.EntityFrameworkCore.DbLoggerCategory.Database.Transaction;
 
 namespace DominoesProperties.Controllers
 {
@@ -24,9 +30,12 @@ namespace DominoesProperties.Controllers
         private readonly IStringLocalizer<InvestmentController> localizer;
         private readonly PaymentController paymentController;
         private readonly IConfiguration configuration;
+        private readonly IWebHostEnvironment env;
+        private readonly IEmailService emailService;
 
         public InvestmentController(IPropertyRepository _propertyRepository, IStringLocalizer<InvestmentController> _localizer, IConfiguration _configuration,
-        ICustomerRepository _customerRepository, IInvestmentRepository _investmentRepository, PaymentController _paymentController)
+        ICustomerRepository _customerRepository, IInvestmentRepository _investmentRepository, PaymentController _paymentController, IWebHostEnvironment _env,
+        IEmailService _emailService)
         {
             propertyRepository = _propertyRepository;
             localizer = _localizer;
@@ -34,6 +43,8 @@ namespace DominoesProperties.Controllers
             investmentRepository = _investmentRepository;
             paymentController = _paymentController;
             configuration = _configuration;
+            env = _env;
+            emailService = _emailService;
         }
 
         [HttpPost]
@@ -62,33 +73,78 @@ namespace DominoesProperties.Controllers
             }
 
             var amount = property.UnitPrice * investment.Units;
-            if (amount > decimal.Parse(configuration["app_settings:PayLimit"]))
-            {
-                //TODO write offline method code here
-            }
-            Investment newInvestment = new()
-            {
-                Amount = amount,
-                CustomerId = customer.Id,
-                PropertyId = property.Id,
-                Units = investment.Units,
-                YearlyInterestAmount = (property.TargetYield * property.UnitPrice) / 100 * investment.Units,
-                Yield = property.TargetYield,
-                PaymentType = PaymentType.PROPERTY_PURCHASE.ToString(),
-                TransactionRef = Guid.NewGuid().ToString(),
-                Status = "PENDING"
-            };
 
-            if (investmentRepository.AddInvestment(newInvestment) != 0)
+            if (investment.Channel.Equals(Channel.WALLET))
             {
-                Payment pay = new()
+                if (customer.Wallet.Balance < amount)
                 {
-                    Amount = newInvestment.Amount,
-                    Module = PaymentType.PROPERTY_PURCHASE,
-                    InvestmentId = newInvestment.TransactionRef,
-                    Callback = string.Format("{0}/{1}", $"{Request.Scheme}://{Request.Host}{Request.PathBase}", "api/payment/verify-payment")
+                    response.Message = "Low wallet balance, please fund your wallet or try a different payment method to complete your investment.";
+                    return response;
+                }
+
+                Investment newInvestment = new()
+                {
+                    Amount = amount,
+                    CustomerId = customer.Id,
+                    PropertyId = property.Id,
+                    Units = investment.Units,
+                    YearlyInterestAmount = (property.TargetYield * property.UnitPrice) / 100 * investment.Units,
+                    Yield = property.TargetYield,
+                    PaymentType = PaymentType.PROPERTY_PURCHASE.ToString(),
+                    TransactionRef = Guid.NewGuid().ToString(),
+                    Status = "PENDING"
                 };
-                return paymentController.DoInitPayment(pay, customer.UniqueRef);
+                if (investmentRepository.AddInvestmentFromWallet(newInvestment))
+                {
+                    string filePath = Path.Combine(env.ContentRootPath, @"EmailTemplates\investment.html");
+                    string html = System.IO.File.ReadAllText(filePath.Replace(@"\", "/"));
+                    html = html.Replace("{FIRSTNAME}", string.Format("{0} {1}", customer.FirstName, customer.LastName)).Replace("{I-NAME}", property.Name);
+                    html = html.Replace("{I-UNITS}", investment.Units.ToString()).Replace("{I-PRICE}", property.UnitPrice.ToString()).Replace("{I-TOTAL}", newInvestment.Amount.ToString()).Replace("{I-DATE}", newInvestment.PaymentDate.ToString()).Replace("{webroot}", configuration["app_settings:WebEndpoint"]); ;
+
+                    EmailData emailData = new()
+                    {
+                        EmailBody = html,
+                        EmailSubject = "Congratulations!!! You just made an investment",
+                        EmailToId = customer.Email,
+                        EmailToName = customer.FirstName
+                    };
+                    emailService.SendEmail(emailData);
+
+                    response.Message = "You have successfully invested in the property";
+                    response.Success = true;
+                    return response;
+                }
+            }
+            else
+            {
+                if (amount > decimal.Parse(configuration["app_settings:PayLimit"]))
+                {
+                    //TODO write offline method code here
+                }
+                Investment newInvestment = new()
+                {
+                    Amount = amount,
+                    CustomerId = customer.Id,
+                    PropertyId = property.Id,
+                    Units = investment.Units,
+                    YearlyInterestAmount = (property.TargetYield * property.UnitPrice) / 100 * investment.Units,
+                    Yield = property.TargetYield,
+                    PaymentType = PaymentType.PROPERTY_PURCHASE.ToString(),
+                    TransactionRef = Guid.NewGuid().ToString(),
+                    Status = "PENDING"
+                };
+
+                if (investmentRepository.AddInvestment(newInvestment) != 0)
+                {
+                    Payment pay = new()
+                    {
+                        Amount = newInvestment.Amount,
+                        Module = PaymentType.PROPERTY_PURCHASE,
+                        InvestmentId = newInvestment.TransactionRef,
+                        Callback = string.Format("{0}/{1}", $"{Request.Scheme}://{Request.Host}{Request.PathBase}", "api/payment/verify-payment")
+                    };
+                    return paymentController.DoInitPayment(pay, customer.UniqueRef);
+                }
             }
             return response;
         }
