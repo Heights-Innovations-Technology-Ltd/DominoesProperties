@@ -54,6 +54,16 @@ namespace Repositories.Service
             return customer;
         }
 
+        public Customer GetCustomer(long id)
+        {
+            var customer = _context.Customers.Local.Where(x => x.Id == id).FirstOrDefault();
+            if (customer == null)
+            {
+                customer = _context.Customers.Where(x => x.Id == id).FirstOrDefault();
+            }
+            return customer;
+        }
+
         public List<Customer> GetCustomers()
         {
             var customers = _context.Customers.Local.ToList();

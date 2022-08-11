@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using DominoesProperties.Enums;
+using DominoesProperties.Helper;
 using DominoesProperties.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -34,33 +35,34 @@ namespace DominoesProperties.Controllers
             paymentController = _paymentController;
             configuration = _configuration;
         }
-        
+
         [HttpPost]
         [Authorize(Roles = "CUSTOMER")]
         public ApiResponse Investments([FromBody] InvestmentNew investment)
         {
             var property = propertyRepository.GetProperty(investment.PropertyUniqueId);
-            if(property == null){
+            if (property == null)
+            {
                 response.Message = $"Property with id {investment.PropertyUniqueId} not found";
                 return response;
             }
-            
+
             global::Models.Models.Customer customer = customerRepository.GetCustomer(HttpContext.User.Identity.Name);
 
-            if(investment.Units > property.UnitAvailable)
+            if (investment.Units > property.UnitAvailable)
             {
                 response.Message = $"Not enough investment units available, only {property.UnitAvailable} units available for purchase";
                 return response;
             }
 
-            if(investment.Units > property.MaxUnitPerCustomer)
+            if (investment.Units > property.MaxUnitPerCustomer)
             {
                 response.Message = $"Maximum number of investment units of {property.MaxUnitPerCustomer} allowed per customer exceeded";
                 return response;
             }
 
             var amount = property.UnitPrice * investment.Units;
-            if(amount > decimal.Parse(configuration["app_settings:PayLimit"]))
+            if (amount > decimal.Parse(configuration["app_settings:PayLimit"]))
             {
                 //TODO write offline method code here
             }
@@ -70,14 +72,15 @@ namespace DominoesProperties.Controllers
                 CustomerId = customer.Id,
                 PropertyId = property.Id,
                 Units = investment.Units,
-                YearlyInterestAmount = (property.TargetYield * property.UnitPrice)/100 * investment.Units,
+                YearlyInterestAmount = (property.TargetYield * property.UnitPrice) / 100 * investment.Units,
                 Yield = property.TargetYield,
                 PaymentType = PaymentType.PROPERTY_PURCHASE.ToString(),
                 TransactionRef = Guid.NewGuid().ToString(),
                 Status = "PENDING"
             };
-            
-            if(investmentRepository.AddInvestment(newInvestment) != 0){
+
+            if (investmentRepository.AddInvestment(newInvestment) != 0)
+            {
                 Payment pay = new()
                 {
                     Amount = newInvestment.Amount,
@@ -101,26 +104,6 @@ namespace DominoesProperties.Controllers
                 x.Property = null;
             });
 
-            if(investments.Count > 0){
-                response.Message = "Successful";
-                response.Success = true;
-                response.Data = investments;
-                return response;
-            }
-            response.Message = "No record found";
-            return response;
-        }
-
-        [HttpGet("property/{propertyUniqueId}")]
-        [Authorize(Roles = "ADMIN")]
-        public ApiResponse PropertyInvestment(string propertyUniqueId)
-        {
-            List<Investment> investments = investmentRepository.GetPropertyInvestments(propertyRepository.GetProperty(propertyUniqueId).Id);
-            investments.ForEach(x =>
-            {
-                x.Property = null;
-            });
-
             if (investments.Count > 0)
             {
                 response.Message = "Successful";
@@ -132,19 +115,56 @@ namespace DominoesProperties.Controllers
             return response;
         }
 
+        [HttpGet("property/{propertyUniqueId}")]
+        [Authorize(Roles = "ADMIN, SUPER")]
+        public ApiResponse PropertyInvestment(string propertyUniqueId)
+        {
+            List<Investment> investments = investmentRepository.GetPropertyInvestments(propertyRepository.GetProperty(propertyUniqueId).Id);
+            List<InvestmentView> investments1 = new();
+            investments.ForEach(x =>
+            {
+                var cc = customerRepository.GetCustomer(x.CustomerId);
+                var xx = ClassConverter.ConvertInvestmentForView(x);
+                xx.Customer = $"{cc.FirstName} {cc.LastName}";
+                xx.Property = propertyRepository.GetProperty(x.PropertyId).Name;
+                investments1.Add(xx);
+            });
+
+            if (investments.Count > 0)
+            {
+                response.Message = "Successful";
+                response.Success = true;
+                response.Data = investments1;
+                return response;
+            }
+            response.Message = "No record found";
+            return response;
+        }
+
         [HttpGet]
-        [Authorize]
+        [Authorize(Roles = "ADMIN, SUPER")]
         public ApiResponse Investment([FromQuery] QueryParams queryParams)
         {
-            PagedList<Investment> investments = investmentRepository.GetInvestments(queryParams);
+            PagedList<Investment> investments1 = investmentRepository.GetInvestments(queryParams);
             (int TotalCount, int PageSize, int CurrentPage, int TotalPages, bool HasNext, bool HasPrevious) metadata = (
-                investments.TotalCount,
-                investments.PageSize,
-                investments.CurrentPage,
-                investments.TotalPages,
-                investments.HasNext,
-                investments.HasPrevious
-            );
+                 investments1.TotalCount,
+                 investments1.PageSize,
+                 investments1.CurrentPage,
+                 investments1.TotalPages,
+                 investments1.HasNext,
+                 investments1.HasPrevious
+             );
+
+            List<InvestmentView> investments = new();
+            investments1.ForEach(x =>
+            {
+                var cc = customerRepository.GetCustomer(x.CustomerId);
+                var xx = ClassConverter.ConvertInvestmentForView(x);
+                xx.Customer = $"{cc.FirstName} {cc.LastName}";
+                xx.Property = propertyRepository.GetProperty(x.PropertyId).Name;
+                investments.Add(xx);
+            });
+            
             Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
             response.Success = true;
             response.Message = "Successfull";

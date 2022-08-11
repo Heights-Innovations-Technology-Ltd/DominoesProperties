@@ -81,8 +81,7 @@ namespace DominoesPropertiesWeb.Service
                     }
                     if (file.Length > 0)
                     {
-                        var dateTime = DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss").Replace("/", "").Replace(":","").Replace(" ", "");
-                        string filename = $"{propertyId.Replace("-", "")}-{dateTime}{fileInfo.Extension}";
+                        string filename = $"{propertyId.Replace("-", "")}-{DateTime.Now.Millisecond}{fileInfo.Extension}";
 
                         using var fileStream = new FileStream(Path.Combine(path, filename), FileMode.Create);
                         await file.CopyToAsync(fileStream);
