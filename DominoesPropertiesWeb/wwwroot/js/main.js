@@ -1329,7 +1329,8 @@ const GetAllInvestments = () => {
             var data = JSON.parse(res).data;
             console.log(data);
             if (JSON.parse(res).success) {
-                adminInvestmentsTmp(data);
+                //adminInvestmentsTmp(data);
+                LoadCurrentData(data);
             } else {
                 window.scrollTo(0, 0);
             }
@@ -1437,13 +1438,52 @@ const investmentTmp = (data) => {
     });
 }
 
+function LoadCurrentData(result) {
+    $('#example').DataTable({
+        "aLengthMenu": [[5, 10, 25, -1], [5, 10, 25, "All"]],
+        "iDisplayLength": 5,
+        retrieve: true,
+        "data": result,
+        "columns": [
+            { "data": "customer" },
+            { "data": "property" },
+            {
+                "data": "yield",
+                render: function (data, type, row) {
+                    return data + "<sup>%</sup>";
+                }
+            },
+            {
+                "data": "amount",
+                render: function (data, type, row) {
+                    return "<sup>&#8358;</sup>" + formatToCurrency(data);
+                }
+            },
+            {
+                "data": "yearlyInterestAmount",
+                render: function (data, type, row) {
+                    return "<sup>&#8358;</sup>" + formatToCurrency(data);
+                }
+            },
+            { "data": "units" },
+            {
+                "data": "paymentDate",
+                render: function (data, type, row) {
+                    return moment(data).format('MMMM Do YYYY');
+                }
+            },
+        ]
+    });
+}
+
 const adminInvestmentsTmp = (data) => {
-    $('.investments tbody').html('');
+    $('#exampleData').html('');
     let i = {
         yearlyInterest: 0,
         amount: 0
     };
-   
+
+    
     data.forEach(x => {
         i = {
             yearlyInterest: x.yearlyInterestAmount + x.amount,
@@ -1456,17 +1496,17 @@ const adminInvestmentsTmp = (data) => {
 
         const ctx = document.getElementsByClassName('myChart' + x.transactionRef);
         let res = `<tr>
-                        <td><input type="checkbox" name=""></td>
-                        <td>${x.propertyId}</td>
-                        <td>System Architect</td>
+                        <td><canvas class="myChart"></canvas></td>
+                        <td>${x.property}</td>
+                        <td>${x.customer}</td>
                         <td>${x.yield}<sup>%</sup></td>
                         <td><sup>&#8358;</sup>${formatToCurrency(x.amount)}</td>
                         <td><sup>&#8358;</sup>${formatToCurrency(x.yearlyInterestAmount)}/yrs</td>
                         <td>${x.units}</td>
                         <td>${moment(x.paymentDate).format('MMMM Do YYYY')}</td>
                     </tr>`;
-        $('.investments tbody').append(res);
-        //myChart(i, ctx);
+        $('#exampleData').append(res);
+        myChart(i, ctx);
     });
 }
 
