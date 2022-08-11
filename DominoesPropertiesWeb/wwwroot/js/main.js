@@ -1438,7 +1438,7 @@ const investmentTmp = (data) => {
 }
 
 const adminInvestmentsTmp = (data) => {
-    $('#investments').html('');
+    $('.investments tbody').html('');
     let i = {
         yearlyInterest: 0,
         amount: 0
@@ -1455,81 +1455,17 @@ const adminInvestmentsTmp = (data) => {
         maturedDate.setMonth(maturedDate.getMonth() + 11);
 
         const ctx = document.getElementsByClassName('myChart' + x.transactionRef);
-        let res = `<div class="col-lg-3 col-md-3">
-					    <div class="single-featured-item">
-						    <div class="canvas-img" mb-0 p-4">
-                                <img src="/images/featured/featured-2.jpg" alt="Image">
-							  
-						    </div>
-						    <div class="featured-content style-three">
-							    <div>
-                                     <div class="row">
-                                        <div class="col-md-4">
-                                            <h3 style="font-size:14px; font-weight:normal;">
-									            Investment 
-								            </h3>
-                                        </div>
-                                        <div class="col-md-8">
-                                            <small class="float-end">${x.propertyId}</small>
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-md-8">
-                                            <h3 style="font-size:14px; font-weight:normal;">
-									            Projected Interest
-								            </h3>
-                                        </div>
-                                        <div class="col-md-4">
-                                           <small class="float-end">${x.yield}<sup>%</sup></small>
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-md-4">
-                                            <h3 style="font-size:14px; font-weight:normal;">
-									           Amount
-								            </h3>
-                                        </div>
-                                        <div class="col-md-8">
-                                           <small class="price float-end"><sup>&#8358;</sup>${formatToCurrency(x.amount)}</small>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-4">
-                                            <h3 style="font-size:14px; font-weight:normal;">
-									         Projected Yield
-								            </h3>
-                                        </div>
-                                        <div class="col-md-8">
-                                          <small class="price float-end"><sup>&#8358;</sup>${formatToCurrency(x.yearlyInterestAmount)}/yrs</small>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-4">
-                                            <h3 style="font-size:14px; font-weight:normal;">
-									         Unit
-								            </h3>
-                                        </div>
-                                        <div class="col-md-8">
-                                          <small class="float-end">${x.units}</small>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-4">
-                                            <h3 style="font-size:14px; font-weight:normal;">
-									            Date
-								            </h3>
-                                        </div>
-                                        <div class="col-md-8">
-                                            <small class="float-end">${moment(x.paymentDate).format('MMMM Do YYYY')}</small>
-                                        </div>
-                                    </div>
-							    </div>
-						    </div>
-					    </div>
-				    </div>`;
-        $('#investments').append(res);
+        let res = `<tr>
+                        <td><input type="checkbox" name=""></td>
+                        <td>${x.propertyId}</td>
+                        <td>System Architect</td>
+                        <td>${x.yield}<sup>%</sup></td>
+                        <td><sup>&#8358;</sup>${formatToCurrency(x.amount)}</td>
+                        <td><sup>&#8358;</sup>${formatToCurrency(x.yearlyInterestAmount)}/yrs</td>
+                        <td>${x.units}</td>
+                        <td>${moment(x.paymentDate).format('MMMM Do YYYY')}</td>
+                    </tr>`;
+        $('.investments tbody').append(res);
         //myChart(i, ctx);
     });
 }
