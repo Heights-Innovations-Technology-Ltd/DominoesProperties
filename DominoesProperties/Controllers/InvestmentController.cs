@@ -116,20 +116,25 @@ namespace DominoesProperties.Controllers
         }
 
         [HttpGet("property/{propertyUniqueId}")]
-        [Authorize(Roles = "ADMIN")]
+        [Authorize(Roles = "ADMIN, SUPER")]
         public ApiResponse PropertyInvestment(string propertyUniqueId)
         {
             List<Investment> investments = investmentRepository.GetPropertyInvestments(propertyRepository.GetProperty(propertyUniqueId).Id);
+            List<InvestmentView> investments1 = new();
             investments.ForEach(x =>
             {
-                x.Property = null;
+                var cc = customerRepository.GetCustomer(x.CustomerId);
+                var xx = ClassConverter.ConvertInvestmentForView(x);
+                xx.Customer = $"{cc.FirstName} {cc.LastName}";
+                xx.Property = propertyRepository.GetProperty(x.PropertyId).Name;
+                investments1.Add(xx);
             });
 
             if (investments.Count > 0)
             {
                 response.Message = "Successful";
                 response.Success = true;
-                response.Data = investments;
+                response.Data = investments1;
                 return response;
             }
             response.Message = "No record found";
@@ -137,7 +142,7 @@ namespace DominoesProperties.Controllers
         }
 
         [HttpGet]
-        [Authorize]
+        [Authorize(Roles = "ADMIN, SUPER")]
         public ApiResponse Investment([FromQuery] QueryParams queryParams)
         {
             PagedList<Investment> investments1 = investmentRepository.GetInvestments(queryParams);
