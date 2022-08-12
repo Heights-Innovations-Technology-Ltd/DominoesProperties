@@ -295,14 +295,21 @@ namespace Models.Context
 
             modelBuilder.Entity<Property>(entity =>
             {
-                entity.ToTable("Property");
+                entity.ToTable("property");
 
-                entity.HasIndex(e => e.CreatedBy, "Property_Admin_Email_fk");
-
-                entity.HasIndex(e => e.Type, "Property_Property_Type_Id_fk");
-
-                entity.HasIndex(e => e.UniqueId, "Property_UniqueId_uindex")
+                entity.HasIndex(e => e.Id, "property_Id_uindex")
                     .IsUnique();
+
+                entity.HasIndex(e => e.UniqueId, "property_UniqueId_uindex")
+                    .IsUnique();
+
+                entity.Property(e => e.Account).HasMaxLength(10);
+
+                entity.Property(e => e.AllowSharing)
+                    .HasColumnType("bit(1)")
+                    .HasDefaultValueSql("b'0'");
+
+                entity.Property(e => e.Bank).HasMaxLength(100);
 
                 entity.Property(e => e.ClosingDate).HasColumnType("date");
 
@@ -310,11 +317,10 @@ namespace Models.Context
                     .IsRequired()
                     .HasMaxLength(200);
 
-                entity.Property(e => e.DateCreated).HasDefaultValueSql("CURRENT_TIMESTAMP");
-
                 entity.Property(e => e.InterestRate).HasColumnType("decimal(18,2)");
 
                 entity.Property(e => e.IsDeleted)
+                    .IsRequired()
                     .HasColumnType("bit(1)")
                     .HasDefaultValueSql("b'0'");
 
@@ -324,13 +330,22 @@ namespace Models.Context
 
                 entity.Property(e => e.Longitude).HasMaxLength(100);
 
+                entity.Property(e => e.MaxUnitPerCustomer).HasDefaultValueSql("'1000'");
+
+                entity.Property(e => e.MinimumSharingPercentage).HasDefaultValueSql("'0'");
+
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasMaxLength(200);
 
                 entity.Property(e => e.ProjectedGrowth).HasColumnType("decimal(18,2)");
 
-                entity.Property(e => e.Status).HasMaxLength(20);
+                entity.Property(e => e.Status)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .HasDefaultValueSql("'ONGOING_CONSTRUCTION'");
+
+                entity.Property(e => e.Summary).IsRequired();
 
                 entity.Property(e => e.TargetYield).HasColumnType("decimal(18,2)");
 
@@ -343,17 +358,6 @@ namespace Models.Context
                 entity.Property(e => e.UnitPrice).HasColumnType("decimal(18,2)");
 
                 entity.Property(e => e.VideoLink).HasMaxLength(500);
-
-                entity.HasOne(d => d.CreatedByNavigation)
-                    .WithMany(p => p.Properties)
-                    .HasForeignKey(d => d.CreatedBy)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("Property_Admin_Email_fk");
-
-                entity.HasOne(d => d.TypeNavigation)
-                    .WithMany(p => p.Properties)
-                    .HasForeignKey(d => d.Type)
-                    .HasConstraintName("Property_Property_Type_Id_fk");
             });
 
             modelBuilder.Entity<PropertyType>(entity =>
