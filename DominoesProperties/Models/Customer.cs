@@ -2,7 +2,7 @@
 
 namespace DominoesProperties.Models
 {
-    public class Customer
+    public class CustomerReq
     {
         [Required(ErrorMessage = "Password is required")]
         [MaxLength(50)]

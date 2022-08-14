@@ -61,7 +61,7 @@ namespace DominoesProperties.Controllers
 
         [HttpPost]
         [Route("register")]
-        public ApiResponse RegisterAsync([FromBody] Models.Customer customer)
+        public ApiResponse RegisterAsync([FromBody] Models.CustomerReq customer)
         {
             if (customerRepository.GetCustomer(customer.Email) != null)
             {

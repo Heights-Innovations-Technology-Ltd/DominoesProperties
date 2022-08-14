@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Models.Context;
 using Models.Models;
@@ -10,8 +11,10 @@ namespace Repositories.Service
 {
     public class InvestmentService : BaseRepository, IInvestmentRepository
     {
-        public InvestmentService(dominoespropertiesContext context):base(context)
+        private readonly ILoggerManager loggerManager;
+        public InvestmentService(dominoespropertiesContext context, ILoggerManager _loggerManager):base(context)
         {
+            loggerManager = _loggerManager;
         }
 
         public long AddInvestment(Investment investment)
@@ -103,6 +106,85 @@ namespace Repositories.Service
             {
                 tt.Rollback();
                 return false;
+            }
+        }
+
+        public List<Sharinggroup> GetSharinggroups(long propertyId)
+        {
+            return _context.Sharinggroups
+                .Include(x => x.Sharingentries)
+                .Where(x => !x.IsClosed.Value)
+                .ToList();
+        }
+
+        public Sharinggroup GetSharinggroups(string groupRef)
+        {
+            return _context.Sharinggroups
+                .Where(x => x.UniqueId == groupRef)
+                .FirstOrDefault();
+        }
+
+        public bool AddSharingentry(Sharingentry sharingentry)
+        {
+            try
+            {
+                _context.Sharingentries.Add(sharingentry);
+                _context.SaveChanges();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public bool AddSharingGroup(Sharinggroup sharinggroup)
+        {
+            try
+            {
+                _context.Sharinggroups.Add(sharinggroup);
+                _context.SaveChanges();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public void UpdateSharingGroup(Sharinggroup sharinggroup)
+        {
+            _context.Sharinggroups.Update(sharinggroup);
+            _context.SaveChanges();
+        }
+
+        public async Task<bool> CloseSharingGroupAsync(long groupId)
+        {
+            try
+            {
+                var group = _context.Sharinggroups.Find(groupId);
+                group.IsClosed = true;
+                await group.Sharingentries.AsQueryable().ForEachAsync(x => x.IsClosed = true);
+                _context.Sharinggroups.Update(group);
+                _context.SaveChanges();
+                return true;
+            }catch(Exception ex)
+            {
+                loggerManager.LogError(ex.ToString());
+                return false;
+            }
+        }
+
+        public void DeleteGroup(Sharinggroup groupRef)
+        {
+            try
+            {
+                _context.Sharinggroups.Remove(groupRef);
+                _context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                loggerManager.LogError(ex.ToString());
             }
         }
     }

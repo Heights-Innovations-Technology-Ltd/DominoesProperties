@@ -5,17 +5,15 @@ using DominoesProperties.Enums;
 using DominoesProperties.Helper;
 using DominoesProperties.Models;
 using DominoesProperties.Services;
+using Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Localization;
-using Models.Context;
 using Models.Models;
 using Newtonsoft.Json;
 using Repositories.Repository;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
-using Transaction = Microsoft.EntityFrameworkCore.DbLoggerCategory.Database.Transaction;
 
 namespace DominoesProperties.Controllers
 {
@@ -27,24 +25,116 @@ namespace DominoesProperties.Controllers
         private readonly IPropertyRepository propertyRepository;
         private readonly ICustomerRepository customerRepository;
         private readonly IInvestmentRepository investmentRepository;
-        private readonly IStringLocalizer<InvestmentController> localizer;
         private readonly PaymentController paymentController;
         private readonly IConfiguration configuration;
         private readonly IWebHostEnvironment env;
         private readonly IEmailService emailService;
 
-        public InvestmentController(IPropertyRepository _propertyRepository, IStringLocalizer<InvestmentController> _localizer, IConfiguration _configuration,
+        public InvestmentController(IPropertyRepository _propertyRepository, IConfiguration _configuration,
         ICustomerRepository _customerRepository, IInvestmentRepository _investmentRepository, PaymentController _paymentController, IWebHostEnvironment _env,
         IEmailService _emailService)
         {
             propertyRepository = _propertyRepository;
-            localizer = _localizer;
             customerRepository = _customerRepository;
             investmentRepository = _investmentRepository;
             paymentController = _paymentController;
             configuration = _configuration;
             env = _env;
             emailService = _emailService;
+        }
+
+        [HttpGet("pair-groups/{propertyUniqueId}")]
+        [Authorize(Roles = "CUSTOMER")]
+        public ApiResponse InvestmentGroup(string propertyUniqueId)
+        {
+            List<Sharinggroup> groups;
+            var property = propertyRepository.GetProperty(propertyUniqueId);
+            groups = investmentRepository.GetSharinggroups(property.Id);
+            if (groups.Count > 0)
+            {
+                response.Success = true;
+                response.Message = "Pairing groups successfully fetched";
+            }
+            else
+            {
+                response.Message = "No available groups for this investment";
+            }
+            response.Data = groups;
+            return response;
+        }
+
+        [HttpPost("pair-groups")]
+        [Authorize(Roles = "CUSTOMER")]
+        public ApiResponse AddInvestmentGroup([FromBody] SharingGroup investment)
+        {
+            var property = propertyRepository.GetProperty(investment.PropertyUniqueId);
+            if (property == null)
+            {
+                response.Message = "Invalid parameter in request, check to confirm property identifier is valid";
+                return response;
+            }
+            else if (!property.AllowSharing.Value)
+            {
+                response.Message = "Pairing is not allowed on this property";
+                return response;
+            }
+            else if (property.UnitAvailable < 1)
+            {
+                response.Message = "Property is fully subscribed";
+                return response;
+            }
+
+            Sharinggroup shg = new()
+            {
+                Alias = investment.Alias,
+                CustomerUniqueId = HttpContext.User.Identity.Name,
+                PropertyId = property.Id,
+                Date = DateTime.Now,
+                MaxCount = 100 / property.MinimumSharingPercentage.Value,
+                UniqueId = CommonLogic.GetUniqueRefNumber("pg"),
+                IsClosed = false
+            };
+
+            if (investmentRepository.AddSharingGroup(shg))
+            {
+                Payment pay = new()
+                {
+                    Amount = (property.UnitPrice * investment.PercentageShare) / 100,
+                    Module = PaymentType.PROPERTY_PAIRING_GROUP,
+                    InvestmentId = shg.UniqueId,
+                    Callback = string.Format("{0}/{1}", $"{Request.Scheme}://{Request.Host}{Request.PathBase}", "api/payment/verify-payment")
+                };
+                return paymentController.DoInitPayment(pay, HttpContext.User.Identity.Name);
+            }
+            response.Message = "Unable to create new group for this property, either pairing is not allow or property is fully subscribed";
+            return response;
+        }
+
+        [HttpPost("pair-invest")]
+        [Authorize(Roles = "CUSTOMER")]
+        public ApiResponse AddInvestmentShareEntry([FromBody] InvestmentSharing investment)
+        {
+            var property = propertyRepository.GetProperty(investment.PropertyUniqueId);
+            if (property == null)
+            {
+                response.Message = $"Property with id {investment.PropertyUniqueId} not found";
+                return response;
+            }
+
+            if (property.UnitAvailable < 1)
+            {
+                response.Message = $"Pair investment closed for this property";
+                return response;
+            }
+
+            Payment pay = new()
+            {
+                Amount = (property.UnitPrice * investment.PercentageShare) / 100,
+                Module = PaymentType.PROPERTY_PAIRING,
+                InvestmentId = investment.SharingGroupId,
+                Callback = string.Format("{0}/{1}", $"{Request.Scheme}://{Request.Host}{Request.PathBase}", "api/payment/verify-payment")
+            };
+            return paymentController.DoInitPayment(pay, HttpContext.User.Identity.Name);
         }
 
         [HttpPost]
@@ -74,7 +164,7 @@ namespace DominoesProperties.Controllers
 
             var amount = property.UnitPrice * investment.Units;
 
-            if (investment.Channel.Equals(Channel.WALLET))
+            if (investment.PaymentChannel.Equals(Channel.WALLET))
             {
                 if (customer.Wallet.Balance < amount)
                 {
@@ -220,7 +310,7 @@ namespace DominoesProperties.Controllers
                 xx.Property = propertyRepository.GetProperty(x.PropertyId).Name;
                 investments.Add(xx);
             });
-            
+
             Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
             response.Success = true;
             response.Message = "Successfull";

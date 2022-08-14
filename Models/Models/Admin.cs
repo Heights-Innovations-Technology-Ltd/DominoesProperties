@@ -11,6 +11,7 @@ namespace Models.Models
     {
         public Admin()
         {
+            Enquiries = new HashSet<Enquiry>();
             Properties = new HashSet<Property>();
             PropertyImages = new HashSet<Propertyupload>();
         }
@@ -30,5 +31,6 @@ namespace Models.Models
         [IgnoreDataMember]
         [NotMapped]
         public virtual ICollection<Propertyupload> PropertyImages { get; set; }
+        public virtual ICollection<Enquiry> Enquiries { get; set; }
     }
 }
