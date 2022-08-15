@@ -1,16 +1,17 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Models.Models;
 
 #nullable disable
 
-namespace Models.Models
+namespace Models.Context
 {
-    public partial class db_a88af9_dominoContext : DbContext
+    public partial class dominoespropertiesContext : DbContext
     {
-        public db_a88af9_dominoContext()
+        public dominoespropertiesContext()
         {
         }
 
-        public db_a88af9_dominoContext(DbContextOptions<db_a88af9_dominoContext> options)
+        public dominoespropertiesContext(DbContextOptions<dominoespropertiesContext> options)
             : base(options)
         {
         }
