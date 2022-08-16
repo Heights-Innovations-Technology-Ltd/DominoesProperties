@@ -1,0 +1,90 @@
+﻿
+@{
+    ViewData["Title"] = "ViewInvestment";
+    Layout = "~/Views/Shared/_LayoutDash.cshtml";
+}
+
+<style>
+table{
+    width:100%;
+}
+#example_filter{
+    float:right;
+}
+#example_paginate{
+    float:right;
+}
+label {
+    display: inline-flex;
+    margin-bottom: .5rem;
+    margin-top: .5rem;
+   
+}
+</style>
+<script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap4.min.js"></script>
+
+<!-- Start Dashboard Area -->
+	<div class="dashboard-area">
+		<div class="container-fluid">
+			<div class="dashboard-title-wrap mb-2">
+				<div class="row align-items-center">
+					<div class="col-lg-6 col-sm-6">
+						<ul class="dashboard-page-title">
+							<li>
+								<a href="/dashoard">
+									Dashboard 
+								</a>
+							</li>
+							<li>
+								<a href="/Investment">
+									Investments
+								</a>
+							</li>
+		
+							<li class="active">Property Investments</li>
+						</ul>
+					</div>
+					<div class="col-lg-6 col-sm-6">
+						
+					</div>
+				</div>
+			</div>
+
+			<div class="my-listing">
+				
+				<div class="latest-lavel">
+					<div class="row align-items-center">
+						
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="col-md-12">
+						<table id="example" class="table table-striped table-bordered investments" style="width:100%">
+							<thead>
+								<tr>
+									<th>Investment</th>
+									<th>Customer</th>
+									<th>Projected Interest</th>
+									<th>Amount</th>
+									<th>Projected Yield</th>
+									<th>Unit</th>
+									<th>Status</th>
+									<th>Date</th>
+								</tr>
+							</thead>
+						</table>
+                    </div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- End Dashboard Area -->
+	<script>
+		$(document).ready(() =>{
+			GetInvestmentById();
+			$('#example_wrapper').removeClass('container-fluid');
+		});
+	</script>
+

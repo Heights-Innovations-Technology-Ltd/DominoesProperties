@@ -360,6 +360,7 @@ const GetProperties = (type) => {
         } else {
             var res = JSON.parse(xhr.responseText);
             var data = JSON.parse(res).data;
+            console.log(data);
             if (JSON.parse(res).success) {
                 $('#property-count').html(data.length + ' Results Found');
                 
@@ -402,7 +403,10 @@ const GetProperties = (type) => {
 								</li>
 						    </ul>
                        `);
-                } else {
+                } else if (type == "investment") {
+                    adminInvestmentTmp(data);
+                }
+                else {
                     propertiesTmp(data);
                 }
             } else {
@@ -484,6 +488,86 @@ const adminPropertTmp = (data) => {
 												</h3>
 												 <h3 class="price">&#8358;${formatToCurrency(x.unitPrice)}</h3>
 											</div>
+											<p>
+												<i class="ri-map-pin-fill"></i>
+												${x.location}
+											</p>
+											<ul>
+												<li>
+													<i class="ri-hotel-bed-fill"></i>
+													${x.description["bedroom"]} Bed
+												</li>
+												<li>
+													<i class="ri-wheelchair-fill"></i>
+													${x.description["bathroom"]} Bath
+												</li>
+												<li>
+													<i class="ri-ruler-2-line"></i>
+													${x.description["landSize"]} Sqft
+												</li>
+                                                <li>
+													<i class="ri-wheelchair-fill"></i>
+													${x.description["toilet"]} Toilet
+												</li>
+                                                <li>
+													<i class="ri-building-2-fill"></i>
+													${x.description["floorLevel"]} Floor
+												</li>
+											</ul>
+										</div>
+</a>
+									</div>
+								</div>`;
+
+        $('#properties').append(res);
+    });
+}
+
+const adminInvestmentTmp = (data) => {
+    $('#properties').html('');
+
+    data.forEach(x => {
+        let res = `<div class="col-lg-4 col-md-4">
+									<div class="single-featured-item">
+                                    <a href="/investment/viewinvestment/${x.uniqueId}">
+										<div class="featured-img mb-0">
+											<img src="/images/featured/featured-2.jpg" alt="Image">
+										</div>
+										<div class="featured-content style-three">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <h3 style="font-size:14px; font-weight:normal;">
+													<a href="/investment/viewinvestment/${x.uniqueId}">${x.name}</a>
+												</h3>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <h3 class="price float-end">&#8358;${formatToCurrency(x.unitPrice)}</h3>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                   <h3 style="font-size:14px; font-weight:normal;">Total Units</h3>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <h3 class="float-end" style="font-size:14px; font-weight:normal;">${x.totalUnits}</h3>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                   <h3 style="font-size:14px; font-weight:normal;">Unit Sold</h3>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <h3 class="float-end" style="font-size:14px; font-weight:normal;">${x.unitSold}</h3>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                   <h3 style="font-size:14px; font-weight:normal;">Available Unit</h3>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <h3 class="float-end" style="font-size:14px; font-weight:normal;">${x.unitAvailable}</h3>
+                                                </div>
+                                            </div>
 											<p>
 												<i class="ri-map-pin-fill"></i>
 												${x.location}
@@ -684,6 +768,27 @@ const getSingleProperty = () => {
             console.log(data);
             if (JSON.parse(res).success) {
                 singleData = data;
+                if (data.data.Images.length > 0) {
+                    var i = getRandom(data.data.Images, 1);
+                    $('.properties-bg-img').css('background-image', "url('" + i + "')");
+                    $('.shorting').html(`
+                        <h3>Gallery</h3>
+                        <div class="row justify-content-center property-img"></div>
+                    `);
+                    data.data.Images.forEach(x => {
+                        $('.property-img').append(`
+                        <div class="col-lg-4 col-sm-6">
+							<div class="single-gallery">
+								<img src="${x}" alt="Image">
+								<a href="${x}">
+									<i class="ri-eye-line"></i>
+								</a>
+							</div>
+						</div>
+                    `);
+                    })
+                }
+
                 $('#name').html(data.name);
                 $('#price').html("&#8358; " + formatToCurrency(data.unitPrice));
                 $('#location').html(data.location);
@@ -780,21 +885,17 @@ const getSingleProperty = () => {
                 if (data.description['basement']) $("#basement").attr('checked', 'checked');
 
                 if (data.videoLink != null) {
-                    $('.video-link').hmtl(`<h3>Property Video</h3>
-								<div class="video-wrap">
-									<img src="~/images/video-img.jpg" alt="Image">
-
-									<div class="video-button">
-										<a href="https://www.youtube.com/watch?v=Qj59_LGUBvE" class="video-btn popup-youtube">
-											<i class="ri-play-fill"></i>
-										</a>
-									</div>
-								</div>`);
+                    if (data.data.Images.length > 0) {
+                        var i = getRandom(data.data.Images, 1);
+                        $('.video-img').removeAttr('src');
+                        $('.video-img').attr('src', i[0]);
+                    }
+                    
+                    $('.video-url').attr('href', data.videoLink);
                 }
-                console.log(data.data["Document"]);
                 if (data.data["Document"].length > 0) {
-                    $('.floor-plan').hmtl(`<h3>Floor Plans</h3>
-								<img src="~/images/map-img.jpg" alt="Image">`);
+                $('.floor-plan').html(`<h3>Floor Plans</h3>
+						<img src="${data.data["Document"]}" alt="Image">`);
                 }
 
                 //checkout
@@ -864,7 +965,7 @@ const editSingleProperty = () => {
         } else {
             var res = JSON.parse(xhr.responseText);
             var data = JSON.parse(res).data;
-
+            console.log(data);
             if (JSON.parse(res).success) {
                
                 $("#name").val(data.name);
@@ -980,7 +1081,8 @@ $('.btn-property').click(() => {
                 Account: $("#account").val(),
                 Bank: $("#bank").val(),
                 MaxUnitPerCustomer: Number($("#maxCustomerUnit").val()),
-                ClosingDate: $("#closingDate").val()
+                ClosingDate: $("#closingDate").val(),
+                VideoLink: $("#videoLink").val()
 
             };
 
@@ -1099,7 +1201,8 @@ $('.btn-update-property').click(() => {
                 Bank: $("#bank").val(),
                 MaxUnitPerCustomer: Number($("#maxCustomerUnit").val()),
                 Summary: $("#description").val(),
-                ClosingDate: $("#closingDate").val()
+                ClosingDate: $("#closingDate").val(),
+                VideoLink: $("#videoLink").val()
 
             };
 
@@ -1112,6 +1215,12 @@ $('.btn-update-property').click(() => {
                 xhr.send(JSON.stringify(params));
                 if (xhr.status != 200) {
                     // alert('Something went wrong try again!');
+                    Swal.fire(
+                        'Good job!',
+                        'Oops! something went wrong.',
+                        'error'
+                    );
+                    $(".btn-update-property").html("Edit").attr("disabled", !1);
                 } else {
                     var res = JSON.parse(xhr.responseText);
                     var data = JSON.parse(res).data;
@@ -1279,7 +1388,9 @@ $('#btnUpload').on('click', function () {
             contentType: false,
             type: "POST",
             success: function (data) {
+                console.log(data);
                 alert("Files Uploaded!");
+
             }
         }
     );
@@ -1313,9 +1424,12 @@ const GetInvestments = () => {
     }
 }
 
-const GetAllInvestments = () => {
+const GetInvestmentById = () => {
+    let urls = window.location.href.split("/");
+    let token = urls[5];
+    console.log(token);
     let xhr = new XMLHttpRequest();
-    let url = "/get-investments";
+    let url = `/get-investment/${token}`;
     xhr.open('GET', url, false);
     xhr.setRequestHeader("content-type", "application/json");
     xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
@@ -1445,29 +1559,34 @@ function LoadCurrentData(result) {
         retrieve: true,
         "data": result,
         "columns": [
-            { "data": "customer" },
-            { "data": "property" },
+            { "data": "customer", "class": "p-3"},
+            { "data": "property", "class": "p-3"},
             {
                 "data": "yield",
+                "class": "p-3",
                 render: function (data, type, row) {
                     return data + "<sup>%</sup>";
                 }
             },
             {
                 "data": "amount",
+                "class": "p-3",
                 render: function (data, type, row) {
                     return "<sup>&#8358;</sup>" + formatToCurrency(data);
                 }
             },
             {
                 "data": "yearlyInterestAmount",
+                "class": "p-3",
                 render: function (data, type, row) {
                     return "<sup>&#8358;</sup>" + formatToCurrency(data);
                 }
             },
-            { "data": "units" },
+            { "data": "units", "class": "p-3"},
+            { "data": "status", "class": "p-3"},
             {
                 "data": "paymentDate",
+                "class": "p-3",
                 render: function (data, type, row) {
                     return moment(data).format('MMMM Do YYYY');
                 }
