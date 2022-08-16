@@ -59,6 +59,9 @@
     <None Remove="Hangfire.AspNetCore" />
     <None Remove="Hangfire.MySqlStorage" />
     <None Remove="Hangfire" />
+    <None Remove="Hangfire.Core" />
+    <None Remove="Hangfire.Dashboard.Basic.Authentication" />
+    <None Remove="Scheduled\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.16" />
@@ -83,7 +86,8 @@
     <PackageReference Include="MailKit" Version="3.3.0" />
     <PackageReference Include="Hangfire.AspNetCore" Version="1.7.30" />
     <PackageReference Include="Hangfire.MySqlStorage" Version="2.0.3" />
-    <PackageReference Include="Hangfire" Version="1.7.30" />
+    <PackageReference Include="Hangfire.Core" Version="1.7.30" />
+    <PackageReference Include="Hangfire.Dashboard.Basic.Authentication" Version="5.0.0" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Helper\" />
@@ -91,6 +95,7 @@
     <Folder Include="Enums\" />
     <Folder Include="EmailTemplates\" />
     <Folder Include="Services\" />
+    <Folder Include="Scheduled\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Models\Models.csproj">

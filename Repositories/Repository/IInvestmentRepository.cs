@@ -23,5 +23,6 @@ namespace Repositories.Repository
         Sharinggroup GetSharinggroups(string groupRef);
         void DeleteGroup(Sharinggroup groupRef);
         void UpdateSharingGroup(Sharinggroup sharinggroup);
+        List<Sharinggroup> CompletedSharingGroup();
     }
 }
