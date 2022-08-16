@@ -41,7 +41,9 @@ namespace DominoesProperties.Models
         public int MaxUnitPerCustomer { get; set; }
         public string VideoLink { get; set; }
         public object Data { get; set; }
-        
+        public bool AllowSharing { get; set; }
+        public int MinimumSharingPercentage { get; set; }
+
         [JsonIgnore]
         public string CreatedBy { get; set; }
         [JsonIgnore]

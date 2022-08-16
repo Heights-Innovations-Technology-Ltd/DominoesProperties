@@ -168,6 +168,8 @@ namespace DominoesProperties.Controllers
             property.Latitude = string.IsNullOrEmpty(updateProperty.Latitude) ? property.Latitude : updateProperty.Latitude;
             property.Summary = string.IsNullOrEmpty(updateProperty.Summary) ? property.Summary : updateProperty.Summary;
             property.VideoLink = string.IsNullOrEmpty(updateProperty.VideoLink) ? property.VideoLink : updateProperty.VideoLink;
+            property.AllowSharing = updateProperty.AllowSharing;
+            property.MinimumSharingPercentage = updateProperty.MinimumSharingPercentage > 0 ? updateProperty.MinimumSharingPercentage : property.MinimumSharingPercentage;
 
             response.Data = propertyRepository.UpdateProperty(property);
             response.Success = true;

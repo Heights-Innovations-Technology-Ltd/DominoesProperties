@@ -15,22 +15,22 @@ namespace Repositories.Service
 
         public void DeleteUpload(long uploadId)
         {
-            var up = _context.PropertyUploads.Find(uploadId);
-            _context.PropertyUploads.Remove(up);
+            var up = _context.Propertyuploads.Find(uploadId);
+            _context.Propertyuploads.Remove(up);
             _context.SaveChanges();
 
         }
 
         public List<Propertyupload> GetUploads(long propertyId)
         {
-            return _context.PropertyUploads.Where(x => x.PropertyId.Equals(propertyId)).ToList();
+            return _context.Propertyuploads.Where(x => x.PropertyId.Equals(propertyId)).ToList();
         }
 
         public bool NewUpload(List<Propertyupload> uploads)
         {
             try
             {
-                _context.PropertyUploads.AddRangeAsync(uploads);
+                _context.Propertyuploads.AddRangeAsync(uploads);
                 _context.SaveChanges();
                 return true;
             }
