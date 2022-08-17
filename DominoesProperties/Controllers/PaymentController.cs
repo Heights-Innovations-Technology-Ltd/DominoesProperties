@@ -198,7 +198,8 @@ namespace DominoesProperties.Controllers
                         GroupId = group.UniqueId,
                         PercentageShare = decimal.ToInt32(decimal.Round(decimal.Divide(transaction.Amount, property.UnitPrice) * 100, MidpointRounding.ToZero)),
                         Date = DateTime.Now,
-                        IsClosed = false
+                        IsClosed = false,
+                        PaymentReference = transaction.TransactionRef
                     };
                     if (investmentRepository.AddSharingentry(entry))
                     {
