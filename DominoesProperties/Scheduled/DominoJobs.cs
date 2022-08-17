@@ -1,11 +1,12 @@
 ﻿using System;
 using Hangfire;
+using Microsoft.AspNetCore.Mvc;
 using Models.Models;
 using Repositories.Repository;
 
 namespace DominoesProperties.Scheduled
 {
-    public class DominoJobs
+    public class DominoJobs : Controller
     {
         private readonly IRecurringJobManager backgroundJob;
         private readonly IInvestmentRepository investmentRepository;
@@ -15,21 +16,11 @@ namespace DominoesProperties.Scheduled
             investmentRepository = _investmentRepository;
         }
 
+        
         protected void PerformPairInvestment()
         {
             investmentRepository.CompletedSharingGroup().ForEach(x => {
-                Investment newInvestment = new()
-                {
-                    Amount = x.Property.UnitPrice,
-                    CustomerId = customer.Id,
-                    PropertyId = property.Id,
-                    Units = investment.Units,
-                    YearlyInterestAmount = (property.TargetYield * property.UnitPrice) / 100 * investment.Units,
-                    Yield = property.TargetYield,
-                    PaymentType = PaymentType.PROPERTY_PURCHASE.ToString(),
-                    TransactionRef = Guid.NewGuid().ToString(),
-                    Status = "PENDING"
-                };
+                
             });
         }
     }
