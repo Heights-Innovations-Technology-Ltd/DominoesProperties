@@ -27,13 +27,14 @@
 			</div>
 
 			<div class="my-listing">
+				
 				<div class="latest-lavel">
 					<div class="row align-items-center">
 						
 					</div>
 				</div>
 
-				<div class="row" id="investments">
+				<div class="row" id="properties">
 						
 					<div class="col-lg-12">
 						<div class="pagination-area">
@@ -57,6 +58,7 @@
 	<!-- End Dashboard Area -->
 	<script>
 		$(document).ready(() =>{
-			GetAllInvestments();
-		})
+			GetProperties("investment");
+			$('#example_wrapper').removeClass('container-fluid');
+		});
 	</script>

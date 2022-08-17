@@ -39,6 +39,17 @@ namespace DominoesPropertiesWeb.Controllers
             return View();
         }
 
+        [HttpGet("/Investment/viewinvestment/{uniqueid}")]
+        public IActionResult ViewInvestment()
+        {
+            var userAuth = this.session.GetString("Token");
+            if (userAuth == null || userAuth.Equals(string.Empty))
+            {
+                return RedirectToAction("SignIn", "Home");
+            }
+            return View();
+        }
+
         [Route("/invest")]
         public async Task<JsonResult> propertyInvestment([FromBody] dynamic property)
         {
@@ -71,6 +82,13 @@ namespace DominoesPropertiesWeb.Controllers
             return Json(JsonConvert.SerializeObject(data));
         }
 
-
+        [Route("/get-investment/{propetyUniqueId}")]
+        public async Task<JsonResult> GetInvestmentById(string propetyUniqueId)
+        {
+            var res = Task.Run(() => httpContext.Get($"Investment/property/{propetyUniqueId}"));
+            await Task.WhenAll(res);
+            var data = res.Status == TaskStatus.RanToCompletion ? res.Result : null;
+            return Json(JsonConvert.SerializeObject(data));
+        }
     }
 }

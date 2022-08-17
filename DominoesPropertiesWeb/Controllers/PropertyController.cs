@@ -98,6 +98,7 @@ namespace DominoesPropertiesWeb.Controllers
             obj.MaxUnitPerCustomer = Convert.ToInt32(jObject["MaxUnitPerCustomer"]);
             obj.ClosingDate = Convert.ToDateTime(jObject["ClosingDate"]);
             obj.Summary = Convert.ToString(jObject["Summary"]);
+            obj.VideoLink = Convert.ToString(jObject["VideoLink"]);
 
             DesObj.Bathroom = Convert.ToInt32(jObject["Description"]["Bathroom"]);
             DesObj.Toilet = Convert.ToInt32(jObject["Description"]["Toilet"]);
@@ -142,6 +143,7 @@ namespace DominoesPropertiesWeb.Controllers
             obj.MaxUnitPerCustomer = Convert.ToInt32(jObject["MaxUnitPerCustomer"]);
             obj.ClosingDate = Convert.ToDateTime(jObject["ClosingDate"]);
             obj.Summary = Convert.ToString(jObject["Summary"]);
+            obj.VideoLink = Convert.ToString(jObject["VideoLink"]);
 
             var res = Task.Run(() => httpContext.Put("Property/" + propertyId, obj));
             var data = await res.GetAwaiter().GetResult();

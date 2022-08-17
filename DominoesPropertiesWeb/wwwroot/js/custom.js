@@ -241,7 +241,7 @@
 	});
 
 	// Year JS
-	document.getElementById("year").innerHTML = new Date().getFullYear();
+	//document.getElementById("year").innerHTML = new Date().getFullYear();
 	
 	// WOW Animation
 	if ($('.wow').length) {
@@ -301,11 +301,11 @@
 	
 	// AJAX MailChimp JS
 	$(".newsletter-form").ajaxChimp({
-		url: "https://Envy Theme.us20.list-manage.com/subscribe/post?u=60e1ffe2e8a68ce1204cd39a5&amp;id=42d6d188d9", // Your url MailChimp
+		url: "https://EnvyTheme.us20.list-manage.com/subscribe/post?u=60e1ffe2e8a68ce1204cd39a5&amp;id=42d6d188d9", // Your url MailChimp
 		callback: callbackFunction
 	});
 
-	// Popup Video JS
+	 //Popup Video JS
 	$('.popup-youtube, .popup-vimeo').magnificPopup({
 		disableOn: 300,
 		type: 'iframe',
