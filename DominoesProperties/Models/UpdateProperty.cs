@@ -17,6 +17,8 @@ namespace DominoesProperties.Models
         public string Latitude { get; set; }
         public string Summary { get; set; }
         public string VideoLink { get; set; }
+        public bool AllowSharing { get; set; }
+        public int MinimumSharingPercentage { get; set; }
 
     }
 }

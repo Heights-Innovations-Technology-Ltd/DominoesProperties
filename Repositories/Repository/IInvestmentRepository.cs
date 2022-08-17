@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Models.Models;
 
 namespace Repositories.Repository
@@ -15,5 +16,13 @@ namespace Repositories.Repository
         List<Investment> GetPropertyInvestments(long propertyId);
         bool AddInvestmentFromWallet(Investment investment);
         List<char> GetUsersOnInvestment(long propertyId);
+        List<Sharinggroup> GetSharinggroups(long propertyId);
+        bool AddSharingentry(Sharingentry sharingentry);
+        bool AddSharingGroup(Sharinggroup sharinggroup);
+        Task<bool> CloseSharingGroupAsync(long groupId);
+        Sharinggroup GetSharinggroups(string groupRef);
+        void DeleteGroup(Sharinggroup groupRef);
+        void UpdateSharingGroup(Sharinggroup sharinggroup);
+        List<Sharinggroup> CompletedSharingGroup();
     }
 }

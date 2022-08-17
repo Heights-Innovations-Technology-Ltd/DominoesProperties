@@ -41,7 +41,6 @@ namespace DominoesProperties.Controllers
         private readonly IEmailService emailService;
         private readonly IInvestmentRepository investmentRepository;
         private readonly ApiResponse response = new(false, "Error performing request, contact admin");
-        private readonly string[] fileExtensions = { ".jpg", ".png", ".jpeg", "gif" };
 
         public CustomerController(ILoggerManager _logger, ICustomerRepository _customerRepository, IStringLocalizer<CustomerController> _stringLocalizer,
             IConnectionMultiplexer _distributedCache, IConfiguration _configuration, IApplicationSettingsRepository _applicationSettingsRepository,
@@ -61,7 +60,7 @@ namespace DominoesProperties.Controllers
 
         [HttpPost]
         [Route("register")]
-        public ApiResponse RegisterAsync([FromBody] Models.Customer customer)
+        public ApiResponse RegisterAsync([FromBody] Models.CustomerReq customer)
         {
             if (customerRepository.GetCustomer(customer.Email) != null)
             {
@@ -334,10 +333,10 @@ namespace DominoesProperties.Controllers
 
             var result = (from item in investment
                           group item by item.Property.Status into g
-                          select new InvestCat() { status = g.Key, values = g.Count() }).ToList();
+                          select new InvestCat() { Status = g.Key, Values = g.Count() }).ToList();
 
-            var e = result.Where(x => x.status.Equals("OPEN_FOR_INVESTMENT") || x.status.Equals("ONGOING_CONSTRUCTION")).Sum(x => x.values);
-            var f = result.Where(x => x.status.Equals("CLOSED_FOR_INVESTMENT") || x.status.Equals("RENTED_OUT")).Sum(x => x.values);
+            var e = result.Where(x => x.Status.Equals("OPEN_FOR_INVESTMENT") || x.Status.Equals("ONGOING_CONSTRUCTION")).Sum(x => x.Values);
+            var f = result.Where(x => x.Status.Equals("CLOSED_FOR_INVESTMENT") || x.Status.Equals("RENTED_OUT")).Sum(x => x.Values);
 
             dashboardElement.Add("ActiveInvestment", e);
             dashboardElement.Add("ClosedInvestment", f);
@@ -424,6 +423,6 @@ namespace DominoesProperties.Controllers
 
 internal class InvestCat
 {
-    public string status { get; set; }
-    public int values { get; set; }
+    public string Status { get; set; }
+    public int Values { get; set; }
 }

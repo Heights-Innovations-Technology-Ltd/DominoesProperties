@@ -28,7 +28,7 @@ namespace Repositories.Service
         /// <returns></returns>
         public ApplicationSetting GetApplicationSettingsByName(string settingname)
         {
-            return _context.ApplicationSettings.FirstOrDefault(x => x.SettingName == settingname);
+            return _context.Applicationsettings.FirstOrDefault(x => x.SettingName == settingname);
         }
 
         public ApplicationSetting UpdateApplicationSettingsByName(ApplicationSetting applicationSettings)
@@ -37,7 +37,7 @@ namespace Repositories.Service
             {
                 if (applicationSettings != null)
                 {
-                    _context.ApplicationSettings.Update(applicationSettings);
+                    _context.Applicationsettings.Update(applicationSettings);
                     _context.SaveChanges();
                     return applicationSettings;
                 }

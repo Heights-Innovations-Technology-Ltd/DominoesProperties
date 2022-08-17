@@ -17,17 +17,19 @@ namespace Models.Context
         }
 
         public virtual DbSet<Admin> Admins { get; set; }
-        public virtual DbSet<ApplicationSetting> ApplicationSettings { get; set; }
-        public virtual DbSet<AuditLog> AuditLogs { get; set; }
+        public virtual DbSet<ApplicationSetting> Applicationsettings { get; set; }
+        public virtual DbSet<AuditLog> Auditlogs { get; set; }
         public virtual DbSet<Customer> Customers { get; set; }
         public virtual DbSet<Description> Descriptions { get; set; }
         public virtual DbSet<Enquiry> Enquiries { get; set; }
         public virtual DbSet<Investment> Investments { get; set; }
-        public virtual DbSet<PaystackPayment> PaystackPayments { get; set; }
+        public virtual DbSet<PaystackPayment> Paystackpayments { get; set; }
         public virtual DbSet<Property> Properties { get; set; }
         public virtual DbSet<PropertyType> PropertyTypes { get; set; }
-        public virtual DbSet<Propertyupload> PropertyUploads { get; set; }
+        public virtual DbSet<Propertyupload> Propertyuploads { get; set; }
         public virtual DbSet<Role> Roles { get; set; }
+        public virtual DbSet<Sharingentry> Sharingentries { get; set; }
+        public virtual DbSet<Sharinggroup> Sharinggroups { get; set; }
         public virtual DbSet<Transaction> Transactions { get; set; }
         public virtual DbSet<Wallet> Wallets { get; set; }
 
@@ -46,12 +48,10 @@ namespace Models.Context
                 entity.HasKey(e => e.Email)
                     .HasName("PRIMARY");
 
-                entity.ToTable("Admin");
+                entity.ToTable("admin");
 
-                entity.HasIndex(e => e.Email, "Admin_Email_uindex")
+                entity.HasIndex(e => e.Email, "admin_Email_uindex")
                     .IsUnique();
-
-                entity.HasIndex(e => e.RoleFk, "Admin_Role_Id_fk");
 
                 entity.Property(e => e.Email).HasMaxLength(200);
 
@@ -59,38 +59,50 @@ namespace Models.Context
                     .IsRequired()
                     .HasMaxLength(200);
 
-                entity.Property(e => e.DateCreated).HasDefaultValueSql("CURRENT_TIMESTAMP");
+                entity.Property(e => e.IsActive)
+                    .IsRequired()
+                    .HasColumnType("bit(1)")
+                    .HasDefaultValueSql("b'1'");
 
-                entity.Property(e => e.IsActive).HasColumnType("bit(1)");
-
-                entity.Property(e => e.IsDeleted).HasColumnType("bit(1)");
+                entity.Property(e => e.IsDeleted)
+                    .IsRequired()
+                    .HasColumnType("bit(1)")
+                    .HasDefaultValueSql("b'0'");
 
                 entity.Property(e => e.Password)
                     .IsRequired()
                     .HasMaxLength(1000);
 
                 entity.Property(e => e.RoleFk).HasColumnName("RoleFK");
-
-                entity.HasOne(d => d.RoleFkNavigation)
-                    .WithMany(p => p.Admins)
-                    .HasForeignKey(d => d.RoleFk)
-                    .HasConstraintName("Admin_Role_Id_fk");
             });
 
             modelBuilder.Entity<ApplicationSetting>(entity =>
             {
+                entity.ToTable("applicationsettings");
+
+                entity.HasIndex(e => e.Id, "applicationsettings_Id_uindex")
+                    .IsUnique();
+
                 entity.Property(e => e.SettingName)
                     .IsRequired()
                     .HasMaxLength(200);
 
-                entity.Property(e => e.TestingEmail).HasMaxLength(200);
+                entity.Property(e => e.TestingEmail)
+                    .IsRequired()
+                    .HasMaxLength(200);
 
-                entity.Property(e => e.TestingMode).HasColumnType("bit(1)");
+                entity.Property(e => e.TestingMode)
+                    .IsRequired()
+                    .HasColumnType("bit(1)")
+                    .HasDefaultValueSql("b'1'");
             });
 
             modelBuilder.Entity<AuditLog>(entity =>
             {
-                entity.ToTable("AuditLog");
+                entity.ToTable("auditlog");
+
+                entity.HasIndex(e => e.Id, "auditlog_Id_uindex")
+                    .IsUnique();
 
                 entity.Property(e => e.RequestPayload).HasColumnType("varchar(5000)");
 
@@ -99,15 +111,18 @@ namespace Models.Context
 
             modelBuilder.Entity<Customer>(entity =>
             {
-                entity.ToTable("Customer");
+                entity.ToTable("customer");
 
-                entity.HasIndex(e => e.Email, "Customer_Email_uindex")
+                entity.HasIndex(e => e.Email, "customer_Email_uindex")
                     .IsUnique();
 
-                entity.HasIndex(e => e.Phone, "Customer_Phone_uindex")
+                entity.HasIndex(e => e.Id, "customer_Id_uindex")
                     .IsUnique();
 
-                entity.HasIndex(e => e.UniqueRef, "Customer_UniqueRef_uindex")
+                entity.HasIndex(e => e.Phone, "customer_Phone_uindex")
+                    .IsUnique();
+
+                entity.HasIndex(e => e.UniqueRef, "customer_UniqueRef_uindex")
                     .IsUnique();
 
                 entity.Property(e => e.AccountNumber).HasMaxLength(10);
@@ -115,6 +130,8 @@ namespace Models.Context
                 entity.Property(e => e.Address).HasColumnType("varchar(5000)");
 
                 entity.Property(e => e.BankName).HasMaxLength(200);
+
+                entity.Property(e => e.DateRegistered).HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                 entity.Property(e => e.Email)
                     .IsRequired()
@@ -125,22 +142,26 @@ namespace Models.Context
                     .HasMaxLength(50);
 
                 entity.Property(e => e.IsAccountVerified)
+                    .IsRequired()
                     .HasColumnType("bit(1)")
                     .HasDefaultValueSql("b'0'");
 
                 entity.Property(e => e.IsActive)
                     .HasColumnType("bit(1)")
-                    .HasDefaultValueSql("b'0'");
+                    .HasDefaultValueSql("b'1'");
 
                 entity.Property(e => e.IsDeleted)
+                    .IsRequired()
                     .HasColumnType("bit(1)")
                     .HasDefaultValueSql("b'0'");
 
                 entity.Property(e => e.IsSubscribed)
+                    .IsRequired()
                     .HasColumnType("bit(1)")
                     .HasDefaultValueSql("b'0'");
 
                 entity.Property(e => e.IsVerified)
+                    .IsRequired()
                     .HasColumnType("bit(1)")
                     .HasDefaultValueSql("b'0'");
 
@@ -165,10 +186,9 @@ namespace Models.Context
 
             modelBuilder.Entity<Description>(entity =>
             {
-                entity.ToTable("Description");
+                entity.HasNoKey();
 
-                entity.HasIndex(e => e.PropertyId, "Description_PropertyId_uindex")
-                    .IsUnique();
+                entity.ToTable("description");
 
                 entity.Property(e => e.AirConditioned).HasColumnType("bit(1)");
 
@@ -200,6 +220,10 @@ namespace Models.Context
                 entity.HasIndex(e => e.Id, "Enquiry_Id_uindex")
                     .IsUnique();
 
+                entity.HasIndex(e => e.ClosedBy, "enquiry_admin_Email_fk");
+
+                entity.Property(e => e.ClosedBy).HasMaxLength(200);
+
                 entity.Property(e => e.CustomerUniqueReference)
                     .IsRequired()
                     .HasMaxLength(50);
@@ -212,29 +236,40 @@ namespace Models.Context
                     .IsRequired()
                     .HasMaxLength(50);
 
+                entity.Property(e => e.Status)
+                    .IsRequired()
+                    .HasMaxLength(10)
+                    .HasDefaultValueSql("'NEW'");
+
                 entity.Property(e => e.Subject)
                     .IsRequired()
                     .HasMaxLength(100);
+
+                entity.HasOne(d => d.ClosedByNavigation)
+                    .WithMany(p => p.Enquiries)
+                    .HasForeignKey(d => d.ClosedBy)
+                    .HasConstraintName("enquiry_admin_Email_fk");
             });
 
             modelBuilder.Entity<Investment>(entity =>
             {
-                entity.ToTable("Investment");
+                entity.ToTable("investment");
 
-                entity.HasIndex(e => e.CustomerId, "Investment_Customer_Id_fk");
-
-                entity.HasIndex(e => e.PropertyId, "Investment_Property_Id_fk");
-
-                entity.HasIndex(e => e.TransactionRef, "Investment_TransactionRef_uindex")
+                entity.HasIndex(e => e.Id, "investment_Id_uindex")
                     .IsUnique();
 
-                entity.Property(e => e.Amount).HasColumnType("decimal(18,2)");
+                entity.HasIndex(e => e.PropertyId, "investment_property_Id_fk");
 
-                entity.Property(e => e.PaymentDate).HasDefaultValueSql("CURRENT_TIMESTAMP");
+                entity.Property(e => e.Amount).HasColumnType("decimal(18,2)");
 
                 entity.Property(e => e.PaymentType)
                     .IsRequired()
                     .HasMaxLength(20);
+
+                entity.Property(e => e.Status)
+                    .IsRequired()
+                    .HasMaxLength(10)
+                    .HasDefaultValueSql("'PENDING'");
 
                 entity.Property(e => e.TransactionRef)
                     .IsRequired()
@@ -244,22 +279,18 @@ namespace Models.Context
 
                 entity.Property(e => e.Yield).HasColumnType("decimal(18,2)");
 
-                entity.HasOne(d => d.Customer)
-                    .WithMany(p => p.Investments)
-                    .HasForeignKey(d => d.CustomerId)
-                    .HasConstraintName("Investment_Customer_Id_fk");
-
                 entity.HasOne(d => d.Property)
                     .WithMany(p => p.Investments)
                     .HasForeignKey(d => d.PropertyId)
-                    .HasConstraintName("Investment_Property_Id_fk");
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("investment_property_Id_fk");
             });
 
             modelBuilder.Entity<PaystackPayment>(entity =>
             {
-                entity.ToTable("PaystackPayment");
+                entity.ToTable("paystackpayment");
 
-                entity.HasIndex(e => e.TransactionRef, "PaystackPayment_TransactionRef_uindex")
+                entity.HasIndex(e => e.Id, "paystackpayment_Id_uindex")
                     .IsUnique();
 
                 entity.Property(e => e.AccessCode)
@@ -270,17 +301,15 @@ namespace Models.Context
 
                 entity.Property(e => e.Channel).HasMaxLength(10);
 
-                entity.Property(e => e.Date).HasDefaultValueSql("CURRENT_TIMESTAMP");
-
                 entity.Property(e => e.FromAccount).HasMaxLength(10);
 
                 entity.Property(e => e.Payload).HasColumnType("varchar(5000)");
 
-                entity.Property(e => e.PaymentModule)
-                    .IsRequired()
-                    .HasMaxLength(20);
+                entity.Property(e => e.PaymentModule).HasMaxLength(20);
 
-                entity.Property(e => e.Status).HasMaxLength(5);
+                entity.Property(e => e.PaystackRef).HasMaxLength(50);
+
+                entity.Property(e => e.Status).HasMaxLength(50);
 
                 entity.Property(e => e.ToAccount).HasMaxLength(10);
 
@@ -295,14 +324,25 @@ namespace Models.Context
 
             modelBuilder.Entity<Property>(entity =>
             {
-                entity.ToTable("Property");
+                entity.ToTable("property");
 
-                entity.HasIndex(e => e.CreatedBy, "Property_Admin_Email_fk");
-
-                entity.HasIndex(e => e.Type, "Property_Property_Type_Id_fk");
-
-                entity.HasIndex(e => e.UniqueId, "Property_UniqueId_uindex")
+                entity.HasIndex(e => e.Id, "property_Id_uindex")
                     .IsUnique();
+
+                entity.HasIndex(e => e.UniqueId, "property_UniqueId_uindex")
+                    .IsUnique();
+
+                entity.HasIndex(e => e.CreatedBy, "property_admin_Email_fk");
+
+                entity.HasIndex(e => e.Type, "property_property_type_Id_fk");
+
+                entity.Property(e => e.Account).HasMaxLength(10);
+
+                entity.Property(e => e.AllowSharing)
+                    .HasColumnType("bit(1)")
+                    .HasDefaultValueSql("b'0'");
+
+                entity.Property(e => e.Bank).HasMaxLength(100);
 
                 entity.Property(e => e.ClosingDate).HasColumnType("date");
 
@@ -310,11 +350,10 @@ namespace Models.Context
                     .IsRequired()
                     .HasMaxLength(200);
 
-                entity.Property(e => e.DateCreated).HasDefaultValueSql("CURRENT_TIMESTAMP");
-
                 entity.Property(e => e.InterestRate).HasColumnType("decimal(18,2)");
 
                 entity.Property(e => e.IsDeleted)
+                    .IsRequired()
                     .HasColumnType("bit(1)")
                     .HasDefaultValueSql("b'0'");
 
@@ -324,13 +363,22 @@ namespace Models.Context
 
                 entity.Property(e => e.Longitude).HasMaxLength(100);
 
+                entity.Property(e => e.MaxUnitPerCustomer).HasDefaultValueSql("'1000'");
+
+                entity.Property(e => e.MinimumSharingPercentage).HasDefaultValueSql("'0'");
+
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasMaxLength(200);
 
                 entity.Property(e => e.ProjectedGrowth).HasColumnType("decimal(18,2)");
 
-                entity.Property(e => e.Status).HasMaxLength(20);
+                entity.Property(e => e.Status)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .HasDefaultValueSql("'ONGOING_CONSTRUCTION'");
+
+                entity.Property(e => e.Summary).IsRequired();
 
                 entity.Property(e => e.TargetYield).HasColumnType("decimal(18,2)");
 
@@ -343,22 +391,14 @@ namespace Models.Context
                 entity.Property(e => e.UnitPrice).HasColumnType("decimal(18,2)");
 
                 entity.Property(e => e.VideoLink).HasMaxLength(500);
-
-                entity.HasOne(d => d.CreatedByNavigation)
-                    .WithMany(p => p.Properties)
-                    .HasForeignKey(d => d.CreatedBy)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("Property_Admin_Email_fk");
-
-                entity.HasOne(d => d.TypeNavigation)
-                    .WithMany(p => p.Properties)
-                    .HasForeignKey(d => d.Type)
-                    .HasConstraintName("Property_Property_Type_Id_fk");
             });
 
             modelBuilder.Entity<PropertyType>(entity =>
             {
-                entity.ToTable("Property_Type");
+                entity.ToTable("property_type");
+
+                entity.HasIndex(e => e.Id, "property_type_Id_uindex")
+                    .IsUnique();
 
                 entity.Property(e => e.DateCreated).HasColumnType("date");
 
@@ -402,31 +442,104 @@ namespace Models.Context
 
             modelBuilder.Entity<Role>(entity =>
             {
-                entity.ToTable("Role");
+                entity.HasNoKey();
+
+                entity.ToTable("role");
 
                 entity.Property(e => e.CreatedBy).HasMaxLength(200);
-
-                entity.Property(e => e.DateCreated).HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                 entity.Property(e => e.Page).HasColumnType("varchar(5000)");
 
                 entity.Property(e => e.Privilege).HasColumnType("varchar(5000)");
 
-                entity.Property(e => e.RoleName)
+                entity.Property(e => e.RoleName).HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<Sharingentry>(entity =>
+            {
+                entity.ToTable("sharingentry");
+
+                entity.HasIndex(e => e.CustomerId, "sharingentry_CustomerId_index");
+
+                entity.HasIndex(e => e.GroupId, "sharingentry_GroupId_index");
+
+                entity.HasIndex(e => e.Id, "sharingentry_Id_uindex")
+                    .IsUnique();
+
+                entity.HasIndex(e => e.IsClosed, "sharingentry_IsClosed_index");
+
+                entity.HasIndex(e => e.PaymentReference, "sharingentry_PaymentReference_uindex")
+                    .IsUnique();
+
+                entity.HasIndex(e => e.GroupId, "sharingentry_sharinggroup_UniqueId_fk");
+
+                entity.Property(e => e.Date).HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                entity.Property(e => e.GroupId)
+                    .IsRequired()
+                    .HasMaxLength(32);
+
+                entity.Property(e => e.IsClosed)
+                    .IsRequired()
+                    .HasColumnType("bit(1)")
+                    .HasDefaultValueSql("b'0'");
+
+                entity.Property(e => e.PaymentReference).HasMaxLength(50);
+
+                entity.HasOne(d => d.Customer)
+                    .WithMany(p => p.Sharingentries)
+                    .HasForeignKey(d => d.CustomerId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("sharingentry_customer_Id_fk");
+
+                entity.HasOne(d => d.Group)
+                    .WithMany(p => p.Sharingentries)
+                    .HasForeignKey(d => d.GroupId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("sharingentry_sharinggroup_UniqueId_fk");
+            });
+
+            modelBuilder.Entity<Sharinggroup>(entity =>
+            {
+                entity.HasKey(e => e.UniqueId)
+                    .HasName("PRIMARY");
+
+                entity.ToTable("sharinggroup");
+
+                entity.HasIndex(e => e.UniqueId, "sharinggroup_UniqueId_uindex")
+                    .IsUnique();
+
+                entity.HasIndex(e => e.PropertyId, "sharinggroup_property_Id_fk");
+
+                entity.Property(e => e.UniqueId).HasMaxLength(32);
+
+                entity.Property(e => e.Alias)
                     .IsRequired()
                     .HasMaxLength(50);
+
+                entity.Property(e => e.CustomerUniqueId).HasMaxLength(32);
+
+                entity.Property(e => e.Date).HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                entity.Property(e => e.IsClosed)
+                    .IsRequired()
+                    .HasColumnType("bit(1)")
+                    .HasDefaultValueSql("b'0'");
+
+                entity.Property(e => e.PercentageSubscribed).HasColumnName("percentageSubscribed");
+
+                entity.HasOne(d => d.Property)
+                    .WithMany(p => p.Sharinggroups)
+                    .HasForeignKey(d => d.PropertyId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("sharinggroup_property_Id_fk");
             });
 
             modelBuilder.Entity<Transaction>(entity =>
             {
-                entity.HasKey(e => e.TransactionRef)
-                    .HasName("PRIMARY");
+                entity.HasNoKey();
 
-                entity.ToTable("Transaction");
-
-                entity.HasIndex(e => e.CustomerId, "Transaction_Customer_Id_fk");
-
-                entity.Property(e => e.TransactionRef).HasMaxLength(50);
+                entity.ToTable("transaction");
 
                 entity.Property(e => e.Amount).HasColumnType("decimal(18,2)");
 
@@ -440,46 +553,33 @@ namespace Models.Context
 
                 entity.Property(e => e.Status).HasMaxLength(50);
 
-                entity.Property(e => e.TransactionDate).HasDefaultValueSql("CURRENT_TIMESTAMP");
+                entity.Property(e => e.TransactionRef).HasMaxLength(50);
 
                 entity.Property(e => e.TransactionType).HasMaxLength(10);
-
-                entity.HasOne(d => d.Customer)
-                    .WithMany(p => p.Transactions)
-                    .HasForeignKey(d => d.CustomerId)
-                    .HasConstraintName("Transaction_Customer_Id_fk");
             });
 
             modelBuilder.Entity<Wallet>(entity =>
             {
-                entity.ToTable("Wallet");
+                entity.ToTable("wallet");
 
-                entity.HasIndex(e => e.CustomerId, "Wallet_CustomerId_uindex")
+                entity.HasIndex(e => e.CustomerId, "wallet_CustomerId_uindex")
                     .IsUnique();
 
-                entity.HasIndex(e => e.WalletNo, "Wallet_WalletNo_uindex")
+                entity.HasIndex(e => e.Id, "wallet_Id_uindex")
                     .IsUnique();
 
-                entity.Property(e => e.Balance)
-                    .HasColumnType("decimal(18,2)")
-                    .HasDefaultValueSql("'0.00'");
+                entity.HasIndex(e => e.WalletNo, "wallet_WalletNo_uindex")
+                    .IsUnique();
 
-                entity.Property(e => e.DateCreated).HasDefaultValueSql("CURRENT_TIMESTAMP");
+                entity.Property(e => e.Balance).HasColumnType("decimal(18,2)");
 
                 entity.Property(e => e.LastTransactionAmount).HasColumnType("decimal(18,2)");
 
-                entity.Property(e => e.Limit)
-                    .HasColumnType("decimal(18,2)")
-                    .HasDefaultValueSql("'0.00'");
+                entity.Property(e => e.Limit).HasColumnType("decimal(18,2)");
 
                 entity.Property(e => e.WalletNo)
                     .IsRequired()
                     .HasMaxLength(40);
-
-                entity.HasOne(d => d.Customer)
-                    .WithOne(p => p.Wallet)
-                    .HasForeignKey<Wallet>(d => d.CustomerId)
-                    .HasConstraintName("Wallet_Customer_Id_fk");
             });
 
             OnModelCreatingPartial(modelBuilder);

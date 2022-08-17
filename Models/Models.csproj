@@ -28,7 +28,7 @@
     <None Remove="Pomelo.EntityFrameworkCore.MySql.Design" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="MySql.Data" Version="8.0.29" />
+    <PackageReference Include="MySql.Data" Version="8.0.30" />
     <PackageReference Include="MySqlConnector" Version="2.1.11" />
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql.Design" Version="1.1.2" />
     <PackageReference Include="MySql.EntityFrameworkCore" Version="5.0.13" />

@@ -90,7 +90,7 @@ namespace DominoesPropertiesWeb.Service
                         {
                             DateUploaded = Dated,
                             ImageName = filename,
-                            Url = $"{request.HttpContext.Request.Scheme}://{request.HttpContext.Request.Host}{request.HttpContext.Request.PathBase}/Uploads/Property/{filename}",
+                            Url = $"{request.HttpContext.Request.Scheme}://{request.HttpContext.Request.Host}{request.HttpContext.Request.PathBase}/uploads/property/{filename}",
                             UploadType = prop.UploadType.ToString()
                         });
                     }
