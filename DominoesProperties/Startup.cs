@@ -6,6 +6,7 @@ using DominoesProperties.Controllers;
 using DominoesProperties.Extensions;
 using DominoesProperties.Helper;
 using DominoesProperties.Models;
+using DominoesProperties.Scheduled;
 using DominoesProperties.Services;
 using Hangfire;
 using Hangfire.Dashboard;
@@ -81,6 +82,7 @@ namespace DominoesProperties
             services.AddScoped<IAdminRepository, AdminService>();
             services.AddScoped<IUploadRepository, UploadService>();
             services.AddTransient<IEmailService, EmailService>();
+            services.AddScoped<IDominoJob, DominoJob>();
 
             services.AddMvc().AddViewLocalization(Microsoft.AspNetCore.Mvc.Razor.LanguageViewLocationExpanderFormat.Suffix).AddDataAnnotationsLocalization();
 
