@@ -81,8 +81,7 @@ namespace DominoesPropertiesWeb.Service
                     }
                     if (file.Length > 0)
                     {
-                        var dateTime = DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss").Replace("/", "").Replace(":","").Replace(" ", "");
-                        string filename = $"{propertyId.Replace("-", "")}-{dateTime}{fileInfo.Extension}";
+                        string filename = $"{propertyId.Replace("-", "")}-{DateTime.Now.Millisecond}{fileInfo.Extension}";
 
                         using var fileStream = new FileStream(Path.Combine(path, filename), FileMode.Create);
                         await file.CopyToAsync(fileStream);
@@ -91,7 +90,7 @@ namespace DominoesPropertiesWeb.Service
                         {
                             DateUploaded = Dated,
                             ImageName = filename,
-                            Url = $"{request.HttpContext.Request.Scheme}://{request.HttpContext.Request.Host}{request.HttpContext.Request.PathBase}/Uploads/Property/{filename}",
+                            Url = $"{request.HttpContext.Request.Scheme}://{request.HttpContext.Request.Host}{request.HttpContext.Request.PathBase}/uploads/property/{filename}",
                             UploadType = prop.UploadType.ToString()
                         });
                     }

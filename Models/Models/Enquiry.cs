@@ -22,5 +22,7 @@ namespace Models.Models
         public string Status { get; set; } = "NEW";
         public string ClosedBy { get; set; }
         public DateTime DateCreated { get; set; }
+
+        public virtual Admin ClosedByNavigation { get; set; }
     }
 }

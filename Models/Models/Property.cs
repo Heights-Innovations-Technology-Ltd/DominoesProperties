@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
+using System.Runtime.Serialization;
 
 #nullable disable
 
@@ -12,6 +12,7 @@ namespace Models.Models
         {
             Investments = new HashSet<Investment>();
             PropertyUploads = new HashSet<Propertyupload>();
+            Sharinggroups = new HashSet<Sharinggroup>();
         }
 
         public long Id { get; set; }
@@ -39,10 +40,15 @@ namespace Models.Models
         public string Bank { get; set; }
         public int MaxUnitPerCustomer { get; set; } = 1000;
         public string VideoLink { get; set; }
+        public bool? AllowSharing { get; set; }
+        public int? MinimumSharingPercentage { get; set; }
 
         public virtual Admin CreatedByNavigation { get; set; }
         public virtual PropertyType TypeNavigation { get; set; }
+        [IgnoreDataMember]
         public virtual ICollection<Investment> Investments { get; set; }
         public virtual ICollection<Propertyupload> PropertyUploads { get; set; }
+        [IgnoreDataMember]
+        public virtual ICollection<Sharinggroup> Sharinggroups { get; set; }
     }
 }

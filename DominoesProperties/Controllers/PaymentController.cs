@@ -30,11 +30,12 @@ namespace DominoesProperties.Controllers
         private readonly ILoggerManager logger;
         private readonly IEmailService emailService;
         private readonly IWebHostEnvironment environment;
+        private readonly IPropertyRepository propertyRepository;
         private readonly ApiResponse response = new(false, "Error performing request, contact admin");
 
         public PaymentController(IConfiguration _configuration, ICustomerRepository _customerRepository, ILoggerManager _logger, IWebHostEnvironment _environment,
             IPaystackRepository _paystackRepository, ITransactionRepository _transactionRepository, IWalletRepository _walletRepository,
-            IInvestmentRepository _investmentRepository, IEmailService _emailService)
+            IInvestmentRepository _investmentRepository, IEmailService _emailService, IPropertyRepository _propertyRepository)
         {
             configuration = _configuration;
             customerRepository = _customerRepository;
@@ -45,6 +46,7 @@ namespace DominoesProperties.Controllers
             logger = _logger;
             environment = _environment;
             emailService = _emailService;
+            propertyRepository = _propertyRepository;
         }
 
         [HttpPost]
@@ -91,8 +93,13 @@ namespace DominoesProperties.Controllers
             }
             catch (Exception e)
             {
+                if (payment.Module.Equals(PaymentType.PROPERTY_PAIRING_GROUP))
+                {
+                    var group = investmentRepository.GetSharinggroups(payment.InvestmentId);
+                    investmentRepository.DeleteGroup(group);
+                }
                 logger.LogError(e.StackTrace);
-                response.Message = "Error verifying transaction status, we will re-confirm and get back to you";
+                response.Message = "Error initiating transaction status, we will re-confirm and get back to you";
                 return response;
             }
         }
@@ -120,13 +127,13 @@ namespace DominoesProperties.Controllers
                 paystackRepository.UpdatePayment(paystack);
 
                 Transaction transaction = new();
-                transaction.Amount = Convert.ToDecimal(jObject["amount"]);
+                transaction.Amount = Convert.ToDecimal(jObject["amount"])/100;
                 transaction.Channel = paystack.Channel;
                 var customer = customerRepository.GetCustomer(Convert.ToString(cust["email"]));
                 transaction.CustomerId = customer.Id;
                 transaction.Module = paystack.PaymentModule;
                 transaction.Status = paystack.Status;
-                transaction.TransactionRef = paystack.TransactionRef;
+                transaction.TransactionRef = paystack.PaymentModule.Equals(PaymentType.PROPERTY_PAIRING.ToString()) ? $"{paystack.TransactionRef}-{new Random().Next(2, 10)}"  : paystack.TransactionRef;
                 transaction.TransactionType = TransactionType.CR.ToString();
 
                 transactionRepository.NewTransaction(transaction);
@@ -141,6 +148,69 @@ namespace DominoesProperties.Controllers
 
                     sendMail(customer.Email, customer.FirstName, customer.LastName, "wallet.html", "Your wallet has been successfully funded", paystack.Amount);
                 }
+                else if (paystack.PaymentModule.Equals(PaymentType.PROPERTY_PAIRING_GROUP.ToString()))
+                {
+                    var group = investmentRepository.GetSharinggroups(paystack.TransactionRef);
+                    if (!paystack.Status.ToLower().Equals("success"))
+                    {
+                        investmentRepository.DeleteGroup(group);
+                        response.Message = "Payment was not successful, group was not created";
+
+                        logger.LogInfo($"{transaction.TransactionRef} : {reference} : {paystack.Status}");
+                        logger.LogInfo($"{paystack.TransactionRef} : Payment unsuccessfull");
+                        return Redirect($"{configuration["app_settings:WebEndpoint"]}?status={paystack.Status}");
+                    }
+                    else
+                    {
+                        var property = propertyRepository.GetProperty(group.PropertyId);
+                        Sharingentry entry = new()
+                        {
+                            CustomerId = customer.Id,
+                            GroupId = group.UniqueId,
+                            PercentageShare = (int)(transaction.Amount / property.UnitPrice) * 100,
+                            Date = DateTime.Now,
+                            IsClosed = false
+                        };
+                        if (investmentRepository.AddSharingentry(entry))
+                        {
+                            group.PercentageSubscribed += entry.PercentageShare;
+                            investmentRepository.UpdateSharingGroup(group);
+                            logger.LogInfo($"{transaction.TransactionRef} : {reference} : {paystack.Status}");
+                            logger.LogInfo($"{paystack.TransactionRef} : Payment successfully done");
+                            return Redirect($"{configuration["app_settings:WebEndpoint"]}?status=success");
+                        }
+                    }
+                }
+                else if (paystack.PaymentModule.Equals(PaymentType.PROPERTY_PAIRING.ToString()))
+                {
+                    var spp = transaction.TransactionRef[..transaction.TransactionRef.LastIndexOf("-")];
+                    var group = investmentRepository.GetSharinggroups(spp);
+                    var property = propertyRepository.GetProperty(group.PropertyId);
+
+                    var cc = decimal.ToInt32(decimal.Round(decimal.Divide(transaction.Amount, property.UnitPrice) * 100, MidpointRounding.ToZero));
+                    var xx = cc * 100;
+                    var yy = decimal.Round(xx, MidpointRounding.ToZero);
+                    var ff = decimal.ToInt32(yy);
+
+                    Sharingentry entry = new()
+                    {
+                        CustomerId = customer.Id,
+                        GroupId = group.UniqueId,
+                        PercentageShare = decimal.ToInt32(decimal.Round(decimal.Divide(transaction.Amount, property.UnitPrice) * 100, MidpointRounding.ToZero)),
+                        Date = DateTime.Now,
+                        IsClosed = false,
+                        PaymentReference = transaction.TransactionRef
+                    };
+                    if (investmentRepository.AddSharingentry(entry))
+                    {
+                        group.PercentageSubscribed += entry.PercentageShare;
+                        investmentRepository.UpdateSharingGroup(group);
+
+                        logger.LogInfo($"{transaction.TransactionRef} : {reference} : {paystack.Status}");
+                        logger.LogInfo($"{paystack.TransactionRef} : Payment successfully done");
+                        return Redirect($"{configuration["app_settings:WebEndpoint"]}?status=success");
+                    }
+                }
                 else if (paystack.PaymentModule.Equals(PaymentType.PROPERTY_PURCHASE.ToString()))
                 {
                     var investment = investmentRepository.GetNewInvestments(paystack.TransactionRef);
@@ -150,7 +220,7 @@ namespace DominoesProperties.Controllers
 
                     string filePath = "", html = "";
                     EmailData emailData;
-                    if(investment.Property.UnitAvailable == 0)
+                    if (investment.Property.UnitAvailable == 0)
                     {
                         investment.Property.Status = PropertyStatus.CLOSED_FOR_INVESTMENT.ToString();
 
@@ -165,8 +235,9 @@ namespace DominoesProperties.Controllers
                             EmailToId = customer.Email,
                             EmailToName = customer.FirstName
                         };
+                        //TODO send broadcast
                     }
-                    
+
                     investmentRepository.UpdateInvestment(investment);
 
                     filePath = Path.Combine(environment.ContentRootPath, @"EmailTemplates\investment.html");
@@ -196,7 +267,7 @@ namespace DominoesProperties.Controllers
             {
                 logger.LogError(ex.StackTrace);
                 logger.LogError($"{DateTime.Now} : Payment : verify-payment: {reference} | rror verifying transaction status");
-                return Redirect($"{configuration["app_settings:WebEndpoint"]}?reference={reference}status=error");
+                return Redirect($"{configuration["app_settings:WebEndpoint"]}?reference={reference}&status=error");
             }
         }
 

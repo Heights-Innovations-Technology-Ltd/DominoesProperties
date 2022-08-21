@@ -6,7 +6,12 @@ using DominoesProperties.Controllers;
 using DominoesProperties.Extensions;
 using DominoesProperties.Helper;
 using DominoesProperties.Models;
+using DominoesProperties.Scheduled;
 using DominoesProperties.Services;
+using Hangfire;
+using Hangfire.Dashboard;
+using Hangfire.MySql;
+using HangfireBasicAuthenticationFilter;
 using Helpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -16,7 +21,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -78,6 +82,7 @@ namespace DominoesProperties
             services.AddScoped<IAdminRepository, AdminService>();
             services.AddScoped<IUploadRepository, UploadService>();
             services.AddTransient<IEmailService, EmailService>();
+            services.AddScoped<IDominoJob, DominoJob>();
 
             services.AddMvc().AddViewLocalization(Microsoft.AspNetCore.Mvc.Razor.LanguageViewLocationExpanderFormat.Suffix).AddDataAnnotationsLocalization();
 
@@ -155,6 +160,31 @@ namespace DominoesProperties
                                  .AllowAnyMethod();
                       });
             });
+
+            // Add Hangfire services.
+            string hangfireConnectionString = Configuration.GetConnectionString("DominoProps_String");
+            services.AddHangfire(configuration => configuration
+                .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+                .UseSimpleAssemblyNameTypeSerializer()
+                .UseRecommendedSerializerSettings()
+                .UseStorage(
+                    new MySqlStorage(
+                        hangfireConnectionString,
+                        new MySqlStorageOptions
+                        {
+                            QueuePollInterval = TimeSpan.FromSeconds(10),
+                            JobExpirationCheckInterval = TimeSpan.FromHours(1),
+                            CountersAggregateInterval = TimeSpan.FromMinutes(5),
+                            PrepareSchemaIfNecessary = true,
+                            DashboardJobListLimit = 25000,
+                            TransactionTimeout = TimeSpan.FromMinutes(1),
+                            TablesPrefix = "Hangfire",
+                        }
+                    )
+                ));
+
+            // Add the processing server as IHostedService
+            services.AddHangfireServer(options => options.WorkerCount = 1);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -193,6 +223,12 @@ namespace DominoesProperties
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHangfireDashboard("/hangfire", new DashboardOptions
+                {
+                    //Authorization = new[] { new HangFireAuth() },
+                    IsReadOnlyFunc = (DashboardContext context) => true,
+                    AppPath = Configuration.GetValue<string>("app_settings:WebEndpoint")
+                });
             });
         }
     }

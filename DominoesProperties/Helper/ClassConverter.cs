@@ -7,12 +7,12 @@ namespace DominoesProperties.Helper
 {
     public class ClassConverter
     {
-        internal static Models.Customer ConvertCustomerToModel()
+        internal static Models.CustomerReq ConvertCustomerToModel()
         {
             return null;
         }
 
-        internal static Customer ConvertCustomerToEntity(Models.Customer customer)
+        internal static Customer ConvertCustomerToEntity(Models.CustomerReq customer)
         {
             return new Customer
             {
@@ -80,7 +80,9 @@ namespace DominoesProperties.Helper
                 TotalPrice = property.UnitAvailable * property.UnitPrice,
                 MaxUnitPerCustomer = property.MaxUnitPerCustomer,
                 Summary = property.Summary,
-                VideoLink = property.VideoLink
+                VideoLink = property.VideoLink,
+                AllowSharing = property.AllowSharing,
+                MinimumSharingPercentage = property.MinimumSharingPercentage
             };
         }
 
@@ -107,7 +109,9 @@ namespace DominoesProperties.Helper
                 UnitSold = property.UnitSold,
                 TypeName = property.TypeNavigation.Name,
                 Summary = property.Summary,
-                VideoLink = property.VideoLink
+                VideoLink = property.VideoLink,
+                AllowSharing = property.AllowSharing.Value,
+                MinimumSharingPercentage = property.MinimumSharingPercentage.Value
             };
         }
 
@@ -171,6 +175,23 @@ namespace DominoesProperties.Helper
                 Investments = customer.Investments.ToList(),
                 BankName = customer.BankName
             };
+        }
+
+        internal static Models.InvestmentView ConvertInvestmentForView(Investment inv)
+        {
+            return new Models.InvestmentView
+            {
+                Id = inv.Id,
+                CustomerId = inv.CustomerId,
+                PropertyId = inv.PropertyId,
+                Units = inv.Units,
+                PaymentDate = inv.PaymentDate,
+                Amount = inv.Amount,
+                Yield = inv.Yield,
+                YearlyInterestAmount = inv.YearlyInterestAmount,
+                TransactionRef = inv.TransactionRef,
+                Status = inv.Status
+    };
         }
     }
 }

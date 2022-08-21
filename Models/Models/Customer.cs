@@ -11,6 +11,7 @@ namespace Models.Models
         {
             Investments = new HashSet<Investment>();
             Transactions = new HashSet<Transaction>();
+            Sharingentries = new HashSet<Sharingentry>();
         }
 
         public long Id { get; set; }
@@ -34,5 +35,6 @@ namespace Models.Models
         public virtual Wallet Wallet { get; set; }
         public virtual ICollection<Investment> Investments { get; set; }
         public virtual ICollection<Transaction> Transactions { get; set; }
+        public virtual ICollection<Sharingentry> Sharingentries { get; set; }
     }
 }

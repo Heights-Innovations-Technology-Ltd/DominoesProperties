@@ -8,6 +8,12 @@ namespace Models.Models
 {
     public partial class Transaction
     {
+        public Transaction()
+        {
+            Investments = new HashSet<Investment>();
+            Paystackpayments = new HashSet<PaystackPayment>();
+        }
+
         [IgnoreDataMember]
         public string TransactionRef { get; set; }
         public decimal Amount { get; set; }
@@ -21,5 +27,7 @@ namespace Models.Models
         public string ResponsePayload { get; set; }
 
         public virtual Customer Customer { get; set; }
+        public virtual ICollection<Investment> Investments { get; set; }
+        public virtual ICollection<PaystackPayment> Paystackpayments { get; set; }
     }
 }

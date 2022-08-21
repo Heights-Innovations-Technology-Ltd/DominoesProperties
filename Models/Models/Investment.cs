@@ -24,5 +24,6 @@ namespace Models.Models
 
         public virtual Customer Customer { get; set; }
         public virtual Property Property { get; set; }
+        public virtual Transaction TransactionRefNavigation { get; set; }
     }
 }
