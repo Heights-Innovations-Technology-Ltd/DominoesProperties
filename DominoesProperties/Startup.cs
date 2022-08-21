@@ -225,7 +225,7 @@ namespace DominoesProperties
                 endpoints.MapControllers();
                 endpoints.MapHangfireDashboard("/hangfire", new DashboardOptions
                 {
-                    Authorization = new[] { new HangFireAuth() },
+                    //Authorization = new[] { new HangFireAuth() },
                     IsReadOnlyFunc = (DashboardContext context) => true,
                     AppPath = Configuration.GetValue<string>("app_settings:WebEndpoint")
                 });

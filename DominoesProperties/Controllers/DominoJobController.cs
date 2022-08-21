@@ -20,7 +20,7 @@ namespace DominoesProperties.Controllers
         [HttpGet("complete-pairing")]
         public void CompletePairing()
         {
-            backgroundJob.AddOrUpdate("complete-pairing", () => dominoJob.PerformPairInvestment(), Cron.Minutely);
+            backgroundJob.AddOrUpdate("complete-pairing", () => dominoJob.PerformPairInvestment(), Cron.Hourly(30));
         }
 
         [HttpGet("incomplete-pairing")]
