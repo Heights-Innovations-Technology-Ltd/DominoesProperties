@@ -24,5 +24,6 @@ namespace Repositories.Repository
         void DeleteGroup(Sharinggroup groupRef);
         void UpdateSharingGroup(Sharinggroup sharinggroup);
         List<Sharinggroup> CompletedSharingGroup();
+        List<Sharinggroup> UncompletedSharingGroup();
     }
 }

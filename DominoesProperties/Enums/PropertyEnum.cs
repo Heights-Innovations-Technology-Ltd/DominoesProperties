@@ -42,7 +42,8 @@
         FUND_WALLET = 2,
         PROPERTY_PURCHASE = 3,
         PROPERTY_PAIRING_GROUP = 4,
-        PROPERTY_PAIRING = 5
+        PROPERTY_PAIRING = 5,
+        REVERSAL = 6
     }
 
     public enum ValidationModule

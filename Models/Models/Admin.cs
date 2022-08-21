@@ -13,7 +13,7 @@ namespace Models.Models
         {
             Enquiries = new HashSet<Enquiry>();
             Properties = new HashSet<Property>();
-            PropertyImages = new HashSet<Propertyupload>();
+            Propertyuploads = new HashSet<Propertyupload>();
         }
 
         public string Email { get; set; }
@@ -29,8 +29,7 @@ namespace Models.Models
         [IgnoreDataMember]
         public virtual ICollection<Property> Properties { get; set; }
         [IgnoreDataMember]
-        [NotMapped]
-        public virtual ICollection<Propertyupload> PropertyImages { get; set; }
+        public virtual ICollection<Propertyupload> Propertyuploads { get; set; }
         public virtual ICollection<Enquiry> Enquiries { get; set; }
     }
 }

@@ -20,5 +20,7 @@ namespace Models.Models
         public string Payload { get; set; }
         public string PaymentModule { get; set; }
         public string PaystackRef { get; set; }
+
+        public virtual Transaction TransactionRefNavigation { get; set; }
     }
 }

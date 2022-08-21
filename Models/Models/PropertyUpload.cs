@@ -14,6 +14,7 @@ namespace Models.Models
         public string UploadType { get; set; }
         public string AdminEmail { get; set; }
 
+        public virtual Admin AdminEmailNavigation { get; set; }
         public virtual Property Property { get; set; }
     }
 }

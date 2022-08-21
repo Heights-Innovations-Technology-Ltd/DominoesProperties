@@ -53,6 +53,8 @@ namespace Models.Context
                 entity.HasIndex(e => e.Email, "admin_Email_uindex")
                     .IsUnique();
 
+                entity.HasIndex(e => e.RoleFk, "admin_role_Id_fk");
+
                 entity.Property(e => e.Email).HasMaxLength(200);
 
                 entity.Property(e => e.CreatedBy)
@@ -73,7 +75,15 @@ namespace Models.Context
                     .IsRequired()
                     .HasMaxLength(1000);
 
-                entity.Property(e => e.RoleFk).HasColumnName("RoleFK");
+                entity.Property(e => e.RoleFk)
+                    .HasColumnName("RoleFK")
+                    .HasDefaultValueSql("'1'");
+
+                entity.HasOne(d => d.RoleFkNavigation)
+                    .WithMany(p => p.Admins)
+                    .HasForeignKey(d => d.RoleFk)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("admin_role_Id_fk");
             });
 
             modelBuilder.Entity<ApplicationSetting>(entity =>
@@ -186,39 +196,62 @@ namespace Models.Context
 
             modelBuilder.Entity<Description>(entity =>
             {
-                entity.HasNoKey();
-
                 entity.ToTable("description");
 
-                entity.Property(e => e.AirConditioned).HasColumnType("bit(1)");
+                entity.Property(e => e.AirConditioned)
+                    .HasColumnType("bit(1)")
+                    .HasDefaultValueSql("b'0'");
 
-                entity.Property(e => e.Basement).HasColumnType("bit(1)");
+                entity.Property(e => e.Basement)
+                    .HasColumnType("bit(1)")
+                    .HasDefaultValueSql("b'0'");
 
-                entity.Property(e => e.Fireplace).HasColumnType("bit(1)");
+                entity.Property(e => e.Bathroom).HasDefaultValueSql("'0'");
 
-                entity.Property(e => e.Gym).HasColumnType("bit(1)");
+                entity.Property(e => e.Bedroom).HasDefaultValueSql("'0'");
+
+                entity.Property(e => e.Fireplace)
+                    .HasColumnType("bit(1)")
+                    .HasDefaultValueSql("b'0'");
+
+                entity.Property(e => e.FloorLevel).HasDefaultValueSql("'0'");
+
+                entity.Property(e => e.Gym)
+                    .HasColumnType("bit(1)")
+                    .HasDefaultValueSql("b'0'");
 
                 entity.Property(e => e.LandSize).HasMaxLength(50);
 
-                entity.Property(e => e.Laundry).HasColumnType("bit(1)");
+                entity.Property(e => e.Laundry)
+                    .HasColumnType("bit(1)")
+                    .HasDefaultValueSql("b'0'");
 
-                entity.Property(e => e.Parking).HasColumnType("bit(1)");
+                entity.Property(e => e.Parking)
+                    .HasColumnType("bit(1)")
+                    .HasDefaultValueSql("b'0'");
 
                 entity.Property(e => e.PropertyId).HasMaxLength(200);
 
-                entity.Property(e => e.Refrigerator).HasColumnType("bit(1)");
+                entity.Property(e => e.Refrigerator)
+                    .HasColumnType("bit(1)")
+                    .HasDefaultValueSql("b'0'");
 
-                entity.Property(e => e.SecurityGuard).HasColumnType("bit(1)");
+                entity.Property(e => e.SecurityGuard)
+                    .HasColumnType("bit(1)")
+                    .HasDefaultValueSql("b'0'");
 
-                entity.Property(e => e.SwimmingPool).HasColumnType("bit(1)");
+                entity.Property(e => e.SwimmingPool)
+                    .HasColumnType("bit(1)")
+                    .HasDefaultValueSql("b'0'");
+
+                entity.Property(e => e.Toilet).HasDefaultValueSql("'0'");
             });
 
             modelBuilder.Entity<Enquiry>(entity =>
             {
                 entity.ToTable("enquiry");
 
-                entity.HasIndex(e => e.Id, "Enquiry_Id_uindex")
-                    .IsUnique();
+                entity.HasIndex(e => e.Status, "enquiry_Status_index");
 
                 entity.HasIndex(e => e.ClosedBy, "enquiry_admin_Email_fk");
 
@@ -258,7 +291,13 @@ namespace Models.Context
                 entity.HasIndex(e => e.Id, "investment_Id_uindex")
                     .IsUnique();
 
+                entity.HasIndex(e => e.Status, "investment_Status_index");
+
+                entity.HasIndex(e => e.CustomerId, "investment_customer_Id_fk");
+
                 entity.HasIndex(e => e.PropertyId, "investment_property_Id_fk");
+
+                entity.HasIndex(e => e.TransactionRef, "investment_transaction_TransactionRef_fk");
 
                 entity.Property(e => e.Amount).HasColumnType("decimal(18,2)");
 
@@ -279,11 +318,23 @@ namespace Models.Context
 
                 entity.Property(e => e.Yield).HasColumnType("decimal(18,2)");
 
+                entity.HasOne(d => d.Customer)
+                    .WithMany(p => p.Investments)
+                    .HasForeignKey(d => d.CustomerId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("investment_customer_Id_fk");
+
                 entity.HasOne(d => d.Property)
                     .WithMany(p => p.Investments)
                     .HasForeignKey(d => d.PropertyId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("investment_property_Id_fk");
+
+                entity.HasOne(d => d.TransactionRefNavigation)
+                    .WithMany(p => p.Investments)
+                    .HasForeignKey(d => d.TransactionRef)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("investment_transaction_TransactionRef_fk");
             });
 
             modelBuilder.Entity<PaystackPayment>(entity =>
@@ -293,19 +344,26 @@ namespace Models.Context
                 entity.HasIndex(e => e.Id, "paystackpayment_Id_uindex")
                     .IsUnique();
 
+                entity.HasIndex(e => e.PaystackRef, "paystackpayment_pk")
+                    .IsUnique();
+
+                entity.HasIndex(e => e.TransactionRef, "paystackpayment_transaction_TransactionRef_fk");
+
                 entity.Property(e => e.AccessCode)
                     .IsRequired()
                     .HasMaxLength(20);
 
                 entity.Property(e => e.Amount).HasColumnType("decimal(18,2)");
 
-                entity.Property(e => e.Channel).HasMaxLength(10);
+                entity.Property(e => e.Channel)
+                    .IsRequired()
+                    .HasMaxLength(10);
 
                 entity.Property(e => e.FromAccount).HasMaxLength(10);
 
                 entity.Property(e => e.Payload).HasColumnType("varchar(5000)");
 
-                entity.Property(e => e.PaymentModule).HasMaxLength(20);
+                entity.Property(e => e.PaymentModule).HasMaxLength(50);
 
                 entity.Property(e => e.PaystackRef).HasMaxLength(50);
 
@@ -320,6 +378,12 @@ namespace Models.Context
                 entity.Property(e => e.Type)
                     .IsRequired()
                     .HasMaxLength(2);
+
+                entity.HasOne(d => d.TransactionRefNavigation)
+                    .WithMany(p => p.Paystackpayments)
+                    .HasForeignKey(d => d.TransactionRef)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("paystackpayment_transaction_TransactionRef_fk");
             });
 
             modelBuilder.Entity<Property>(entity =>
@@ -339,6 +403,7 @@ namespace Models.Context
                 entity.Property(e => e.Account).HasMaxLength(10);
 
                 entity.Property(e => e.AllowSharing)
+                    .IsRequired()
                     .HasColumnType("bit(1)")
                     .HasDefaultValueSql("b'0'");
 
@@ -349,6 +414,8 @@ namespace Models.Context
                 entity.Property(e => e.CreatedBy)
                     .IsRequired()
                     .HasMaxLength(200);
+
+                entity.Property(e => e.DateCreated).HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                 entity.Property(e => e.InterestRate).HasColumnType("decimal(18,2)");
 
@@ -391,6 +458,18 @@ namespace Models.Context
                 entity.Property(e => e.UnitPrice).HasColumnType("decimal(18,2)");
 
                 entity.Property(e => e.VideoLink).HasMaxLength(500);
+
+                entity.HasOne(d => d.CreatedByNavigation)
+                    .WithMany(p => p.Properties)
+                    .HasForeignKey(d => d.CreatedBy)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("property_admin_Email_fk");
+
+                entity.HasOne(d => d.TypeNavigation)
+                    .WithMany(p => p.Properties)
+                    .HasForeignKey(d => d.Type)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("property_property_type_Id_fk");
             });
 
             modelBuilder.Entity<PropertyType>(entity =>
@@ -417,13 +496,19 @@ namespace Models.Context
                 entity.HasIndex(e => e.Url, "propertyuploads_Url_uindex")
                     .IsUnique();
 
+                entity.HasIndex(e => e.AdminEmail, "propertyuploads_admin_Email_fk");
+
                 entity.HasIndex(e => e.PropertyId, "propertyuploads_property_Id_fk");
 
-                entity.Property(e => e.AdminEmail).HasMaxLength(200);
+                entity.Property(e => e.AdminEmail)
+                    .IsRequired()
+                    .HasMaxLength(200);
 
                 entity.Property(e => e.DateUploaded).HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-                entity.Property(e => e.ImageName).HasMaxLength(100);
+                entity.Property(e => e.ImageName)
+                    .IsRequired()
+                    .HasMaxLength(100);
 
                 entity.Property(e => e.UploadType)
                     .IsRequired()
@@ -434,16 +519,21 @@ namespace Models.Context
                     .IsRequired()
                     .HasMaxLength(500);
 
+                entity.HasOne(d => d.AdminEmailNavigation)
+                    .WithMany(p => p.Propertyuploads)
+                    .HasForeignKey(d => d.AdminEmail)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("propertyuploads_admin_Email_fk");
+
                 entity.HasOne(d => d.Property)
                     .WithMany(p => p.PropertyUploads)
                     .HasForeignKey(d => d.PropertyId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("propertyuploads_property_Id_fk");
             });
 
             modelBuilder.Entity<Role>(entity =>
             {
-                entity.HasNoKey();
-
                 entity.ToTable("role");
 
                 entity.Property(e => e.CreatedBy).HasMaxLength(200);
@@ -484,6 +574,10 @@ namespace Models.Context
                     .HasColumnType("bit(1)")
                     .HasDefaultValueSql("b'0'");
 
+                entity.Property(e => e.IsReversed)
+                    .HasColumnType("bit(1)")
+                    .HasDefaultValueSql("b'0'");
+
                 entity.Property(e => e.PaymentReference).HasMaxLength(50);
 
                 entity.HasOne(d => d.Customer)
@@ -517,7 +611,7 @@ namespace Models.Context
                     .IsRequired()
                     .HasMaxLength(50);
 
-                entity.Property(e => e.CustomerUniqueId).HasMaxLength(32);
+                entity.Property(e => e.CustomerUniqueId).HasMaxLength(50);
 
                 entity.Property(e => e.Date).HasDefaultValueSql("CURRENT_TIMESTAMP");
 
@@ -525,8 +619,6 @@ namespace Models.Context
                     .IsRequired()
                     .HasColumnType("bit(1)")
                     .HasDefaultValueSql("b'0'");
-
-                entity.Property(e => e.PercentageSubscribed).HasColumnName("percentageSubscribed");
 
                 entity.HasOne(d => d.Property)
                     .WithMany(p => p.Sharinggroups)
@@ -537,15 +629,24 @@ namespace Models.Context
 
             modelBuilder.Entity<Transaction>(entity =>
             {
-                entity.HasNoKey();
+                entity.HasKey(e => e.TransactionRef)
+                    .HasName("PRIMARY");
 
                 entity.ToTable("transaction");
+
+                entity.HasIndex(e => e.Status, "transaction_Status_index");
+
+                entity.HasIndex(e => e.TransactionRef, "transaction_TransactionRef_index");
+
+                entity.HasIndex(e => e.CustomerId, "transaction_customer_Id_fk");
+
+                entity.Property(e => e.TransactionRef).HasMaxLength(50);
 
                 entity.Property(e => e.Amount).HasColumnType("decimal(18,2)");
 
                 entity.Property(e => e.Channel).HasMaxLength(10);
 
-                entity.Property(e => e.Module).HasMaxLength(20);
+                entity.Property(e => e.Module).HasMaxLength(50);
 
                 entity.Property(e => e.RequestPayload).HasColumnType("varchar(5000)");
 
@@ -553,9 +654,15 @@ namespace Models.Context
 
                 entity.Property(e => e.Status).HasMaxLength(50);
 
-                entity.Property(e => e.TransactionRef).HasMaxLength(50);
+                entity.Property(e => e.TransactionDate).HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                 entity.Property(e => e.TransactionType).HasMaxLength(10);
+
+                entity.HasOne(d => d.Customer)
+                    .WithMany(p => p.Transactions)
+                    .HasForeignKey(d => d.CustomerId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("transaction_customer_Id_fk");
             });
 
             modelBuilder.Entity<Wallet>(entity =>
@@ -580,6 +687,12 @@ namespace Models.Context
                 entity.Property(e => e.WalletNo)
                     .IsRequired()
                     .HasMaxLength(40);
+
+                entity.HasOne(d => d.Customer)
+                    .WithOne(p => p.Wallet)
+                    .HasForeignKey<Wallet>(d => d.CustomerId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("wallet_customer_Id_fk");
             });
 
             OnModelCreatingPartial(modelBuilder);

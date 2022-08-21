@@ -131,6 +131,13 @@ namespace Repositories.Service
                 .ToList();
         }
 
+        public List<Sharinggroup> UncompletedSharingGroup()
+        {
+            return _context.Sharinggroups
+                .Where(x => !x.IsClosed.Value)
+                .ToList();
+        }
+
         public bool AddSharingentry(Sharingentry sharingentry)
         {
             try

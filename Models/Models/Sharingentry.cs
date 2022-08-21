@@ -13,6 +13,7 @@ namespace Models.Models
         public int PercentageShare { get; set; }
         public DateTime Date { get; set; }
         public string PaymentReference { get; set; }
+        public bool IsReversed { get; set; }
 
         public virtual Customer Customer { get; set; }
         public virtual Sharinggroup Group { get; set; }
