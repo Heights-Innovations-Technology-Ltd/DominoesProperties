@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using DominoesProperties.Enums;
 using DominoesProperties.Helper;
 using DominoesProperties.Models;
@@ -23,11 +21,10 @@ namespace DominoesProperties.Controllers
         private readonly IPropertyRepository propertyRepository;
         private readonly ILoggerManager logger;
         private readonly IUtilRepository utilRepository;
-        private readonly ApiResponse response = new(false, "Error performing request, contact admin");
+        private readonly ApiResponse response;
         private readonly IConfiguration configuration;
         private readonly IUploadRepository uploadRepository;
         private readonly IAdminRepository adminRepository;
-        private readonly String[] fileExtensions = { ".jpg", ".png", ".jpeg", "gif" };
 
 
         public PropertyController(IPropertyRepository _propertyRepository, ILoggerManager _logger,
@@ -39,6 +36,7 @@ namespace DominoesProperties.Controllers
             configuration = _configuration;
             uploadRepository = _uploadRepository;
             adminRepository = _adminRepository;
+            response = new(false, "Error performing request, contact admin");
         }
 
         [HttpGet]
@@ -136,6 +134,12 @@ namespace DominoesProperties.Controllers
         [Authorize(Roles = "ADMIN, SUPER")]
         public ApiResponse Property([FromBody] Properties properties)
         {
+            if(properties.AllowSharing && properties.MinimumSharingPercentage < 10)
+            {
+                response.Message = $"Sharing percentage cannot be less and 10% for property that allows sharing";
+                return response;
+            }
+
             Property property = ClassConverter.PropertyToEntity(properties);
             property.CreatedBy = adminRepository.GetUser(HttpContext.User.Identity.Name).Email;
             Description description = ClassConverter.DescriptionToEntity(properties.Description);

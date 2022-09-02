@@ -160,11 +160,11 @@ namespace DominoesProperties.Controllers
         }
 
         [HttpGet("test-email/{email}/{encoded}")]
-        public String SendTestMail(string email, string encoded)
+        public string SendTestMail(string email, string encoded)
         {
             string token = CommonLogic.GetUniqueRefNumber("AT");
             string url = string.Format("{0}{1}/{2}?value={3}", configuration["app_settings:WebEndpoint"], ValidationModule.ACTIVATE_ACCOUNT.ToString().ToLower(), token, "customer");
-            string filePath = Path.Combine(environment.ContentRootPath, @"EmailTemplates\NewCustomer.html");
+            string filePath = Path.Combine(environment.ContentRootPath, @"EmailTemplates\welcome.html");
             string html = System.IO.File.ReadAllText(filePath.Replace(@"\", "/"));
             html = html.Replace("{name}", string.Format("{0} {1}", "Dominoes", "Tester")).Replace("{link}", url);
 
@@ -179,19 +179,18 @@ namespace DominoesProperties.Controllers
             return CommonLogic.Decrypt(encoded);
         }
 
-        [HttpGet("test/{action}/{keyValues}")]
-        public ApiResponse TestEncryption(string keyValues, string action)
+        [HttpPost("test/encypt")]
+        public ApiResponse TestEncryption([FromBody] Dictionary<string, string> keyValues)
         {
-            Dictionary<string, string> keyValuePairs = new Dictionary<string, string>();
-            JObject jObject = JsonConvert.DeserializeObject<JObject>(Convert.ToString(keyValues));
-            foreach (JProperty property in jObject.Properties())
+            Dictionary<string, string> result = new();
+            foreach (var keyValuePairs in keyValues)
             {
-                keyValuePairs.Add(property.Name, "encrypt".Equals(action) ? CommonLogic.Encrypt(property.Value.ToString()) : CommonLogic.Decrypt(property.Value.ToString()));
+                result.Add(keyValuePairs.Key, "encrypt".Equals("encrypt") ? CommonLogic.Encrypt(keyValuePairs.Value) : CommonLogic.Decrypt(keyValuePairs.Value));
             }
 
             response.Success = true;
             response.Message = "Success!";
-            response.Data = keyValuePairs;
+            response.Data = result;
             return response;
         }
     }
