@@ -50,6 +50,11 @@ namespace DominoesPropertiesWeb.Controllers
 
         public IActionResult Create()
         {
+            var isAuthAdmin = this.session.GetString("RoleFK");
+            if (isAuthAdmin == null || isAuthAdmin.Equals(string.Empty))
+            {
+                return RedirectToAction("Index", "Home");
+            }
             return View();
         }
 
@@ -89,7 +94,9 @@ namespace DominoesPropertiesWeb.Controllers
             obj.UnitPrice = Convert.ToInt32(jObject["UnitPrice"]);
             obj.Status = Convert.ToInt32(jObject["Status"]);
             obj.TotalUnits = Convert.ToInt32(jObject["UnitAvailable"]);
-            obj.InterestRate = Convert.ToInt32(jObject["InterestRate"]);
+            obj.InterestRate = 0;
+            //obj.InterestRate = Convert.ToInt32(jObject["InterestRate"]);
+            obj.ProjectedGrowth = Convert.ToInt32(jObject["ProjectedGrowth"]);
             obj.Longitude = Convert.ToString(jObject["Longitude"]);
             obj.Latitude = Convert.ToString(jObject["Latitude"]);
             obj.CreatedBy = Convert.ToString(jObject["CreatedBy"]);
@@ -99,6 +106,9 @@ namespace DominoesPropertiesWeb.Controllers
             obj.ClosingDate = Convert.ToDateTime(jObject["ClosingDate"]);
             obj.Summary = Convert.ToString(jObject["Summary"]);
             obj.VideoLink = Convert.ToString(jObject["VideoLink"]);
+            obj.AllowSharing = Convert.ToBoolean(jObject["AllowSharing"]);
+            obj.MinimumSharingPercentage = Convert.ToInt32(jObject["MinimumSharing"]);
+            obj.TargetYield = 0;
 
             DesObj.Bathroom = Convert.ToInt32(jObject["Description"]["Bathroom"]);
             DesObj.Toilet = Convert.ToInt32(jObject["Description"]["Toilet"]);
