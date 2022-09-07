@@ -96,7 +96,7 @@ namespace DominoesPropertiesWeb.Controllers
             obj.TotalUnits = Convert.ToInt32(jObject["UnitAvailable"]);
             obj.InterestRate = 0;
             //obj.InterestRate = Convert.ToInt32(jObject["InterestRate"]);
-            obj.ProjectedGrowth = Convert.ToInt32(jObject["ProjectedGrowth"]);
+            obj.TargetYield = Convert.ToInt32(jObject["TargetYield"]);
             obj.Longitude = Convert.ToString(jObject["Longitude"]);
             obj.Latitude = Convert.ToString(jObject["Latitude"]);
             obj.CreatedBy = Convert.ToString(jObject["CreatedBy"]);
@@ -108,7 +108,6 @@ namespace DominoesPropertiesWeb.Controllers
             obj.VideoLink = Convert.ToString(jObject["VideoLink"]);
             obj.AllowSharing = Convert.ToBoolean(jObject["AllowSharing"]);
             obj.MinimumSharingPercentage = Convert.ToInt32(jObject["MinimumSharing"]);
-            obj.TargetYield = 0;
 
             DesObj.Bathroom = Convert.ToInt32(jObject["Description"]["Bathroom"]);
             DesObj.Toilet = Convert.ToInt32(jObject["Description"]["Toilet"]);

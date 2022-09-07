@@ -1077,7 +1077,7 @@ $(document).ready(function () {
                         Basement: $("#basement").is(":checked") ? 1 : 0,
                     },
                     //InterestRate: Number($("#interest").val()),
-                    ProjectedGrowth: Number($("#projectedGrowth").val()),
+                    TargetYield: Number($("#targetYield").val()),
                     Longitude: Number($("#logitude").val()),
                     Latitude: Number($("#latitude").val()),
                     Summary: $("#description").val(),
