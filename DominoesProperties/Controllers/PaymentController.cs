@@ -75,6 +75,7 @@ namespace DominoesProperties.Controllers
             };
 
             var initResponse = payStackApi.MobileAppInitTransaction(m).Data;
+
             try
             {
                 JObject jObject = JsonConvert.DeserializeObject<JObject>(Convert.ToString(initResponse));
