@@ -378,12 +378,6 @@ namespace Models.Context
                 entity.Property(e => e.Type)
                     .IsRequired()
                     .HasMaxLength(2);
-
-                entity.HasOne(d => d.TransactionRefNavigation)
-                    .WithMany(p => p.Paystackpayments)
-                    .HasForeignKey(d => d.TransactionRef)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("paystackpayment_transaction_TransactionRef_fk");
             });
 
             modelBuilder.Entity<Property>(entity =>
