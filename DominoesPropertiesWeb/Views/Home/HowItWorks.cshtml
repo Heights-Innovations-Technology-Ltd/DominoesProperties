@@ -1,0 +1,285 @@
+﻿
+@{
+    ViewData["Title"] = "HowItWorks";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .timeline {
+      position: relative;
+      width: 100%;
+      max-width: 1140px;
+      margin: 0 auto;
+      padding: 15px 0;
+    }
+
+    .timeline::after {
+      content: '';
+      position: absolute;
+      width: 2px;
+      background: #006E51;
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      margin-left: -1px;
+    }
+
+    .container1 {
+      padding: 15px 30px;
+      position: relative;
+      background: inherit;
+      width: 50%;
+    }
+
+    .container1.left {
+      left: 0;
+    }
+
+    .container1.right {
+      left: 50%;
+    }
+
+    .container1::after {
+      content: '';
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      top: calc(50% - 8px);
+      right: -8px;
+      background: #ffffff;
+      border: 2px solid #006E51;
+      border-radius: 16px;
+      z-index: 1;
+    }
+
+    .container1.right::after {
+      left: -8px;
+    }
+
+    .container1::before {
+      content: '';
+      position: absolute;
+      width: 50px;
+      height: 2px;
+      top: calc(50% - 1px);
+      right: 8px;
+      background: #006E51;
+      z-index: 1;
+    }
+
+    .container1.right::before {
+      left: 8px;
+    }
+
+    .container1 .date {
+      position: absolute;
+      display: inline-block;
+      top: calc(50% - 8px);
+      text-align: center;
+      font-size: 14px;
+      font-weight: bold;
+      color: #006E51;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      z-index: 1;
+    }
+
+    .container1.left .date {
+      right: -88px;
+    }
+
+    .container1.right .date {
+      left: -99px;
+    }
+
+    .container1 .icon {
+      position: absolute;
+      display: inline-block;
+      width: 40px;
+      height: 40px;
+      padding: 9px 0;
+      top: calc(50% - 20px);
+      background: #d05a15;
+      border: 2px solid #006E51;
+      border-radius: 40px;
+      text-align: center;
+      font-size: 18px;
+      color: #006E51;
+      z-index: 1;
+    }
+
+    .container1.left .icon {
+      right: 56px;
+    }
+
+    .container1.right .icon {
+      left: 56px;
+    }
+
+    .container1 .content {
+      padding: 30px 90px 30px 30px;
+      background: #d05a15;
+      position: relative;
+      border-radius: 0 500px 500px 0;
+    }
+
+    .container1.right .content {
+      padding: 30px 30px 30px 90px;
+      border-radius: 500px 0 0 500px;
+    }
+
+    .container1 .content h2 {
+      margin: 0 0 10px 0;
+      font-size: 18px;
+      font-weight: normal;
+      color: #006E51;
+    }
+
+    .container1 .content p {
+      margin: 0;
+      font-size: 16px;
+      line-height: 22px;
+      color: #000000;
+    }
+
+    @@media (max-width: 767.98px) {
+      .timeline::after {
+        left: 90px;
+      }
+
+      .container1 {
+        width: 100%;
+        padding-left: 120px;
+        padding-right: 30px;
+      }
+
+      .container1.right {
+        left: 0%;
+      }
+
+      .container1.left::after, 
+      .container1.right::after {
+        left: 82px;
+      }
+
+      .container1.left::before,
+      .container1.right::before {
+        left: 100px;
+        border-color: transparent #006E51 transparent transparent;
+      }
+
+      .container1.left .date,
+      .container1.right .date {
+        right: auto;
+        left: 15px;
+      }
+
+      .container1.left .icon,
+      .container1.right .icon {
+        right: auto;
+        left: 146px;
+      }
+
+      .container1.left .content,
+      .container1.right .content {
+        padding: 30px 30px 30px 90px;
+        border-radius: 500px 0 0 500px;
+      }
+    }
+</style>
+
+<!-- Start Page Title Area -->
+		<div class="page-title-area bg-9">
+			<div class="container">
+				<div class="page-title-content">
+					<h2>Properties</h2>
+					
+					<ul>
+						<li>
+							<a href="/">
+								Home 
+							</a>
+						</li>
+
+						<li class="active">How it works</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<!-- End Page Title Area -->
+
+		<!-- End Listing Area -->
+		@*<div class="listing-area ptb-100">
+			<div class="container">
+				<div class="row">
+					<div class="col-md-12">
+						
+					</div>
+				</div>
+			</div>
+
+		</div>*@
+        <div class="timeline">
+                          <div class="container1 left">
+                            <div class="date"> Register</div>
+                            <i class="icon fa fa-home"></i>
+                            <div class="content">
+                              <h2>Coinvest</h2>
+                              <p>
+                                In the latter stage of coinvesting, a waitlist for potential clients will be created.
+                              </p>
+                            </div>
+                          </div>
+                          <div class="container1 right">
+                            <div class="date">Discover</div>
+                            <i class="icon fa fa-gift"></i>
+                            <div class="content">
+                              <h2>Lorem ipsum dolor sit amet</h2>
+                              <p>
+                                Lorem ipsum dolor sit amet elit. Aliquam odio dolor, id luctus erat sagittis non. Ut blandit semper pretium.
+                              </p>
+                            </div>
+                          </div>
+                          <div class="container1 left">
+                            <div class="date">Purchase</div>
+                            <i class="icon fa fa-user"></i>
+                            <div class="content">
+                              <h2>Lorem ipsum dolor sit amet</h2>
+                              <p>
+                                Lorem ipsum dolor sit amet elit. Aliquam odio dolor, id luctus erat sagittis non. Ut blandit semper pretium.
+                              </p>
+                            </div>
+                          </div>
+                          <div class="container1 right">
+                            <div class="date">Reporting</div>
+                            <i class="icon fa fa-running"></i>
+                            <div class="content">
+                              <h2>Lorem ipsum dolor sit amet</h2>
+                              <p>
+                                Lorem ipsum dolor sit amet elit. Aliquam odio dolor, id luctus erat sagittis non. Ut blandit semper pretium.
+                              </p>
+                            </div>
+                          </div>
+                          <div class="container1 left">
+                            <div class="date">Get Paid</div>
+                            <i class="icon fa fa-cog"></i>
+                            <div class="content">
+                              <h2>Lorem ipsum dolor sit amet</h2>
+                              <p>
+                                Lorem ipsum dolor sit amet elit. Aliquam odio dolor, id luctus erat sagittis non. Ut blandit semper pretium.
+                              </p>
+                            </div>
+                          </div>
+                          <div class="container1 right">
+                            <div class="date">Manage <br>your <br />portfolio</div>
+                            <i class="icon fa fa-certificate"></i>
+                            <div class="content">
+                              <h2>Lorem ipsum dolor sit amet</h2>
+                              <p>
+                                Lorem ipsum dolor sit amet elit. Aliquam odio dolor, id luctus erat sagittis non. Ut blandit semper pretium.
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+		<!-- End Listing Area -->
+
