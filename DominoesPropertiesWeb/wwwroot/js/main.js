@@ -1104,7 +1104,7 @@ $(document).ready(function () {
                     } else {
                         var res = JSON.parse(xhr.responseText);
                         var data = JSON.parse(res).data;
-                        var Message = JSON.parse(res).message;
+                        var message = JSON.parse(res).message;
                         if (JSON.parse(res).success) {
                             window.scrollTo(0, 0);
                             $('.form-control').val('');
@@ -1113,11 +1113,9 @@ $(document).ready(function () {
                                 'Good job!',
                                 message,
                                 'success'
-                            );
-
-                            setTimeout(() => {
+                            ).then(() => {
                                 location.reload();
-                            }, 2000);
+                            });
                         } else {
                             var err = JSON.parse(res).message;
                             Swal.fire(

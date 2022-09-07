@@ -22,10 +22,10 @@ namespace Models.Models
         public int? Type { get; set; }
         public int TotalUnits { get; set; } = 0;
         public decimal UnitPrice { get; set; } = 0;
-        public decimal? TotalPrice { get; set; } = 0;
+        public decimal TotalPrice { get; set; } = 0;
         public string Status { get; set; } = "ONGOING_CONSTRUCTION";
-        public int? UnitSold { get; set; } = 0;
-        public int? UnitAvailable { get; set; } = 0;
+        public int UnitSold { get; set; } = 0;
+        public int UnitAvailable { get; set; } = 0;
         public DateTime? ClosingDate { get; set; }
         public decimal? TargetYield { get; set; } = 0;
         public decimal? ProjectedGrowth { get; set; } = 0;

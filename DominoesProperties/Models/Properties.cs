@@ -20,8 +20,8 @@ namespace DominoesProperties.Models
         public decimal UnitPrice { get; set; }
         [Required(ErrorMessage ="Current property status is required")]
         public string Status { get; set; }
-        public int? UnitSold { get; set; }
-        public int? UnitAvailable { get; set; }
+        public int UnitSold { get; set; }
+        public int UnitAvailable { get; set; }
         public DateTime? ClosingDate { get; set; }
         [Required(ErrorMessage ="Brief description of the property is required")]
         public PropertyDescription Description { get; set; }
