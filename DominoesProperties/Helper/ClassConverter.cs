@@ -67,7 +67,7 @@ namespace DominoesProperties.Helper
                 Longitude = property.Longitude,
                 Location = property.Location,
                 TargetYield = property.TargetYield,
-                UnitAvailable = property.TotalUnits - property.UnitSold,
+                UnitAvailable = property.UnitAvailable = property.TotalUnits - property.UnitSold,
                 UnitPrice = property.UnitPrice,
                 Status = property.Status,
                 Type = property.Type,
