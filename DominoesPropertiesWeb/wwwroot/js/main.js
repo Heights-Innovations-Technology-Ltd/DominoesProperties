@@ -727,7 +727,10 @@ const propertyDetails = (id) => {
             icon: 'info',
             title: 'Oops...',
             text: 'Property details can only be view by subscribed users, kindly subscribe to get full access ',
-            footer: `<a href="javascript:void(0)" class="default-btn " onclick="onSubscribe()">Subcribe Now</a>`
+            footer: `<a href="javascript:void(0)" class="default-btn btn-subscribe" onclick="onSubscribe()">Subcribe Now</a>`
+        }).then(() => {
+            
+            //$('.btn-subscribe').trigger('click');
         })
         return;
     }
@@ -1796,7 +1799,39 @@ $('.btn-activate').click(() => {
         $(".btn-activate").html("Activate").attr("disabled", !1);
     }
 });
+const onSubscribe = () => {
+    console.log('enter');
+    let xhr = new XMLHttpRequest();
+    let url = "/subscribe";
+    xhr.open('GET', url, false);
+    xhr.setRequestHeader("content-type", "application/json");
+    xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+    try {
 
+        xhr.send();
+        if (xhr.status != 200) {
+            $(".btn-subscribe").html("Loading...").attr("disabled", !0);
+            // alert('Something went wrong try again!');
+        } else {
+            var res = JSON.parse(xhr.responseText);
+            var data = JSON.parse(res).data;
+
+            if (JSON.parse(res).success) {
+                location = data;
+                //window.open(data, "Dominoes Society", "status=1,toolbar=1");
+                $(".btn-subscribe").html("Subscribe to get full access").attr("disabled", !1);
+            } else {
+                $(".btn-subscribe").html("Subscribe to get full access").attr("disabled", !1);
+                window.scrollTo(0, 0);
+                message(data, 'error');
+            }
+
+        }
+    } catch (err) { // instead of onerror
+        //alert("Request failed");
+        $(".btn-subscribe").html("Subscribe to get full access").attr("disabled", !1);
+    }
+}
 $('.btn-subscribe').click(() => {
     $(".btn-subscribe").html("Loading...").attr("disabled", !0);
     let xhr = new XMLHttpRequest();

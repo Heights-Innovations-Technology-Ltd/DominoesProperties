@@ -4458,26 +4458,26 @@ FAQ Area Style
   color: #ffffff;
 }
 
-.accordion-button:not(.collapsed)::after {
-  background-image: unset;
-  content: "\f1af";
-  font-family: 'Sailec' !important;
-  border-color: #ffffff;
-}
+    .accordion-button:not(.collapsed)::after {
+        background-image: unset;
+        content: "\f1af";
+        font-family: 'remixicon' !important;
+        border-color: #ffffff;
+    }
 
-.accordion-button::after {
-  background-image: unset;
-  content: "\ea13";
-  font-family: 'Sailec' !important;
-  position: absolute;
-  border: 1px solid #2b3b3a;
-  border-radius: 50px;
-  width: 20px;
-  height: 20px;
-  left: 20px;
-  top: 17px;
-  text-align: center;
-}
+    .accordion-button::after {
+        background-image: unset;
+        content: "\ea13";
+        font-family: 'remixicon' !important;
+        position: absolute;
+        border: 1px solid #2b3b3a;
+        border-radius: 50px;
+        width: 20px;
+        height: 20px;
+        left: 20px;
+        top: 17px;
+        text-align: center;
+    }
 
 /*
 Listing Map Style
