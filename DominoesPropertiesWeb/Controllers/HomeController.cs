@@ -54,6 +54,10 @@ namespace DominoesPropertiesWeb.Controllers
         {
             return View();
         }
+        public IActionResult HowItWorks()
+        {
+            return View();
+        }
 
         public IActionResult Properties()
         {

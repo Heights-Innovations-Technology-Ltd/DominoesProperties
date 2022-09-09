@@ -727,7 +727,10 @@ const propertyDetails = (id) => {
             icon: 'info',
             title: 'Oops...',
             text: 'Property details can only be view by subscribed users, kindly subscribe to get full access ',
-            footer: `<a href="javascript:void(0)" class="default-btn " onclick="onSubscribe()">Subcribe Now</a>`
+            footer: `<a href="javascript:void(0)" class="default-btn btn-subscribe" onclick="onSubscribe()">Subcribe Now</a>`
+        }).then(() => {
+            
+            //$('.btn-subscribe').trigger('click');
         })
         return;
     }
@@ -1010,136 +1013,141 @@ const editSingleProperty = () => {
     }
 }
 
-$('.btn-property').click(() => {
-    const confirmPropertyUpdate = Swal.mixin({
-        customClass: {
-            confirmButton: 'btn btn-success mx-2',
-            cancelButton: 'btn btn-danger'
-        },
-        buttonsStyling: false
-    })
+$(document).ready(function () {
+    $('.btn-property').click((e) => {
+        e.preventDefault();
+        const confirmPropertyUpdate = Swal.mixin({
+            customClass: {
+                confirmButton: 'btn btn-success mx-2',
+                cancelButton: 'btn btn-danger'
+            },
+            buttonsStyling: false
+        })
 
-    confirmPropertyUpdate.fire({
-        title: 'Are you sure?',
-        text: "To create this property!",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Yes, create it!',
-        cancelButtonText: 'No, cancel!',
-        reverseButtons: true
-    }).then((result) => {
-        if (result.isConfirmed) {
-            $(".btn-property").html("Processing...").attr("disabled", !0);
-            let t = false;
-            var e = "";
-            if (
-                ($("#property-form")
-                    .find("input")
-                    .each(function () {
-                        $(this).prop("required") && ($(this).val() || ((t = !0), (name = $(this).attr("name")), (e += name + ", ")));
-                    })
+        confirmPropertyUpdate.fire({
+            title: 'Are you sure?',
+            text: "To create this property!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, create it!',
+            cancelButtonText: 'No, cancel!',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $(".btn-property").html("Processing...").attr("disabled", !0);
+                let t = false;
+                var e = "";
+                if (
+                    ($("#property-form")
+                        .find("input")
+                        .each(function () {
+                            $(this).prop("required") && ($(this).val() || ((t = !0), (name = $(this).attr("name")), (e += name + ", ")));
+                        })
 
+                    )
                 )
-            )
 
-                if (t) message("Validation error the following field are required " + e.substring(0, e.length - 2), 'error'), window.scrollTo(0, 0), $(".btn-property").attr("disabled", !1).html("Submit");
+                    if (t) message("Validation error the following field are required " + e.substring(0, e.length - 2), 'error'), window.scrollTo(0, 0), $(".btn-property").attr("disabled", !1).html("Submit");
 
-            if ((!Number($("#price").val())) && $("#price").val() != '') {
-                $(".btn-property").html("Submit").attr("disabled", !1);
-                message("Invalid price supply, kindly check and try again!", 'error');
-                $('#price').focus();
-                return;
-            }
-
-            var params = {
-                Name: $("#name").val().trim(),
-                Location: $("#location").val(),
-                Type: $("#types").val(),
-                UnitPrice: Number($("#price").val()),
-                Status: $("#status").val(),
-                UnitAvailable: Number($("#unit").val()),
-                Description: {
-                    Bathroom: Number($("#bathroom").val()),
-                    Toilet: Number($("#toilet").val()),
-                    FloorLevel: Number($("#floorLevel").val()),
-                    Bedroom: Number($("#bedRoom").val()),
-                    LandSize: $("#landSize").val(),
-                    AirConditioned: $("#airConditioned").is(":checked") ? 1 : 0,
-                    Refrigerator: $("#refrigerator").is(":checked") ? 1 : 0,
-                    Parking: $("#parking").is(":checked") ? 1 : 0,
-                    SwimmingPool: $("#swimmingPool").is(":checked") ? 1 : 0,
-                    Laundry: $("#laundry").is(":checked") ? 1 : 0,
-                    Gym: $("#gym").is(":checked") ? 1 : 0,
-                    SecurityGuard: $("#securityGuard").is(":checked") ? 1 : 0,
-                    Fireplace: $("#fireplace").is(":checked") ? 1 : 0,
-                    Basement: $("#basement").is(":checked") ? 1 : 0,
-                },
-                InterestRate: Number($("#interest").val()),
-                Longitude: Number($("#logitude").val()),
-                Latitude: Number($("#latitude").val()),
-                Summary: $("#description").val(),
-                Account: $("#account").val(),
-                Bank: $("#bank").val(),
-                MaxUnitPerCustomer: Number($("#maxCustomerUnit").val()),
-                ClosingDate: $("#closingDate").val(),
-                VideoLink: $("#videoLink").val()
-
-            };
-
-            let xhr = new XMLHttpRequest();
-            let url = "/create-property";
-            xhr.open('POST', url, false);
-            xhr.setRequestHeader("content-type", "application/json");
-            xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
-            try {
-                xhr.send(JSON.stringify(params));
-                if (xhr.status != 200) {
-                    // alert('Something went wrong try again!');
-                } else {
-                    var res = JSON.parse(xhr.responseText);
-                    var data = JSON.parse(res).data;
-                    var Message = JSON.parse(res).message;
-                    if (JSON.parse(res).success) {
-                        window.scrollTo(0, 0);
-                        $('.form-control').val('');
-                        $(".btn-property").html("Submit").attr("disabled", !1);
-                        Swal.fire(
-                            'Good job!',
-                            message,
-                            'success'
-                        );
-
-                        setTimeout(() => {
-                            location.reload();
-                        }, 2000);
-                    } else {
-                        var err = JSON.parse(res).message;
-                        Swal.fire(
-                            'Opps!',
-                            err == "401" ? "You don't have permission to perform this action" : "Something went wrong, admin has been contacted",
-                            'error'
-                        );
-                        $(".btn-property").html("Submit").attr("disabled", !1);
-                        window.scrollTo(0, 0);
-                    }
-
+                if ((!Number($("#price").val())) && $("#price").val() != '') {
+                    $(".btn-property").html("Submit").attr("disabled", !1);
+                    message("Invalid price supply, kindly check and try again!", 'error');
+                    $('#price').focus();
+                    return;
                 }
-            } catch (err) { // instead of onerror
-                //alert("Request failed");
-                $(".btn-property").html("Submit").attr("disabled", !1);
+
+                var params = {
+                    Name: $("#name").val().trim(),
+                    Location: $("#location").val(),
+                    Type: $("#types").val(),
+                    UnitPrice: Number($("#price").val()),
+                    Status: $("#status").val(),
+                    UnitAvailable: Number($("#unit").val()),
+                    Description: {
+                        Bathroom: Number($("#bathroom").val()),
+                        Toilet: Number($("#toilet").val()),
+                        FloorLevel: Number($("#floorLevel").val()),
+                        Bedroom: Number($("#bedRoom").val()),
+                        LandSize: $("#landSize").val(),
+                        AirConditioned: $("#airConditioned").is(":checked") ? 1 : 0,
+                        Refrigerator: $("#refrigerator").is(":checked") ? 1 : 0,
+                        Parking: $("#parking").is(":checked") ? 1 : 0,
+                        SwimmingPool: $("#swimmingPool").is(":checked") ? 1 : 0,
+                        Laundry: $("#laundry").is(":checked") ? 1 : 0,
+                        Gym: $("#gym").is(":checked") ? 1 : 0,
+                        SecurityGuard: $("#securityGuard").is(":checked") ? 1 : 0,
+                        Fireplace: $("#fireplace").is(":checked") ? 1 : 0,
+                        Basement: $("#basement").is(":checked") ? 1 : 0,
+                    },
+                    //InterestRate: Number($("#interest").val()),
+                    TargetYield: Number($("#targetYield").val()),
+                    Longitude: Number($("#logitude").val()),
+                    Latitude: Number($("#latitude").val()),
+                    Summary: $("#description").val(),
+                    Account: $("#account").val(),
+                    Bank: $("#bank").val(),
+                    MaxUnitPerCustomer: Number($("#maxCustomerUnit").val()),
+                    ClosingDate: $("#closingDate").val(),
+                    VideoLink: $("#videoLink").val(),
+                    AllowSharing: Number($("#allowSharing").val()),
+                    MinimumSharing: $("#minimumSharing").val()
+
+                };
+
+                let xhr = new XMLHttpRequest();
+                let url = "/create-property";
+                xhr.open('POST', url, false);
+                xhr.setRequestHeader("content-type", "application/json");
+                xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+                try {
+                    xhr.send(JSON.stringify(params));
+                    if (xhr.status != 200) {
+                        // alert('Something went wrong try again!');
+                        $(".btn-property").html("Submit").attr("disabled", !1);
+                    } else {
+                        var res = JSON.parse(xhr.responseText);
+                        var data = JSON.parse(res).data;
+                        var message = JSON.parse(res).message;
+                        if (JSON.parse(res).success) {
+                            window.scrollTo(0, 0);
+                            $('.form-control').val('');
+                            $(".btn-property").html("Submit").attr("disabled", !1);
+                            Swal.fire(
+                                'Good job!',
+                                message,
+                                'success'
+                            ).then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            var err = JSON.parse(res).message;
+                            Swal.fire(
+                                'Opps!',
+                                err == "401" ? "You don't have permission to perform this action" : "Something went wrong, admin has been contacted",
+                                'error'
+                            );
+                            $(".btn-property").html("Submit").attr("disabled", !1);
+                            window.scrollTo(0, 0);
+                        }
+
+                    }
+                } catch (err) { // instead of onerror
+                    //alert("Request failed");
+                }
+            } else if (
+                /* Read more about handling dismissals below */
+                result.dismiss === Swal.DismissReason.cancel
+            ) {
+                confirmPropertyUpdate.fire(
+                    'Cancelled',
+                    'No changes was made :)',
+                    'error'
+                )
             }
-        } else if (
-            /* Read more about handling dismissals below */
-            result.dismiss === Swal.DismissReason.cancel
-        ) {
-            confirmPropertyUpdate.fire(
-                'Cancelled',
-                'No changes was made :)',
-                'error'
-            )
-        }
+        });
     });
-});
+})
+
 
 $('.btn-update-property').click(() => {
 
@@ -1791,7 +1799,39 @@ $('.btn-activate').click(() => {
         $(".btn-activate").html("Activate").attr("disabled", !1);
     }
 });
+const onSubscribe = () => {
+    console.log('enter');
+    let xhr = new XMLHttpRequest();
+    let url = "/subscribe";
+    xhr.open('GET', url, false);
+    xhr.setRequestHeader("content-type", "application/json");
+    xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+    try {
 
+        xhr.send();
+        if (xhr.status != 200) {
+            $(".btn-subscribe").html("Loading...").attr("disabled", !0);
+            // alert('Something went wrong try again!');
+        } else {
+            var res = JSON.parse(xhr.responseText);
+            var data = JSON.parse(res).data;
+
+            if (JSON.parse(res).success) {
+                location = data;
+                //window.open(data, "Dominoes Society", "status=1,toolbar=1");
+                $(".btn-subscribe").html("Subscribe to get full access").attr("disabled", !1);
+            } else {
+                $(".btn-subscribe").html("Subscribe to get full access").attr("disabled", !1);
+                window.scrollTo(0, 0);
+                message(data, 'error');
+            }
+
+        }
+    } catch (err) { // instead of onerror
+        //alert("Request failed");
+        $(".btn-subscribe").html("Subscribe to get full access").attr("disabled", !1);
+    }
+}
 $('.btn-subscribe').click(() => {
     $(".btn-subscribe").html("Loading...").attr("disabled", !0);
     let xhr = new XMLHttpRequest();

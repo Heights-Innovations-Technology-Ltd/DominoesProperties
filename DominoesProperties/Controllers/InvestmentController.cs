@@ -148,7 +148,7 @@ namespace DominoesProperties.Controllers
                 return response;
             }
 
-            global::Models.Models.Customer customer = customerRepository.GetCustomer(HttpContext.User.Identity.Name);
+            Customer customer = customerRepository.GetCustomer(HttpContext.User.Identity.Name);
 
             if (investment.Units > property.UnitAvailable)
             {
