@@ -19,7 +19,7 @@ namespace Models.Models
         public string UniqueId { get; set; }
         public string Name { get; set; }
         public string Location { get; set; }
-        public int? Type { get; set; }
+        public int Type { get; set; }
         public int TotalUnits { get; set; } = 0;
         public decimal UnitPrice { get; set; } = 0;
         public decimal TotalPrice { get; set; } = 0;
@@ -27,9 +27,9 @@ namespace Models.Models
         public int UnitSold { get; set; } = 0;
         public int UnitAvailable { get; set; } = 0;
         public DateTime? ClosingDate { get; set; }
-        public decimal? TargetYield { get; set; } = 0;
-        public decimal? ProjectedGrowth { get; set; } = 0;
-        public decimal? InterestRate { get; set; } = 0;
+        public decimal TargetYield { get; set; } = 0;
+        public decimal ProjectedGrowth { get; set; } = 0;
+        public decimal InterestRate { get; set; } = 0;
         public DateTime? DateCreated { get; set; } = DateTime.Now;
         public string Longitude { get; set; }
         public string Latitude { get; set; }

@@ -60,7 +60,7 @@ namespace DominoesProperties.Controllers
 
         [HttpPost]
         [Route("register")]
-        public ApiResponse RegisterAsync([FromBody] Models.CustomerReq customer)
+        public ApiResponse RegisterAsync([FromBody] CustomerReq customer)
         {
             if (customerRepository.GetCustomer(customer.Email) != null)
             {
@@ -93,12 +93,13 @@ namespace DominoesProperties.Controllers
         public ApiResponse Login(Login login)
         {
             var customer = customerRepository.GetCustomer(login.Email);
-            if (customer == null || !customer.IsActive.Value || customer.IsDeleted.Value)
+            if (customer == null || customer.IsDeleted.Value)
             {
                 response.Success = false;
                 response.Message = "Username name not found!";
                 return response;
             }
+
             if (!customer.IsVerified.Value)
             {
                 response.Success = false;
@@ -378,7 +379,7 @@ namespace DominoesProperties.Controllers
                     }
 
                     var db = distributedCache.GetDatabase();
-                    _ = await db.StringSetAsync(token, uniqueRef, TimeSpan.FromMinutes(15));
+                    _ = await db.StringSetAsync(token, uniqueRef, TimeSpan.FromDays(1));
 
                     EmailData emailData = new()
                     {
@@ -413,7 +414,7 @@ namespace DominoesProperties.Controllers
 
             var token = new JwtSecurityToken(configuration["app_settings:Issuer"],
                configuration["app_settings:Issuer"], claims,
-                expires: DateTime.Now.AddMinutes(10),
+                expires: DateTime.Now.AddMinutes(20),
                 signingCredentials: credentials);
 
             return new JwtSecurityTokenHandler().WriteToken(token);

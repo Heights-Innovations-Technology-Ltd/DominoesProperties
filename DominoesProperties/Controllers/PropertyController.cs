@@ -42,19 +42,20 @@ namespace DominoesProperties.Controllers
         [HttpGet]
         public ApiResponse Property([FromQuery] QueryParams queryParams, [FromQuery] PropertyFilter propertyFilter)
         {
-
             List<Properties> properties = new();
 
             if (propertyFilter != null)
             {
                 var prop = propertyRepository.GetProperties();
 
-                if (propertyFilter.Category != null)
+                if (!string.IsNullOrEmpty(propertyFilter.Category))
                     prop = prop.Where(x => x.Status == propertyFilter.Category).ToList();
                 if (propertyFilter.MinPrice > 0)
                     prop = prop.Where(x => x.UnitPrice >= propertyFilter.MinPrice).ToList();
                 if (propertyFilter.MaxPrice > 0)
                     prop = prop.Where(x => x.UnitPrice >= propertyFilter.MaxPrice).ToList();
+                if(!string.IsNullOrEmpty(propertyFilter.Location))
+                    prop = prop.Where(x => x.Location.Contains(propertyFilter.Location)).ToList();
 
                 prop.ForEach(x =>
                 {
@@ -161,13 +162,13 @@ namespace DominoesProperties.Controllers
                 return response;
             }
             property.Location = string.IsNullOrEmpty(updateProperty.Location) ? property.Location : updateProperty.Location;
-            property.Type = updateProperty.Type == null ? property.Type : updateProperty.Type;
+            property.Type = updateProperty.Type == null ? property.Type : updateProperty.Type.Value;
             property.TotalUnits = updateProperty.TotalUnits > 0 ? updateProperty.TotalUnits : property.TotalUnits;
             property.UnitPrice = updateProperty.UnitPrice > 0 ? updateProperty.UnitPrice : property.UnitPrice;
             property.ClosingDate = updateProperty.ClosingDate == null ? property.ClosingDate : updateProperty.ClosingDate;
-            property.TargetYield = updateProperty.TargetYield > 0 ? updateProperty.TargetYield : property.TargetYield;
-            property.ProjectedGrowth = updateProperty.ProjectedGrowth > 0 ? updateProperty.ProjectedGrowth : property.ProjectedGrowth;
-            property.InterestRate = updateProperty.InterestRate > 0 ? updateProperty.InterestRate : property.InterestRate;
+            property.TargetYield = updateProperty.TargetYield.Value > 0 ? updateProperty.TargetYield.Value : property.TargetYield;
+            property.ProjectedGrowth = updateProperty.ProjectedGrowth.Value > 0 ? updateProperty.ProjectedGrowth.Value : property.ProjectedGrowth;
+            property.InterestRate = updateProperty.InterestRate.Value > 0 ? updateProperty.InterestRate.Value : property.InterestRate;
             property.Longitude = string.IsNullOrEmpty(updateProperty.Longitude) ? property.Longitude : updateProperty.Longitude;
             property.Latitude = string.IsNullOrEmpty(updateProperty.Latitude) ? property.Latitude : updateProperty.Latitude;
             property.Summary = string.IsNullOrEmpty(updateProperty.Summary) ? property.Summary : updateProperty.Summary;

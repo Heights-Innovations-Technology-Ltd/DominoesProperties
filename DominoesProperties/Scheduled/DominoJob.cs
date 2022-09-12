@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
 using DominoesProperties.Enums;
+using DominoesProperties.Models;
+using MailKit.Net.Smtp;
+using MimeKit;
 using Models.Models;
 using Repositories.Repository;
 
@@ -12,13 +15,18 @@ namespace DominoesProperties.Scheduled
         private readonly IPropertyRepository propertyRepository;
         private readonly ITransactionRepository transactionRepository;
         private readonly IWalletRepository walletRepository;
+        private readonly IEmailRetryRepository emailRetryRepository;
+        private readonly ILoggerManager logger;
+        private readonly EmailSettings _emailSettings;
 
-        public DominoJob(IInvestmentRepository _investmentRepository, IPropertyRepository _propertyRepository, ITransactionRepository _transactionRepository, IWalletRepository _walletRepository)
+        public DominoJob(IInvestmentRepository _investmentRepository, IPropertyRepository _propertyRepository, ITransactionRepository _transactionRepository, IWalletRepository _walletRepository, IEmailRetryRepository _emailRetryRepository, ILoggerManager _logger)
         {
             investmentRepository = _investmentRepository;
             propertyRepository = _propertyRepository;
             transactionRepository = _transactionRepository;
             walletRepository = _walletRepository;
+            emailRetryRepository = _emailRetryRepository;
+            logger = _logger;
         }
 
         public void PerformPairInvestment()
@@ -42,8 +50,9 @@ namespace DominoesProperties.Scheduled
                             investmentRepository.UpdateSharingGroup(x);
                             scope.Complete();
                         }
-                        catch (Exception)
+                        catch (Exception e)
                         {
+                            logger.LogError(e.StackTrace);
                             scope.Dispose();
                         }
                     }
@@ -78,8 +87,9 @@ namespace DominoesProperties.Scheduled
                                 investmentRepository.UpdateSharingGroup(x);
                                 scope.Complete();
                             }
-                            catch (Exception)
+                            catch (Exception e)
                             {
+                                logger.LogError(e.StackTrace);
                                 scope.Dispose();
                             }
                         }
@@ -126,8 +136,9 @@ namespace DominoesProperties.Scheduled
                                     investmentRepository.UpdateSharingGroup(x);
                                     scope.Complete();
                                 }
-                                catch (Exception)
+                                catch (Exception e)
                                 {
+                                    logger.LogError(e.StackTrace);
                                     scope.Dispose();
                                 }
                             }
@@ -137,6 +148,56 @@ namespace DominoesProperties.Scheduled
                 return true;
             });
             return finished;
+        }
+
+        public void ResendEmail()
+        {
+            SmtpClient emailClient = new();
+            try
+            {
+                emailClient.Connect(_emailSettings.Host, _emailSettings.Port, _emailSettings.UseSSL);
+                emailClient.Authenticate(_emailSettings.EmailId, _emailSettings.Password);
+
+                var retries = emailRetryRepository.GetRetries();
+                retries.ForEach(x =>
+                {
+                    if (x.DateCreated.Day == DateTime.Now.Day && x.DateCreated.AddMinutes(5) <= DateTime.Now && x.RetryCount < 3)
+                    {
+                        MimeMessage emailMessage = new();
+
+                        MailboxAddress emailFrom = new(_emailSettings.Name, _emailSettings.EmailId);
+                        emailMessage.From.Add(emailFrom);
+
+                        MailboxAddress emailTo = new(x.RecipientName, x.Recipient);
+                        emailMessage.To.Add(emailTo);
+
+                        emailMessage.Subject = x.Subject;
+
+                        BodyBuilder emailBodyBuilder = new()
+                        {
+                            HtmlBody = x.Body
+                        };
+                        emailMessage.Body = emailBodyBuilder.ToMessageBody();
+                        emailClient.Send(emailMessage);
+
+                        x.DateCreated = DateTime.Now;
+                        x.StatusCode = "200";
+                        x.RetryCount += 1;
+
+                        emailRetryRepository.UpdateRetry(x);
+                    }
+                });
+
+                emailClient.Disconnect(true);
+                emailClient.Dispose();
+            }
+            catch (Exception ex)
+            {
+                logger.LogDebug("Connection not obtained for SMTP server");
+                logger.LogDebug(ex.StackTrace);
+                emailClient.Disconnect(true);
+                emailClient.Dispose();
+            }
         }
     }
 }
