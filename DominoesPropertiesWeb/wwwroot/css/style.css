@@ -342,7 +342,8 @@ Bg-color Style*/
 }
 
 .bg-color-f9fcff {
-  background-color: #f9fcff;
+    background-color: #f9fcff;
+    /*background-color: #f1f5f9;*/
 }
 
 .bg-color-f8fafb {
