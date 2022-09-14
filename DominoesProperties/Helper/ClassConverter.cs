@@ -86,7 +86,7 @@ namespace DominoesProperties.Helper
 
         internal static Models.Properties EntityToProperty(Property property)
         {
-            return new Models.Properties
+            var prop = new Models.Properties
             {
                 UniqueId = property.UniqueId,
                 Name = property.Name,
@@ -111,6 +111,12 @@ namespace DominoesProperties.Helper
                 AllowSharing = property.AllowSharing.Value,
                 MinimumSharingPercentage = property.MinimumSharingPercentage.Value
             };
+
+            if (property.PropertyUploads != null)
+            {
+                prop.Data = property.PropertyUploads;
+            }
+            return prop;
         }
 
         internal static Description DescriptionToEntity(Models.PropertyDescription description){
