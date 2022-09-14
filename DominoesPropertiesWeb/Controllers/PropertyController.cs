@@ -145,6 +145,8 @@ namespace DominoesPropertiesWeb.Controllers
             obj.InterestRate = Convert.ToInt32(jObject["InterestRate"]);
             obj.Longitude = Convert.ToString(jObject["Longitude"]);
             obj.Latitude = Convert.ToString(jObject["Latitude"]);
+            obj.AllowSharing = Convert.ToBoolean(jObject["AllowSharing"]);
+            obj.MinimumSharingPercentage = Convert.ToInt32(jObject["MinimumSharing"]);
             //obj.TargetYield = jObject["TargetYield"] != null ? Convert.ToDecimal(jObject["TargetYield"]) : 0;
             //obj.ProjectedGrowth = jObject["ProjectedGrowth"] != null ? Convert.ToDecimal(jObject["ProjectedGrowth"]) : 0;
             obj.AccountNumber = Convert.ToString(jObject["Account"]);
@@ -238,6 +240,7 @@ namespace DominoesPropertiesWeb.Controllers
             propertyFilter.SecurityGuard = Convert.ToBoolean(jObject["SecurityGuard"]);
             propertyFilter.Fireplace = Convert.ToBoolean(jObject["Fireplace"]);
             propertyFilter.Basement = Convert.ToBoolean(jObject["Basement"]);
+            propertyFilter.Location = Convert.ToString(jObject["Location"]);
 
             //if (Convert.ToInt32(jObject["Category"]) > 0) query.Add("Category", propertyFilter.Category.ToString());
             if (Convert.ToInt32(jObject["Bathroom"]) > 0) query.Add("Bathroom", propertyFilter.Bathroom.ToString());
@@ -255,6 +258,7 @@ namespace DominoesPropertiesWeb.Controllers
             if (Convert.ToBoolean(jObject["SecurityGuard"])) query.Add("SecurityGuard", propertyFilter.SecurityGuard.ToString());
             if (Convert.ToBoolean(jObject["Fireplace"])) query.Add("Fireplace", propertyFilter.Fireplace.ToString());
             if (Convert.ToBoolean(jObject["Basement"])) query.Add("Basement", propertyFilter.Basement.ToString());
+            if (Convert.ToString(jObject["Location"]).Length > 0) query.Add("Location", propertyFilter.Location.ToString());
 
             var res = Task.Run(() => httpContext.Get("Property", query));
             await Task.WhenAll(res);

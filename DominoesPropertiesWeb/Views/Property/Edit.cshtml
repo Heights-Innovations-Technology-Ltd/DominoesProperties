@@ -77,24 +77,30 @@
 								</select>
 							</div>
 						</div>
-						<div class="col-lg-6 col-md-6">
-							<div class="form-group">
-								<label>Interest Rate</label>
-								<input type="text" class="form-control" name="Interest" id="interest">
+						<h3 class="mt-30">Property Sharable?</h3>
+
+							<div class="col-lg-6 col-md-6">
+								<div class="form-group">
+									<label for="type">Allow Sharing</label>
+									<select class="form-control" name="Allow-sharing" id="allowSharing" required>
+										<option>Select Category</option>
+										<option value="1">Yes</option>
+										<option value="0">No</option>
+									</select>
+								</div>
 							</div>
-						</div>
-						<div class="col-lg-6 col-md-6">
-							<div class="form-group">
-								<label>Max unit per customer</label>
-								<input type="number" min="1" class="form-control" name="maxCustomerUnit" id="maxCustomerUnit" required>
+							<div class="col-lg-6 col-md-6">
+								<div class="form-group">
+									<label>Minimum Sharing Percentage</label>
+									<select class="form-control" name="minimumSharing" id="minimumSharing">
+										<option>Select Option</option>
+										<option value="10">10<sup>%</sup></option>
+										<option value="20">20<sup>%</sup></option>
+										<option value="25">25<sup>%</sup></option>
+										<option value="50">50<sup>%</sup></option>
+									</select>
+								</div>
 							</div>
-						</div>
-						<div class="col-lg-6 col-md-6">
-							<div class="form-group">
-								<label>Investment Closing Date</label>
-								<input type="date" class="form-control" name="closingDate" id="closingDate">
-							</div>
-						</div>
 
 						<h3 class="mt-30">Location / Contacts</h3>
 

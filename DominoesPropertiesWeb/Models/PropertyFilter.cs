@@ -18,5 +18,6 @@
         public bool? AirConditioned { get; set; }
         public bool? Basement { get; set; }
         public bool? SecurityGuard { get; set; }
+        public string Location { get; set; }
     }
 }
