@@ -54,7 +54,7 @@ namespace DominoesProperties.Controllers
                     prop = prop.Where(x => x.UnitPrice >= propertyFilter.MinPrice).ToList();
                 if (propertyFilter.MaxPrice > 0)
                     prop = prop.Where(x => x.UnitPrice >= propertyFilter.MaxPrice).ToList();
-                if(!string.IsNullOrEmpty(propertyFilter.Location))
+                if (!string.IsNullOrEmpty(propertyFilter.Location))
                     prop = prop.Where(x => x.Location.Contains(propertyFilter.Location)).ToList();
 
                 prop.ForEach(x =>
@@ -62,6 +62,9 @@ namespace DominoesProperties.Controllers
                     var prop2 = ClassConverter.EntityToProperty(x);
                     prop2.Description = ClassConverter.ConvertDescription(propertyRepository.GetDescriptionByPropertyId(prop2.UniqueId));
                     properties.Add(prop2);
+
+                    //var uploaded = uploadRepository.GetUploads(x.Id).Where(x => x.UploadType.Equals(UploadType.PICTURE.ToString())).Select(x => x.Url).ToList();
+                    //prop2.Data = uploaded;
                 });
 
                 if (propertyFilter.AirConditioned != null)
@@ -135,7 +138,7 @@ namespace DominoesProperties.Controllers
         [Authorize(Roles = "ADMIN, SUPER")]
         public ApiResponse Property([FromBody] Properties properties)
         {
-            if(properties.AllowSharing && properties.MinimumSharingPercentage < 10)
+            if (properties.AllowSharing && properties.MinimumSharingPercentage < 10)
             {
                 response.Message = $"Sharing percentage cannot be less and 10% for property that allows sharing";
                 return response;
@@ -275,10 +278,12 @@ namespace DominoesProperties.Controllers
                             ImageName = x.ImageName,
                             PropertyId = property.Id,
                             UploadType = x.UploadType.ToString(),
-                            Url = x.Url
+                            Url = x.Url,
+                            AdminEmail = HttpContext.User.Identity.Name
                         });
                     }
-                    else {
+                    else
+                    {
                         response.Message = "One or more upload data is incorrect, kindly check and try aagin";
                         isError = true;
                     }
