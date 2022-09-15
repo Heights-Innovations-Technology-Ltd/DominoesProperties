@@ -247,7 +247,6 @@ const GetUAdminDashboard = () => {
         } else {
             var res = JSON.parse(xhr.responseText);
             var data = JSON.parse(res).data;
-            console.log(data);
             if (JSON.parse(res).success) {
                 $('.total-property').text(data.Properties);
                 $('.active-property').text(data.ActiveProperties);
@@ -361,7 +360,6 @@ const GetProperties = (type) => {
             var res = JSON.parse(xhr.responseText);
             var data = JSON.parse(res).data;
             if (JSON.parse(res).success) {
-                console.log(data);
                 $('#property-count').html(data.length + ' Results Found');
                 
                 if (type == "admin") {
@@ -432,7 +430,6 @@ const filterProperty = () => {
         return;
     }
     var location = sessionStorage.getItem("landingFilter");
-    console.log(location);
     var params = {
         Category: $("#types").val(),
         Bathroom: Number($("#bathroom").val()),
@@ -781,7 +778,6 @@ const getSingleProperty = () => {
         } else {
             var res = JSON.parse(xhr.responseText);
             var data = JSON.parse(res).data;
-            console.log(res);
             if (JSON.parse(res).success) {
                 singleData = data;
                 if (data.data.Images.length > 0) {
@@ -981,7 +977,6 @@ const editSingleProperty = () => {
         } else {
             var res = JSON.parse(xhr.responseText);
             var data = JSON.parse(res).data;
-            console.log(data);
             if (JSON.parse(res).success) {
                
                 $("#name").val(data.name);
@@ -1408,25 +1403,26 @@ $('#btnUpload').on('click', function () {
             contentType: false,
             type: "POST",
             success: function (data) {
-                console.log(data);
-                //var success = data.success;
-                //var message = data.message;
-                //if (success) {
-                //    Swal.fire(
-                //        'Good job!',
-                //        message,
-                //        'success'
-                //    );
-                //    $("#btnUpload").attr("disabled", !1).html(`Submit`);
-                //}
-                //else {
-                //    Swal.fire(
-                //        'Opps!',
-                //        message,
-                //        'error'
-                //    );
-                //    $("#btnUpload").attr("disabled", !1).html(`Submit`);
-                //}
+                var success = JSON.parse(data).success;
+                var message = JSON.parse(data).message;
+                if (success) {
+                    Swal.fire(
+                        'Good job!',
+                        message,
+                        'success'
+                    ).then(() => {
+                        location.reload();
+                    });
+                    $("#btnUpload").attr("disabled", !1).html(`Submit`);
+                }
+                else {
+                    Swal.fire(
+                        'Opps!',
+                        message,
+                        'error'
+                    );
+                    $("#btnUpload").attr("disabled", !1).html(`Submit`);
+                }
             }
         }
     );
@@ -1463,7 +1459,6 @@ const GetInvestments = () => {
 const GetInvestmentById = () => {
     let urls = window.location.href.split("/");
     let token = urls[5];
-    console.log(token);
     let xhr = new XMLHttpRequest();
     let url = `/get-investment/${token}`;
     xhr.open('GET', url, false);
@@ -1477,7 +1472,6 @@ const GetInvestmentById = () => {
         } else {
             var res = JSON.parse(xhr.responseText);
             var data = JSON.parse(res).data;
-            console.log(data);
             if (JSON.parse(res).success) {
                 //adminInvestmentsTmp(data);
                 LoadCurrentData(data);
@@ -1828,7 +1822,6 @@ $('.btn-activate').click(() => {
     }
 });
 const onSubscribe = () => {
-    console.log('enter');
     let xhr = new XMLHttpRequest();
     let url = "/subscribe";
     xhr.open('GET', url, false);
@@ -2444,7 +2437,6 @@ function forgetPassword() {
                     //alert('Something went wrong try again!');
                 } else {
                     var res = JSON.parse(xhr.responseText);
-                    console.log(res);
                     var data = JSON.parse(res).data;
                     if (JSON.parse(res).success) {
                         Swal.fire(

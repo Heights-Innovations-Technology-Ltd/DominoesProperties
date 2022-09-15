@@ -301,7 +301,9 @@ namespace DominoesPropertiesWeb.Controllers
                 var uploadResponse = _uploadRepository.UploadPropertyImages(fileUploads, propertyId, Request);
 
                 var res = Task.Run(() => httpContext.Post("Property/uploads/" + propertyId, uploadResponse));
-                var data = await res.GetAwaiter().GetResult();
+                //var data = await res.GetAwaiter().GetResult();
+                await Task.WhenAll(res);
+                var data = res.Status == TaskStatus.RanToCompletion ? res.Result : null;
                 return Json(JsonConvert.SerializeObject(data));
             }
             return Json(this.StatusCode(StatusCodes.Status204NoContent, "Empty request body"));
