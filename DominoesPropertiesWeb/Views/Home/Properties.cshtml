@@ -177,7 +177,7 @@
 											</div>
 
 											<div class="col-lg-12 col-sm-12">
-												<button type="button" class="default-btn btn-filter-property ">
+												<button type="button" class="default-btn " onclick="filterProperty()">
 													 Search <i class="fa fa-search"></i>
 												</button>
 											</div>
@@ -230,6 +230,10 @@
 			$(document).ready(() =>{
 				GetPropertyTypes();
 				GetProperties("client");
+				var session = sessionStorage.getItem("landingFilter");
+				if(session != null || session != ""){
+					filterProperty();
+				}
 			})
 		</script>
 
