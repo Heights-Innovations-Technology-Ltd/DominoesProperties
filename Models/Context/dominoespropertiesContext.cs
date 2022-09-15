@@ -390,7 +390,7 @@ namespace Models.Context
                 entity.HasIndex(e => e.PaystackRef, "paystackpayment_pk")
                     .IsUnique();
 
-                entity.HasIndex(e => e.TransactionRef, "paystackpayment_transaction_TransactionRef_fk");
+                entity.HasIndex(e => e.TransactionRef, "paystackpayment_TransactionRef_uindex");
 
                 entity.Property(e => e.AccessCode)
                     .IsRequired()
