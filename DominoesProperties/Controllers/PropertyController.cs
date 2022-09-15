@@ -296,7 +296,7 @@ namespace DominoesProperties.Controllers
                 if (uploadRepository.NewUpload(propertyUploads))
                 {
                     response.Success = true;
-                    response.Message = "Passport successfully uploaded";
+                    response.Message = "Property images successfully uploaded";
                     return response;
                 }
                 else
