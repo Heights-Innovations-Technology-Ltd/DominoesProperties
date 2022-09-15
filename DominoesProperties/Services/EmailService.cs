@@ -1,10 +1,12 @@
 ﻿using System;
 using System.IO;
+using System.Net.Sockets;
 using DominoesProperties.Models;
 using MailKit.Net.Smtp;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using MimeKit;
+using Models.Models;
 using Repositories.Repository;
 
 namespace DominoesProperties.Services
@@ -13,22 +15,24 @@ namespace DominoesProperties.Services
     {
         private readonly EmailSettings _emailSettings;
         private readonly ILoggerManager logger;
-        public EmailService(IOptions<EmailSettings> options, ILoggerManager _logger)
+        private readonly IEmailRetryRepository emailRetrials;
+        public EmailService(IOptions<EmailSettings> options, ILoggerManager _logger, IEmailRetryRepository _emailRetrials)
         {
             _emailSettings = options.Value;
             logger = _logger;
+            emailRetrials = _emailRetrials;
         }
 
         public bool SendEmail(EmailData emailData)
         {
             try
             {
-                MimeMessage emailMessage = new MimeMessage();
+                MimeMessage emailMessage = new();
 
-                MailboxAddress emailFrom = new MailboxAddress(_emailSettings.Name, _emailSettings.EmailId);
+                MailboxAddress emailFrom = new(_emailSettings.Name, _emailSettings.EmailId);
                 emailMessage.From.Add(emailFrom);
 
-                MailboxAddress emailTo = new MailboxAddress(emailData.EmailToName, emailData.EmailToId);
+                MailboxAddress emailTo = new(emailData.EmailToName, emailData.EmailToId);
                 emailMessage.To.Add(emailTo);
 
                 emailMessage.Subject = emailData.EmailSubject;
@@ -39,7 +43,7 @@ namespace DominoesProperties.Services
                 };
                 emailMessage.Body = emailBodyBuilder.ToMessageBody();
 
-                SmtpClient emailClient = new SmtpClient();
+                SmtpClient emailClient = new();
                 emailClient.Connect(_emailSettings.Host, _emailSettings.Port, _emailSettings.UseSSL);
                 emailClient.Authenticate(_emailSettings.EmailId, _emailSettings.Password);
                 emailClient.Send(emailMessage);
@@ -48,10 +52,21 @@ namespace DominoesProperties.Services
 
                 return true;
             }
-            catch (Exception ex)
+            catch (SocketException ex)
             {
                 //Log Exception Details
                 logger.LogError(ex.StackTrace);
+                EmailRetry retry = new()
+                {
+                    Subject = emailData.EmailSubject,
+                    Body = emailData.EmailBody,
+                    DateCreated = DateTime.Now,
+                    Recipient = emailData.EmailToId,
+                    RecipientName = emailData.EmailToName,
+                    StatusCode = "500",
+                    Category = "CUSTOMER"
+                };
+                emailRetrials.AddRetry(retry);
                 return false;
             }
         }

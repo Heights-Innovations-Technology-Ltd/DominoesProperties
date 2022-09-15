@@ -28,5 +28,11 @@ namespace DominoesProperties.Controllers
         {
             backgroundJobClient.ContinueJobWith("complete-pairing", () => dominoJob.CheckUnclosedPairing(), JobContinuationOptions.OnlyOnSucceededState);
         }
+
+        [HttpGet("retry-mail")]
+        public void RetryEmailSender()
+        {
+            backgroundJob.AddOrUpdate("retry-email", () => dominoJob.ResendEmail(), "*/10 * * * *");
+        }
     }
 }

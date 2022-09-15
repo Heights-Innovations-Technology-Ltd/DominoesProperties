@@ -30,25 +30,12 @@
 										<div class="row">
 											<div class="col-lg-12">
 												<div class="form-group">
-													<select class="form-select form-control" name="Property-Type" id="types" required>
-														<option>Select Type</option>
-													</select>
-												</div>
-											</div>
-											<div class="col-lg-12">
-												<div class="form-group">
-													<select class="form-select form-control" name="Property-Category" id="status" required>
-														<option>Select Category</option>
-														<option value="0">ONGOING CONSTRUCTION</option>
-														<option value="1">OPEN FOR INVESTMENT</option>
-														<option value="2">CLOSED FOR INVESTMENT</option>
-														<option value="3">RENTED OUT</option>
-													</select>
+													<input type="text" class="form-control" name="location" id="location" placeholder="Search your prefer location" required>
 												</div>
 											</div>
 											<div class="col-lg-12">
 												<div class="form-group mb-0">
-													<a href="#" class="default-btn btn-radius">
+													<a href="#" class="default-btn btn-radius" onclick="filterProperty()">
 														Search
 													</a>
 												</div>

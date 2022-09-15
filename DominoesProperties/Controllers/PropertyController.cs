@@ -42,25 +42,29 @@ namespace DominoesProperties.Controllers
         [HttpGet]
         public ApiResponse Property([FromQuery] QueryParams queryParams, [FromQuery] PropertyFilter propertyFilter)
         {
-
             List<Properties> properties = new();
 
             if (propertyFilter != null)
             {
                 var prop = propertyRepository.GetProperties();
 
-                if (propertyFilter.Category != null)
+                if (!string.IsNullOrEmpty(propertyFilter.Category))
                     prop = prop.Where(x => x.Status == propertyFilter.Category).ToList();
                 if (propertyFilter.MinPrice > 0)
                     prop = prop.Where(x => x.UnitPrice >= propertyFilter.MinPrice).ToList();
                 if (propertyFilter.MaxPrice > 0)
                     prop = prop.Where(x => x.UnitPrice >= propertyFilter.MaxPrice).ToList();
+                if (!string.IsNullOrEmpty(propertyFilter.Location))
+                    prop = prop.Where(x => x.Location.Contains(propertyFilter.Location)).ToList();
 
                 prop.ForEach(x =>
                 {
                     var prop2 = ClassConverter.EntityToProperty(x);
                     prop2.Description = ClassConverter.ConvertDescription(propertyRepository.GetDescriptionByPropertyId(prop2.UniqueId));
                     properties.Add(prop2);
+
+                    //var uploaded = uploadRepository.GetUploads(x.Id).Where(x => x.UploadType.Equals(UploadType.PICTURE.ToString())).Select(x => x.Url).ToList();
+                    //prop2.Data = uploaded;
                 });
 
                 if (propertyFilter.AirConditioned != null)
@@ -134,7 +138,7 @@ namespace DominoesProperties.Controllers
         [Authorize(Roles = "ADMIN, SUPER")]
         public ApiResponse Property([FromBody] Properties properties)
         {
-            if(properties.AllowSharing && properties.MinimumSharingPercentage < 10)
+            if (properties.AllowSharing && properties.MinimumSharingPercentage < 10)
             {
                 response.Message = $"Sharing percentage cannot be less and 10% for property that allows sharing";
                 return response;
@@ -161,13 +165,13 @@ namespace DominoesProperties.Controllers
                 return response;
             }
             property.Location = string.IsNullOrEmpty(updateProperty.Location) ? property.Location : updateProperty.Location;
-            property.Type = updateProperty.Type == null ? property.Type : updateProperty.Type;
+            property.Type = updateProperty.Type == null ? property.Type : updateProperty.Type.Value;
             property.TotalUnits = updateProperty.TotalUnits > 0 ? updateProperty.TotalUnits : property.TotalUnits;
             property.UnitPrice = updateProperty.UnitPrice > 0 ? updateProperty.UnitPrice : property.UnitPrice;
             property.ClosingDate = updateProperty.ClosingDate == null ? property.ClosingDate : updateProperty.ClosingDate;
-            property.TargetYield = updateProperty.TargetYield > 0 ? updateProperty.TargetYield : property.TargetYield;
-            property.ProjectedGrowth = updateProperty.ProjectedGrowth > 0 ? updateProperty.ProjectedGrowth : property.ProjectedGrowth;
-            property.InterestRate = updateProperty.InterestRate > 0 ? updateProperty.InterestRate : property.InterestRate;
+            property.TargetYield = updateProperty.TargetYield.Value > 0 ? updateProperty.TargetYield.Value : property.TargetYield;
+            property.ProjectedGrowth = updateProperty.ProjectedGrowth.Value > 0 ? updateProperty.ProjectedGrowth.Value : property.ProjectedGrowth;
+            property.InterestRate = updateProperty.InterestRate.Value > 0 ? updateProperty.InterestRate.Value : property.InterestRate;
             property.Longitude = string.IsNullOrEmpty(updateProperty.Longitude) ? property.Longitude : updateProperty.Longitude;
             property.Latitude = string.IsNullOrEmpty(updateProperty.Latitude) ? property.Latitude : updateProperty.Latitude;
             property.Summary = string.IsNullOrEmpty(updateProperty.Summary) ? property.Summary : updateProperty.Summary;
@@ -274,10 +278,12 @@ namespace DominoesProperties.Controllers
                             ImageName = x.ImageName,
                             PropertyId = property.Id,
                             UploadType = x.UploadType.ToString(),
-                            Url = x.Url
+                            Url = x.Url,
+                            AdminEmail = HttpContext.User.Identity.Name
                         });
                     }
-                    else {
+                    else
+                    {
                         response.Message = "One or more upload data is incorrect, kindly check and try aagin";
                         isError = true;
                     }
@@ -290,7 +296,7 @@ namespace DominoesProperties.Controllers
                 if (uploadRepository.NewUpload(propertyUploads))
                 {
                     response.Success = true;
-                    response.Message = "Passport successfully uploaded";
+                    response.Message = "Property images successfully uploaded";
                     return response;
                 }
                 else

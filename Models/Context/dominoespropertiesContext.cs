@@ -21,6 +21,7 @@ namespace Models.Context
         public virtual DbSet<AuditLog> Auditlogs { get; set; }
         public virtual DbSet<Customer> Customers { get; set; }
         public virtual DbSet<Description> Descriptions { get; set; }
+        public virtual DbSet<EmailRetry> Emailretries { get; set; }
         public virtual DbSet<Enquiry> Enquiries { get; set; }
         public virtual DbSet<Investment> Investments { get; set; }
         public virtual DbSet<PaystackPayment> Paystackpayments { get; set; }
@@ -247,6 +248,48 @@ namespace Models.Context
                 entity.Property(e => e.Toilet).HasDefaultValueSql("'0'");
             });
 
+            modelBuilder.Entity<EmailRetry>(entity =>
+            {
+                entity.ToTable("emailretry");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.Body)
+                    .IsRequired()
+                    .HasColumnName("body");
+
+                entity.Property(e => e.Category)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .HasColumnName("category");
+
+                entity.Property(e => e.DateCreated)
+                    .HasColumnName("date_created")
+                    .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                entity.Property(e => e.Recipient)
+                    .IsRequired()
+                    .HasMaxLength(200)
+                    .HasColumnName("recipient");
+
+                entity.Property(e => e.RecipientName)
+                    .IsRequired()
+                    .HasMaxLength(500)
+                    .HasColumnName("recipient_name");
+
+                entity.Property(e => e.RetryCount).HasColumnName("retry_count");
+
+                entity.Property(e => e.StatusCode)
+                    .IsRequired()
+                    .HasMaxLength(5)
+                    .HasColumnName("status_code");
+
+                entity.Property(e => e.Subject)
+                    .IsRequired()
+                    .HasMaxLength(500)
+                    .HasColumnName("subject");
+            });
+
             modelBuilder.Entity<Enquiry>(entity =>
             {
                 entity.ToTable("enquiry");
@@ -347,7 +390,7 @@ namespace Models.Context
                 entity.HasIndex(e => e.PaystackRef, "paystackpayment_pk")
                     .IsUnique();
 
-                entity.HasIndex(e => e.TransactionRef, "paystackpayment_transaction_TransactionRef_fk");
+                entity.HasIndex(e => e.TransactionRef, "paystackpayment_TransactionRef_uindex");
 
                 entity.Property(e => e.AccessCode)
                     .IsRequired()
@@ -355,9 +398,7 @@ namespace Models.Context
 
                 entity.Property(e => e.Amount).HasColumnType("decimal(18,2)");
 
-                entity.Property(e => e.Channel)
-                    .IsRequired()
-                    .HasMaxLength(10);
+                entity.Property(e => e.Channel).HasMaxLength(10);
 
                 entity.Property(e => e.FromAccount).HasMaxLength(10);
 

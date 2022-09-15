@@ -247,7 +247,6 @@ const GetUAdminDashboard = () => {
         } else {
             var res = JSON.parse(xhr.responseText);
             var data = JSON.parse(res).data;
-            console.log(data);
             if (JSON.parse(res).success) {
                 $('.total-property').text(data.Properties);
                 $('.active-property').text(data.ActiveProperties);
@@ -360,7 +359,6 @@ const GetProperties = (type) => {
         } else {
             var res = JSON.parse(xhr.responseText);
             var data = JSON.parse(res).data;
-            console.log(data);
             if (JSON.parse(res).success) {
                 $('#property-count').html(data.length + ' Results Found');
                 
@@ -422,7 +420,16 @@ const GetProperties = (type) => {
     }
 }
 
-$('.btn-filter-property').click(() => {
+
+const filterProperty = () => {
+    let urls = window.location.href.split("/");
+    let currentUrl = urls[3];
+    if (currentUrl == "") {
+        sessionStorage.setItem("landingFilter", $("#location").val())
+        window.location.replace("Home/properties");
+        return;
+    }
+    var location = sessionStorage.getItem("landingFilter");
     var params = {
         Category: $("#types").val(),
         Bathroom: Number($("#bathroom").val()),
@@ -439,7 +446,8 @@ $('.btn-filter-property').click(() => {
         Fireplace: $("#fireplace").is(":checked") ? 1 : 0,
         Basement: $("#basement").is(":checked") ? 1 : 0,
         MinPrice: minPrice,
-        MaxPrice: maxPrice
+        MaxPrice: maxPrice,
+        Location: location != null ? sessionStorage.getItem("landingFilter") : ""
     };
 
     let xhr = new XMLHttpRequest();
@@ -457,6 +465,8 @@ $('.btn-filter-property').click(() => {
             if (JSON.parse(res).success) {
                 $('#property-count').html(data.length + ' Results Found')
                 propertiesTmp(data);
+                sessionStorage.removeItem("landingFilter");
+
             } else {
                 Swal.fire(
                     'Opps!',
@@ -469,7 +479,7 @@ $('.btn-filter-property').click(() => {
     } catch (err) { // instead of onerror
         //alert("Request failed");
     }
-});
+}
 
 const adminPropertTmp = (data) => {
     $('#properties').html('');
@@ -768,7 +778,6 @@ const getSingleProperty = () => {
         } else {
             var res = JSON.parse(xhr.responseText);
             var data = JSON.parse(res).data;
-            console.log(data);
             if (JSON.parse(res).success) {
                 singleData = data;
                 if (data.data.Images.length > 0) {
@@ -968,7 +977,6 @@ const editSingleProperty = () => {
         } else {
             var res = JSON.parse(xhr.responseText);
             var data = JSON.parse(res).data;
-            console.log(data);
             if (JSON.parse(res).success) {
                
                 $("#name").val(data.name);
@@ -982,6 +990,8 @@ const editSingleProperty = () => {
                 $("#closingDate").val(data.closingDate);
                 $("#account").val(data.accountNumber);
                 $("#bank").val(data.bankName);
+                setSelectedOption("#allowSharing", data.allowSharing);
+                setSelectedOption("#minimumSharing", data.minimumSharingPercentage);
 
                 $("#bathroom").val(data.description['bathroom']);
                 $("#toilet").val(data.description['toilet']);
@@ -1086,8 +1096,6 @@ $(document).ready(function () {
                     Summary: $("#description").val(),
                     Account: $("#account").val(),
                     Bank: $("#bank").val(),
-                    MaxUnitPerCustomer: Number($("#maxCustomerUnit").val()),
-                    ClosingDate: $("#closingDate").val(),
                     VideoLink: $("#videoLink").val(),
                     AllowSharing: Number($("#allowSharing").val()),
                     MinimumSharing: $("#minimumSharing").val()
@@ -1207,10 +1215,10 @@ $('.btn-update-property').click(() => {
                 ProjectedGrowth: Number($("#growth").val()),
                 Account: $("#account").val(),
                 Bank: $("#bank").val(),
-                MaxUnitPerCustomer: Number($("#maxCustomerUnit").val()),
                 Summary: $("#description").val(),
-                ClosingDate: $("#closingDate").val(),
-                VideoLink: $("#videoLink").val()
+                VideoLink: $("#videoLink").val(),
+                AllowSharing: Number($("#allowSharing").val()),
+                MinimumSharing: $("#minimumSharing").val()
 
             };
 
@@ -1379,7 +1387,6 @@ $('#btnUpload').on('click', function () {
         return;
     }
 
-    
     var formData = new FormData();
 
     for (var i = 0; i != files.length; i++) {
@@ -1396,9 +1403,26 @@ $('#btnUpload').on('click', function () {
             contentType: false,
             type: "POST",
             success: function (data) {
-                console.log(data);
-                alert("Files Uploaded!");
-
+                var success = JSON.parse(data).success;
+                var message = JSON.parse(data).message;
+                if (success) {
+                    Swal.fire(
+                        'Good job!',
+                        message,
+                        'success'
+                    ).then(() => {
+                        location.reload();
+                    });
+                    $("#btnUpload").attr("disabled", !1).html(`Submit`);
+                }
+                else {
+                    Swal.fire(
+                        'Opps!',
+                        message,
+                        'error'
+                    );
+                    $("#btnUpload").attr("disabled", !1).html(`Submit`);
+                }
             }
         }
     );
@@ -1435,7 +1459,6 @@ const GetInvestments = () => {
 const GetInvestmentById = () => {
     let urls = window.location.href.split("/");
     let token = urls[5];
-    console.log(token);
     let xhr = new XMLHttpRequest();
     let url = `/get-investment/${token}`;
     xhr.open('GET', url, false);
@@ -1449,7 +1472,6 @@ const GetInvestmentById = () => {
         } else {
             var res = JSON.parse(xhr.responseText);
             var data = JSON.parse(res).data;
-            console.log(data);
             if (JSON.parse(res).success) {
                 //adminInvestmentsTmp(data);
                 LoadCurrentData(data);
@@ -1800,7 +1822,6 @@ $('.btn-activate').click(() => {
     }
 });
 const onSubscribe = () => {
-    console.log('enter');
     let xhr = new XMLHttpRequest();
     let url = "/subscribe";
     xhr.open('GET', url, false);
@@ -2416,7 +2437,6 @@ function forgetPassword() {
                     //alert('Something went wrong try again!');
                 } else {
                     var res = JSON.parse(xhr.responseText);
-                    console.log(res);
                     var data = JSON.parse(res).data;
                     if (JSON.parse(res).success) {
                         Swal.fire(

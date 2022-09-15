@@ -83,6 +83,7 @@ namespace DominoesProperties
             services.AddScoped<IUploadRepository, UploadService>();
             services.AddTransient<IEmailService, EmailService>();
             services.AddScoped<IDominoJob, DominoJob>();
+            services.AddScoped<IEmailRetryRepository, EmailRetryService>();
 
             services.AddMvc().AddViewLocalization(Microsoft.AspNetCore.Mvc.Razor.LanguageViewLocationExpanderFormat.Suffix).AddDataAnnotationsLocalization();
 

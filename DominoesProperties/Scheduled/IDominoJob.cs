@@ -6,6 +6,7 @@ namespace DominoesProperties.Scheduled
     {
         void PerformPairInvestment();
         Task<bool> CheckUnclosedPairing();
+        void ResendEmail();
     }
 }
 

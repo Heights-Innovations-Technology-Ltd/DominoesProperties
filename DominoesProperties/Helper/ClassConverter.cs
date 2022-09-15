@@ -66,17 +66,17 @@ namespace DominoesProperties.Helper
                 Latitude = property.Latitude,
                 Longitude = property.Longitude,
                 Location = property.Location,
-                TargetYield = property.TargetYield,
+                TargetYield = property.TargetYield.Value,
                 UnitAvailable = property.UnitAvailable = property.TotalUnits - property.UnitSold,
                 UnitPrice = property.UnitPrice,
                 Status = property.Status,
-                Type = property.Type,
+                Type = property.Type.Value,
                 TotalUnits = property.TotalUnits,
                 UnitSold = property.UnitSold,
                 Bank = property.BankName,
                 Account = property.AccountNumber,
                 TotalPrice = property.TotalUnits * property.UnitPrice,
-                ProjectedGrowth = property.TargetYield / 100 * property.TotalUnits * property.UnitPrice,
+                ProjectedGrowth = property.TargetYield.Value / 100 * property.TotalUnits * property.UnitPrice,
                 Summary = property.Summary,
                 VideoLink = property.VideoLink,
                 AllowSharing = property.AllowSharing,
@@ -86,7 +86,7 @@ namespace DominoesProperties.Helper
 
         internal static Models.Properties EntityToProperty(Property property)
         {
-            return new Models.Properties
+            var prop = new Models.Properties
             {
                 UniqueId = property.UniqueId,
                 Name = property.Name,
@@ -111,6 +111,12 @@ namespace DominoesProperties.Helper
                 AllowSharing = property.AllowSharing.Value,
                 MinimumSharingPercentage = property.MinimumSharingPercentage.Value
             };
+
+            if (property.PropertyUploads != null)
+            {
+                prop.Data = property.PropertyUploads;
+            }
+            return prop;
         }
 
         internal static Description DescriptionToEntity(Models.PropertyDescription description){
