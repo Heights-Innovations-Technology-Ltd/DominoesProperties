@@ -136,6 +136,7 @@ namespace DominoesProperties.Controllers
                 transaction.Status = paystack.Status;
                 transaction.TransactionRef = paystack.PaymentModule.Equals(PaymentType.PROPERTY_PAIRING.ToString()) ? $"{paystack.TransactionRef}-{new Random().Next(2, 10)}"  : paystack.TransactionRef;
                 transaction.TransactionType = TransactionType.CR.ToString();
+                transaction.TransactionDate = DateTime.Now;
 
                 transactionRepository.NewTransaction(transaction);
 
