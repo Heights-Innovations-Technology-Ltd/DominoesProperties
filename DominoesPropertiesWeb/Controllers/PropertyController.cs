@@ -267,7 +267,7 @@ namespace DominoesPropertiesWeb.Controllers
         }
 
         [HttpPost("/upload-property/{propertyId}")]
-        public async Task<JsonResult> uploadDoc(string propertyId)
+        public async Task<JsonResult> UploadDoc(string propertyId)
         {
             var obj = Request.Form["uploadType"];
             JObject jObject = JsonConvert.DeserializeObject<JObject>(Convert.ToString(obj));

@@ -153,7 +153,6 @@ namespace DominoesPropertiesWeb.Controllers
 
             obj.Amount = 10000;
             obj.Module = 1;
-            obj.InvestmentId = 0;
             var res = Task.Run(() => httpContext.Post("Payment", obj));
             var data = await res.GetAwaiter().GetResult();
             return Json(JsonConvert.SerializeObject(data));

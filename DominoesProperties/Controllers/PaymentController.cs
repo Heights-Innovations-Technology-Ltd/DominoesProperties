@@ -99,7 +99,8 @@ namespace DominoesProperties.Controllers
                     var group = investmentRepository.GetSharinggroups(payment.InvestmentId);
                     investmentRepository.DeleteGroup(group);
                 }
-                logger.LogError(e.StackTrace);
+                logger.LogDebug(e.StackTrace);
+                response.Success = false;
                 response.Message = "Error initiating transaction status, we will re-confirm and get back to you";
                 return response;
             }
@@ -136,6 +137,7 @@ namespace DominoesProperties.Controllers
                 transaction.Status = paystack.Status;
                 transaction.TransactionRef = paystack.PaymentModule.Equals(PaymentType.PROPERTY_PAIRING.ToString()) ? $"{paystack.TransactionRef}-{new Random().Next(2, 10)}"  : paystack.TransactionRef;
                 transaction.TransactionType = TransactionType.CR.ToString();
+                transaction.TransactionDate = DateTime.Now;
 
                 transactionRepository.NewTransaction(transaction);
 
@@ -257,6 +259,10 @@ namespace DominoesProperties.Controllers
                 }
                 else if (paystack.PaymentModule.Equals(PaymentType.SUBSCRIPTION.ToString()))
                 {
+                    customer.IsSubscribed = true;
+                    customer.IsVerified = true;
+                    customer.IsActive = true;
+                    customerRepository.UpdateCustomer(customer);
                     sendMail(customer.Email, customer.FirstName, customer.LastName, "subscription.html", "Congratulations!, You are in and have access to co-invest with us");
                 }
 
@@ -267,7 +273,7 @@ namespace DominoesProperties.Controllers
             catch (Exception ex)
             {
                 logger.LogError(ex.StackTrace);
-                logger.LogError($"{DateTime.Now} : Payment : verify-payment: {reference} | rror verifying transaction status");
+                logger.LogError($"{DateTime.Now} : Payment : verify-payment: {reference} | Error verifying transaction status");
                 return Redirect($"{configuration["app_settings:WebEndpoint"]}?reference={reference}&status=error");
             }
         }

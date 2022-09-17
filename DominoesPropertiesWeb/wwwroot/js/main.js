@@ -489,7 +489,8 @@ const adminPropertTmp = (data) => {
 									<div class="single-featured-item">
  <a href="/property/viewproperty/${x.uniqueId}">
 										<div class="featured-img mb-0">
-											<img src="/images/featured/featured-2.jpg" alt="Image">
+											<img src="${x.data.length > 0 ? x.data[0].url : '/images/featured/featured-2.jpg'}" style="width: 100%;
+    height: 350px;" alt="Image">
 										</div>
 										<div class="featured-content style-three">
 											<div class="justify-content-between">
@@ -780,13 +781,16 @@ const getSingleProperty = () => {
             var data = JSON.parse(res).data;
             if (JSON.parse(res).success) {
                 singleData = data;
+                if (data.data.Cover.length > 0) {
+                    $('.properties-bg-img').css('background-image', "url('" + data.data.Cover[0] + "')");
+                }
+              
+                
                 if (data.data.Images.length > 0) {
-                    var i = getRandom(data.data.Images, 1);
-                    $('.properties-bg-img').css('background-image', "url('" + i + "')");
-                    $('.shorting').html(`
-                        <h3>Gallery</h3>
-                        <div class="row justify-content-center property-img"></div>
-                    `);
+                    //$('.shorting').html(`
+                       
+                    //`);
+                    $('.gallery-title').removeClass('d-none');
                     data.data.Images.forEach(x => {
                         $('.property-img').append(`
                         <div class="col-lg-4 col-sm-6">
@@ -2305,6 +2309,11 @@ function fundWallet(){
 
                 xhr.send(JSON.stringify(param));
                 if (xhr.status != 200) {
+                    Swal.fire(
+                        'Opps!',
+                        'Error initiating transaction status,we will re-confirm and get back to you',
+                        'error'
+                    );
                     //alert('Something went wrong try again!');
                 } else {
                     var res = JSON.parse(xhr.responseText);
@@ -2400,7 +2409,7 @@ const confirmTransaction = () => {
 
             confirmPropertyUpdate.fire({
                 title: 'Well done',
-                text: "Congratulation your transaction was success, kindly proceed to your dashboard to verify",
+                text: "Congratulation your transaction was successful, kindly proceed to your dashboard to verify",
                 icon: 'success',
                 showCancelButton: false,
                 confirmButtonText: 'Yes!',
@@ -2410,6 +2419,12 @@ const confirmTransaction = () => {
                     window.location.replace('/dashboard');
                 }
             });
+        } else {
+            Swal.fire(
+                'Opps!',
+                'Transaction failed kindly contact admin for support',
+                'error'
+            );
         }
     }
 }

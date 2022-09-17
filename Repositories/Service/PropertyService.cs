@@ -40,7 +40,7 @@ namespace Repositories.Service
         public List<Property> GetProperties()
         {
             return _context.Properties.Where(x => !x.IsDeleted.Value && x.UnitAvailable > 0)
-                .Include(x => x.PropertyUploads)
+                .Include(x => x.PropertyUploads.Where(x => x.UploadType.Equals("COVER")))
                 .Include(x => x.TypeNavigation)
                 .ToList();
         }
