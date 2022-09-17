@@ -490,7 +490,8 @@ const adminPropertTmp = (data) => {
 									<div class="single-featured-item">
  <a href="/property/viewproperty/${x.uniqueId}">
 										<div class="featured-img mb-0">
-											<img src="/images/featured/featured-2.jpg" alt="Image">
+											<img src="${x.data.length > 0 ? x.data[0].url : '/images/featured/featured-2.jpg'}" style="width: 100%;
+    height: 350px;" alt="Image">
 										</div>
 										<div class="featured-content style-three">
 											<div class="justify-content-between">
