@@ -258,6 +258,10 @@ namespace DominoesProperties.Controllers
                 }
                 else if (paystack.PaymentModule.Equals(PaymentType.SUBSCRIPTION.ToString()))
                 {
+                    customer.IsSubscribed = true;
+                    customer.IsVerified = true;
+                    customer.IsActive = true;
+                    customerRepository.UpdateCustomer(customer);
                     sendMail(customer.Email, customer.FirstName, customer.LastName, "subscription.html", "Congratulations!, You are in and have access to co-invest with us");
                 }
 

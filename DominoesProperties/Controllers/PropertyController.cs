@@ -127,6 +127,7 @@ namespace DominoesProperties.Controllers
             var uploaded = uploadRepository.GetUploads(property.Id);
             Uploads.Add("Images", uploaded.Where(x => x.UploadType.Equals(UploadType.PICTURE.ToString())).Select(x => x.Url).ToList());
             Uploads.Add("Document", uploaded.Where(x => x.UploadType.Equals(UploadType.DOCUMENT.ToString())).Select(x => x.Url).ToList());
+            Uploads.Add("Cover", uploaded.Where(x => x.UploadType.Equals(UploadType.COVER.ToString())).Select(x => x.Url).ToList());
             properties.Data = Uploads;
             response.Success = true;
             response.Message = "Successfull";

@@ -61,6 +61,7 @@
     public enum UploadType
     {
         PICTURE,
-        DOCUMENT
+        DOCUMENT,
+        COVER
     }
 }
