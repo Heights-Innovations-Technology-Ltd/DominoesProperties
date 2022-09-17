@@ -99,7 +99,8 @@ namespace DominoesProperties.Controllers
                     var group = investmentRepository.GetSharinggroups(payment.InvestmentId);
                     investmentRepository.DeleteGroup(group);
                 }
-                logger.LogError(e.StackTrace);
+                logger.LogDebug(e.StackTrace);
+                response.Success = false;
                 response.Message = "Error initiating transaction status, we will re-confirm and get back to you";
                 return response;
             }
@@ -272,7 +273,7 @@ namespace DominoesProperties.Controllers
             catch (Exception ex)
             {
                 logger.LogError(ex.StackTrace);
-                logger.LogError($"{DateTime.Now} : Payment : verify-payment: {reference} | rror verifying transaction status");
+                logger.LogError($"{DateTime.Now} : Payment : verify-payment: {reference} | Error verifying transaction status");
                 return Redirect($"{configuration["app_settings:WebEndpoint"]}?reference={reference}&status=error");
             }
         }
