@@ -3360,6 +3360,7 @@ Gallery Area Style
   position: relative;
   overflow: hidden;
   margin-bottom: 30px;
+  height: 200px;
 }
 
 .single-gallery a {
