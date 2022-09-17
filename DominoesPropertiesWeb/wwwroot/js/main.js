@@ -359,7 +359,6 @@ const GetProperties = (type) => {
         } else {
             var res = JSON.parse(xhr.responseText);
             var data = JSON.parse(res).data;
-            console.log(data);
             if (JSON.parse(res).success) {
                 $('#property-count').html(data.length + ' Results Found');
                 
@@ -780,7 +779,6 @@ const getSingleProperty = () => {
         } else {
             var res = JSON.parse(xhr.responseText);
             var data = JSON.parse(res).data;
-            console.log(data);
             if (JSON.parse(res).success) {
                 singleData = data;
                 if (data.data.Cover.length > 0) {
@@ -2311,7 +2309,6 @@ function fundWallet(){
 
                 xhr.send(JSON.stringify(param));
                 if (xhr.status != 200) {
-                    console.log(xhr);
                     Swal.fire(
                         'Opps!',
                         'Error initiating transaction status,we will re-confirm and get back to you',
