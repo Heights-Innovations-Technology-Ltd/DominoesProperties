@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.Serialization;
 
 #nullable disable
 
@@ -14,7 +15,9 @@ namespace Models.Models
         public string UploadType { get; set; }
         public string AdminEmail { get; set; }
 
+        [IgnoreDataMember]
         public virtual Admin AdminEmailNavigation { get; set; }
+        [IgnoreDataMember]
         public virtual Property Property { get; set; }
     }
 }
