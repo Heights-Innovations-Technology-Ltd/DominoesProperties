@@ -622,7 +622,7 @@ const propertiesTmp = (data) => {
 									<div class="single-featured-item">
  <a href="javascript:void(0)" onclick="propertyDetails('${x.uniqueId}')">
 										<div class="featured-img mb-0">
-											<img src="/images/featured/featured-2.jpg" alt="Image">
+											<img src="${x.data.length > 0 ? x.data[0].url : '/images/featured/featured-2.jpg'}" style="width: 100%; height: 350px;" alt="Image">
 										</div>
 										<div class="featured-content style-three">
 											<div class="justify-content-between">
@@ -671,11 +671,11 @@ const LandingPagePropertyTmp = (data) => {
     $('#properties').html('');
 
     data.forEach(x => {
-        let res = `<div class="col-lg-3 col-md-6 ">
+        let res = `<div class="col-lg-4 col-md-6 ">
 									<div class="single-featured-item">
                                         <a href="javascript:void(0)" onclick="propertyDetails('${x.uniqueId}')">
 										    <div class="featured-img mb-0">
-											    <img src="/images/featured/featured-2.jpg" alt="Image">
+											   <img src="${x.data.length > 0 ? x.data[0].url : '/images/featured/featured-2.jpg'}" style="width: 100%; height: 350px;" alt="Image">
 										    </div>
 										    <div class="featured-content style-three">
 											    <div class=" justify-content-between">
@@ -757,7 +757,7 @@ $('.edit-property').click(() => {
 });
 
 let singleData;
-const getSingleProperty = () => {
+const getSingleProperty = (page) => {
 
     if ($('#isSubcribed').val() == "False" && $('#refId').val() != "") {
         location = '/Dashboard/Profile';
@@ -793,9 +793,9 @@ const getSingleProperty = () => {
                     $('.gallery-title').removeClass('d-none');
                     data.data.Images.forEach(x => {
                         $('.property-img').append(`
-                        <div class="col-lg-4 col-sm-6">
+                        <div class="${page == 'customer' ? 'col-lg-6 col-sm-12' : 'col-lg-4 col-sm-6'}">
 							<div class="single-gallery">
-								<img src="${x}" alt="Image">
+								<img src="${x}" alt="Image" style="width: 100%; height: 350px;">
 								<a href="${x}">
 									<i class="ri-eye-line"></i>
 								</a>
@@ -829,7 +829,7 @@ const getSingleProperty = () => {
 												<i class="ri-building-2-fill"></i>
 												${data.description["floorLevel"]} Floor
 											</li>`);
-                data.summary != null ? 
+                data.summary != "" ? 
                 $('.summary').html(`
                     <h3>Property Description</h3>
 					<p class="summary">${data.summary}</p>`) : '';
