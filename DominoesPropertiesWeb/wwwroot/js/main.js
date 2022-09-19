@@ -757,7 +757,7 @@ $('.edit-property').click(() => {
 });
 
 let singleData;
-const getSingleProperty = (page) => {
+const getSingleProperty = () => {
 
     if ($('#isSubcribed').val() == "False" && $('#refId').val() != "") {
         location = '/Dashboard/Profile';
@@ -793,9 +793,9 @@ const getSingleProperty = (page) => {
                     $('.gallery-title').removeClass('d-none');
                     data.data.Images.forEach(x => {
                         $('.property-img').append(`
-                        <div class="${page == 'customer' ? 'col-lg-6 col-sm-12' : 'col-lg-4 col-sm-6'}">
+                        <div class="col-lg-4 col-sm-6">
 							<div class="single-gallery">
-								<img src="${x}" alt="Image" style="width: 100%; height: 350px;">
+								<img src="${x}" alt="Image" style="width: 100%; height: 200px;">
 								<a href="${x}">
 									<i class="ri-eye-line"></i>
 								</a>
