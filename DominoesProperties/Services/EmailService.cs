@@ -52,7 +52,7 @@ namespace DominoesProperties.Services
 
                 return true;
             }
-            catch (SocketException ex)
+            catch (Exception ex)
             {
                 //Log Exception Details
                 logger.LogError(ex.StackTrace);
@@ -67,10 +67,6 @@ namespace DominoesProperties.Services
                     Category = "CUSTOMER"
                 };
                 emailRetrials.AddRetry(retry);
-                return false;
-            }catch(Exception ex)
-            {
-                logger.LogError(ex.StackTrace);
                 return false;
             }
         }
