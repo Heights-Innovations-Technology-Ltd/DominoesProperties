@@ -52,7 +52,7 @@ namespace DominoesProperties.Services
 
                 return true;
             }
-            catch (SocketException ex)
+            catch (Exception ex)
             {
                 //Log Exception Details
                 logger.LogError(ex.StackTrace);
