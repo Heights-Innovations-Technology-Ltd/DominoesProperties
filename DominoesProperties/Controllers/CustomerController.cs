@@ -392,8 +392,7 @@ namespace DominoesProperties.Controllers
                 }
                 catch (Exception ex)
                 {
-                    _ = new ExceptionFormatter(logger, ex);
-                    logger.LogError(ex.InnerException.ToString());
+                    logger.LogError(ex.StackTrace);
                 }
 
                 return true;

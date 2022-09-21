@@ -68,6 +68,10 @@ namespace DominoesProperties.Services
                 };
                 emailRetrials.AddRetry(retry);
                 return false;
+            }catch(Exception ex)
+            {
+                logger.LogError(ex.StackTrace);
+                return false;
             }
         }
 
