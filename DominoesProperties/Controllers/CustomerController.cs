@@ -165,17 +165,12 @@ namespace DominoesProperties.Controllers
         public ApiResponse SendActivationLink(string uniqueRef)
         {
             ApplicationSetting setting = applicationSettingsRepository.GetApplicationSettingsByName("EmailNotification");
-            if (ActivationLink(uniqueRef, ValidationModule.ACTIVATE_ACCOUNT, setting).Result)
-            {
-                response.Message = "Activation link successfully generated and sent to customer email, kindly check your email to activate account";
-                response.Success = true;
-                return response;
-            }
-            else
-            {
-                response.Message = "Error sending activation link";
-                return response;
-            }
+
+            _ = ActivationLink(uniqueRef, ValidationModule.ACTIVATE_ACCOUNT, setting);
+            
+            response.Message = "Activation link successfully generated and sent to customer email, kindly check your email to activate account";
+            response.Success = true;
+            return response;
         }
 
         [HttpPut]
@@ -239,16 +234,10 @@ namespace DominoesProperties.Controllers
         {
             ApplicationSetting settings = applicationSettingsRepository.GetApplicationSettingsByName("EmailNotification");
 
-            if (ActivationLink(email, ValidationModule.RESET_PASSWORD, settings).Result.Equals(true))
-            {
-                response.Message = string.Format("Password reset link successfully sent to {0}", email);
-                response.Success = true;
-                return response;
-            }
-            else
-            {
-                response.Message = "Invalid username supplied";
-            }
+            _ = ActivationLink(email, ValidationModule.RESET_PASSWORD, settings);
+            
+            response.Message = string.Format("Password reset link successfully sent to {0}", email);
+            response.Success = true;
             return response;
         }
 
@@ -392,8 +381,7 @@ namespace DominoesProperties.Controllers
                 }
                 catch (Exception ex)
                 {
-                    _ = new ExceptionFormatter(logger, ex);
-                    logger.LogError(ex.InnerException.ToString());
+                    logger.LogError(ex.StackTrace);
                 }
 
                 return true;

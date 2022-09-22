@@ -48,7 +48,6 @@
     <None Remove="Localization.AspNetCore.TagHelpers" />
     <None Remove="FluentEmail.Core" />
     <None Remove="FluentEmail.Smtp" />
-    <None Remove="Resources\Controller\" />
     <None Remove="Templates\" />
     <None Remove="FluentEmail.Razor" />
     <None Remove="My.Extensions.Localization.Json" />
@@ -77,7 +76,7 @@
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.4.0" />
     <PackageReference Include="MySql.EntityFrameworkCore" Version="5.0.13" />
     <PackageReference Include="MySql.Data" Version="8.0.30" />
-    <PackageReference Include="MySqlConnector" Version="2.1.12" />
+    <PackageReference Include="MySqlConnector" Version="2.1.13" />
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="5.0.4" />
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql.Design" Version="1.1.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.16">
@@ -90,14 +89,13 @@
     <PackageReference Include="MailKit" Version="3.3.0" />
     <PackageReference Include="Hangfire.AspNetCore" Version="1.7.30" />
     <PackageReference Include="Hangfire.MySqlStorage" Version="2.0.3" />
-    <PackageReference Include="Hangfire.Core" Version="1.7.30" />
+    <PackageReference Include="Hangfire.Core" Version="1.7.31" />
     <PackageReference Include="Hangfire.Dashboard.Basic.Authentication" Version="5.0.0" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Helper\" />
     <Folder Include="Extensions\" />
     <Folder Include="Enums\" />
-    <Folder Include="Resources\" />
     <Folder Include="Services\" />
     <Folder Include="Scheduled\" />
   </ItemGroup>
@@ -127,6 +125,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Remove="Resources\**" />
+    <Content Remove="Resources\**" />
+    <EmbeddedResource Remove="Resources\**" />
+    <None Remove="Resources\**" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="EmailTemplates\enquiry.html">
