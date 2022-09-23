@@ -1948,7 +1948,7 @@ $('.btn-verify').click(() => {
 
 const propertyInvestment =  () => {
     let price = Number($('#price').text().replace(/[^0-9\.-]+/g, "").replace("₦", ""));
-    
+    let unit = $('#unit').val();
     const confirmPropertyUpdate = Swal.mixin({
         customClass: {
             confirmButton: 'btn btn-success mx-2',
@@ -1972,7 +1972,7 @@ const propertyInvestment =  () => {
             let id = urls[5];
             let params = {
                 propertyUniqueId: id,
-                units: $('#unit').val()
+                units: unit
             }
             let xhr = new XMLHttpRequest();
             let url = "/invest";
