@@ -13,11 +13,21 @@
     <None Remove="Select.HtmlToPdf.NetCore" />
     <None Remove="PayStack.Net" />
     <None Remove="Enum\" />
+    <None Remove="MozJpegSharp.GdiPlus" />
+    <None Remove="runtime.osx.10.10-x64.CoreCompat.System.Drawing" />
+    <None Remove="IronPdf" />
+    <None Remove="PdfSharp" />
+    <None Remove="PdfSharpCore" />
+    <None Remove="HtmlRenderer.PdfSharp" />
+    <None Remove="iTextSharp" />
+    <None Remove="itextsharp.xmlworker" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Twilio" Version="5.78.0" />
     <PackageReference Include="Select.HtmlToPdf.NetCore" Version="22.1.0" />
     <PackageReference Include="PayStack.Net" Version="0.7.7" />
+    <PackageReference Include="MozJpegSharp.GdiPlus" Version="2.1.12" />
+    <PackageReference Include="runtime.osx.10.10-x64.CoreCompat.System.Drawing" Version="6.0.5.128" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Enum\" />

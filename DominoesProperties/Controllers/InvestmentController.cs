@@ -92,7 +92,8 @@ namespace DominoesProperties.Controllers
                 Date = DateTime.Now,
                 MaxCount = 100 / property.MinimumSharingPercentage.Value,
                 UniqueId = CommonLogic.GetUniqueRefNumber("pg"),
-                IsClosed = false
+                IsClosed = false,
+                UnitPrice = property.UnitPrice
             };
 
             if (investmentRepository.AddSharingGroup(shg))
@@ -175,6 +176,7 @@ namespace DominoesProperties.Controllers
                 Investment newInvestment = new()
                 {
                     Amount = amount,
+                    UnitPrice = property.UnitPrice,
                     CustomerId = customer.Id,
                     PropertyId = property.Id,
                     Units = investment.Units,

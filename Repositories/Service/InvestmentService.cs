@@ -201,5 +201,11 @@ namespace Repositories.Service
                 loggerManager.LogError(ex.ToString());
             }
         }
+
+        public List<Sharingentry> GetSharingEntries(long customerId)
+        {
+            return _context.Sharingentries
+                .Where(x => x.CustomerId == customerId).ToList();
+        }
     }
 }

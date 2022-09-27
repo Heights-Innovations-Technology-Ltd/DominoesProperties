@@ -357,6 +357,10 @@ namespace Models.Context
                     .IsRequired()
                     .HasMaxLength(50);
 
+                entity.Property(e => e.UnitPrice)
+                    .HasColumnType("decimal(18,2)")
+                    .HasDefaultValueSql("'0.00'");
+
                 entity.Property(e => e.YearlyInterestAmount).HasColumnType("decimal(18,2)");
 
                 entity.Property(e => e.Yield).HasColumnType("decimal(18,2)");
@@ -645,6 +649,10 @@ namespace Models.Context
                 entity.Property(e => e.Alias)
                     .IsRequired()
                     .HasMaxLength(50);
+
+                entity.Property(e => e.UnitPrice)
+                    .HasColumnType("decimal(18,2)")
+                    .HasDefaultValueSql("'0.00'");
 
                 entity.Property(e => e.CustomerUniqueId).HasMaxLength(50);
 
