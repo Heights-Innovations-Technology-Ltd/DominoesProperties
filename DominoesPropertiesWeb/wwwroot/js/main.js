@@ -166,7 +166,7 @@ $('.btn-adminlogin').click(() => {
             } else {
                 window.scrollTo(0, 0);
                 Swal.fire(
-                    'Opps!',
+                    'Oops!',
                     data,
                     'error'
                 );
@@ -469,7 +469,7 @@ const filterProperty = () => {
 
             } else {
                 Swal.fire(
-                    'Opps!',
+                    'Oops!',
                     'No data match your request',
                     'error'
                 );
@@ -1134,7 +1134,7 @@ $(document).ready(function () {
                         } else {
                             var err = JSON.parse(res).message;
                             Swal.fire(
-                                'Opps!',
+                                'Oops!',
                                 err == "401" ? "You don't have permission to perform this action" : "Something went wrong, admin has been contacted",
                                 'error'
                             );
@@ -1421,7 +1421,7 @@ $('#btnUpload').on('click', function () {
                 }
                 else {
                     Swal.fire(
-                        'Opps!',
+                        'Oops!',
                         message,
                         'error'
                     );
@@ -1993,7 +1993,7 @@ const propertyInvestment =  () => {
                     } else {
                         var err = JSON.parse(res).message;
                         Swal.fire(
-                            'Opps!',
+                            'Oops!',
                             err == "Forbiden" ?  "You don't have permission to perform this action" :  "Something went wrong, admin has been contacted",
                             'error'
                         );
@@ -2310,7 +2310,7 @@ function fundWallet(){
                 xhr.send(JSON.stringify(param));
                 if (xhr.status != 200) {
                     Swal.fire(
-                        'Opps!',
+                        'Oops!',
                         'Error initiating transaction status,we will re-confirm and get back to you',
                         'error'
                     );
@@ -2421,7 +2421,7 @@ const confirmTransaction = () => {
             });
         } else {
             Swal.fire(
-                'Opps!',
+                'Oops!',
                 'Transaction failed kindly contact admin for support',
                 'error'
             );
@@ -2461,7 +2461,7 @@ function forgetPassword() {
                         );
                     } else {
                         Swal.fire(
-                            'Opps!',
+                            'Oops!',
                              data,
                             'error'
                         );
