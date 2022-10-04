@@ -1,4 +1,5 @@
 ﻿using DominoesPropertiesWeb.HttpContext;
+using DominoesPropertiesWeb.Repository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -14,17 +15,18 @@ namespace DominoesPropertiesWeb.Controllers
     {
         private readonly ISession session;
         private readonly IConfiguration _config;
-
+        private readonly IUploadsRepository _uploadRepository;
         private readonly IHttpContext httpContext;
         string url = string.Empty;
         dynamic jsonObj = new JObject();
 
-        public DashboardController(IHttpContextAccessor httpContextAccessor, IConfiguration config, IHttpContext httpContext)
+        public DashboardController(IHttpContextAccessor httpContextAccessor, IConfiguration config, IHttpContext httpContext, IUploadsRepository uploadRepository)
         {
             this.session = httpContextAccessor.HttpContext.Session;
             _config = config;
             url = _config["Base_URL"];
             this.httpContext = httpContext;
+            _uploadRepository = uploadRepository;
         }
         public IActionResult Index()
         {
@@ -111,8 +113,26 @@ namespace DominoesPropertiesWeb.Controllers
 
             //var data = res.Status == TaskStatus.RanToCompletion ? res.Result : null;
             return Json(JsonConvert.SerializeObject(data));
-        } 
-        
+        }
+
+        [HttpPost("/upload-picture/{customerId}")]
+        public async Task<JsonResult> UploadDoc(string customerId)
+        {
+            var json = Request.Form.Files;
+           
+            if (json.Count > 0)
+            {
+                IFormFile file = json[0];
+                var uploadResponse = await _uploadRepository.UploadCustomerPassportAsync(file, customerId, Request);
+                var res = Task.Run(() => httpContext.Post("Customer/passport", uploadResponse));
+                //var data = await res.GetAwaiter().GetResult();
+                await Task.WhenAll(res);
+                var data = res.Status == TaskStatus.RanToCompletion ? res.Result : null;
+                return Json(JsonConvert.SerializeObject(data));
+            }
+            return Json(this.StatusCode(StatusCodes.Status204NoContent, "Empty request body"));
+        }
+
         [Route("/change-password")]
         public async Task<JsonResult> ChangePassword([FromBody] dynamic password)
         {

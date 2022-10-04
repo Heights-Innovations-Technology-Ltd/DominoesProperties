@@ -4313,12 +4313,41 @@ label {
 }
 
 
-input[type=text] {
+/*input[type=text] {
     width: 100%;
     padding: 8px 10px 10px;
     margin: 15px 0;
     display: inline-block;
     border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+input[type=email] {
+    width: 100%;
+    padding: 8px 10px 10px;
+    margin: 15px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}*/
+input {
+    width: 100%;
+    padding: 8px 10px 10px;
+    margin: 15px 0;
+    display: inline-block;
+    border: 2px solid #8c9499;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+select {
+    width: 100%;
+    padding: 8px 10px 10px;
+    margin: 15px 0;
+    display: inline-block;
+    border: 2px solid #ccc;
     border-radius: 4px;
     box-sizing: border-box;
 }
