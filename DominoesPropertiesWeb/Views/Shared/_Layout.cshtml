@@ -9,7 +9,7 @@
 		<meta property="og:locale" content="en_US" />
 		<meta property="og:type" content="website" />
 		<meta property="og:title" content="Domines Real Estate || Co-Investment Community for Real Estate" />
-		<meta property="og:description" content="We are a great agency for buying and selling your property with confidence. So you can easily buy and sell through our company" />
+		<meta property="og:description" content="We are Africa's foremost investment community that helps you invest safely and successfully in fractional real estate" />
 
 		<!-- Links Of CSS File -->
 		<link rel="stylesheet" href="~/css/bootstrap.min.css">
@@ -107,11 +107,15 @@
 										Home            
 									</a>
 								</li>
-								<li class="nav-item">
-									<a asp-controller="Home" asp-action="properties" class="nav-link" id="property-links">
-										Investments
-									</a>
-								</li>
+
+								@if(Username != null){
+									<li class="nav-item">
+										<a asp-controller="Home" asp-action="properties" class="nav-link" id="property-links">
+											Investments
+										</a>
+									</li>
+								}
+								
 								<li class="nav-item">
 									<a asp-controller="Home" asp-action="howitworks" class="nav-link">
 										How it works            
@@ -139,7 +143,7 @@
 										<li>
 											<div class="dropdown">
 												<button type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-													<img src="~/images/agents/agent-1.jpg" alt="Image">
+													<img src="~/images/agents/agent-1.jpeg" style="width:50px; height:50px" alt="Image">
 													<span>@userFullName</span>
 												</button>
 												<ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
@@ -149,7 +153,7 @@
 															Dashboard
 														</a>
 													</li>
-													@if(userFullName != null)
+													@if(Username != null)
 													{
 														<li>
 															<a asp-controller="Dashboard" asp-action="Profile">
@@ -260,9 +264,8 @@
 								<img src="~/images/Logo-BLK.png" style="width:160px;" class="white-logo" alt="Dominoes logo">
 							</a>
 
-							<p style="text-align:justify">The cooperative way to build a viable property portfolio 
-								Helping income earners to easily invest in high yielding real estate without breaking the bank and to start earning passive income
-							</p>
+							<p style="text-align:justify">The cooperative way to build a viable property portfolio.</p>
+                            <p>Helping income earners to easily invest in high yielding properties without breaking the bank and to start earning passive income</p>
 						</div>
 					</div>
 
@@ -273,7 +276,7 @@
 							<ul class="contact-info">
 								<li>
 									<i class="ri-map-pin-fill"></i>
-									Office address
+									287B, Corporation Drive, Dolphin Estate, Ikoyi, Lagos.
 								</li>
 								<li>
 									<i class="ri-phone-fill"></i>
@@ -285,7 +288,7 @@
 									<a href="javascript:void(0)"><span class="__cf_email__" data-cfemail="8ce5e2eae3ccebe1ede5e0a2efe3e1">inquiries@realestatedominoes.com</span></a>
 								</li>
 								<li>
-									<a href="https://api.whatsapp.com/send?phone=2348094822156&text=I'm%20interested%20in%20your%20property%20for%20sale" target="_blank">
+									<a href="https://api.whatsapp.com/send?phone=2348094822156&text=I%20am%20interested%20in%20one%20of%20your%20properties" target="_blank">
 										<i class="fa fa-whatsapp" aria-hidden="true"></i> 08094822156
 									</a>
 								</li>

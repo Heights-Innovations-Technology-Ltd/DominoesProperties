@@ -31,20 +31,21 @@ namespace DominoesPropertiesWeb.Service
                 {
                     Directory.CreateDirectory(path);
                 }
-                    FileInfo fileInfo = new(file.FileName);
-                    if (!fileExtensions.Contains(fileInfo.Extension.ToLower()))
-                    {
-                        return string.Empty;
-                    }
-                    if (file.Length > 0)
-                    {
-                        string filename = $"{customerUniqueId.Replace("-", "")}{fileInfo.Extension}";
+                FileInfo fileInfo = new(file.FileName);
+                if (!fileExtensions.Contains(fileInfo.Extension.ToLower()))
+                {
+                    return string.Empty;
+                }
 
-                        using var fileStream = new FileStream(Path.Combine(path, filename), FileMode.Create);
-                        await file.CopyToAsync(fileStream);
+                if (file.Length > 0)
+                {
+                    string filename = $"{customerUniqueId.Replace("-", "")}{DateTime.Now.Millisecond}{fileInfo.Extension}";
 
-                        url = $"{request.HttpContext.Request.Scheme}://{request.HttpContext.Request.Host}{request.HttpContext.Request.PathBase}/Uploads/Passport/{filename}";
-                    }
+                    using var fileStream = new FileStream(Path.Combine(path, filename), FileMode.Create);
+                    await file.CopyToAsync(fileStream);
+
+                    url = $"{request.HttpContext.Request.Scheme}://{request.HttpContext.Request.Host}{request.HttpContext.Request.PathBase}/Uploads/Passport/{filename}";
+                }
             }
             catch (Exception ex)
             {

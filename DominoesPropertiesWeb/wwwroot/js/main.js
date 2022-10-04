@@ -166,7 +166,7 @@ $('.btn-adminlogin').click(() => {
             } else {
                 window.scrollTo(0, 0);
                 Swal.fire(
-                    'Opps!',
+                    'Oops!',
                     data,
                     'error'
                 );
@@ -193,7 +193,7 @@ const GetUserProfile = (mode) => {
         } else {
             var res = JSON.parse(xhr.responseText);
             var data = JSON.parse(res).data;
-
+            console.log(data);
             if (JSON.parse(res).success) {
                 profile(data,mode);
                
@@ -273,12 +273,13 @@ const profile = (data, mode) => {
         $('#phone').val(data.phone);
         $('#address').val(data.address);
         $('#account').val(data.accountNumber);
-    }else if (mode == "dashboard") {
-        $('#walletBalance').html('&#8358; ' + data.walletBalance);
+        $('#bank').val(data.bankName);
+    } else if (mode == "dashboard") {
+        $('#walletBalance').html('&#8358; ' + currency(data.walletBalance));
     } else {
         $('.fullName').text(data.firstName + " " + data.lastName);
         $('.walletId').html("wallet ID ( <strong>" + data.walletId + "</strong> )");
-        $('.walletBalance').html('&#8358; ' + data.walletBalance);
+        $('.walletBalance').html('&#8358; ' + currency(data.walletBalance));
         $('#profile').html(`
             <div class="card-body">
 				<div class="row">
@@ -322,7 +323,7 @@ const profile = (data, mode) => {
 					<h6 class="mb-0">Bank Name</h6>
 					</div>
 					<div class="col-sm-9">
-					<p class="text-muted mb-0">${data.bankName == null ? 'Not yet set' : data.bankName}</p>
+					<p class="text-muted mb-0">hell${data.bankName == null ? 'Not yet set' : data.bankName}</p>
 					</div>
 				</div>
 				<hr>
@@ -469,7 +470,7 @@ const filterProperty = () => {
 
             } else {
                 Swal.fire(
-                    'Opps!',
+                    'Oops!',
                     'No data match your request',
                     'error'
                 );
@@ -542,7 +543,7 @@ const adminInvestmentTmp = (data) => {
 									<div class="single-featured-item">
                                     <a href="/investment/viewinvestment/${x.uniqueId}">
 										<div class="featured-img mb-0">
-											<img src="/images/featured/featured-2.jpg" alt="Image">
+											<img src="${x.data.length > 0 ? x.data[0].url : '/images/featured/featured-2.jpg'}" alt="Image">
 										</div>
 										<div class="featured-content style-three">
                                             <div class="row">
@@ -1134,7 +1135,7 @@ $(document).ready(function () {
                         } else {
                             var err = JSON.parse(res).message;
                             Swal.fire(
-                                'Opps!',
+                                'Oops!',
                                 err == "401" ? "You don't have permission to perform this action" : "Something went wrong, admin has been contacted",
                                 'error'
                             );
@@ -1421,11 +1422,65 @@ $('#btnUpload').on('click', function () {
                 }
                 else {
                     Swal.fire(
-                        'Opps!',
+                        'Oops!',
                         message,
                         'error'
                     );
                     $("#btnUpload").attr("disabled", !1).html(`Submit`);
+                }
+            }
+        }
+    );
+});
+
+$('.btn-upload-picture').on('click', function () {
+    let t = false;
+    var e = "";
+    $('.msg').html('');
+    $(".btn-upload-picture").attr("disabled", !0).html(`Processing...`);
+    var fileUpload = $("#file").get(0);
+    var files = fileUpload.files;
+
+    if (files.length == 0) {
+        Swal.fire(
+            'Oops!',
+            'Profile picture is required',
+            'error'
+        );
+        $(".btn-upload-picture").attr("disabled", !1).html(`Submit`);
+        return;
+    }
+
+    var formData = new FormData();
+    formData.append("files", files[0]);
+
+    $.ajax(
+        {
+            url: "/upload-picture/" + $("#refId").val(),
+            data: formData,
+            processData: false,
+            contentType: false,
+            type: "POST",
+            success: function (data) {
+                var success = JSON.parse(data).success;
+                var message = JSON.parse(data).message;
+                if (success) {
+                    Swal.fire(
+                        'Good job!',
+                        message,
+                        'success'
+                    ).then(() => {
+                        location.reload();
+                    });
+                    $(".btn-upload-picture").attr("disabled", !1).html(`Submit`);
+                }
+                else {
+                    Swal.fire(
+                        'Oops!',
+                        message,
+                        'error'
+                    );
+                    $(".btn-upload-picture").attr("disabled", !1).html(`Submit`);
                 }
             }
         }
@@ -1447,7 +1502,7 @@ const GetInvestments = () => {
         } else {
             var res = JSON.parse(xhr.responseText);
             var data = JSON.parse(res).data;
-
+            console.log(data);
             if (JSON.parse(res).success) {
                 investmentTmp(data);
             } else {
@@ -1510,7 +1565,7 @@ const investmentTmp = (data) => {
         let res = `<div class="col-lg-3 col-md-3">
 					    <div class="single-featured-item">
 						    <div class="canvas-img" mb-0 p-4">
-                                <img src="/images/featured/featured-2.jpg" alt="Image">
+                                <img src="${x.data.length > 0 ? x.data[0].url : '/images/featured/featured-2.jpg'}" alt="Image">
 							  
 						    </div>
 						    <div class="featured-content style-three">
@@ -1993,7 +2048,7 @@ const propertyInvestment =  () => {
                     } else {
                         var err = JSON.parse(res).message;
                         Swal.fire(
-                            'Opps!',
+                            'Oops!',
                             err == "Forbiden" ?  "You don't have permission to perform this action" :  "Something went wrong, admin has been contacted",
                             'error'
                         );
@@ -2260,6 +2315,8 @@ function formatToCurrency(amount) {
     return (amount).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
 }
 
+const currency = (value) => new Intl.NumberFormat().format(value);
+
 const setSelectedOption = (id, value) => {
 
     $(id + ' option').each(function () {
@@ -2310,7 +2367,7 @@ function fundWallet(){
                 xhr.send(JSON.stringify(param));
                 if (xhr.status != 200) {
                     Swal.fire(
-                        'Opps!',
+                        'Oops!',
                         'Error initiating transaction status,we will re-confirm and get back to you',
                         'error'
                     );
@@ -2421,7 +2478,7 @@ const confirmTransaction = () => {
             });
         } else {
             Swal.fire(
-                'Opps!',
+                'Oops!',
                 'Transaction failed kindly contact admin for support',
                 'error'
             );
@@ -2461,7 +2518,7 @@ function forgetPassword() {
                         );
                     } else {
                         Swal.fire(
-                            'Opps!',
+                            'Oops!',
                              data,
                             'error'
                         );

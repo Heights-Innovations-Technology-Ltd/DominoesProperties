@@ -41,41 +41,47 @@
 							<div class="col-lg-6 col-md-6">
 								<div class="form-group">
 									<label for="type">Property Type</label>
-									<select class="form-control" name="Property-Type" id="types" required>
+									<select class="form-control select" name="Property-Type" id="types" required>
 										<option>Select Type</option>
 									</select>
 								</div>
 							</div>
-							<div class="col-lg-6 col-md-6">
-								<div class="form-group">
-									<label>Unit Price</label>
-									<input type="text" class="form-control" name="Price" id="price" required>
+							</div>
+							<div class="row">
+								<div class="col-lg-6 col-md-6">
+									<div class="form-group">
+										<label>Unit Price</label>
+										<input type="text" class="form-control" name="Price" id="price" required>
+									</div>
+								</div>
+								<div class="col-lg-6 col-md-6">
+									<div class="form-group">
+										<label>Total Unit</label>
+										<input type="text" class="form-control" name="Total-Unit" id="unit" required>
+									</div>
 								</div>
 							</div>
-							<div class="col-lg-6 col-md-6">
-								<div class="form-group">
-									<label>Total Unit</label>
-									<input type="text" class="form-control" name="Total-Unit" id="unit" required>
+							<div class="row">
+								<div class="col-lg-6 col-md-6">
+									<div class="form-group">
+										<label for="type">Property Category</label>
+										<select class="form-control" name="Property-Category" id="status" required>
+											<option>Select Category</option>
+											<option value="0">ONGOING CONSTRUCTION</option>
+											<option value="1">OPEN FOR INVESTMENT</option>
+											<option value="2">CLOSED FOR INVESTMENT</option>
+											<option value="3">RENTED OUT</option>
+										</select>
+									</div>
+								</div>
+								<div class="col-lg-6 col-md-6">
+									<div class="form-group">
+										<label>Target Yield</label>
+										<input type="text" class="form-control" name="targetYield" id="targetYield" required>
+									</div>
 								</div>
 							</div>
-							<div class="col-lg-6 col-md-6">
-								<div class="form-group">
-									<label for="type">Property Category</label>
-									<select class="form-control" name="Property-Category" id="status" required>
-										<option>Select Category</option>
-										<option value="0">ONGOING CONSTRUCTION</option>
-										<option value="1">OPEN FOR INVESTMENT</option>
-										<option value="2">CLOSED FOR INVESTMENT</option>
-										<option value="3">RENTED OUT</option>
-									</select>
-								</div>
-							</div>
-							<div class="col-lg-6 col-md-6">
-								<div class="form-group">
-									<label>Target Yield</label>
-									<input type="text" class="form-control" name="targetYield" id="targetYield" required>
-								</div>
-							</div>
+							<div class="row">
 
 							<h3 class="mt-30">Property Sharable?</h3>
 
@@ -116,18 +122,22 @@
 									<input type="text" class="form-control" id="latitude">
 								</div>
 							</div>
-							<div class="col-lg-12 col-md-12">
-								<div class="form-group">
-									<label>Address</label>
-									<input type="text" class="form-control" id="location">
+							</div>
+							<div class="row">
+								<div class="col-md-6">
+									<div class="form-group">
+										<label>Description</label>
+										<textarea class="form-control" id="description" rows="3"></textarea>
+									</div>
+								</div>
+								<div class="col-lg-6 col-md-6">
+									<div class="form-group">
+										<label>Address</label>
+										<input type="text" class="form-control" id="location">
+									</div>
 								</div>
 							</div>
-							<div class="col-md-12">
-								<div class="form-group">
-									<label>Description</label>
-									<textarea class="form-control" id="description" rows="3"></textarea>
-								</div>
-							</div>
+							<div class="row">
 
 							<div class="features-content">
 								<h3 class="mt-30">Account Details</h3>
