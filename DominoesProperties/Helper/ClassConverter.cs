@@ -41,7 +41,8 @@ namespace DominoesProperties.Helper
                 IsVerified = customer.IsVerified,
                 Phone = customer.Phone,
                 WalletId = customer.Wallet.WalletNo,
-                WalletBalance = customer.Wallet.Balance.Value
+                WalletBalance = customer.Wallet.Balance.Value,
+                PassportUrl = customer.PassportUrl
             };
         }
 
@@ -177,7 +178,8 @@ namespace DominoesProperties.Helper
                 WalletId = customer.Wallet.WalletNo,
                 WalletBalance = customer.Wallet.Balance.Value,
                 Investments = customer.Investments.ToList(),
-                BankName = customer.BankName
+                BankName = customer.BankName,
+                PassportUrl = customer.PassportUrl
             };
         }
 

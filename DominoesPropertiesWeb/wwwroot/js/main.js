@@ -274,12 +274,14 @@ const profile = (data, mode) => {
         $('#address').val(data.address);
         $('#account').val(data.accountNumber);
         $('#bank').val(data.bankName);
+        $('.profile-pic').attr("src", data.passportUrl)
     } else if (mode == "dashboard") {
         $('#walletBalance').html('&#8358; ' + currency(data.walletBalance));
     } else {
         $('.fullName').text(data.firstName + " " + data.lastName);
-        $('.walletId').html("wallet ID ( <strong>" + data.walletId + "</strong> )");
+        $('.walletId').html("Wallet: ( <strong>" + data.walletId + "</strong> )");
         $('.walletBalance').html('&#8358; ' + currency(data.walletBalance));
+        $("#passport").attr("src", data.passportUrl);
         $('#profile').html(`
             <div class="card-body">
 				<div class="row">
@@ -314,7 +316,7 @@ const profile = (data, mode) => {
 					<h6 class="mb-0">Account Number</h6>
 					</div>
 					<div class="col-sm-9">
-					<p class="text-muted mb-0">${data.accountNumber == null ? 'Not yet set' : data.accountNumber}</p>
+					<p class="text-muted mb-0">${data.accountNumber == null ? '--' : data.accountNumber}</p>
 					</div>
 				</div>
 				<hr>
@@ -323,7 +325,7 @@ const profile = (data, mode) => {
 					<h6 class="mb-0">Bank Name</h6>
 					</div>
 					<div class="col-sm-9">
-					<p class="text-muted mb-0">hell${data.bankName == null ? 'Not yet set' : data.bankName}</p>
+					<p class="text-muted mb-0">${data.bankName == null ? '--' : data.bankName}</p>
 					</div>
 				</div>
 				<hr>
