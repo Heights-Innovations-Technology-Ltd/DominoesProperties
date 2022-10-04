@@ -21,6 +21,7 @@ namespace Models.Models
         public DateTime Date { get; set; }
         public bool? IsClosed { get; set; }
         public int PercentageSubscribed { get; set; }
+        public decimal UnitPrice { get; set; }
 
         [IgnoreDataMember]
         public virtual Property Property { get; set; }
