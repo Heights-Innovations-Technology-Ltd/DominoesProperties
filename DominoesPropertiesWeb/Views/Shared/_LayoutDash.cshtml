@@ -107,11 +107,14 @@
 										Home            
 									</a>
 								</li>
-								<li class="nav-item">
-									<a asp-controller="Home" asp-action="properties" class="nav-link" id="property-links">
-										Investments
-									</a>
-								</li>
+
+								@if(Username != null){
+									<li class="nav-item">
+										<a asp-controller="Home" asp-action="properties" class="nav-link" id="property-links">
+											Investments
+										</a>
+									</li>
+								}
 								<li class="nav-item">
 									<a asp-controller="Home" asp-action="howitworks" class="nav-link">
 										How it works            
@@ -144,7 +147,7 @@
 														Dashboard
 													</a>
 												</li>
-												@if(userFullName != null)
+												@if(Username != null)
 												{
 													<li>
 														<a asp-controller="Dashboard" asp-action="Profile">

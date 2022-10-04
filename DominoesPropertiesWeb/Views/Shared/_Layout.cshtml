@@ -107,11 +107,15 @@
 										Home            
 									</a>
 								</li>
-								<li class="nav-item">
-									<a asp-controller="Home" asp-action="properties" class="nav-link" id="property-links">
-										Investments
-									</a>
-								</li>
+
+								@if(Username != null){
+									<li class="nav-item">
+										<a asp-controller="Home" asp-action="properties" class="nav-link" id="property-links">
+											Investments
+										</a>
+									</li>
+								}
+								
 								<li class="nav-item">
 									<a asp-controller="Home" asp-action="howitworks" class="nav-link">
 										How it works            
@@ -139,7 +143,7 @@
 										<li>
 											<div class="dropdown">
 												<button type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-													<img src="~/images/agents/agent-1.jpg" alt="Image">
+													<img src="~/images/agents/agent-1.jpeg" style="width:50px; height:50px" alt="Image">
 													<span>@userFullName</span>
 												</button>
 												<ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
@@ -149,7 +153,7 @@
 															Dashboard
 														</a>
 													</li>
-													@if(userFullName != null)
+													@if(Username != null)
 													{
 														<li>
 															<a asp-controller="Dashboard" asp-action="Profile">
