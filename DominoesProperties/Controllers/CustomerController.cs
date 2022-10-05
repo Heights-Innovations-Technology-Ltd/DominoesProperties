@@ -325,8 +325,8 @@ namespace DominoesProperties.Controllers
                           group item by item.Property.Status into g
                           select new InvestCat() { Status = g.Key, Values = g.Count() }).ToList();
 
-            var e = result.Where(x => x.Status.Equals((int)PropertyStatus.OPEN_FOR_INVESTMENT) || x.Status.Equals((int)PropertyStatus.ONGOING_CONSTRUCTION)).Sum(x => x.Values);
-            var f = result.Where(x => x.Status.Equals((int)PropertyStatus.CLOSED_FOR_INVESTMENT) || x.Status.Equals((int)PropertyStatus.RENTED_OUT)).Sum(x => x.Values);
+            var e = result.Where(x => x.Status.Equals("OPEN_FOR_INVESTMENT") || x.Status.Equals("ONGOING_CONSTRUCTION")).Sum(x => x.Values);
+            var f = result.Where(x => x.Status.Equals("CLOSED_FOR_INVESTMENT") || x.Status.Equals("RENTED_OUT")).Sum(x => x.Values);
 
             dashboardElement.Add("ActiveInvestment", e);
             dashboardElement.Add("ClosedInvestment", f);
