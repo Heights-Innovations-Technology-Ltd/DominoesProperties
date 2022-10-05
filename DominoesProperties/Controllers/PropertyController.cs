@@ -147,6 +147,7 @@ namespace DominoesProperties.Controllers
 
             Property property = ClassConverter.PropertyToEntity(properties);
             property.CreatedBy = adminRepository.GetUser(HttpContext.User.Identity.Name).Email;
+
             Description description = ClassConverter.DescriptionToEntity(properties.Description);
             description.PropertyId = propertyRepository.AddNewProperty(property).UniqueId;
             propertyRepository.AddPropertyDescription(description);
@@ -244,15 +245,6 @@ namespace DominoesProperties.Controllers
             response.Message = "Property types fetched successfully!";
             return response;
         }
-
-        //[HttpGet("feature")]
-        //public ApiResponse GetFeatureProperty()
-        //{
-        //    response.Data = propertyRepository.GetProperties().Where(x => x.Status.Equals(PropertyStatus.OPEN_FOR_INVESTMENT) || x.Status.Equals(PropertyStatus.ONGOING_CONSTRUCTION));
-        //    response.Success = true;
-        //    response.Message = "Property types fetched successfully!";
-        //    return response;
-        //}
 
         [HttpPost("uploads/{propertyId}")]
         [Authorize(Roles = "SUPER, ADMIN")]
