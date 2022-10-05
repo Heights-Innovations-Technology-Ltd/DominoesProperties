@@ -50,10 +50,14 @@
                         a = {};
 
                 } else {
-                   
-                    message(res.data
-                        , 'error'),
-                        window.scrollTo(0, 0),
+                    Swal.fire(
+                        'Oops!',
+                        res.data,
+                        'error'
+                    );
+                    //message(res.data
+                    //    , 'error'),
+                    window.scrollTo(0, 0);
                         $(".btn-register").html("Register").attr("disabled", !1);
                     a = {};
                 }
@@ -110,8 +114,13 @@ $('.btn-login').click(() => {
                 $(".form-control").val("");
             } else {
                 window.scrollTo(0, 0);
-                message(data
-                    , 'error');
+                Swal.fire(
+                    'Oops!',
+                    data,
+                    'error'
+                );
+                //message(data
+                //    , 'error');
                 $(".btn-login").html("Login").attr("disabled", !1);
 
             }
@@ -371,6 +380,9 @@ const GetProperties = (type) => {
                 } else if (type == "landing") {
                     LandingPagePropertyTmp(data.slice(0, 7));
                     var i = getRandom(data, 1);
+                        $('#property-img').html(`<img src="${i[0].data.length > 0 ? i[0].data[0].url  : '/images/why-choose-img.jpg'}" id="property-image" style="height:402px; width:636px"  alt="Image">`);
+                    if (i[0].data.length > 0) {
+                    }
                     $('.property').html(`
                             <div class="d-flex justify-content-between">
 							    <a href="javascript:void(0)" onclick="propertyDetails('${i[0].uniqueId}')">
@@ -2489,6 +2501,103 @@ const confirmTransaction = () => {
         }
     }
 }
+
+$(document).ready(function () {
+    $('.btn-news').click(function (e) {
+        console.log('here');
+        e.preventDefault();
+        if ($('#email').val().trim() == "") {
+            Swal.fire(
+                'Oops!',
+                'Kindlyt provide active email address',
+                'error'
+            );
+            return;
+        }
+
+        $(".btn-news").attr("disabled", !0);
+        let param = {
+            email: $('#email').val().trim()
+        }
+
+        let xhr = new XMLHttpRequest();
+        let url = "/news";
+        xhr.open('POST', url, false);
+        xhr.setRequestHeader("content-type", "application/json");
+        xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+        try {
+            xhr.send(JSON.stringify(param));
+            if (xhr.status != 200) {
+                //alert('Something went wrong try again!');
+            } else {
+                var res = JSON.parse(xhr.responseText);
+                var message = JSON.parse(res).message;
+                console.log(message);
+                if (JSON.parse(res).success) {
+                    $(".btn-news").attr("disabled", !1);
+                    Swal.fire(
+                        'Good job!',
+                        message,
+                        'success'
+                    ).then(() => {
+                        $('#email').val('');
+                    });
+
+                } else {
+                    $(".btn-news").attr("disabled", !1);
+                    Swal.fire(
+                        'Oops!',
+                        message,
+                        'error'
+                    );
+                }
+            }
+        } catch (err) { // instead of onerror
+            //alert("Request failed");
+        }
+    })
+});
+
+const getNewSubscribers = () => {
+    let xhr = new XMLHttpRequest();
+    let url = "/get-newsSubscribers";
+    xhr.open('GET', url, false);
+    xhr.setRequestHeader("content-type", "application/json");
+    xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+    try {
+        xhr.send();
+        if (xhr.status != 200) {
+            //alert('Something went wrong try again!');
+        } else {
+            var res = JSON.parse(xhr.responseText);
+
+            console.log(res);
+            var data = JSON.parse(res).data;
+            if (JSON.parse(res).success) {
+                
+            } else {
+                Swal.fire(
+                    'Oops!',
+                    data,
+                    'error'
+                );
+            }
+        }
+    } catch (err) { // instead of onerror
+        //alert("Request failed");
+    }
+}
+
+
+$('.signup').click(() => {
+    $('#signup').removeClass('d-none');
+    $('#signin').addClass('d-none');
+});
+
+$('.signin').click(() => {
+    $('#signup').addClass('d-none');
+    $('#signin').removeClass('d-none');
+});
 
 function forgetPassword() {
 
