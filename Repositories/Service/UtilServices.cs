@@ -51,5 +51,15 @@ namespace Repositories.Service
             }
             return propertyTypes;
         }
+
+        List<string> IUtilRepository.GetNewsletterSubscibers()
+        {
+            return _context.Newsletters.Select(x => x.Email).ToList();
+        }
+
+        void IUtilRepository.AddNSubscibers(Newsletter newsletter)
+        {
+            _context.Newsletters.Add(newsletter);
+        }
     }
 }
