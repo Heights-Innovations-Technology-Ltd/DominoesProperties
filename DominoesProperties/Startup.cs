@@ -197,6 +197,7 @@ namespace DominoesProperties
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Domino Properties v1"));
             }
+            
             app.UseExceptionHandler(a => a.Run(async context =>
             {
                 var exceptionHandlerPathFeature = context.Features.Get<IExceptionHandlerPathFeature>();
@@ -226,7 +227,7 @@ namespace DominoesProperties
                 endpoints.MapControllers();
                 endpoints.MapHangfireDashboard("/hangfire", new DashboardOptions
                 {
-                    //Authorization = new[] { new HangFireAuth() },
+                    Authorization = new[] { new HangFireAuth() },
                     IsReadOnlyFunc = (DashboardContext context) => true,
                     AppPath = Configuration.GetValue<string>("app_settings:WebEndpoint")
                 });

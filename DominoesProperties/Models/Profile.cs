@@ -32,6 +32,7 @@ namespace DominoesProperties.Models
         public string WalletId { get; set; }
         public decimal WalletBalance { get; set; }
         public string BankName { get; set; }
+        public string PassportUrl { get; set; }
         public List<Transaction> Transactions { get; set; }
         public List<Investment>  Investments { get; set; }
     }

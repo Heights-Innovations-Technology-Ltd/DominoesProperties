@@ -9,7 +9,7 @@
 		<meta property="og:locale" content="en_US" />
 		<meta property="og:type" content="website" />
 		<meta property="og:title" content="Domines Real Estate || Co-Investment Community for Real Estate" />
-		<meta property="og:description" content="We are a great agency for buying and selling your property with confidence. So you can easily buy and sell through our company" />
+		<meta property="og:description" content="We are Africa's foremost investment community that helps you invest safely and successfully in fractional real estate" />
 
 		<!-- Links Of CSS File -->
 		<link rel="stylesheet" href="~/css/bootstrap.min.css">
@@ -42,17 +42,19 @@
 		@inject IHttpContextAccessor HttpContextAccessor
 
 		@{
-			var Username = @HttpContextAccessor.HttpContext.Session.GetString("ReferenceId");
-			var IsSubscribed = @HttpContextAccessor.HttpContext.Session.GetString("IsSubscribed");
-			var WalletId = @HttpContextAccessor.HttpContext.Session.GetString("WalletId");
-			var Firstname = @HttpContextAccessor.HttpContext.Session.GetString("Firstname");
-			var Lastname = @HttpContextAccessor.HttpContext.Session.GetString("Lastname");
-			var isAdmin = @HttpContextAccessor.HttpContext.Session.GetString("RoleFK");
-			
-			var userFullName = string.Format("{0} {1}", Firstname, Lastname);
-			if(isAdmin != null && isAdmin != ""){
-				userFullName = @HttpContextAccessor.HttpContext.Session.GetString("Email");
-			}
+            var Username = @HttpContextAccessor.HttpContext.Session.GetString("ReferenceId");
+            var IsSubscribed = @HttpContextAccessor.HttpContext.Session.GetString("IsSubscribed");
+            var WalletId = @HttpContextAccessor.HttpContext.Session.GetString("WalletId");
+            var Firstname = @HttpContextAccessor.HttpContext.Session.GetString("Firstname");
+            var Lastname = @HttpContextAccessor.HttpContext.Session.GetString("Lastname");
+            var isAdmin = @HttpContextAccessor.HttpContext.Session.GetString("RoleFK");
+            var passport = @HttpContextAccessor.HttpContext.Session.GetString("Passport");
+            
+
+            var userFullName = string.Format("{0} {1}", Firstname, Lastname);
+            if(isAdmin != null && isAdmin != ""){
+                userFullName = @HttpContextAccessor.HttpContext.Session.GetString("Email");
+            }
 		}
 		@Html.Hidden("refId", Username)
 		@Html.Hidden("isSubcribed", IsSubscribed)
@@ -107,11 +109,14 @@
 										Home            
 									</a>
 								</li>
-								<li class="nav-item">
-									<a asp-controller="Home" asp-action="properties" class="nav-link" id="property-links">
-										Investments
-									</a>
-								</li>
+
+								@if(Username != null){
+									<li class="nav-item">
+										<a asp-controller="Home" asp-action="properties" class="nav-link" id="property-links">
+											Investments
+										</a>
+									</li>
+								}
 								<li class="nav-item">
 									<a asp-controller="Home" asp-action="howitworks" class="nav-link">
 										How it works            
@@ -134,7 +139,7 @@
 									<li>
 										<div class="dropdown">
 											<button type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-												<img src="~/images/agents/agent-1.jpeg" style="width:50px; height:50px" alt="Image">
+												<img src="@passport" style="width:50px; height:50px" alt="Image">
 												<span>@userFullName</span>
 											</button>
 											<ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
@@ -144,7 +149,7 @@
 														Dashboard
 													</a>
 												</li>
-												@if(userFullName != null)
+												@if(Username != null)
 												{
 													<li>
 														<a asp-controller="Dashboard" asp-action="Profile">

@@ -117,6 +117,7 @@ namespace DominoesPropertiesWeb.Controllers
                 this.session.SetString("WalletId", (string)resObj["walletId"]);
                 this.session.SetString("WalletBalance", (string)resObj["walletBalance"]);
                 this.session.SetString("Token", (string)data["TokenObj"]);
+                this.session.SetString("Passport", resObj["passportUrl"] != null ? (string)resObj["passportUrl"] : "/images/agents/agent-1.jpeg");
                 jsonObj.success = success;
                 jsonObj.data = data["message"];
             }
