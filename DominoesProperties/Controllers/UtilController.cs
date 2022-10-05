@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 using DominoesProperties.Enums;
@@ -65,12 +66,24 @@ namespace DominoesProperties.Controllers
                 string filePath = Path.Combine(environment.ContentRootPath, @"EmailTemplates\enquiry.html");
                 string html = System.IO.File.ReadAllText(filePath.Replace(@"\", "/"));
 
+                string filePath2 = Path.Combine(environment.ContentRootPath, @"EmailTemplates\enquiry-admin.html");
+                string html2 = System.IO.File.ReadAllText(filePath2.Replace(@"\", "/"));
+                html2 = html2.Replace("{PROPERTY}", property.Name).Replace("{CUSTOMER}", $"{customer.FirstName} {customer.LastName}").Replace("{SUBJECT}", enquiry.Subject).Replace("{MESSAGE}", enquiry.Message);
+
                 _ = _emailService.SendEmail(new EmailData
                 {
                     EmailBody = html,
                     EmailSubject = "Property Enquiry - Dominoes Society",
                     EmailToName = customer.FirstName,
                     EmailToId = customer.Email
+                });
+
+                _ = _emailService.SendEmail(new EmailData
+                {
+                    EmailBody = html2,
+                    EmailSubject = "Property Enquiry - Dominoes Society",
+                    EmailToName = "Inquiries",
+                    EmailToId = "inquiries@realestatedominoes.com"
                 });
 
                 return response;
@@ -156,6 +169,30 @@ namespace DominoesProperties.Controllers
             response.Data = propertyRepository.Locations();
             response.Success = true;
             response.Message = "Successful";
+            return response;
+        }
+
+        [HttpPost("subscribers")]
+        [AllowAnonymous]
+        public ApiResponse Subscribe([FromBody] [Required(ErrorMessage = "Email is required")] [MaxLength(100)][EmailAddress(ErrorMessage ="Not a valid email address")] string Email)
+        {
+            Newsletter newsletter = new()
+            {
+                Email = Email
+            };
+            utilRepository.AddNSubscibers(newsletter);
+            response.Success = true;
+            response.Message = "You have been added to our mailing list successful";
+            return response;
+        }
+
+        [HttpGet("subscribers")]
+        [AllowAnonymous]
+        public ApiResponse Subscribers()
+        {
+            response.Success = true;
+            response.Message = "List fetched successfully";
+            response.Data = utilRepository.GetNewsletterSubscibers();
             return response;
         }
 
