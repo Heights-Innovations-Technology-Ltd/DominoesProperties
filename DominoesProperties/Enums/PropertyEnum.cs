@@ -12,10 +12,10 @@
 
     public enum PropertyStatus
     {
-        ONGOING_CONSTRUCTION,
-        OPEN_FOR_INVESTMENT,
-        CLOSED_FOR_INVESTMENT,
-        RENTED_OUT
+        ONGOING_CONSTRUCTION=0,
+        OPEN_FOR_INVESTMENT=1,
+        CLOSED_FOR_INVESTMENT=2,
+        RENTED_OUT=3
     }
 
     public enum Module
