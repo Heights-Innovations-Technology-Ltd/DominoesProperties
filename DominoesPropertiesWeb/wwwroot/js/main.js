@@ -2574,7 +2574,8 @@ const getNewSubscribers = () => {
             console.log(res);
             var data = JSON.parse(res).data;
             if (JSON.parse(res).success) {
-                
+                $('#newsCount').text(`New Subscribers (${data.length})`);
+                $('#description').val(data.join(", "));
             } else {
                 Swal.fire(
                     'Oops!',
