@@ -2,6 +2,7 @@
 using Models.Models;
 using Helpers;
 using System.Linq;
+using DominoesProperties.Enums;
 
 namespace DominoesProperties.Helper
 {
@@ -41,7 +42,8 @@ namespace DominoesProperties.Helper
                 IsVerified = customer.IsVerified,
                 Phone = customer.Phone,
                 WalletId = customer.Wallet.WalletNo,
-                WalletBalance = customer.Wallet.Balance.Value
+                WalletBalance = customer.Wallet.Balance.Value,
+                PassportUrl = customer.PassportUrl
             };
         }
 
@@ -69,7 +71,7 @@ namespace DominoesProperties.Helper
                 TargetYield = property.TargetYield.Value,
                 UnitAvailable = property.UnitAvailable = property.TotalUnits - property.UnitSold,
                 UnitPrice = property.UnitPrice,
-                Status = property.Status,
+                Status = ((PropertyStatus)int.Parse(property.Status)).ToString(),
                 Type = property.Type.Value,
                 TotalUnits = property.TotalUnits,
                 UnitSold = property.UnitSold,
@@ -100,7 +102,7 @@ namespace DominoesProperties.Helper
                 ProjectedGrowth = property.ProjectedGrowth,
                 UnitAvailable = property.UnitAvailable,
                 UnitPrice = property.UnitPrice,
-                Status = property.Status,
+                Status = ((int)Enum.Parse(typeof(PropertyStatus), property.Status)).ToString(),
                 TargetYield = property.TargetYield,
                 Type = property.Type,
                 TotalUnits = property.TotalUnits,
@@ -177,7 +179,8 @@ namespace DominoesProperties.Helper
                 WalletId = customer.Wallet.WalletNo,
                 WalletBalance = customer.Wallet.Balance.Value,
                 Investments = customer.Investments.ToList(),
-                BankName = customer.BankName
+                BankName = customer.BankName,
+                PassportUrl = customer.PassportUrl
             };
         }
 

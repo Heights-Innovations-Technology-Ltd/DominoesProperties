@@ -65,6 +65,7 @@
     <None Remove="Hangfire.Core" />
     <None Remove="Hangfire.Dashboard.Basic.Authentication" />
     <None Remove="Scheduled\" />
+    <None Remove="EmailTemplates\enquiry %28copy%29.html" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.16" />
@@ -153,6 +154,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="EmailTemplates\activation.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="EmailTemplates\enquiry-admin.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

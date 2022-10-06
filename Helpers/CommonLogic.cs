@@ -256,31 +256,34 @@ namespace Helpers
         {
             try
             {
-                string filePath = System.IO.Path.Combine(path, "templates/ReportTemplate.html");
-                string templatedate = File.ReadAllText(filePath);
+                string filePath = Path.Combine(path, @"EmailTemplates\report.html");
+                string templatedate = File.ReadAllText(filePath.Replace(@"\", "/"));
                 templatedate = templatedate.Replace("##Title##", title);
                 templatedate = templatedate.Replace("##ReportName##", reportname);
                 templatedate = templatedate.Replace("##Image##", string.Format("{0}{1}", path, "/images/logo_black.png"));
                 templatedate = templatedate.Replace("##Table##", htmldata);
                 templatedate = templatedate.Replace("##Date##", DateTime.Now.Date.ToString("MMM/dd/yyyy"));
-                HtmlToPdf converter = new HtmlToPdf();
+
+                HtmlToPdf converter = new();
                 converter.Options.MarginLeft = 10;
                 converter.Options.MarginTop = 10;
                 converter.Options.MarginRight = 10;
                 converter.Options.PdfPageSize = PdfPageSize.A4;
                 converter.Options.PdfPageOrientation = PdfPageOrientation.Landscape;
                 PdfDocument doc = converter.ConvertHtmlString(templatedate);
-                string filename = string.Format("{0}/TempFiles/{1}.pdf", path, reportname);
+                string filename = string.Format("{0}/Statements/{1}.pdf", path, reportname);
                 doc.Save(filename);
                 doc.Close();
                 return filename;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Console.WriteLine(ex);
                 return null;
             }
 
         }
+
         /// <summary>
         /// Generates the PDF uni.
         /// </summary>

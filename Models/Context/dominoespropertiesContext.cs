@@ -24,6 +24,7 @@ namespace Models.Context
         public virtual DbSet<EmailRetry> Emailretries { get; set; }
         public virtual DbSet<Enquiry> Enquiries { get; set; }
         public virtual DbSet<Investment> Investments { get; set; }
+        public virtual DbSet<Newsletter> Newsletters { get; set; }
         public virtual DbSet<PaystackPayment> Paystackpayments { get; set; }
         public virtual DbSet<Property> Properties { get; set; }
         public virtual DbSet<PropertyType> PropertyTypes { get; set; }
@@ -357,6 +358,10 @@ namespace Models.Context
                     .IsRequired()
                     .HasMaxLength(50);
 
+                entity.Property(e => e.UnitPrice)
+                    .HasColumnType("decimal(18,2)")
+                    .HasDefaultValueSql("'0.00'");
+
                 entity.Property(e => e.YearlyInterestAmount).HasColumnType("decimal(18,2)");
 
                 entity.Property(e => e.Yield).HasColumnType("decimal(18,2)");
@@ -378,6 +383,20 @@ namespace Models.Context
                     .HasForeignKey(d => d.TransactionRef)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("investment_transaction_TransactionRef_fk");
+            });
+
+            modelBuilder.Entity<Newsletter>(entity =>
+            {
+                entity.ToTable("newsletter");
+
+                entity.HasIndex(e => e.Email, "newsletter_Email_uindex")
+                    .IsUnique();
+
+                entity.Property(e => e.DateCreated).HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                entity.Property(e => e.Email)
+                    .IsRequired()
+                    .HasMaxLength(70);
             });
 
             modelBuilder.Entity<PaystackPayment>(entity =>
@@ -645,6 +664,10 @@ namespace Models.Context
                 entity.Property(e => e.Alias)
                     .IsRequired()
                     .HasMaxLength(50);
+
+                entity.Property(e => e.UnitPrice)
+                    .HasColumnType("decimal(18,2)")
+                    .HasDefaultValueSql("'0.00'");
 
                 entity.Property(e => e.CustomerUniqueId).HasMaxLength(50);
 

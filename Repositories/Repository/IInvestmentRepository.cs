@@ -25,5 +25,6 @@ namespace Repositories.Repository
         void UpdateSharingGroup(Sharinggroup sharinggroup);
         List<Sharinggroup> CompletedSharingGroup();
         List<Sharinggroup> UncompletedSharingGroup();
+        List<Sharingentry> GetSharingEntries(long customerId);
     }
 }

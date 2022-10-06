@@ -39,17 +39,18 @@
 		@inject IHttpContextAccessor HttpContextAccessor
 
 		@{
-			string Username = @HttpContextAccessor.HttpContext.Session.GetString("ReferenceId");
-			var IsSubscribed = @HttpContextAccessor.HttpContext.Session.GetString("IsSubscribed");
-			var WalletId = @HttpContextAccessor.HttpContext.Session.GetString("WalletId");
-			var Firstname = @HttpContextAccessor.HttpContext.Session.GetString("Firstname");
-			var Lastname = @HttpContextAccessor.HttpContext.Session.GetString("Lastname");
-			var isAdmin = @HttpContextAccessor.HttpContext.Session.GetString("RoleFK");
-			
-			var userFullName = string.Format("{0} {1}", Firstname, Lastname);
-			if(isAdmin != null && isAdmin != ""){
-				userFullName = @HttpContextAccessor.HttpContext.Session.GetString("Email");
-			}
+            string Username = @HttpContextAccessor.HttpContext.Session.GetString("ReferenceId");
+            var IsSubscribed = @HttpContextAccessor.HttpContext.Session.GetString("IsSubscribed");
+            var WalletId = @HttpContextAccessor.HttpContext.Session.GetString("WalletId");
+            var Firstname = @HttpContextAccessor.HttpContext.Session.GetString("Firstname");
+            var Lastname = @HttpContextAccessor.HttpContext.Session.GetString("Lastname");
+            var isAdmin = @HttpContextAccessor.HttpContext.Session.GetString("RoleFK");
+            var passport = @HttpContextAccessor.HttpContext.Session.GetString("Passport");
+
+            var userFullName = string.Format("{0} {1}", Firstname, Lastname);
+            if(isAdmin != null && isAdmin != ""){
+                userFullName = @HttpContextAccessor.HttpContext.Session.GetString("Email");
+            }
 		}
 
 		@Html.Hidden("refId", Username)
@@ -107,11 +108,15 @@
 										Home            
 									</a>
 								</li>
-								<li class="nav-item">
-									<a asp-controller="Home" asp-action="properties" class="nav-link" id="property-links">
-										Investments
-									</a>
-								</li>
+
+								@if(Username != null){
+									<li class="nav-item">
+										<a asp-controller="Home" asp-action="properties" class="nav-link" id="property-links">
+											Investments
+										</a>
+									</li>
+								}
+								
 								<li class="nav-item">
 									<a asp-controller="Home" asp-action="howitworks" class="nav-link">
 										How it works            
@@ -139,7 +144,7 @@
 										<li>
 											<div class="dropdown">
 												<button type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-													<img src="~/images/agents/agent-1.jpg" alt="Image">
+													<img src="@passport" style="width:50px; height:50px" alt="Image">
 													<span>@userFullName</span>
 												</button>
 												<ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
@@ -149,7 +154,7 @@
 															Dashboard
 														</a>
 													</li>
-													@if(userFullName != null)
+													@if(Username != null)
 													{
 														<li>
 															<a asp-controller="Dashboard" asp-action="Profile">

@@ -20,6 +20,7 @@ namespace Models.Models
         public decimal? YearlyInterestAmount { get; set; }
         public string TransactionRef { get; set; }
         public string Status { get; set; }
+        public decimal UnitPrice { get; set; }
 
 
         public virtual Customer Customer { get; set; }
