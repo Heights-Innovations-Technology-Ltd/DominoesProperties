@@ -109,7 +109,7 @@
 									</a>
 								</li>
 
-								@if(Username != null){
+								@if(isAdmin == null){
 									<li class="nav-item">
 										<a asp-controller="Home" asp-action="properties" class="nav-link" id="property-links">
 											Investments

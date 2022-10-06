@@ -56,6 +56,7 @@ namespace DominoesPropertiesWeb.Controllers
                 this.session.SetString("RoleFK", (string)resObj["roleFk"]);
                 this.session.SetString("IsActive", (string)resObj["isActive"]);
                 this.session.SetString("Token", (string)data["TokenObj"]);
+                this.session.SetString("Passport", resObj["passportUrl"] != null ? (string)resObj["passportUrl"] : "/images/agents/agent-1.jpeg");
                 jsonObj.success = success;
                 jsonObj.data = data["message"];
             }

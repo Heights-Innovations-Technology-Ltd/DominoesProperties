@@ -34,8 +34,8 @@
 					</div>
 				</div>
 				<div class="row">
-					
-					<div class="col-lg-6">
+
+					<div class="col-lg-6 mx-auto" id="signin">
 						<div class="user-form-content log-in">
 							<h3>Sign in</h3>
 							
@@ -55,10 +55,13 @@
 											<input type="hidden" class="catch_me" value="">
 										</div>
 									</div>
-		
-									<div class="col-12">
+									<div class="col-6">
+										<a href="#" class="forgot-login signup" style="text-align:left">Don't have an account sign up</a>
+									</div>
+									<div class="col-6">
 										<a href="#" class="forgot-login"   onclick="forgetPassword()">Forgot your password?</a>
 									</div>
+									
 									
 									<div class="col-12">
 										<button class="default-btn btn-login" type="button">
@@ -70,8 +73,8 @@
 						</div>
 					</div>
 
-					<div class="col-lg-6">
-						<div class="user-form-content sign-up">
+					<div class="col-lg-6 mx-auto d-none" id="signup">
+						<div class="user-form-content">
 							<h3>Sign Up</h3>
 							<form class="user-form" id="user-form" autocomplete="off">
 								<div class="row">
@@ -122,6 +125,10 @@
 											<label>Confirm Password</label>
 											<input class="form-control" type="password" name="confirm_password" id="confirm_password">
 										</div>
+									</div>
+
+									<div class="col-12">
+										<a href="javascript:void(0)" class="forgot-login signin">Have an account sign in</a>
 									</div>
 		
 									<div class="col-12">

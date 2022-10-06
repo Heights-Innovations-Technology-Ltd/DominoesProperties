@@ -173,7 +173,7 @@ namespace DominoesPropertiesWeb.Controllers
             var data = res.Status == TaskStatus.RanToCompletion ? res.Result : null;
             return Json(JsonConvert.SerializeObject(data));
         }
-        
+
         [Route("/reset-password/{email}")]
         public async Task<JsonResult> ResetPassword(string email)
         {
@@ -182,5 +182,25 @@ namespace DominoesPropertiesWeb.Controllers
             var data = res.Status == TaskStatus.RanToCompletion ? res.Result : null;
             return Json(JsonConvert.SerializeObject(data));
         }
+
+        [Route("news")]
+        public async Task<JsonResult> Subscribe([FromBody] dynamic email)
+        {
+            JObject jObject = JsonConvert.DeserializeObject<JObject>(Convert.ToString(email));
+            var res = Task.Run(() => httpContext.Post("Util/subscribers", Convert.ToString(jObject["email"])));
+            await Task.WhenAll(res);
+            var data = res.Status == TaskStatus.RanToCompletion ? res.Result : null;
+            return Json(JsonConvert.SerializeObject(data));
+        }
+
+        [Route("get-newsSubscribers")]
+        public async Task<JsonResult> GetNewsSubscribers()
+        {
+            var res = Task.Run(() => httpContext.Get("Util/subscribers"));
+            await Task.WhenAll(res);
+            var data = res.Status == TaskStatus.RanToCompletion ? res.Result : null;
+            return Json(JsonConvert.SerializeObject(data));
+        }
+
     }
 }
