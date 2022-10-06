@@ -168,6 +168,15 @@ namespace DominoesPropertiesWeb.Controllers
             //var data = res.Status == TaskStatus.RanToCompletion ? res.Result : null;
             return Json(JsonConvert.SerializeObject(data));
         }
+        public IActionResult NewsSubscribers()
+        {
+            var isAuthAdmin = this.session.GetString("RoleFK");
+            if (isAuthAdmin == null || isAuthAdmin.Equals(string.Empty))
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            return View();
+        }
 
         [Route("/logout")]
         public IActionResult Logout()

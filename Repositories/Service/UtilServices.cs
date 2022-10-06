@@ -60,6 +60,7 @@ namespace Repositories.Service
         void IUtilRepository.AddNSubscibers(Newsletter newsletter)
         {
             _context.Newsletters.Add(newsletter);
+            _context.SaveChanges();
         }
     }
 }
