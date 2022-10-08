@@ -61,7 +61,6 @@ namespace Repositories.Service
             figures.Add("ActiveProperties", properties.Where(x => "ONGOING_CONSTRUCTION".Equals(x.Status) || "OPEN_FOR_INVESTMENT".Equals(x.Status)).Count());
             figures.Add("Customers", customers.Count());
             figures.Add("NewCustomers", customers.Where(x => x.DateRegistered.Date.Equals(DateTime.Now.Date)).Count());
-            //figures.Add("ActiveInvestments", investments.Where(x => "ONGOING_CONSTRUCTION".Equals(x.Status) || "OPEN_FOR_INVESTMENT".Equals(x.Status)).Count());
 
             return figures;
         }

@@ -17,7 +17,7 @@ namespace Models.Models
         public string CreatedBy { get; set; }
         public string Privilege { get; set; }
         public string Page { get; set; }
-        public DateTime? DateCreated { get; set; }
+        public DateTime? DateCreated { get; set; } = DateTime.Now;
 
         public virtual ICollection<Admin> Admins { get; set; }
     }
