@@ -2588,6 +2588,128 @@ const getNewSubscribers = () => {
         //alert("Request failed");
     }
 }
+const getEnquiries = () => {
+    let xhr = new XMLHttpRequest();
+    let url = "/get-enquiries";
+    xhr.open('GET', url, false);
+    xhr.setRequestHeader("content-type", "application/json");
+    xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+    try {
+        xhr.send();
+        if (xhr.status != 200) {
+            //alert('Something went wrong try again!');
+        } else {
+            var res = JSON.parse(xhr.responseText);
+            var data = JSON.parse(res).data;
+            console.log(data);
+            if (JSON.parse(res).success) {
+                enquiriesTmp(data);
+            } else {
+                Swal.fire(
+                    'Oops!',
+                    data,
+                    'error'
+                );
+            }
+        }
+    } catch (err) { // instead of onerror
+        //alert("Request failed");
+    }
+}
+
+const enquiriesTmp = (data) => {
+    $('#Table_ID tbody').html('');
+
+    data.forEach(x => {
+        let res = `<tr>
+                    <td>${x.subject}</td>
+                    <td><span class="badge badge-primary ${x.status == "New" ? 'bg-success': 'bg-info'}">${x.status}</span></td>
+                    <td>${x.status == "New" ? '<a href="javascript:void(0)" class="default-btn" onclick="getEnquiry(${x.id})">View</a>' : '...'}</td>
+                </tr>`;
+        $('#Table_ID tbody').append(res);
+    })
+}
+
+const getEnquiry = (id) => {
+    let xhr = new XMLHttpRequest();
+    let url = `/get-enquiry/${id}`;
+    xhr.open('GET', url, false);
+    xhr.setRequestHeader("content-type", "application/json");
+    xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+    try {
+        xhr.send();
+        if (xhr.status != 200) {
+            //alert('Something went wrong try again!');
+        } else {
+            var res = JSON.parse(xhr.responseText);
+            console.log(res);
+            var data = JSON.parse(res).data;
+            if (JSON.parse(res).success) {
+                console.log(data.message);
+                Swal.fire({
+                    template: '#my-template'
+                });
+                $('#enquiryId').val(data.id);
+                $('.enquiryMessage').text(data.message);
+
+                $('.swal2-popup').css("width", '50%');
+
+
+            } else {
+                Swal.fire(
+                    'Oops!',
+                    data,
+                    'error'
+                );
+            }
+        }
+    } catch (err) { // instead of onerror
+        //alert("Request failed");
+    }
+}
+
+const treatEnquiry = ()=> {
+    console.log('here');
+    let id = $('#enquiryId').val();
+    if (id == "") {
+        return;
+    }
+    $(".btn-treated").html('Processing...').attr("disabled", !0);
+    let xhr = new XMLHttpRequest();
+    let url = `/update-enquiry-status/${id}/CLOSED`;
+    xhr.open('GET', url, false);
+    xhr.setRequestHeader("content-type", "application/json");
+    xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+    try {
+        xhr.send();
+        if (xhr.status != 200) {
+            //alert('Something went wrong try again!');
+            $(".btn-treated").html('Mark as treated').attr("disabled", !1);
+        } else {
+            var res = JSON.parse(xhr.responseText);
+            console.log(res);
+            var data = JSON.parse(res).message;
+            if (JSON.parse(res).success) {
+                Swal.fire(
+                    'Good job!',
+                    data,
+                    'success'
+                );
+                $(".btn-treated").html('Mark as treated').attr("disabled", !1);
+            } else {
+                $(".btn-treated").html('Mark as treated').attr("disabled", !1);
+                Swal.fire(
+                    'Oops!',
+                    data,
+                    'error'
+                );
+            }
+        }
+    } catch (err) { // instead of onerror
+        //alert("Request failed");
+    }
+};
+
 
 
 $('.signup').click(() => {

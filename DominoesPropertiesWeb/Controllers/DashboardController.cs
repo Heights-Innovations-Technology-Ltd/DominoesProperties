@@ -67,6 +67,15 @@ namespace DominoesPropertiesWeb.Controllers
             }
             return View();
         }
+        public IActionResult Enquiry()
+        {
+            var isAuthAdmin = this.session.GetString("Token");
+            if (isAuthAdmin == null || isAuthAdmin.Equals(string.Empty))
+            {
+                return RedirectToAction("SignIn", "Home");
+            }
+            return View();
+        }
 
         [Route("customer-dashboard")]
         public async Task<JsonResult> CustomerDashboard()
@@ -176,6 +185,33 @@ namespace DominoesPropertiesWeb.Controllers
                 return RedirectToAction("Index", "Home");
             }
             return View();
+        }
+
+        [Route("get-enquiries")]
+        public async Task<JsonResult> GetEnquiries()
+        {
+            var res = Task.Run(() => httpContext.Get("Util/enquiry"));
+            await Task.WhenAll(res);
+            var data = res.Status == TaskStatus.RanToCompletion ? res.Result : null;
+            return Json(JsonConvert.SerializeObject(data));
+        }
+
+        [Route("get-enquiry/{enquiryId}")]
+        public async Task<JsonResult> GetEnquiry(int enquiryId)
+        {
+            var res = Task.Run(() => httpContext.Get("Util/enquiry/" + enquiryId));
+            await Task.WhenAll(res);
+            var data = res.Status == TaskStatus.RanToCompletion ? res.Result : null;
+            return Json(JsonConvert.SerializeObject(data));
+        }
+
+        [Route("update-enquiry-status/{enquiryId}/{status}")]
+        public async Task<JsonResult> GetEnquiry(int enquiryId, string status)
+        {
+            var res = Task.Run(() => httpContext.Put($"Util/enquiry/{enquiryId}/{status}", null));
+            await Task.WhenAll(res);
+            var data = res.Status == TaskStatus.RanToCompletion ? res.Result : null;
+            return Json(JsonConvert.SerializeObject(data));
         }
 
         [Route("/logout")]

@@ -8,7 +8,7 @@ namespace Models.Models
 {
     public partial class Enquiry
     {
-        [IgnoreDataMember]
+        //[IgnoreDataMember]
         public long Id { get; set; }
         [Required(ErrorMessage = "Customer reference is required")]
         public string CustomerUniqueReference { get; set; }
