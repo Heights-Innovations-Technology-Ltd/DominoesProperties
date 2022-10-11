@@ -62,5 +62,20 @@ namespace Repositories.Service
             _context.Newsletters.Add(newsletter);
             _context.SaveChanges();
         }
+
+        public bool CloseEnquiry(Enquiry enquiry)
+        {
+            try
+            {
+                _context.Enquiries.Update(enquiry);
+                _context.SaveChanges();
+                return true;
+            }
+            catch (Exception ex)
+            {
+
+                return false;
+            }
+        }
     }
 }

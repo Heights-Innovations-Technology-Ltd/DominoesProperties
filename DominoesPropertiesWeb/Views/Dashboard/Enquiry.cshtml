@@ -1,0 +1,100 @@
+﻿
+@{
+    ViewData["Title"] = "Enquiry";
+    Layout = "~/Views/Shared/_LayoutDash.cshtml";
+}
+<link href="//cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css" rel="stylesheet" type="text/css">
+<script src="//cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+
+<!-- Start Dashboard Area -->
+<div class="dashboard-area">
+	<div class="container-fluid">
+		<div class="dashboard-title-wrap">
+			<div class="row align-items-center">
+				<div class="col-lg-6 col-sm-6">
+					<ul class="dashboard-page-title">
+						<li>
+							<a href="/dashboard">
+								Home
+							</a>
+						</li>
+
+						<li class="active">Customer Enquiry</li>
+					</ul>
+				</div>
+				<div class="col-lg-6 col-sm-6">
+				</div>
+			</div>
+		</div>
+
+		<div class="add-listing">
+			<table id="Table_ID">
+				<thead>
+					<tr>
+						<th>Subject</th>
+						<th>Status</th>
+						<th>Action</th>
+					</tr>
+				</thead>
+				<tbody></tbody>
+			</table>
+		</div>
+	</div>
+	<template id="my-template">
+		<swal-html >
+			<div class="model fadeIn modal-lg">
+				<div class="payment w-100">
+					<div class="receipt-box">
+						<div class="message">
+							<div class="row">
+								<div class="col-lg-12">
+									<input type="hidden" id="enquiryId" />
+									<div class="message-wrap">
+										<div class="review-date d-flex justify-content-between align-items-center">
+											<div class="date">
+												<h3>Enquiry Detail</h3>
+											</div>
+										</div>
+
+										<div class="chat-user">
+											<h4>Customer Name</h4>
+										</div>
+
+										<ul class="massage-list">
+											<li class="left-chat">
+												<span style="margin-left:0;">10Dec, 2021   8:30PM</span>
+												<p class="enquiryMessage" style="margin-left:0;"></p>
+											</li>
+										</ul>
+
+										<a href="javascript:void(0)" class="default-btn btn-treated mt-3" onclick="treatEnquiry()">
+											Mark as treated
+										</a>
+										@*<form>
+											<div class="form-group">
+												<input type="text" class="form-control" placeholder="Write message">
+												<button type="submit" class="default-btn">
+													Mark as treat
+												</button>
+											</div>
+										</form>*@
+									</div>
+								</div>
+							</div>
+						</div>
+
+					</div>
+					
+				</div>
+			</div>
+		</swal-html>
+	</template>
+</div>
+<!-- End Dashboard Area -->
+<script>
+	$(() => {
+		getEnquiries();
+		$('#Table_ID').DataTable();
+	});
+</script>
+

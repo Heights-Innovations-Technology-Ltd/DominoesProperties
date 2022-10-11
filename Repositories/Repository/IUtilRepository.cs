@@ -11,6 +11,7 @@ namespace Repositories.Repository
         bool AddEnquiry(Enquiry enquiry);
         Enquiry GetEnquiry(string customerIdentifier);
         Enquiry GetEnquiry(long id);
+        bool CloseEnquiry(Enquiry enquiry);
         List<string> GetNewsletterSubscibers();
         void AddNSubscibers(Newsletter newsletter);
     }

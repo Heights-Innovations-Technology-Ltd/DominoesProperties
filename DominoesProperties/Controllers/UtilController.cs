@@ -120,7 +120,7 @@ namespace DominoesProperties.Controllers
                 enqList.HasPrevious
             );
 
-            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(new JObject(metadata2)));
+            //Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(new JObject(metadata2)));
             response.Success = enqList.Count > 0;
             response.Message = response.Success ? "Successfull" : "No request found";
             response.Data = enqList;
@@ -136,6 +136,7 @@ namespace DominoesProperties.Controllers
                 var enquiry = utilRepository.GetEnquiry(enquiryId);
                 enquiry.Status = Enum.Parse<EnquiryStatus>(status).ToString();
                 enquiry.ClosedBy = HttpContext.User.Identity.Name;
+                utilRepository.CloseEnquiry(enquiry);
                 response.Message = "Enquiry closed successfully";
                 response.Success = true;
                 return response;
@@ -154,7 +155,7 @@ namespace DominoesProperties.Controllers
             var enq = utilRepository.GetEnquiry(enquiryId);
             if (enq != null)
             {
-                response.Data =
+                response.Data = enq;
                 response.Success = true;
                 response.Message = "Successful";
                 return response;
