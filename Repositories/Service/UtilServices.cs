@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Models.Context;
 using Models.Models;
+using MySql.Data.MySqlClient;
 using Repositories.Repository;
 
 namespace Repositories.Service
@@ -57,10 +58,23 @@ namespace Repositories.Service
             return _context.Newsletters.Select(x => x.Email).ToList();
         }
 
-        public void AddSubscibers(Newsletter newsletter)
+        public int AddSubscibers(Newsletter newsletter)
         {
-            _context.Newsletters.Add(newsletter);
-            _context.SaveChanges();
+            try
+            {
+                _context.Newsletters.Add(newsletter);
+                _context.SaveChanges();
+                return 0;
+            }
+            catch (MySqlException exception)
+            {
+                if (exception.Number == 2601 || exception.Message.ToLower().Contains("duplicate"))
+                {
+                    return 1;
+                }
+                else
+                    return 2;
+            }
         }
     }
 }
