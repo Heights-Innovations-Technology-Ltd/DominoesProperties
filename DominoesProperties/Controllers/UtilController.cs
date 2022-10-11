@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using DominoesProperties.Enums;
 using DominoesProperties.Models;
 using DominoesProperties.Services;
@@ -180,7 +181,18 @@ namespace DominoesProperties.Controllers
             {
                 Email = Email
             };
-            utilRepository.AddNSubscibers(newsletter);
+            utilRepository.AddSubscibers(newsletter);
+
+            string filePath = Path.Combine(environment.ContentRootPath, @"EmailTemplates\newsletter.html");
+            string html = System.IO.File.ReadAllText(filePath.Replace(@"\", "/"));
+
+            _emailService.SendEmail(new EmailData
+            {
+                EmailBody = html,
+                EmailSubject = "Newsletter -  Real Estate",
+                EmailToId = Email
+            });
+
             response.Success = true;
             response.Message = "You have been added to our mailing list successful";
             return response;
