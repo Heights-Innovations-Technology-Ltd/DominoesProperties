@@ -13,6 +13,6 @@ namespace Repositories.Repository
         Enquiry GetEnquiry(long id);
         bool CloseEnquiry(Enquiry enquiry);
         List<string> GetNewsletterSubscibers();
-        void AddNSubscibers(Newsletter newsletter);
+        int AddSubscibers(Newsletter newsletter);
     }
 }

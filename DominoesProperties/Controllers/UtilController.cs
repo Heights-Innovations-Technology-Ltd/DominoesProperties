@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using DominoesProperties.Enums;
 using DominoesProperties.Models;
 using DominoesProperties.Services;
@@ -175,16 +176,36 @@ namespace DominoesProperties.Controllers
 
         [HttpPost("subscribers")]
         [AllowAnonymous]
-        public ApiResponse Subscribe([FromBody] [Required(ErrorMessage = "Email is required")] [MaxLength(100)][EmailAddress(ErrorMessage ="Not a valid email address")] string Email)
+        public ApiResponse Subscribe([FromBody][Required(ErrorMessage = "Email is required")][MaxLength(100)][EmailAddress(ErrorMessage = "Not a valid email address")] string Email)
         {
             Newsletter newsletter = new()
             {
                 Email = Email
             };
-            utilRepository.AddNSubscibers(newsletter);
-            response.Success = true;
-            response.Message = "You have been added to our mailing list successful";
-            return response;
+            var xx = utilRepository.AddSubscibers(newsletter);
+            if (xx == 0)
+            {
+
+                string filePath = Path.Combine(environment.ContentRootPath, @"EmailTemplates\newsletter.html");
+                string html = System.IO.File.ReadAllText(filePath.Replace(@"\", "/"));
+
+                _emailService.SendEmail(new EmailData
+                {
+                    EmailBody = html,
+                    EmailSubject = "Newsletter -  Real Estate",
+                    EmailToId = Email
+                });
+
+                response.Success = true;
+                response.Message = "You have been added to our mailing list successfully";
+                return response;
+            }
+            else
+            {
+                response.Success = false;
+                response.Message = xx == 1 ? "You seem to already have subscribed to our newsletter" : "Error saving your email, please try again shortly";
+                return response;
+            }
         }
 
         [HttpGet("subscribers")]
