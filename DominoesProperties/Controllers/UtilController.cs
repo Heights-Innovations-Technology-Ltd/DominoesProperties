@@ -97,6 +97,13 @@ namespace DominoesProperties.Controllers
         public ApiResponse Enquiry([FromQuery] QueryParams queryParams, [FromQuery] string propertyId, [FromQuery] string customerId)
         {
             var enquiries = utilRepository.GetEnquiries();
+            if(enquiries == null || enquiries.Count < 1)
+            {
+                response.Success = true;
+                response.Message = "No record found";
+                response.Data = new List<Enquiry>();
+                return response;
+            }
 
             if (!string.IsNullOrEmpty(customerId))
             {
