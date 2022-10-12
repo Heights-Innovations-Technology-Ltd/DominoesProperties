@@ -1,0 +1,132 @@
+﻿
+@{
+    ViewData["Title"] = "Setting";
+    Layout = "~/Views/Shared/_LayoutDash.cshtml";
+}
+
+<style>
+	.nav_link{
+		color: #d05a15;
+		font-size:18px;
+	}
+
+	.nav-tabs .nav_link{
+		border: 1px solid #d05a15;
+	}
+
+	.nav-tabs .nav_link.active{
+		border-color: #d05a15 #d05a15 #fff;
+	}
+	.nav-tabs .nav_link:hover{
+		border-color: #d05a15 #d05a15 #fff;
+		color:#000;
+	}
+
+</style>
+<!-- Start Dashboard Area -->
+<div class="dashboard-area">
+	<div class="container-fluid">
+		<div class="dashboard-title-wrap">
+			<div class="row align-items-center">
+				<div class="col-lg-6 col-sm-6">
+					<ul class="dashboard-page-title">
+						<li>
+							<a href="/dashboard">
+								Home
+							</a>
+						</li>
+
+						<li class="active">Settings</li>
+					</ul>
+				</div>
+				<div class="col-lg-6 col-sm-6">
+				</div>
+			</div>
+		</div>
+
+		<div class="add-listing">
+			<div class="row">
+				<div class="col-md-9 mx-auto">
+					<ul class="nav nav-tabs mb-5" id="myTab" role="tablist">
+						<li class="nav-item" role="presentation">
+							<a class="nav-link nav_link active" id="home-tab" data-bs-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Property Type</a>
+						</li>
+						<li class="nav-item" role="presentation">
+							<a class="nav-link nav_link" id="profile-tab" data-bs-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">User Role</a>
+						</li>
+						<li class="nav-item" role="presentation">
+							<a class="nav-link nav_link" id="contact-tab" data-bs-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">Admin User</a>
+						</li>
+					</ul>
+					<div class="tab-content" id="myTabContent">
+						<div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+							<a class="default-btn float-end" href="javascript:void(0)"><i class="fa fa-plus"></i> Property Type</a>
+							<table id="Table_property">
+								<thead>
+									<tr>
+										<th>Type Name</th>
+										<th>Action</th>
+									</tr>
+								</thead>
+								<tbody></tbody>
+							</table>
+						</div>
+						<div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+							<h3>Admin User Role</h3>
+							<table id="Table_role">
+								<thead>
+									<tr>
+										<th>Role Name</th>
+										<th>Action</th>
+									</tr>
+								</thead>
+								<tbody></tbody>
+							</table>
+						</div>
+						<div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
+							<h3>Admin User</h3>
+							<table id="Table_user">
+								<thead>
+									<tr>
+										<th>Email</th>
+										<th>Role Name</th>
+										<th>Status</th>
+										<th>Action</th>
+									</tr>
+								</thead>
+								<tbody></tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+		</div>
+	</div>
+	@*property type template*@
+	<template id="type-template">
+		<swal-html>
+			<div class="model fadeIn modal-lg">
+				<div class="payment w-100">
+					<div class="receipt-box">
+						<div class="form-group">
+							<label>Property Type Name</label>
+							<input type="text" class="form-control" name="Property-type-Name" id="name" required>
+						</div>
+						<button class="default-btn  rounded" type="button" onclick="addPropertyType()">Submit <i class="fa fa-arrow-right"></i></button>
+					</div>
+
+				</div>
+			</div>
+		</swal-html>
+	</template>
+</div>
+<!-- End Dashboard Area -->
+<script>
+	$(() => {
+		getNewSubscribers();
+		$('#Table_role').DataTable();
+		$('#Table_property').DataTable();
+	})
+</script>
+
