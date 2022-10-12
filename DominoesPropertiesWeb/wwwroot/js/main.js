@@ -27,7 +27,6 @@
             Password: $("#password").val(),
             ConfirmPassword: $("#confirm_password").val()
         };
-
         $.ajax({
             type: "post",
             url: "/createuser",
@@ -202,7 +201,6 @@ const GetUserProfile = (mode) => {
         } else {
             var res = JSON.parse(xhr.responseText);
             var data = JSON.parse(res).data;
-            console.log(data);
             if (JSON.parse(res).success) {
                 profile(data,mode);
                
@@ -371,7 +369,6 @@ const GetProperties = (type) => {
         } else {
             var res = JSON.parse(xhr.responseText);
             var data = JSON.parse(res).data;
-            console.log(data);
             if (JSON.parse(res).success) {
                 $('#property-count').html(data.length + ' Results Found');
                 
@@ -795,7 +792,6 @@ const getSingleProperty = () => {
         } else {
             var res = JSON.parse(xhr.responseText);
             var data = JSON.parse(res).data;
-            console.log(data);
             if (JSON.parse(res).success) {
                 singleData = data;
                 if (data.data.Cover.length > 0) {
@@ -1518,7 +1514,6 @@ const GetInvestments = () => {
         } else {
             var res = JSON.parse(xhr.responseText);
             var data = JSON.parse(res).data;
-            console.log(data);
             if (JSON.parse(res).success) {
                 investmentTmp(data);
             } else {
@@ -2504,7 +2499,6 @@ const confirmTransaction = () => {
 
 $(document).ready(function () {
     $('.btn-news').click(function (e) {
-        console.log('here');
         e.preventDefault();
         if ($('#email').val().trim() == "") {
             Swal.fire(
@@ -2532,7 +2526,6 @@ $(document).ready(function () {
             } else {
                 var res = JSON.parse(xhr.responseText);
                 var message = JSON.parse(res).message;
-                console.log(message);
                 if (JSON.parse(res).success) {
                     $(".btn-news").attr("disabled", !1);
                     Swal.fire(
@@ -2570,8 +2563,6 @@ const getNewSubscribers = () => {
             //alert('Something went wrong try again!');
         } else {
             var res = JSON.parse(xhr.responseText);
-
-            console.log(res);
             var data = JSON.parse(res).data;
             if (JSON.parse(res).success) {
                 $('#newsCount').text(`New Subscribers (${data.length})`);
@@ -2601,7 +2592,6 @@ const getEnquiries = () => {
         } else {
             var res = JSON.parse(xhr.responseText);
             var data = JSON.parse(res).data;
-            console.log(data);
             if (JSON.parse(res).success) {
                 enquiriesTmp(data);
             } else {
@@ -2642,10 +2632,8 @@ const getEnquiry = (id) => {
             //alert('Something went wrong try again!');
         } else {
             var res = JSON.parse(xhr.responseText);
-            console.log(res);
             var data = JSON.parse(res).data;
             if (JSON.parse(res).success) {
-                console.log(data.message);
                 Swal.fire({
                     template: '#my-template'
                 });
@@ -2669,7 +2657,6 @@ const getEnquiry = (id) => {
 }
 
 const treatEnquiry = ()=> {
-    console.log('here');
     let id = $('#enquiryId').val();
     if (id == "") {
         return;
@@ -2687,7 +2674,6 @@ const treatEnquiry = ()=> {
             $(".btn-treated").html('Mark as treated').attr("disabled", !1);
         } else {
             var res = JSON.parse(xhr.responseText);
-            console.log(res);
             var data = JSON.parse(res).message;
             if (JSON.parse(res).success) {
                 Swal.fire(
@@ -2709,6 +2695,48 @@ const treatEnquiry = ()=> {
         //alert("Request failed");
     }
 };
+
+const addPropertyType = () => {
+    let type = $('#property-type-name').val();
+    if (type == "") {
+        return;
+    }
+
+    this.attr("disabled", !0);
+    let xhr = new XMLHttpRequest();
+    let url = `/property-type`;
+    xhr.open('POST', url, false);
+    xhr.setRequestHeader("content-type", "application/json");
+    xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+    try {
+        xhr.send();
+        if (xhr.status != 200) {
+            //alert('Something went wrong try again!');
+            this.attr("disabled", !1);
+        } else {
+            var res = JSON.parse(xhr.responseText);
+            var data = JSON.parse(res).message;
+            if (JSON.parse(res).success) {
+                Swal.fire(
+                    'Good job!',
+                    data,
+                    'success'
+                );
+                this.attr("disabled", !1)
+               
+            } else {
+                this.attr("disabled", !1);
+                Swal.fire(
+                    'Oops!',
+                    data,
+                    'error'
+                );
+            }
+        }
+    } catch (err) { // instead of onerror
+        //alert("Request failed");
+    }
+}
 
 
 

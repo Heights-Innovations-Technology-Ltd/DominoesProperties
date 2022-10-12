@@ -186,6 +186,15 @@ namespace DominoesPropertiesWeb.Controllers
             }
             return View();
         }
+        public IActionResult Setting()
+        {
+            var isAuthAdmin = this.session.GetString("RoleFK");
+            if (isAuthAdmin == null || isAuthAdmin.Equals(string.Empty))
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            return View();
+        }
 
         [Route("get-enquiries")]
         public async Task<JsonResult> GetEnquiries()
@@ -211,6 +220,22 @@ namespace DominoesPropertiesWeb.Controllers
             var res = Task.Run(() => httpContext.Put($"Util/enquiry/{enquiryId}/{status}", null));
             await Task.WhenAll(res);
             var data = res.Status == TaskStatus.RanToCompletion ? res.Result : null;
+            return Json(JsonConvert.SerializeObject(data));
+        }
+
+        [Route("/property-type")]
+        public async Task<JsonResult> PropertyType([FromBody] dynamic type)
+        {
+            JObject jObject = JsonConvert.DeserializeObject<JObject>(Convert.ToString(type));
+
+            dynamic obj = new ExpandoObject();
+
+            obj.Name = Convert.ToString(jObject["type"]);
+
+            var res = Task.Run(() => httpContext.Post("Config/property-type", obj));
+            var data = await res.GetAwaiter().GetResult();
+            //await Task.WhenAll(res);
+            //var data = res.Status == TaskStatus.RanToCompletion ? res.Result : null;
             return Json(JsonConvert.SerializeObject(data));
         }
 
