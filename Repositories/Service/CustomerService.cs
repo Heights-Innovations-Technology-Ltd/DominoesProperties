@@ -5,32 +5,44 @@ using Helpers;
 using Microsoft.EntityFrameworkCore;
 using Models.Context;
 using Models.Models;
+using MySql.Data.MySqlClient;
 using Repositories.Repository;
 
 namespace Repositories.Service
 {
     public class CustomerService : BaseRepository, ICustomerRepository
     {
+        private readonly ILoggerManager logger;
 
-        public CustomerService(dominoespropertiesContext context):base(context)
+        public CustomerService(dominoespropertiesContext context, ILoggerManager _logger):base(context)
         {
+            logger = _logger;
         }
 
         public Customer CreateCustomer(Customer customer)
         {
-            _context.Customers.Add(customer);
-            _context.SaveChanges();
-
-            Wallet customerWallet = new Wallet
+            try
             {
-                CustomerId = customer.Id,
-                WalletNo = CommonLogic.GetUniqueNumber("WA"),
-            };
+                _context.Customers.Add(customer);
+                _context.SaveChanges();
 
-            _context.Wallets.Add(customerWallet);
-            _context.SaveChanges();
+                Wallet customerWallet = new Wallet
+                {
+                    CustomerId = customer.Id,
+                    WalletNo = CommonLogic.GetUniqueNumber("WA")
+                };
 
-            return customer;
+                _context.Wallets.Add(customerWallet);
+                _context.SaveChanges();
+
+                logger.LogInfo("Customer creation done successfully");
+                return customer;
+            }
+            catch (Exception ex)
+            {
+                logger.LogInfo("Error creating customer"+ ex);
+                throw;
+            }
         }
 
         public void DeleteCustomer(string uniqueReference)
@@ -39,11 +51,13 @@ namespace Repositories.Service
             customer.IsDeleted = true;
             _context.Customers.Update(customer);
             _context.SaveChanges();
+
+            logger.LogInfo("Customer deletion done successfully");
         }
 
         public Customer GetCustomer(string identifier)
         {
-            var customer = _context.Customers.Local.Where(x => x.Email.Equals(identifier) || x.UniqueRef.Equals(identifier)).SingleOrDefault();
+            var customer = _context.Customers.Local.Where(x => x.Email.Equals(identifier) || x.UniqueRef.Equals(identifier) || x.Phone == identifier).SingleOrDefault();
             if (customer == null)
             {
                 customer = _context.Customers
@@ -51,6 +65,7 @@ namespace Repositories.Service
                     .Include(x => x.Wallet)
                     .SingleOrDefault();
             }
+
             return customer;
         }
 

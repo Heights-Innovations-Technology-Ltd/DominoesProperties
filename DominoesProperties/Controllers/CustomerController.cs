@@ -68,6 +68,12 @@ namespace DominoesProperties.Controllers
                 return response;
             }
 
+            if (customerRepository.GetCustomer(customer.Phone) != null)
+            {
+                response.Message = $"Customer with phone numer {customer.Phone} already exist";
+                return response;
+            }
+
             if (adminRepository.GetUser(customer.Email) != null)
             {
                 response.Message = $"Admin user exist with email {customer.Email} and admin is not allowed as a customer";
@@ -346,7 +352,7 @@ namespace DominoesProperties.Controllers
                 try
                 {
                     string token = "", html = "", subject = "", filePath="";
-                    string url = string.Format("{0}{1}{2}?value={3}", configuration["app_settings:WebEndpoint"], validationModule.ToString().ToLower(), token, "customer");
+                    string url = string.Format("{0}/{1}{2}?value={3}", configuration["app_settings:WebEndpoint"], validationModule.ToString().ToLower(), token, "customer");
                     switch (validationModule)
                     {
                         case ValidationModule.ACTIVATE_ACCOUNT:
