@@ -209,28 +209,26 @@
 							<div class="others-options justify-content-center d-flex align-items-center">
 								<ul>
 									<li>
-										<a href="#" class="wishlist">
-											<i class="ri-heart-line"></i>
-											<span>0</span>
+										<a asp-controller="Dashboard" asp-action="Index">
+											<i class="ri-dashboard-line"></i>
+											Dashboard
 										</a>
 									</li>
+									@if (Username != null)
+									{
+										<li>
+											<a asp-controller="Dashboard" asp-action="Profile">
+												<i class="ri-user-line"></i>
+												My Profile
+											</a>
+										</li>
+									}
+
 									<li>
-										<a href="#" class="login">
-											<i class="ri-user-line"></i>
+										<a href="javascript:void(0)" class="logout">
+											<i class="ri-logout-box-r-line"></i>
+											Sign out
 										</a>
-									</li>
-									<li>
-										<a href="#" class="default-btn">
-											Add Listing
-										</a>
-									</li>
-									<li>
-										<form class="search-form">
-											<input type="text" class="form-control" placeholder="Search...">
-											<button type="submit" class="src-btn">
-												<i class="ri-search-line"></i>
-											</button>
-										</form>
 									</li>
 								</ul>
 							</div>
