@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Models.Models;
 
 namespace Repositories.Repository
@@ -6,7 +7,7 @@ namespace Repositories.Repository
     public interface IConfigRepository
     {
         Role AddRole(Role role);
-        PropertyType AddPropertyType(PropertyType propertyType);
+        Task<PropertyType> AddPropertyType(PropertyType propertyType);
         List<Role> GetRoles();
         List<PropertyType> GetPropertyTypes();
         bool DeleteRole(int RoleId);
