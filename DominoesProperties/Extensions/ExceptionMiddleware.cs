@@ -43,7 +43,7 @@ namespace DominoesProperties.Extensions
                 BadHttpRequestException => "Invalid request payload supplied",
                 NotImplementedException => "Method not implemented in logic",
                 DbUpdateException => exception.Message,
-                MySqlException => "Database exception occured, kindly try again later",
+                MySqlException => "Error performing operation, kindly try again later or contact admin for support",
                 _ => exception.Message
             };
 

@@ -13,7 +13,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Models.Models;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Repositories.Repository;
 
 namespace DominoesProperties.Controllers
@@ -175,20 +174,40 @@ namespace DominoesProperties.Controllers
 
         [HttpPost("subscribers")]
         [AllowAnonymous]
-        public ApiResponse Subscribe([FromBody] [Required(ErrorMessage = "Email is required")] [MaxLength(100)][EmailAddress(ErrorMessage ="Not a valid email address")] string Email)
+        public ApiResponse Subscribe([FromBody][Required(ErrorMessage = "Email is required")][MaxLength(100)][EmailAddress(ErrorMessage = "Not a valid email address")] string Email)
         {
             Newsletter newsletter = new()
             {
                 Email = Email
             };
-            utilRepository.AddNSubscibers(newsletter);
-            response.Success = true;
-            response.Message = "You have been added to our mailing list successful";
-            return response;
+            var xx = utilRepository.AddSubscibers(newsletter);
+            if (xx == 0)
+            {
+
+                string filePath = Path.Combine(environment.ContentRootPath, @"EmailTemplates\newsletter.html");
+                string html = System.IO.File.ReadAllText(filePath.Replace(@"\", "/"));
+
+                _emailService.SendEmail(new EmailData
+                {
+                    EmailBody = html,
+                    EmailSubject = "Newsletter -  Real Estate",
+                    EmailToId = Email
+                });
+
+                response.Success = true;
+                response.Message = "You have been added to our mailing list successfully";
+                return response;
+            }
+            else
+            {
+                response.Success = false;
+                response.Message = xx == 1 ? "You seem to already have subscribed to our newsletter" : "Error saving your email, please try again shortly";
+                return response;
+            }
         }
 
         [HttpGet("subscribers")]
-        [AllowAnonymous]
+        [Authorize(Roles = "SUPER, ADMIN")]
         public ApiResponse Subscribers()
         {
             response.Success = true;
@@ -197,7 +216,53 @@ namespace DominoesProperties.Controllers
             return response;
         }
 
+        [HttpGet("onboard-customers")]
+        [Authorize(Roles = "SUPER, ADMIN")]
+        public ApiResponse OnboardCustomers([FromQuery] DateTime? startDate)
+        {
+            if (configuration.GetValue<bool>("app_settings:onboard"))
+            {
+
+                var customers = customerRepository.GetCustomers();
+                if (customers == null)
+                {
+                    response.Success = false;
+                    response.Message = "No customer found";
+                    return response;
+                }
+                if (startDate != null)
+                {
+                    customers = customers.FindAll(x => x.DateRegistered.Date.CompareTo(DateTime.Now.Date) >= 0).ToList();
+                }
+
+                customers.ForEach(x =>
+                {
+                    string filePath = Path.Combine(environment.ContentRootPath, @"EmailTemplates\account-setup.html");
+                    string html = System.IO.File.ReadAllText(filePath.Replace(@"\", "/"));
+                    html = html.Replace("{FIRSTNAME}", string.Format("{0} {1}", x.FirstName, x.LastName)).Replace("{webroot}", configuration["app_settings:WebEndpoint"]);
+
+                    _ = _emailService.SendEmail(new EmailData
+                    {
+                        EmailBody = html,
+                        EmailSubject = "Customer Onboarding -  Real Estate Dominoes",
+                        EmailToName = string.Format("{0} {1}", x.FirstName, x.LastName),
+                        EmailToId = x.Email
+                    });
+                });
+                response.Success = true;
+                response.Message = "Onboarding email sending in process";
+                return response;
+            }
+            else
+            {
+                response.Success = false;
+                response.Message = "Onboarding email sending is disabled";
+                return response;
+            }
+        }
+
         [HttpGet("test-email/{email}/{encoded}")]
+        [Authorize(Roles = "SUPER, ADMIN")]
         public string SendTestMail(string email, string encoded)
         {
             string token = CommonLogic.GetUniqueRefNumber("AT");
@@ -218,6 +283,7 @@ namespace DominoesProperties.Controllers
         }
 
         [HttpPost("test/encypt")]
+        [Authorize(Roles = "SUPER, ADMIN")]
         public ApiResponse TestEncryption([FromBody] Dictionary<string, string> keyValues)
         {
             Dictionary<string, string> result = new();
