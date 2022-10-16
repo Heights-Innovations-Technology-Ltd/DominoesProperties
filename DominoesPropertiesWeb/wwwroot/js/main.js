@@ -501,10 +501,10 @@ const filterProperty = () => {
     }
 }
 
-$('.src-btn').on('click', (e) => {
-    e.preventDefault();
-    filterProperty();
-});
+//$('.src-btn').on('click', (e) => {
+//    e.preventDefault();
+//    filterProperty();
+//});
 
 const adminPropertTmp = (data) => {
     $('#properties').html('');
@@ -2828,6 +2828,38 @@ $('.signin').click(() => {
     $('#signup').addClass('d-none');
     $('#signin').removeClass('d-none');
 });
+
+const sendOnboardingEmail = () => {
+    var startDate = $('#startDate').val();
+    if (startDate == "") {
+        return;
+    }
+
+    let xhr = new XMLHttpRequest();
+    let url = "/onboarding/" + startDate;
+    xhr.open('GET', url, false);
+    xhr.setRequestHeader("content-type", "application/json");
+    xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+    try {
+
+        xhr.send();
+        if (xhr.status != 200) {
+            // alert('Something went wrong try again!');
+        } else {
+            var res = JSON.parse(xhr.responseText);
+            var data = JSON.parse(res).data;
+            console.log(data);
+            if (JSON.parse(res).success) {
+                typeTemp(data);
+            } else {
+                window.scrollTo(0, 0);
+            }
+
+        }
+    } catch (err) { // instead of onerror
+        //alert("Request failed");
+    }
+}
 
 function forgetPassword() {
 

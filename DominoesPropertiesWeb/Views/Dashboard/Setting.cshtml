@@ -100,17 +100,18 @@
 								<tbody></tbody>
 							</table>
 						</div>
-						<div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="email-tab">
+						<div class="tab-pane fade" id="email" role="tabpanel" aria-labelledby="email-tab">
 							<h3>Onboarding Email</h3>
 							<div class="row">
 								<div class="col-md-6">
+									<label>Start Date</label>
 									<input class="form-group" id="startDate" type="date" name="startDate" />
 								</div>
 								<div class="col-md-6">
-									<input class="form-group" id="endDate" type="date" name="endDate" />
+									<a class="default-btn float-end" onclick="sendOnboardingEmail()" href="javascript:void(0)">Send Mail</a>
 								</div>
 							</div>
-							<a class="default-btn float-end" onclick="" href="javascript:void(0)">Send Mail</a>
+							
 						</div>
 					</div>
 				</div>

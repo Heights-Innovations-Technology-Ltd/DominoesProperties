@@ -103,6 +103,15 @@ namespace DominoesPropertiesWeb.Controllers
             var data = res.Status == TaskStatus.RanToCompletion ? res.Result : null;
             return Json(JsonConvert.SerializeObject(data));
         }
+        
+        [Route("onboarding/{startDate}")]
+        public async Task<JsonResult> Onboarding(string startDate)
+        {
+            var res = Task.Run(() => httpContext.Get($"Util/onboard-customer?startDate={startDate}"));
+            await Task.WhenAll(res);
+            var data = res.Status == TaskStatus.RanToCompletion ? res.Result : null;
+            return Json(JsonConvert.SerializeObject(data));
+        }
 
         [Route("update-profile")]
         public async Task<JsonResult> EditCustomer([FromBody] dynamic profile)
