@@ -108,6 +108,13 @@ $('.btn-login').click(() => {
             var res = JSON.parse(xhr.responseText);
             var data = JSON.parse(res).data;
             if (JSON.parse(res).success) {
+                var propertyId = sessionStorage.getItem("redirectToPropertyDetail");
+                console.log(propertyId);
+                if (propertyId != "") {
+                    propertyDetails(propertyId);
+                    sessionStorage.removeItem("redirectToPropertyDetail");
+                    return;
+                }
                 window.location.replace('/dashboard');
                 $(".btn-login").html("Login").attr("disabled", !1);
                 $(".form-control").val("");
@@ -438,7 +445,7 @@ const filterProperty = () => {
     let urls = window.location.href.split("/");
     let currentUrl = urls[3];
     if (currentUrl == "") {
-        sessionStorage.setItem("landingFilter", $("#location").val())
+        sessionStorage.setItem("landingFilter", $(".location").val())
         window.location.replace("Home/properties");
         return;
     }
@@ -493,6 +500,11 @@ const filterProperty = () => {
         //alert("Request failed");
     }
 }
+
+$('.src-btn').on('click', (e) => {
+    e.preventDefault();
+    filterProperty();
+});
 
 const adminPropertTmp = (data) => {
     $('#properties').html('');
@@ -741,11 +753,6 @@ const LandingPagePropertyTmp = (data) => {
 
 const propertyDetails = (id) => {
 
-    if ($('#refId').val() == null || $('#refId').val() == "") {
-        window.location.replace('/Home/signin');
-        return;
-    }
-
     if ($('#isSubcribed').val() == "False" && $('#refId').val() != "") {
         Swal.fire({
             icon: 'info',
@@ -758,7 +765,6 @@ const propertyDetails = (id) => {
         })
         return;
     }
-
     window.location.replace('/Home/PropertyDetails/' + id);
 }
 
@@ -776,7 +782,20 @@ const getSingleProperty = () => {
         location = '/Dashboard/Profile';
         return;
     }
-    
+
+    if ($('#refId').val() == null || $('#refId').val() == "") {
+        Swal.fire({
+            icon: 'info',
+            title: 'Oops...',
+            showCancelButton: false,
+            showConfirmButton: false,
+            allowOutsideClick: false,
+            text: 'Please, kindly login to have full access',
+            footer: `<a href="javascript:void(0)" class="default-btn" onclick="propertyDetailLogin()">Login</a>`
+        });
+    }
+
+   
     let urls = window.location.href.split("/");
     let id = urls[5];
     let xhr = new XMLHttpRequest();
@@ -940,6 +959,13 @@ const getSingleProperty = () => {
         //alert("Request failed");
         $(".btn-activate").html("Activate").attr("disabled", !1);
     }
+}
+
+const propertyDetailLogin = () => {
+    let urls = window.location.href.split("/");
+    let id = urls[5];
+    sessionStorage.setItem("redirectToPropertyDetail", id);
+    window.location.replace("/Home/Signin");
 }
 
 const calUnit =  () => {
@@ -2696,23 +2722,35 @@ const treatEnquiry = ()=> {
     }
 };
 
+const typeModal = () => {
+    Swal.fire({
+        template: '#type-template',
+        showCancelButton: false,
+        showConfirmButton: false
+    });
+}
+
+
 const addPropertyType = () => {
     let type = $('#property-type-name').val();
     if (type == "") {
         return;
     }
+    let param = {
+        type: type
+    }
 
-    this.attr("disabled", !0);
+    //this.attr("disabled", !0);
     let xhr = new XMLHttpRequest();
     let url = `/property-type`;
     xhr.open('POST', url, false);
     xhr.setRequestHeader("content-type", "application/json");
     xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
     try {
-        xhr.send();
+        xhr.send(JSON.stringify(param));
         if (xhr.status != 200) {
             //alert('Something went wrong try again!');
-            this.attr("disabled", !1);
+            //this.attr("disabled", !1);
         } else {
             var res = JSON.parse(xhr.responseText);
             var data = JSON.parse(res).message;
@@ -2722,10 +2760,10 @@ const addPropertyType = () => {
                     data,
                     'success'
                 );
-                this.attr("disabled", !1)
+                //this.attr("disabled", !1)
                
             } else {
-                this.attr("disabled", !1);
+                //this.attr("disabled", !1);
                 Swal.fire(
                     'Oops!',
                     data,
@@ -2738,7 +2776,48 @@ const addPropertyType = () => {
     }
 }
 
+const getTypes = () => {
+    let xhr = new XMLHttpRequest();
+    let url = "/get-property-types";
+    xhr.open('GET', url, false);
+    xhr.setRequestHeader("content-type", "application/json");
+    xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+    try {
 
+        xhr.send();
+        if (xhr.status != 200) {
+            // alert('Something went wrong try again!');
+        } else {
+            var res = JSON.parse(xhr.responseText);
+            var data = JSON.parse(res).data;
+            console.log(data);
+            if (JSON.parse(res).success) {
+                typeTemp(data);
+            } else {
+                window.scrollTo(0, 0);
+            }
+
+        }
+    } catch (err) { // instead of onerror
+        //alert("Request failed");
+        $(".btn-login").html("Login").attr("disabled", !1);
+    }
+}
+
+const typeTemp = (data) => {
+    $('#Table_property tbody').html('');
+
+    data.forEach(x => {
+        let res = `<tr>
+                    <td>${x.name}</td>
+                    <td>
+                        <a href="#" class="text-warning mr-2"><i class="fa fa-pencil"></i></a>
+                        <a href="#" class="text-danger"><i class="fa fa-trash"></i></a>
+                    </td>
+                </tr>`;
+        $('#Table_property tbody').append(res);
+    })
+}
 
 $('.signup').click(() => {
     $('#signup').removeClass('d-none');

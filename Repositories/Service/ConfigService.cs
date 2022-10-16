@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Models.Context;
 using Models.Models;
 using Repositories.Repository;
@@ -12,10 +13,10 @@ namespace Repositories.Service
         {
         }
 
-        public PropertyType AddPropertyType(PropertyType propertyType)
+        public async Task<PropertyType> AddPropertyType(PropertyType propertyType)
         {
             PropertyType prop = _context.PropertyTypes.Add(propertyType).Entity;
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return prop;
         }
 

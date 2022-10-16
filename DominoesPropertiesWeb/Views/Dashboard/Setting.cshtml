@@ -60,8 +60,8 @@
 					</ul>
 					<div class="tab-content" id="myTabContent">
 						<div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
-							<a class="default-btn float-end" href="javascript:void(0)"><i class="fa fa-plus"></i> Property Type</a>
-							<table id="Table_property">
+							<a class="default-btn float-end" onclick="typeModal()" href="javascript:void(0)"><i class="fa fa-plus"></i> Property Type</a>
+							<table id="Table_property" class="mb-5">
 								<thead>
 									<tr>
 										<th>Type Name</th>
@@ -100,33 +100,33 @@
 					</div>
 				</div>
 			</div>
-			
 		</div>
 	</div>
-	@*property type template*@
-	<template id="type-template">
-		<swal-html>
-			<div class="model fadeIn modal-lg">
-				<div class="payment w-100">
-					<div class="receipt-box">
-						<div class="form-group">
-							<label>Property Type Name</label>
-							<input type="text" class="form-control" name="Property-type-Name" id="name" required>
-						</div>
-						<button class="default-btn  rounded" type="button" onclick="addPropertyType()">Submit <i class="fa fa-arrow-right"></i></button>
-					</div>
-
-				</div>
-			</div>
-		</swal-html>
-	</template>
 </div>
+@*property type template*@
+<template id="type-template">
+	<swal-html>
+		<div class="model fadeIn modal-lg">
+			<div class="payment w-100">
+				<div class="receipt-box">
+					<div class="form-group">
+						<label>Property Type Name</label>
+						<input type="text" class="form-control" name="Property-type-Name" id="property-type-name" required>
+					</div>
+					<button class="default-btn" type="button" onclick="addPropertyType()">Submit</button>
+				</div>
+
+			</div>
+		</div>
+	</swal-html>
+</template>
 <!-- End Dashboard Area -->
 <script>
 	$(() => {
-		getNewSubscribers();
-		$('#Table_role').DataTable();
 		$('#Table_property').DataTable();
+		$('#Table_role').DataTable();
+		getTypes();
+		getNewSubscribers();
 	})
 </script>
 

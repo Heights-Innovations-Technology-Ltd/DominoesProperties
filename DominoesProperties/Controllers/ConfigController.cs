@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Models.Models;
 using Repositories.Repository;
+using System.Threading.Tasks;
 
 namespace DominoesProperties.Controllers
 {
@@ -37,22 +38,24 @@ namespace DominoesProperties.Controllers
         [HttpPut]
         [Route("property-type")]
         [Authorize(Roles = "SUPER")]
-        public ApiResponse EditPropertyType([FromBody] PropertyType property)
+        public async Task<ApiResponse> EditPropertyType([FromBody] PropertyType property)
         {
             if (string.IsNullOrEmpty(property.Name))
             {
                 response.Message = "Property type name cannot be empty";
                 return response;
             }
+           
             response.Data = configRepository.EditPropertyTypes(property);
-            response.Message = "Property type update successful";
+            response.Success = true;
+            response.Message = "Property type updated successful";
             return response;
         }
 
         [HttpPost]
         [Route("property-type")]
         [Authorize(Roles = "SUPER")]
-        public ApiResponse AddPropertyType([FromBody] string propertyName)
+        public async Task<ApiResponse> AddPropertyType([FromBody] string propertyName)
         {
             if (string.IsNullOrEmpty(propertyName))
             {
@@ -63,8 +66,9 @@ namespace DominoesProperties.Controllers
             {
                 Name = propertyName
             };
-            response.Data = configRepository.AddPropertyType(pp);
-            response.Message = "Property type update successful";
+            response.Data = await configRepository.AddPropertyType(pp);
+            response.Success = true;
+            response.Message = "Property type created successful";
             return response;
         }
 

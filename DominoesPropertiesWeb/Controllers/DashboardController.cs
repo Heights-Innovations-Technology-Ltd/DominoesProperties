@@ -228,14 +228,10 @@ namespace DominoesPropertiesWeb.Controllers
         {
             JObject jObject = JsonConvert.DeserializeObject<JObject>(Convert.ToString(type));
 
-            dynamic obj = new ExpandoObject();
-
-            obj.Name = Convert.ToString(jObject["type"]);
-
-            var res = Task.Run(() => httpContext.Post("Config/property-type", obj));
-            var data = await res.GetAwaiter().GetResult();
-            //await Task.WhenAll(res);
-            //var data = res.Status == TaskStatus.RanToCompletion ? res.Result : null;
+            var res = Task.Run(() => httpContext.Post("Config/property-type", Convert.ToString(jObject["type"])));
+            //var data = await res.GetAwaiter().GetResult();
+            await Task.WhenAll(res);
+            var data = res.Status == TaskStatus.RanToCompletion ? res.Result : null;
             return Json(JsonConvert.SerializeObject(data));
         }
 
