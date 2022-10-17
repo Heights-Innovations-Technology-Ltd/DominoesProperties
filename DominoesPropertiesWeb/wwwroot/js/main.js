@@ -2490,8 +2490,6 @@ $('.btn-request').click(() => {
 const confirmTransaction = () => {
     let urls = window.location.href.split("/");
     let token = urls[3].split("?")[1];
-    console.log(token);
-    return;
     if (token != undefined) {
         if (token.includes("success")) {
 
@@ -2501,25 +2499,50 @@ const confirmTransaction = () => {
                 },
                 buttonsStyling: false
             })
-
-            confirmPropertyUpdate.fire({
-                title: 'Well done',
-                text: "Congratulation your transaction was successful, kindly proceed to your dashboard to verify",
-                icon: 'success',
-                showCancelButton: false,
-                confirmButtonText: 'Yes!',
-                reverseButtons: true
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    window.location.replace('/dashboard');
-                }
-            });
+            if (token.includes("activation-status")) {
+                confirmPropertyUpdate.fire({
+                    title: 'Well done',
+                    text: "Email sent successfully!  Click on the link to verify your account",
+                    icon: 'success',
+                    showCancelButton: false,
+                    confirmButtonText: 'Yes!',
+                    reverseButtons: true
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.replace('/Home/Signin');
+                    }
+                });
+                return;
+            } else {
+                confirmPropertyUpdate.fire({
+                    title: 'Well done',
+                    text: "Congratulation your transaction was successful, kindly proceed to your dashboard to verify",
+                    icon: 'success',
+                    showCancelButton: false,
+                    confirmButtonText: 'Yes!',
+                    reverseButtons: true
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.replace('/dashboard');
+                    }
+                });
+                return;
+            }
         } else {
-            Swal.fire(
-                'Oops!',
-                'Transaction failed kindly contact admin for support',
-                'error'
-            );
+            if (token.includes("activation_status")) {
+                Swal.fire(
+                    'Oops!',
+                    'Verification Email failed, kindly contact admin for support',
+                    'error'
+                );
+                return;
+            } else {
+                Swal.fire(
+                    'Oops!',
+                    'Transaction failed kindly contact admin for support',
+                    'error'
+                );
+            }
         }
     }
 }
