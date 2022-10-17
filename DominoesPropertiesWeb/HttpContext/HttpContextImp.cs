@@ -121,7 +121,7 @@ namespace DominoesPropertiesWeb.HttpContext
                     else
                     {
                         jsonObj.success = false;
-                        jsonObj.message = result.StatusCode;
+                        jsonObj.message = JsonConvert.DeserializeObject<dynamic>(Convert.ToString(responJsonText));
                     }
                     return jsonObj;
                 }

@@ -49,11 +49,17 @@
                         a = {};
 
                 } else {
-                    Swal.fire(
-                        'Oops!',
-                        res.data,
-                        'error'
-                    );
+                    console.log(res.message.errors);
+                    for (const [key, value] of Object.entries(res.message.errors)) {
+                        console.log(key, value);
+                        message(`<li>${key} </li> ${value[0]}`, 'error');
+                    }
+                    
+                    //Swal.fire(
+                    //    'Oops!',
+                    //    res.message.errors.Password[0] + "\n" + "Confirm " + res.message.errors.ConfirmPassword[0],
+                    //    'error'
+                    //);
                     //message(res.data
                     //    , 'error'),
                     window.scrollTo(0, 0);
@@ -2343,7 +2349,7 @@ $('.logout').click(() => {
 });
 
 
-const message = (msg, _class) => $('#msg').html(`<div class="alert alert-${_class == "error" ? 'danger' : 'success'} alert-dismissible fade show" role="alert">
+const message = (msg, _class) => $('#msg').append(`<div class="alert alert-${_class == "error" ? 'danger' : 'success'} alert-dismissible fade show" role="alert">
 							${msg}
 						</div>`);
 
