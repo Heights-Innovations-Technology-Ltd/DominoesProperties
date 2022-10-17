@@ -5,13 +5,15 @@ namespace DominoesProperties.Models
     public class CustomerReq
     {
         [Required(ErrorMessage = "Password is required")]
-        [MaxLength(50)]
-        [RegularExpression(@"^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$", ErrorMessage = "Password does not match specified pattern")]
+        [MinLength(8, ErrorMessage = "Password cannot be less than 8 characters")]
+        [MaxLength(16, ErrorMessage = "Password cannot be more than 16 characters")]
+        [RegularExpression(@"^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$", ErrorMessage = "Password does not match specified pattern. Must contain atleast one uppercase, one lowercase, one number and a special character")]
         public string Password { get; set; }
         [Required(ErrorMessage = "Confirm password is required")]
-        [MaxLength(50)]
+        [MinLength(8, ErrorMessage = "Password cannot be less than 8 characters")]
+        [MaxLength(16, ErrorMessage = "Password cannot be more than 16 characters")]
         [Compare("Password", ErrorMessage = "Password and Confirm password does not match")]
-        [RegularExpression(@"^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$", ErrorMessage = "Password does not match specified pattern")]
+        [RegularExpression(@"^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$", ErrorMessage = "Confirm password does not match specified pattern. Must contain atleast one uppercase, one lowercase, one number and a special character")]
         public string ConfirmPassword { get; set; }
         [Required(ErrorMessage = "Firstname is required")]
         [MaxLength(50, ErrorMessage = "Firstname cannot be more than 50 characters")]
