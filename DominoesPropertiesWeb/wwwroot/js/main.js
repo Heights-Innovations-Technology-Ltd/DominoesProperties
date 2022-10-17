@@ -2490,6 +2490,7 @@ $('.btn-request').click(() => {
 const confirmTransaction = () => {
     let urls = window.location.href.split("/");
     let token = urls[3].split("?")[1];
+    console.log(token);
     if (token != undefined) {
         if (token.includes("success")) {
 
