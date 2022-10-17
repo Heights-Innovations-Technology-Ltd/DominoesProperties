@@ -107,7 +107,7 @@ namespace DominoesPropertiesWeb.Controllers
         [Route("onboarding/{startDate}")]
         public async Task<JsonResult> Onboarding(string startDate)
         {
-            var res = Task.Run(() => httpContext.Get($"Util/onboard-customer?startDate={startDate}"));
+            var res = Task.Run(() => httpContext.Get($"Util/onboard-customers?startDate={startDate}"));
             await Task.WhenAll(res);
             var data = res.Status == TaskStatus.RanToCompletion ? res.Result : null;
             return Json(JsonConvert.SerializeObject(data));

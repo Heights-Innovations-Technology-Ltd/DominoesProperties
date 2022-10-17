@@ -109,8 +109,7 @@ $('.btn-login').click(() => {
             var data = JSON.parse(res).data;
             if (JSON.parse(res).success) {
                 var propertyId = sessionStorage.getItem("redirectToPropertyDetail");
-                console.log(propertyId);
-                if (propertyId != "") {
+                if (propertyId != null) {
                     propertyDetails(propertyId);
                     sessionStorage.removeItem("redirectToPropertyDetail");
                     return;
@@ -2623,7 +2622,7 @@ const getEnquiries = () => {
             } else {
                 Swal.fire(
                     'Oops!',
-                    data,
+                    JSON.parse(res).message,
                     'error'
                 );
             }
@@ -2668,11 +2667,10 @@ const getEnquiry = (id) => {
 
                 $('.swal2-popup').css("width", '50%');
 
-
             } else {
                 Swal.fire(
                     'Oops!',
-                    data,
+                    JSON.parse(res).message,
                     'error'
                 );
             }
@@ -2760,6 +2758,7 @@ const addPropertyType = () => {
                     data,
                     'success'
                 );
+                location.reload();
                 //this.attr("disabled", !1)
                
             } else {
@@ -2790,7 +2789,6 @@ const getTypes = () => {
         } else {
             var res = JSON.parse(xhr.responseText);
             var data = JSON.parse(res).data;
-            console.log(data);
             if (JSON.parse(res).success) {
                 typeTemp(data);
             } else {
@@ -2830,11 +2828,10 @@ $('.signin').click(() => {
 });
 
 const sendOnboardingEmail = () => {
-    var startDate = $('#startDate').val();
-    if (startDate == "") {
-        return;
+    var startDate = null;
+    if ($('#startDate').val() != "") {
+        startDate = $('#startDate').val();
     }
-
     let xhr = new XMLHttpRequest();
     let url = "/onboarding/" + startDate;
     xhr.open('GET', url, false);
@@ -2850,9 +2847,17 @@ const sendOnboardingEmail = () => {
             var data = JSON.parse(res).data;
             console.log(data);
             if (JSON.parse(res).success) {
-                typeTemp(data);
+                Swal.fire(
+                    'Good job!',
+                    data,
+                    'success'
+                );
             } else {
-                window.scrollTo(0, 0);
+                Swal.fire(
+                    'Oops!',
+                    data,
+                    'error'
+                );
             }
 
         }
