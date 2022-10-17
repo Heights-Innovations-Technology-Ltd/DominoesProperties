@@ -118,9 +118,7 @@ namespace DominoesProperties.Controllers
                 enqList.HasNext,
                 enqList.HasPrevious
             );
-
-            //Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(new JObject(metadata2)));
-            response.Success = enqList.Count > 0;
+            response.Success = true;
             response.Message = response.Success ? "Successfull" : "No request found";
             response.Data = enqList;
             return response;
