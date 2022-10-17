@@ -49,19 +49,9 @@
                         a = {};
 
                 } else {
-                    console.log(res.message.errors);
                     for (const [key, value] of Object.entries(res.message.errors)) {
-                        console.log(key, value);
-                        message(`<li>${key} </li> ${value[0]}`, 'error');
+                        message(`<li>${key} </li> ${value.join("<br/>")}`, 'error');
                     }
-                    
-                    //Swal.fire(
-                    //    'Oops!',
-                    //    res.message.errors.Password[0] + "\n" + "Confirm " + res.message.errors.ConfirmPassword[0],
-                    //    'error'
-                    //);
-                    //message(res.data
-                    //    , 'error'),
                     window.scrollTo(0, 0);
                         $(".btn-register").html("Register").attr("disabled", !1);
                     a = {};
@@ -2876,7 +2866,6 @@ const sendOnboardingEmail = () => {
         } else {
             var res = JSON.parse(xhr.responseText);
             var data = JSON.parse(res).data;
-            console.log(data);
             if (JSON.parse(res).success) {
                 Swal.fire(
                     'Good job!',
