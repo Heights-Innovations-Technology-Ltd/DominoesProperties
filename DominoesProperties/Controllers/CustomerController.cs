@@ -109,7 +109,7 @@ namespace DominoesProperties.Controllers
             if (!customer.IsVerified.Value)
             {
                 response.Success = false;
-                response.Message = "Customer account not verified, <html><a href='#'>click here</a></html> to verify your account";
+                response.Message = $"Customer account not verified, kindly check your email to verify your account or <html><a href='{configuration.GetValue<string>("app_settings:ApiEndpoint")}/customer/resend/{customer.UniqueRef}' style='color:blue;'>Click Here</a></html> to resend verification email";
                 return response;
             }
 
@@ -173,10 +173,22 @@ namespace DominoesProperties.Controllers
             ApplicationSetting setting = applicationSettingsRepository.GetApplicationSettingsByName("EmailNotification");
 
             _ = ActivationLink(uniqueRef, ValidationModule.ACTIVATE_ACCOUNT, setting);
-            
+
             response.Message = "Activation link successfully generated and sent to customer email, kindly check your email to activate account";
             response.Success = true;
             return response;
+        }
+
+        [HttpGet]
+        [Route("resend/{uniqueRef}")]
+        [AllowAnonymous]
+        public RedirectResult ResendActivationLink(string uniqueRef)
+        {
+            ApplicationSetting setting = applicationSettingsRepository.GetApplicationSettingsByName("EmailNotification");
+
+            _ = ActivationLink(uniqueRef, ValidationModule.ACTIVATE_ACCOUNT, setting);
+
+            return Redirect($"{configuration["app_settings:WebEndpoint"]}?activation-status=success");
         }
 
         [HttpPut]
