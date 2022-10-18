@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Models.Models;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Repositories.Repository;
 
 namespace DominoesProperties.Controllers
@@ -95,6 +96,13 @@ namespace DominoesProperties.Controllers
         public ApiResponse Enquiry([FromQuery] QueryParams queryParams, [FromQuery] string propertyId, [FromQuery] string customerId)
         {
             var enquiries = utilRepository.GetEnquiries();
+            if(enquiries == null || enquiries.Count < 1)
+            {
+                response.Success = true;
+                response.Message = "No record found";
+                response.Data = new List<Enquiry>();
+                return response;
+            }
 
             if (!string.IsNullOrEmpty(customerId))
             {
@@ -118,7 +126,9 @@ namespace DominoesProperties.Controllers
                 enqList.HasNext,
                 enqList.HasPrevious
             );
-            response.Success = true;
+
+            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(new JObject(metadata2)));
+            response.Success = enqList.Count > 0;
             response.Message = response.Success ? "Successfull" : "No request found";
             response.Data = enqList;
             return response;
