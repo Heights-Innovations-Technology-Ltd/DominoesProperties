@@ -8,13 +8,13 @@ namespace DominoesProperties.Models
     {
         [Required(ErrorMessage = "Password is required")]
         [MaxLength(50)]
-        [RegularExpression(@"^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$", ErrorMessage = "Password does not match specified pattern")]
+        [RegularExpression(@"^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$", ErrorMessage = "Password does not match specified pattern. \nPassword must contain atleast <html><ul><li>one uppercase</li><li>one lowercase</li> <li>one number</li><li>one special character</li></ul></html>")]
         public string Password { get; set; }
 
         [Required(ErrorMessage = "Confirm password is required")]
         [MaxLength(50)]
         [Compare("Password", ErrorMessage = "Password and Confirm password does not match")]
-        [RegularExpression(@"^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$", ErrorMessage = "Password does not match specified pattern")]
+        [RegularExpression(@"^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$", ErrorMessage = "Password does not match specified pattern. \nConfirm password must contain atleast <html><ul><li>one uppercase</li><li>one lowercase</li> <li>one number</li><li>one special character</li></ul></html>")]
         public string ConfirmPassword { get; set; }
         ///<summary>
         ///This parameter takes the OLD PASSWORD for endpoint, CHANGE PASSWORD and it takes TOKEN for endpoint, RESET PASSWORD
