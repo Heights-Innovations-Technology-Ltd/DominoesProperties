@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Models.Models;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Repositories.Repository;
 
 namespace DominoesProperties.Controllers
@@ -126,7 +127,7 @@ namespace DominoesProperties.Controllers
                 enqList.HasPrevious
             );
 
-            //Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(new JObject(metadata2)));
+            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(new JObject(metadata2)));
             response.Success = enqList.Count > 0;
             response.Message = response.Success ? "Successfull" : "No request found";
             response.Data = enqList;
