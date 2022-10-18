@@ -23,7 +23,7 @@
     <None Remove="itextsharp.xmlworker" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Twilio" Version="5.78.0" />
+    <PackageReference Include="Twilio" Version="5.80.1" />
     <PackageReference Include="Select.HtmlToPdf.NetCore" Version="22.1.0" />
     <PackageReference Include="PayStack.Net" Version="0.7.7" />
     <PackageReference Include="MozJpegSharp.GdiPlus" Version="2.1.12" />
