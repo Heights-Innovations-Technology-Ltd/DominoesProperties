@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Runtime.Serialization;
+
 namespace DominoesProperties.Models
 {
     public class InvestmentView
@@ -14,8 +16,11 @@ namespace DominoesProperties.Models
         public decimal? YearlyInterestAmount { get; set; }
         public string TransactionRef { get; set; }
         public string Status { get; set; }
+        [IgnoreDataMember]
+        public decimal UnitPrice { get; set; }
         public string Customer { get; set; }
         public string Property { get; set; }
+        public string Data { get; set; }
     }
 }
 
