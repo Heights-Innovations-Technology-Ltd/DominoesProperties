@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using DominoesProperties.Enums;
 using DominoesProperties.Helper;
 using DominoesProperties.Models;
@@ -29,10 +30,11 @@ namespace DominoesProperties.Controllers
         private readonly IConfiguration configuration;
         private readonly IWebHostEnvironment env;
         private readonly IEmailService emailService;
+        private readonly IUploadRepository uploadRepository;
 
         public InvestmentController(IPropertyRepository _propertyRepository, IConfiguration _configuration,
         ICustomerRepository _customerRepository, IInvestmentRepository _investmentRepository, PaymentController _paymentController, IWebHostEnvironment _env,
-        IEmailService _emailService)
+        IEmailService _emailService, IUploadRepository _uploadRepository)
         {
             propertyRepository = _propertyRepository;
             customerRepository = _customerRepository;
@@ -41,6 +43,7 @@ namespace DominoesProperties.Controllers
             configuration = _configuration;
             env = _env;
             emailService = _emailService;
+            uploadRepository = _uploadRepository;
         }
 
         [HttpGet("pair-groups/{propertyUniqueId}")]
@@ -242,24 +245,30 @@ namespace DominoesProperties.Controllers
         }
 
         [HttpGet("{customerUniqueId}")]
-        [Authorize(Roles = "ADMIN, CUSTOMER")]
+        [AllowAnonymous]
+        //[Authorize(Roles = "ADMIN, CUSTOMER")]
         public ApiResponse Investment(string customerUniqueId)
         {
-            List<Investment> investments = investmentRepository.GetInvestments(customerRepository.GetCustomer(customerUniqueId).Id);
+            var investments = investmentRepository.GetInvestments(customerRepository.GetCustomer(customerUniqueId).Id);
+            List<InvestmentView> investmentViews = new();
             investments.ForEach(x =>
             {
-                x.Customer = null;
-                x.Property = null;
+                
+                var xx = ClassConverter.ConvertInvestmentForView(x);
+                var dd = uploadRepository.GetUploads(x.PropertyId);
+                xx.Data = dd.Count > 0 ? dd.FirstOrDefault(x => x.UploadType.Equals("COVER")).Url : "";
+                investmentViews.Add(xx);
             });
 
             if (investments.Count > 0)
             {
                 response.Message = "Successful";
                 response.Success = true;
-                response.Data = investments;
+                response.Data = investmentViews;
                 return response;
             }
             response.Message = "No record found";
+            response.Data = investmentViews;
             return response;
         }
 
