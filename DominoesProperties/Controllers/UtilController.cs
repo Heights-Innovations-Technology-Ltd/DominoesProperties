@@ -181,7 +181,7 @@ namespace DominoesProperties.Controllers
         }
 
         [HttpPost("subscribers")]
-        [AllowAnonymous]
+        [Authorize(Roles = "SUPER, ADMIN")]
         public ApiResponse Subscribe([FromBody][Required(ErrorMessage = "Email is required")][MaxLength(100)][EmailAddress(ErrorMessage = "Not a valid email address")] string Email)
         {
             Newsletter newsletter = new()
