@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using DominoesProperties.Enums;
 using DominoesProperties.Helper;
 using DominoesProperties.Models;
@@ -248,6 +249,7 @@ namespace DominoesProperties.Controllers
             List<Investment> investments = investmentRepository.GetInvestments(customerRepository.GetCustomer(customerUniqueId).Id);
             investments.ForEach(x =>
             {
+                //x.Cover = propertyRepository.GetProperty(x.PropertyId).PropertyUploads.FirstOrDefault(x => x.UploadType.Equals("COVER")).Url;
                 x.Customer = null;
                 x.Property = null;
             });

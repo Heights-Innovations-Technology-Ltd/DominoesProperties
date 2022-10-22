@@ -806,6 +806,7 @@ const getSingleProperty = () => {
         } else {
             var res = JSON.parse(xhr.responseText);
             var data = JSON.parse(res).data;
+            console.log(data);
             if (JSON.parse(res).success) {
                 singleData = data;
                 if (data.data.Cover.length > 0) {
@@ -937,8 +938,9 @@ const getSingleProperty = () => {
                     $('.video-url').attr('href', data.videoLink);
                 }
                 if (data.data["Document"].length > 0) {
-                $('.floor-plan').html(`<h3>Floor Plans</h3>
-						<img src="${data.data["Document"]}" alt="Image">`);
+                    $('.property-document').removeAttr("href").attr("href", data.data["Document"])
+      //          $('.floor-plan').html(`<h3>Floor Plans</h3>
+						//<img src="${data.data["Document"]}" alt="Image">`);
                 }
 
                 //checkout
@@ -1535,6 +1537,7 @@ const GetInvestments = () => {
         } else {
             var res = JSON.parse(xhr.responseText);
             var data = JSON.parse(res).data;
+            console.log(data);
             if (JSON.parse(res).success) {
                 investmentTmp(data);
             } else {
@@ -1578,26 +1581,13 @@ const GetInvestmentById = () => {
 
 const investmentTmp = (data) => {
     $('#investments').html('');
-    let i = {
-        yearlyInterest: 0,
-        amount: 0
-    };
    
     data.forEach(x => {
-        i = {
-            yearlyInterest: x.yearlyInterestAmount + x.amount,
-            amount: x.amount
-        };
-
-        var investmentDate = moment(x.paymentDate).subtract(10, 'days').calendar();
-        var maturedDate = new Date(investmentDate);
-        maturedDate.setMonth(maturedDate.getMonth() + 11);
-
-        const ctx = document.getElementsByClassName('myChart' + x.transactionRef);
+        console.log(x);
         let res = `<div class="col-lg-3 col-md-3">
 					    <div class="single-featured-item">
 						    <div class="canvas-img" mb-0 p-4">
-                                <img src="${x.data.length > 0 ? x.data[0].url : '/images/featured/featured-2.jpg'}" alt="Image">
+                                <img src="/images/featured/featured-2.jpg" alt="Image">
 							  
 						    </div>
 						    <div class="featured-content style-three">
@@ -1631,7 +1621,7 @@ const investmentTmp = (data) => {
 								            </h3>
                                         </div>
                                         <div class="col-md-8">
-                                           <small class="price float-end"><sup>&#8358;</sup>${formatToCurrency(x.amount)}</small>
+                                           <small class="price float-end"><sup>&#8358;</sup>${currency(x.amount)}</small>
                                         </div>
                                     </div>
                                     <div class="row">
@@ -1641,7 +1631,7 @@ const investmentTmp = (data) => {
 								            </h3>
                                         </div>
                                         <div class="col-md-8">
-                                          <small class="price float-end"><sup>&#8358;</sup>${formatToCurrency(x.yearlyInterestAmount)}/yrs</small>
+                                          <small class="price float-end"><sup>&#8358;</sup>${currency(x.yearlyInterestAmount)}/yrs</small>
                                         </div>
                                     </div>
                                     <div class="row">
@@ -1669,7 +1659,6 @@ const investmentTmp = (data) => {
 					    </div>
 				    </div>`;
         $('#investments').append(res);
-        //myChart(i, ctx);
     });
 }
 
