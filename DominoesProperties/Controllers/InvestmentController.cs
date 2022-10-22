@@ -245,8 +245,7 @@ namespace DominoesProperties.Controllers
         }
 
         [HttpGet("{customerUniqueId}")]
-        [AllowAnonymous]
-        //[Authorize(Roles = "ADMIN, CUSTOMER")]
+        [Authorize(Roles = "ADMIN, CUSTOMER")]
         public ApiResponse Investment(string customerUniqueId)
         {
             var investments = investmentRepository.GetInvestments(customerRepository.GetCustomer(customerUniqueId).Id);
