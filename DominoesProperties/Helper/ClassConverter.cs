@@ -29,7 +29,8 @@ namespace DominoesProperties.Helper
 
         internal static Models.Profile ConvertCustomerToProfile(Customer customer)
         {
-            return new Models.Profile {
+            return new Models.Profile
+            {
                 UniqueReference = customer.UniqueRef,
                 FirstName = customer.FirstName,
                 LastName = customer.LastName,
@@ -57,7 +58,8 @@ namespace DominoesProperties.Helper
             };
         }
 
-        internal static Property PropertyToEntity(Models.Properties property){
+        internal static Property PropertyToEntity(Models.Properties property)
+        {
             return new Property
             {
                 UniqueId = Guid.NewGuid().ToString(),
@@ -121,8 +123,10 @@ namespace DominoesProperties.Helper
             return prop;
         }
 
-        internal static Description DescriptionToEntity(Models.PropertyDescription description){
-            return new Description{
+        internal static Description DescriptionToEntity(Models.PropertyDescription description)
+        {
+            return new Description
+            {
                 Bathroom = description.Bathroom,
                 Toilet = description.Toilet,
                 AirConditioned = description.AirConditioned,
@@ -197,8 +201,12 @@ namespace DominoesProperties.Helper
                 Yield = inv.Yield,
                 YearlyInterestAmount = inv.YearlyInterestAmount,
                 TransactionRef = inv.TransactionRef,
-                Status = inv.Status
-    };
+                Status = inv.Status,
+                PaymentType = inv.PaymentType,
+                UnitPrice = inv.UnitPrice,
+                Customer = $"{inv.Customer.FirstName} {inv.Customer.LastName}",
+                Property = inv.Property.Name
+            };
         }
     }
 }
