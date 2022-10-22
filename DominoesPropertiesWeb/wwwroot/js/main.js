@@ -562,7 +562,7 @@ const adminInvestmentTmp = (data) => {
 									<div class="single-featured-item">
                                     <a href="/investment/viewinvestment/${x.uniqueId}">
 										<div class="featured-img mb-0">
-											<img src="${x.data.length > 0 ? x.data[0].url : '/images/properties/properties-4.jpg'}" alt="Image">
+											<img src="${x.data.length > 0 ? x.data[0].url : '/images/properties/properties-4.jpg'}"  style="height:300px; width:415px"  alt="Image">
 										</div>
 										<div class="featured-content style-three">
                                             <div class="row">
@@ -1584,7 +1584,7 @@ const investmentTmp = (data) => {
         let res = `<div class="col-lg-3 col-md-3">
 					    <div class="single-featured-item">
 						    <div class="canvas-img" mb-0 p-4">
-                                <img src="/images/properties/properties-4.jpg" alt="Image">
+                                <img src="/images/properties/properties-4.jpg" style="height:300px; width:415px" alt="Image">
 							  
 						    </div>
 						    <div class="featured-content style-three">
