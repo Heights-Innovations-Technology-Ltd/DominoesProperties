@@ -23,14 +23,15 @@ namespace DominoesProperties.Controllers
         [HttpPut]
         [Route("role")]
         [Authorize(Roles = "SUPER")]
-        public ApiResponse EditRole([FromBody] Role role)
+        public async Task<ApiResponse> EditRole([FromBody] Role role)
         {
             if (string.IsNullOrEmpty(role.RoleName))
             {
                 response.Message = "Role name cannot be empty";
                 return response;
             }
-            response.Data = configRepository.EditRoles(role);
+            response.Data = await configRepository.EditRoles(role);
+            response.Success = true;
             response.Message = "Role update successful";
             return response;
         }
@@ -46,7 +47,7 @@ namespace DominoesProperties.Controllers
                 return response;
             }
            
-            response.Data = configRepository.EditPropertyTypes(property);
+            response.Data = await configRepository.EditPropertyTypes(property);
             response.Success = true;
             response.Message = "Property type updated successful";
             return response;
@@ -75,7 +76,7 @@ namespace DominoesProperties.Controllers
         [HttpDelete]
         [Route("property-type/{id}")]
         [Authorize(Roles = "SUPER")]
-        public ApiResponse DeletePropertyType([FromRoute] int id)
+        public async Task<ApiResponse> DeletePropertyType([FromRoute] int id)
         {
             if (id <= 0)
             {
@@ -87,15 +88,16 @@ namespace DominoesProperties.Controllers
                 response.Message = $"No property type found for id {id}";
                 return response;
             }
-            configRepository.DeletePropertyTypes(id);
-            response.Message = "Property type updated successfully";
+            await configRepository.DeletePropertyTypes(id);
+            response.Success = true;
+            response.Message = "Property type deleted successfully";
             return response;
         }
 
         [HttpDelete]
         [Route("role/{id}")]
         [Authorize(Roles = "SUPER")]
-        public ApiResponse DeleteRole([FromRoute] int id)
+        public async Task<ApiResponse> DeleteRole([FromRoute] int id)
         {
             if (id <= 0)
             {
@@ -107,15 +109,16 @@ namespace DominoesProperties.Controllers
                 response.Message = $"No role found for id {id}";
                 return response;
             }
-            configRepository.DeleteRole(id);
-            response.Message = "Role updated successfully";
+            await configRepository.DeleteRole(id);
+            response.Success = true;
+            response.Message = "Role deleted successfully";
             return response;
         }
 
         [HttpPost]
         [Route("role")]
         [Authorize(Roles = "SUPER")]
-        public ApiResponse AddRole([FromBody] Role role)
+        public async Task<ApiResponse> AddRole([FromBody] Role role)
         {
             if (string.IsNullOrEmpty(role.RoleName))
             {
@@ -127,7 +130,8 @@ namespace DominoesProperties.Controllers
                 CreatedBy = HttpContext.User.Identity.Name,
                 RoleName =  role.RoleName
             };
-            response.Data = configRepository.AddRole(pp);
+            response.Data =  await configRepository.AddRole(pp);
+            response.Success = true;
             response.Message = "Role created successfully";
             return response;
         }
