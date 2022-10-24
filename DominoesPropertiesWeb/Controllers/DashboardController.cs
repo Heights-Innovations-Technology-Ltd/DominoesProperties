@@ -243,6 +243,18 @@ namespace DominoesPropertiesWeb.Controllers
             var data = res.Status == TaskStatus.RanToCompletion ? res.Result : null;
             return Json(JsonConvert.SerializeObject(data));
         }
+        
+        [Route("/remove-type/{id}")]
+        public async Task<JsonResult> DeleteType(int id)
+        {
+           
+
+            var res = Task.Run(() => httpContext.Delete("Config/property-type/" + id));
+            //var data = await res.GetAwaiter().GetResult();
+            await Task.WhenAll(res);
+            var data = res.Status == TaskStatus.RanToCompletion ? res.Result : null;
+            return Json(JsonConvert.SerializeObject(data));
+        }
 
         [Route("/logout")]
         public IActionResult Logout()

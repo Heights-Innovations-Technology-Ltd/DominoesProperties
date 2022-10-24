@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using Models.Context;
 using Models.Models;
 using Repositories.Repository;
@@ -20,33 +21,33 @@ namespace Repositories.Service
             return prop;
         }
 
-        public Role AddRole(Role role)
+        public async Task<Role> AddRole(Role role)
         {
             Role rol = _context.Roles.Add(role).Entity;
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return rol;
         }
 
-        public bool DeletePropertyTypes(int propertyType)
+        public async Task<bool>  DeletePropertyTypes(int propertyType)
         {
             var cc = _context.Properties.Count(x => x.TypeNavigation.Id == propertyType);
             if(cc == 0)
             {
-                PropertyType prop = _context.PropertyTypes.FirstOrDefault(x => x.Id == propertyType);
+                PropertyType prop = await _context.PropertyTypes.FirstOrDefaultAsync(x => x.Id == propertyType);
                 _context.PropertyTypes.Remove(prop);
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
             }
             return false;
         }
 
-        public bool DeleteRole(int RoleId)
+        public async Task<bool> DeleteRole(int RoleId)
         {
             var cc = _context.Admins.Count(x => x.RoleFk.Value == RoleId);
             if (cc == 0)
             {
                 Role role = _context.Roles.FirstOrDefault(x => x.Id == RoleId);
                 _context.Roles.Remove(role);
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
             }
             return false;
         }
@@ -61,17 +62,17 @@ namespace Repositories.Service
             return _context.Roles.ToList();
         }
 
-        public List<PropertyType> EditPropertyTypes(PropertyType property)
+        public async Task<List<PropertyType>> EditPropertyTypes(PropertyType property)
         {
             _context.PropertyTypes.Update(property);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return GetPropertyTypes();
         }
 
-        public List<Role> EditRoles(Role role)
+        public async Task<List<Role>> EditRoles(Role role)
         {
             _context.Roles.Update(role);
-            _context.SaveChanges();
+           await _context.SaveChangesAsync();
             return GetRoles();
         }
     }

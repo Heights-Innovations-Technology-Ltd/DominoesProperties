@@ -290,7 +290,7 @@ const profile = (data, mode) => {
         $('.fullName').text(data.firstName + " " + data.lastName);
         $('.walletId').html("Wallet: ( <strong>" + data.walletId + "</strong> )");
         $('.walletBalance').html('&#8358; ' + currency(data.walletBalance));
-        $("#passport").attr("src", data.passportUrl);
+        $("#passport").attr("src", data.passportUrl != null ? data.passportUrl : "/images/agents/user.png");
         $('#profile').html(`
             <div class="card-body">
 				<div class="row">
@@ -509,7 +509,7 @@ const adminPropertTmp = (data) => {
 									<div class="single-featured-item">
  <a href="/property/viewproperty/${x.uniqueId}">
 										<div class="featured-img mb-0">
-											<img src="${x.data.length > 0 ? x.data[0].url : '/images/featured/featured-2.jpg'}" style="width: 100%;
+											<img src="${x.data.length > 0 ? x.data[0].url : '/images/properties/properties-4.jpg'}" style="width: 100%;
     height: 350px;" alt="Image">
 										</div>
 										<div class="featured-content style-three">
@@ -562,7 +562,7 @@ const adminInvestmentTmp = (data) => {
 									<div class="single-featured-item">
                                     <a href="/investment/viewinvestment/${x.uniqueId}">
 										<div class="featured-img mb-0">
-											<img src="${x.data.length > 0 ? x.data[0].url : '/images/featured/featured-2.jpg'}" alt="Image">
+											<img src="${x.data.length > 0 ? x.data[0].url : '/images/properties/properties-4.jpg'}"  style="height:300px; width:415px"  alt="Image">
 										</div>
 										<div class="featured-content style-three">
                                             <div class="row">
@@ -642,7 +642,7 @@ const propertiesTmp = (data) => {
 									<div class="single-featured-item">
  <a href="javascript:void(0)" onclick="propertyDetails('${x.uniqueId}')">
 										<div class="featured-img mb-0">
-											<img src="${x.data.length > 0 ? x.data[0].url : '/images/featured/featured-2.jpg'}" style="width: 100%; height: 350px;" alt="Image">
+											<img src="${x.data.length > 0 ? x.data[0].url : '/images/properties/properties-4.jpg'}" style="width: 100%; height: 350px;" alt="Image">
 										</div>
 										<div class="featured-content style-three">
 											<div class="justify-content-between">
@@ -695,7 +695,7 @@ const LandingPagePropertyTmp = (data) => {
 									<div class="single-featured-item">
                                         <a href="javascript:void(0)" onclick="propertyDetails('${x.uniqueId}')">
 										    <div class="featured-img mb-0">
-											   <img src="${x.data.length > 0 ? x.data[0].url : '/images/featured/featured-2.jpg'}" style="width: 100%; height: 350px;" alt="Image">
+											   <img src="${x.data.length > 0 ? x.data[0].url : '/images/properties/properties-4.jpg'}" style="width: 100%; height: 350px;" alt="Image">
 										    </div>
 										    <div class="featured-content style-three">
 											    <div class=" justify-content-between">
@@ -937,8 +937,9 @@ const getSingleProperty = () => {
                     $('.video-url').attr('href', data.videoLink);
                 }
                 if (data.data["Document"].length > 0) {
-                $('.floor-plan').html(`<h3>Floor Plans</h3>
-						<img src="${data.data["Document"]}" alt="Image">`);
+                    $('.property-document').removeAttr("href").attr("href", data.data["Document"])
+      //          $('.floor-plan').html(`<h3>Floor Plans</h3>
+						//<img src="${data.data["Document"]}" alt="Image">`);
                 }
 
                 //checkout
@@ -1578,26 +1579,12 @@ const GetInvestmentById = () => {
 
 const investmentTmp = (data) => {
     $('#investments').html('');
-    let i = {
-        yearlyInterest: 0,
-        amount: 0
-    };
    
     data.forEach(x => {
-        i = {
-            yearlyInterest: x.yearlyInterestAmount + x.amount,
-            amount: x.amount
-        };
-
-        var investmentDate = moment(x.paymentDate).subtract(10, 'days').calendar();
-        var maturedDate = new Date(investmentDate);
-        maturedDate.setMonth(maturedDate.getMonth() + 11);
-
-        const ctx = document.getElementsByClassName('myChart' + x.transactionRef);
         let res = `<div class="col-lg-3 col-md-3">
 					    <div class="single-featured-item">
 						    <div class="canvas-img" mb-0 p-4">
-                                <img src="${x.data.length > 0 ? x.data[0].url : '/images/featured/featured-2.jpg'}" alt="Image">
+                                <img src="/images/properties/properties-4.jpg" style="height:300px; width:415px" alt="Image">
 							  
 						    </div>
 						    <div class="featured-content style-three">
@@ -1609,7 +1596,7 @@ const investmentTmp = (data) => {
 								            </h3>
                                         </div>
                                         <div class="col-md-8">
-                                            <small class="float-end">${x.propertyId}</small>
+                                            <small class="float-end">${x.property}</small>
                                         </div>
                                     </div>
 
@@ -1631,7 +1618,7 @@ const investmentTmp = (data) => {
 								            </h3>
                                         </div>
                                         <div class="col-md-8">
-                                           <small class="price float-end"><sup>&#8358;</sup>${formatToCurrency(x.amount)}</small>
+                                           <small class="price float-end"><sup>&#8358;</sup>${currency(x.amount)}</small>
                                         </div>
                                     </div>
                                     <div class="row">
@@ -1641,7 +1628,7 @@ const investmentTmp = (data) => {
 								            </h3>
                                         </div>
                                         <div class="col-md-8">
-                                          <small class="price float-end"><sup>&#8358;</sup>${formatToCurrency(x.yearlyInterestAmount)}/yrs</small>
+                                          <small class="price float-end"><sup>&#8358;</sup>${currency(x.yearlyInterestAmount)}/yrs</small>
                                         </div>
                                     </div>
                                     <div class="row">
@@ -1661,7 +1648,7 @@ const investmentTmp = (data) => {
 								            </h3>
                                         </div>
                                         <div class="col-md-8">
-                                            <small class="float-end">${moment(x.paymentDate).format('MMMM Do YYYY')}</small>
+                                            <small class="float-end">${moment(x.paymentDate).format('ll')}</small>
                                         </div>
                                     </div>
 							    </div>
@@ -1669,7 +1656,6 @@ const investmentTmp = (data) => {
 					    </div>
 				    </div>`;
         $('#investments').append(res);
-        //myChart(i, ctx);
     });
 }
 
@@ -2824,18 +2810,53 @@ const getTypes = () => {
 }
 
 const typeTemp = (data) => {
-    $('#Table_property tbody').html('');
+    $('.Table_property tbody').html('');
 
     data.forEach(x => {
-        let res = `<tr>
+        let res = `<tr id="sn${x.id}">
                     <td>${x.name}</td>
                     <td>
-                        <a href="#" class="text-warning mr-2"><i class="fa fa-pencil"></i></a>
-                        <a href="#" class="text-danger"><i class="fa fa-trash"></i></a>
+                        <a href="#" class="text-danger"><i class="fa fa-trash" onclick="removeType(${x.id})"></i></a>
                     </td>
                 </tr>`;
-        $('#Table_property tbody').append(res);
+        $('.Table_property tbody').append(res);
     })
+}
+
+const removeType = (id) => {
+    let xhr = new XMLHttpRequest();
+    let url = "/remove-type/" + id;
+    xhr.open('GET', url, false);
+    xhr.setRequestHeader("content-type", "application/json");
+    xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+    try {
+
+        xhr.send();
+        if (xhr.status != 200) {
+            // alert('Something went wrong try again!');
+        } else {
+            var res = JSON.parse(xhr.responseText);
+            var data = JSON.parse(res).data;
+            if (JSON.parse(res).success) {
+                Swal.fire(
+                    'Good job!',
+                    data,
+                    'success'
+                );
+                $('#sn' + id).remove();
+            } else {
+                Swal.fire(
+                    'Oops',
+                    data,
+                    'error'
+                );
+            }
+
+        }
+    } catch (err) { // instead of onerror
+        //alert("Request failed");
+        $(".btn-login").html("Login").attr("disabled", !1);
+    }
 }
 
 $('.signup').click(() => {

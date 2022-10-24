@@ -201,5 +201,33 @@ namespace DominoesPropertiesWeb.HttpContext
                 return jsonObj;
             }
         }
+
+        public async Task<dynamic> Delete(string endpointURL)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, url))
+            {
+                var token = this.session.GetString("Token");
+                client.DefaultRequestHeaders.Add("Authorization",
+                    "Bearer " + token);
+
+                var result = await client.DeleteAsync(url + endpointURL).ConfigureAwait(false);
+
+                var responJsonText = await result.Content.ReadAsStringAsync();
+                var res = new JObject();
+                if (result.IsSuccessStatusCode)
+                {
+                    res = JsonConvert.DeserializeObject<JObject>(Convert.ToString(responJsonText));
+                    jsonObj.success = Convert.ToBoolean(res["success"]);
+                    var data = JsonConvert.DeserializeObject<dynamic>(Convert.ToString(res["data"]));
+                    jsonObj.data = data != null ? data : Convert.ToString(res["message"]);
+                }
+                else
+                {
+                    jsonObj.success = false;
+                    jsonObj.message = result.StatusCode;
+                }
+                return jsonObj;
+            }
+        }
     }
 }
