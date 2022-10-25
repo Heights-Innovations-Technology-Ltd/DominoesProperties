@@ -788,7 +788,6 @@ const getSingleProperty = () => {
             text: 'Please, kindly login to have full access',
             footer: `<a href="javascript:void(0)" class="default-btn" onclick="propertyDetailLogin()">Login</a>`
         });
-        return;
     }
 
     let urls = window.location.href.split("/");
