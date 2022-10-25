@@ -19,7 +19,7 @@ namespace DominoesPropertiesWeb.Service
             hostEnvironment = _hostEnvironment;
         }
 
-        private readonly string[] fileExtensions = { ".jpg", ".png", ".jpeg", "gif" };
+        private readonly string[] fileExtensions = { ".jpg", ".png", ".jpeg", "gif", ".pdf" };
 
         public async Task<string> UploadCustomerPassportAsync(IFormFile file, string customerUniqueId, HttpRequest request)
         {

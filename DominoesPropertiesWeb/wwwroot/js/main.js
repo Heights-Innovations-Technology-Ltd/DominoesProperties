@@ -936,9 +936,7 @@ const getSingleProperty = () => {
                     $('.video-url').attr('href', data.videoLink);
                 }
                 if (data.data["Document"].length > 0) {
-                    $('.property-document').removeAttr("href").attr("href", data.data["Document"])
-      //          $('.floor-plan').html(`<h3>Floor Plans</h3>
-						//<img src="${data.data["Document"]}" alt="Image">`);
+                    $('.agent-user').removeAttr("href").attr("href", data.data["Document"])
                 }
 
                 //checkout
