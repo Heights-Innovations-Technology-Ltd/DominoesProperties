@@ -52,9 +52,11 @@
             var Lastname = @HttpContextAccessor.HttpContext.Session.GetString("Lastname");
             var isAdmin = @HttpContextAccessor.HttpContext.Session.GetString("RoleFK");
             var passport = @HttpContextAccessor.HttpContext.Session.GetString("Passport");
-            
-
             var userFullName = string.Format("{0} {1}", Firstname, Lastname);
+			var userLogin = false;
+			if(Username != null || isAdmin != null){
+				userLogin = true;
+			}
             if(isAdmin != null && isAdmin != ""){
                 userFullName = @HttpContextAccessor.HttpContext.Session.GetString("Email");
             }
@@ -64,6 +66,7 @@
 		@Html.Hidden("fullname", userFullName)
 		@Html.Hidden("isAdmin", isAdmin)
 		@Html.Hidden("createdBy", @HttpContextAccessor.HttpContext.Session.GetString("Email"))
+@Html.Hidden("isLogIn", userLogin)
     <body>
 		<script>
 			$(function(){
