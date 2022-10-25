@@ -4926,13 +4926,13 @@ Property Single Area Style
   margin-bottom: 50px;
 }
 
-.single-listing-warp .properties-bg-img {
-  background-image: url(../images/properties/properties-6.jpg);
-  background-position: center center;
-  background-repeat: no-repeat;
-  background-size: cover;
-  height: 100%;
-}
+    .single-listing-warp .properties-bg-img {
+        background-image: url(../images/properties/properties-4.jpg);
+        background-position: center center;
+        background-repeat: no-repeat;
+        background-size: cover;
+        height: 100%;
+    }
 
 .single-listing-warp .properties-content {
   background-color: #ffffff;

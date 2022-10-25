@@ -778,7 +778,7 @@ const getSingleProperty = () => {
         return;
     }
 
-    if ($('#refId').val() == null || $('#refId').val() == "") {
+    if ($('#refId').val() == null || $('#isAdmin').val() ==  null) {
         Swal.fire({
             icon: 'info',
             title: 'Oops...',
@@ -1411,7 +1411,7 @@ $('#btnUpload').on('click', function () {
         return;
     }
     $('.msg').html('');
-    $("#btnUpload").attr("disabled", !0).html(`Processing...`);
+    
     var uploadType = $('#uploadType').val();
     var fileUpload = $("#fileUpload").get(0);
 
@@ -1420,12 +1420,22 @@ $('#btnUpload').on('click', function () {
     }
 
     var files = fileUpload.files;
-
+   
     if (files.length == 0) {
         $('.msg').html(message("Property image is required!", 'error'));
         return;
     }
 
+    if (uploadType == 1) {
+        var fname = files[0].name;
+        var extension = fname.substr(fname.lastIndexOf("."))
+        var re = /(\.pdf)$/i;
+        if (!re.exec(extension)) {
+            $('.msg').html(message("Only PDF file is supported!", "error"));
+            return;
+        }
+    }
+    $("#btnUpload").attr("disabled", !0).html(`Processing...`);
     var formData = new FormData();
 
     for (var i = 0; i != files.length; i++) {
@@ -1579,12 +1589,11 @@ const GetInvestmentById = () => {
 
 const investmentTmp = (data) => {
     $('#investments').html('');
-   
     data.forEach(x => {
         let res = `<div class="col-lg-3 col-md-3">
 					    <div class="single-featured-item">
 						    <div class="canvas-img" mb-0 p-4">
-                                <img src="/images/properties/properties-4.jpg" style="height:300px; width:415px" alt="Image">
+                                <img src="${x.data != "" ? x.data : '/images/properties/properties-4.jpg'}" style="height:300px; width:415px" alt="Image">
 							  
 						    </div>
 						    <div class="featured-content style-three">
