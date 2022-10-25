@@ -777,8 +777,8 @@ const getSingleProperty = () => {
         location = '/Dashboard/Profile';
         return;
     }
-
-    if ($('#refId').val() == null || $('#isAdmin').val() ==  null) {
+    var userRef = $('#isLogIn').val();
+    if (userRef == 'False') {
         Swal.fire({
             icon: 'info',
             title: 'Oops...',
@@ -788,9 +788,9 @@ const getSingleProperty = () => {
             text: 'Please, kindly login to have full access',
             footer: `<a href="javascript:void(0)" class="default-btn" onclick="propertyDetailLogin()">Login</a>`
         });
+        return;
     }
 
-   
     let urls = window.location.href.split("/");
     let id = urls[5];
     let xhr = new XMLHttpRequest();
