@@ -306,6 +306,38 @@ namespace DominoesProperties.Controllers
             response.Data = result;
             return response;
         }
+
+        [HttpGet("all-customer")]
+        [Authorize(Roles = "ADMIN, SUPER")]
+        public ApiResponse Customers([FromQuery] QueryParams queryParams)
+        {
+            PagedList<Customer> customers = customerRepository.GetCustomers(queryParams);
+            (int TotalCount, int PageSize, int CurrentPage, int TotalPages, bool HasNext, bool HasPrevious) metadata = (
+                 customers.TotalCount,
+                 customers.PageSize,
+                 customers.CurrentPage,
+                 customers.TotalPages,
+                 customers.HasNext,
+                 customers.HasPrevious
+             );
+
+            List<NewCustomers> custs = new();
+            customers.ForEach(x =>
+            {
+                custs.Add(new NewCustomers
+                {
+                    Email = x.Email,
+                    FirstName = x.FirstName,
+                    LastName = x.LastName
+                });
+            });
+
+            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
+            response.Success = true;
+            response.Message = "Successfull";
+            response.Data = custs;
+            return response;
+        }
     }
 }
 
