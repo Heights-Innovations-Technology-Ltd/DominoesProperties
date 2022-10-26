@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using DominoesProperties.Enums;
 using DominoesProperties.Models;
 using DominoesProperties.Services;
@@ -224,39 +225,21 @@ namespace DominoesProperties.Controllers
             return response;
         }
 
-        [HttpGet("onboard-customers")]
+        [HttpPost("onboard-customers")]
         [Authorize(Roles = "SUPER, ADMIN")]
-        public ApiResponse OnboardCustomers([FromQuery] DateTime? startDate)
+        public ApiResponse OnboardCustomers([FromBody] HashSet<NewCustomers> Customers)
         {
             if (configuration.GetValue<bool>("app_settings:onboard"))
             {
-
-                var customers = customerRepository.GetCustomers();
-                if (customers == null)
+                if (Customers == null)
                 {
                     response.Success = false;
-                    response.Message = "No customer found";
+                    response.Message = "No customer selected, please select a customer to onboard";
                     return response;
                 }
-                if (startDate != null)
-                {
-                    customers = customers.FindAll(x => x.DateRegistered.Date.CompareTo(DateTime.Now.Date) >= 0).ToList();
-                }
 
-                customers.ForEach(x =>
-                {
-                    string filePath = Path.Combine(environment.ContentRootPath, @"EmailTemplates\account-setup.html");
-                    string html = System.IO.File.ReadAllText(filePath.Replace(@"\", "/"));
-                    html = html.Replace("{FIRSTNAME}", string.Format("{0} {1}", x.FirstName, x.LastName)).Replace("{webroot}", configuration["app_settings:WebEndpoint"]);
+                OnboardCustomers(Customers.ToList());
 
-                    _ = _emailService.SendEmail(new EmailData
-                    {
-                        EmailBody = html,
-                        EmailSubject = "Customer Onboarding -  Real Estate Dominoes",
-                        EmailToName = string.Format("{0} {1}", x.FirstName, x.LastName),
-                        EmailToId = x.Email
-                    });
-                });
                 response.Success = true;
                 response.Message = "Onboarding email sending in process";
                 return response;
@@ -267,6 +250,24 @@ namespace DominoesProperties.Controllers
                 response.Message = "Onboarding email sending is disabled";
                 return response;
             }
+        }
+
+        private void OnboardCustomers(List<NewCustomers> Customers)
+        {
+            Task.Run(() => Customers.ToList().ForEach(x =>
+            {
+                string filePath = Path.Combine(environment.ContentRootPath, @"EmailTemplates\account-setup.html");
+                string html = System.IO.File.ReadAllText(filePath.Replace(@"\", "/"));
+                html = html.Replace("{FIRSTNAME}", string.Format("{0} {1}", x.FirstName, x.LastName).ToUpper()).Replace("{webroot}", configuration["app_settings:WebEndpoint"]).Replace("{USERNAME}", x.Email).Replace("{PASSWORD}", "Welcome@2022");
+
+                _ = _emailService.SendEmail(new EmailData
+                {
+                    EmailBody = html,
+                    EmailSubject = "Customer Onboarding -  Real Estate Dominoes",
+                    EmailToName = string.Format("{0} {1}", x.FirstName, x.LastName),
+                    EmailToId = x.Email
+                });
+            }));
         }
 
         [HttpGet("test-email/{email}/{encoded}")]
@@ -306,4 +307,11 @@ namespace DominoesProperties.Controllers
             return response;
         }
     }
+}
+
+public class NewCustomers
+{
+    public string Email { get; set; }
+    public string FirstName { get; set; }
+    public string LastName { get; set; }
 }
