@@ -255,7 +255,7 @@ namespace DominoesProperties.Controllers
                 
                 var xx = ClassConverter.ConvertInvestmentForView(x);
                 var dd = uploadRepository.GetUploads(x.PropertyId);
-                xx.Data = dd.Count > 0 ? dd.FirstOrDefault(x => x.UploadType.Equals("COVER")).Url : "";
+                xx.Data = dd.Any(i => i.UploadType.Equals("COVER")) ? dd.FirstOrDefault(y => y.UploadType.Equals("COVER")).Url : "/images/properties/properties-4.jpg";
                 investmentViews.Add(xx);
             });
 

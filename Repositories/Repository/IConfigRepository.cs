@@ -6,14 +6,14 @@ namespace Repositories.Repository
 {
     public interface IConfigRepository
     {
-        Role AddRole(Role role);
+        Task<Role> AddRole(Role role);
         Task<PropertyType> AddPropertyType(PropertyType propertyType);
         List<Role> GetRoles();
         List<PropertyType> GetPropertyTypes();
-        bool DeleteRole(int RoleId);
-        bool DeletePropertyTypes(int propertyType);
-        List<Role> EditRoles(Role role);
-        List<PropertyType> EditPropertyTypes(PropertyType property);
+        Task<bool> DeleteRole(int RoleId);
+        Task<bool> DeletePropertyTypes(int propertyType);
+        Task<List<Role>> EditRoles(Role role);
+        Task<List<PropertyType>> EditPropertyTypes(PropertyType property);
     }
 }
 

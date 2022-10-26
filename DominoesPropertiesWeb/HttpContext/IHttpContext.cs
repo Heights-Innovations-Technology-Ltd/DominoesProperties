@@ -12,5 +12,6 @@ namespace DominoesPropertiesWeb.HttpContext
         Task<dynamic> Post(string endpointURL, dynamic obj);
         Task<dynamic> Put(string endpointURL, dynamic obj);
         Task<dynamic> PostUpload(string endpointURL, MultipartFormDataContent content);
+        Task<dynamic> Delete(string endpointURL);
     }
 }

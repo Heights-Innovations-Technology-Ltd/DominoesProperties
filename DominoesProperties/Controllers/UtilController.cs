@@ -117,17 +117,17 @@ namespace DominoesProperties.Controllers
             PagedList<Enquiry> enqList = PagedList<Enquiry>.ToPagedList(enquiries.OrderBy(on => on.DateCreated).AsQueryable(),
                 queryParams.PageNumber, queryParams.PageSize);
 
-            (int TotalCount, int PageSize, int CurrentPage, int TotalPages, bool HasNext, bool HasPrevious) metadata2 =
-            (
-                enqList.TotalCount,
-                enqList.PageSize,
-                enqList.CurrentPage,
-                enqList.TotalPages,
-                enqList.HasNext,
-                enqList.HasPrevious
-            );
+            //(int TotalCount, int PageSize, int CurrentPage, int TotalPages, bool HasNext, bool HasPrevious) metadata2 =
+            //(
+            //    enqList.TotalCount,
+            //    enqList.PageSize,
+            //    enqList.CurrentPage,
+            //    enqList.TotalPages,
+            //    enqList.HasNext,
+            //    enqList.HasPrevious
+            //);
 
-            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(new JObject(metadata2)));
+            //Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(new JObject(metadata2)));
             response.Success = enqList.Count > 0;
             response.Message = response.Success ? "Successfull" : "No request found";
             response.Data = enqList;
