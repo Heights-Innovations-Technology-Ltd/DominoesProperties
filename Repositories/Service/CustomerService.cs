@@ -5,7 +5,6 @@ using Helpers;
 using Microsoft.EntityFrameworkCore;
 using Models.Context;
 using Models.Models;
-using MySql.Data.MySqlClient;
 using Repositories.Repository;
 
 namespace Repositories.Service
@@ -87,6 +86,13 @@ namespace Repositories.Service
                 customers = _context.Customers.ToList();
             }
             return customers;
+        }
+
+        public PagedList<Customer> GetCustomers(QueryParams pageParams)
+        {
+            return PagedList<Customer>.ToPagedList(_context.Customers.OrderBy(on => on.DateRegistered),
+                pageParams.PageNumber,
+                pageParams.PageSize);
         }
 
         public Customer UpdateCustomer(Customer customer)
