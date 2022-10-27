@@ -134,6 +134,12 @@ namespace DominoesPropertiesWeb.Controllers
         {
             return View();
         }
+        
+        [HttpGet("/Home/reset_password/{token}")]
+        public IActionResult ResetPassword(string token, [FromQuery(Name = "value")]string value)
+        {
+            return View();
+        }
 
         [Route("activate")]
         public async Task<JsonResult> ActivateAccount([FromBody] dynamic token)
@@ -141,6 +147,17 @@ namespace DominoesPropertiesWeb.Controllers
             JObject jObject = JsonConvert.DeserializeObject<JObject>(Convert.ToString(token));
             
             var res = Task.Run(() => httpContext.Put("Customer/activate/" + Convert.ToString(jObject["token"]), null));
+            await Task.WhenAll(res);
+            var data = res.Status == TaskStatus.RanToCompletion ? res.Result : null;
+            return Json(JsonConvert.SerializeObject(data));
+        }
+        
+        [Route("resetpassword")]
+        public async Task<JsonResult> ResetPassword([FromBody] dynamic model)
+        {
+            JObject jObject = JsonConvert.DeserializeObject<JObject>(Convert.ToString(model));
+            
+            var res = Task.Run(() => httpContext.Post("Customer/reset-password", jObject));
             await Task.WhenAll(res);
             var data = res.Status == TaskStatus.RanToCompletion ? res.Result : null;
             return Json(JsonConvert.SerializeObject(data));

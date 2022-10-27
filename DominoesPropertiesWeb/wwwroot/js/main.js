@@ -2913,6 +2913,103 @@ const sendOnboardingEmail = () => {
     }
 }
 
+const reset_passwordModal = () => {
+    Swal.fire({
+        template: '#my-template',
+        showCancelButton: false,
+        showConfirmButton: false,
+        allowOutsideClick: false,
+    });
+}
+
+const resetPassword = () => {
+    
+    let urls = window.location.href.split("/");
+    let token = urls[5].split("?")[0];
+
+    if (!token.includes("RS")) {
+        return;
+    }
+
+    var password = $('#password').val();
+    var confirm = $('#confirm_password').val();
+    if (password != confirm) {
+        message(`Password doesn't match`, 'error');
+        //Swal.fire(
+        //    'Oops!',
+        //    "Password doesn't match",
+        //    'error'
+        //);
+        return;
+    }
+
+
+    //$(".btn-activate").html("Processing...").attr("disabled", !0);
+
+    let params = {
+        "password": password,
+        "confirmPassword": confirm,
+        "token": token
+    }
+
+    console.log(params);
+    let xhr = new XMLHttpRequest();
+    let url = "/resetpassword";
+    xhr.open('POST', url, false);
+    xhr.setRequestHeader("content-type", "application/json");
+    xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+    try {
+
+        xhr.send(JSON.stringify(params));
+        if (xhr.status != 200) {
+            // alert('Something went wrong try again!');
+        } else {
+            var res = JSON.parse(xhr.responseText);
+            var data = JSON.parse(res).data;
+            var messages = JSON.parse(res).message;
+
+            if (JSON.parse(res).success) {
+                const confirmPropertyUpdate = Swal.mixin({
+                    customClass: {
+                        confirmButton: 'btn btn-success mx-2'
+                    },
+                    buttonsStyling: false
+                })
+
+                confirmPropertyUpdate.fire({
+                    title: 'Well done',
+                    text: `${message}. Kindly proceed to login into your account`,
+                    icon: 'success',
+                    showCancelButton: false,
+                    confirmButtonText: 'Yes!',
+                    reverseButtons: true
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.replace('/Home/signin');
+                    }
+                });
+            } else {
+                window.scrollTo(0, 0);
+                if (messages != undefined) {
+                    for (const [key, value] of Object.entries(messages.errors)) {
+                        message(`<li>${key} </li> ${value.join("<br/>")}`, 'error');
+                    }
+                }
+
+                if (data != undefined) {
+                    $("#msg").html("");
+                    message(data, 'error');
+                }
+                
+            }
+
+        }
+    } catch (err) { // instead of onerror
+        //alert("Request failed");
+        $(".btn-activate").html("Activate").attr("disabled", !1);
+    }
+}
+
 function forgetPassword() {
 
     (async () => {
