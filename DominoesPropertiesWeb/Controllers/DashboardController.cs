@@ -204,6 +204,15 @@ namespace DominoesPropertiesWeb.Controllers
             }
             return View();
         }
+        public IActionResult Onboarding()
+        {
+            var isAuthAdmin = this.session.GetString("RoleFK");
+            if (isAuthAdmin == null || isAuthAdmin.Equals(string.Empty))
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            return View();
+        }
 
         [Route("get-enquiries")]
         public async Task<JsonResult> GetEnquiries()
