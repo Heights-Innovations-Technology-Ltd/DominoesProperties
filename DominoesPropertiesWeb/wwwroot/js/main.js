@@ -2978,7 +2978,7 @@ const resetPassword = () => {
 
                 confirmPropertyUpdate.fire({
                     title: 'Well done',
-                    text: `${message}. Kindly proceed to login into your account`,
+                    text: `${messages != undefined ? messages : data}. Kindly proceed to login into your account`,
                     icon: 'success',
                     showCancelButton: false,
                     confirmButtonText: 'Yes!',
