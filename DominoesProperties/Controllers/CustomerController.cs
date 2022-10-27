@@ -362,12 +362,12 @@ namespace DominoesProperties.Controllers
             {
                 try
                 {
-                    string token = "", html = "", subject = "", filePath="";
-                    string url = string.Format("{0}/{1}{2}?value={3}", configuration["app_settings:WebEndpoint"], validationModule.ToString().ToLower(), token, "customer");
+                    string token = "", html = "", subject = "", filePath="", url;
                     switch (validationModule)
                     {
                         case ValidationModule.ACTIVATE_ACCOUNT:
                             token = CommonLogic.GetUniqueRefNumber("AT");
+                            url = string.Format("{0}/home/{1}/{2}?value={3}", configuration["app_settings:WebEndpoint"], validationModule.ToString().ToLower(), token, "customer");
                             filePath = Path.Combine(environment.ContentRootPath, @"EmailTemplates\activation.html");
                             html = System.IO.File.ReadAllText(filePath.Replace(@"\", "/"));
                             html = html.Replace("{FIRSTNAME}", string.Format("{0} {1}", customer.FirstName, customer.LastName)).Replace("{LINK}", url).Replace("{webroot}", configuration["app_settings:WebEndpoint"]);
@@ -375,6 +375,7 @@ namespace DominoesProperties.Controllers
                             break;
                         case ValidationModule.RESET_PASSWORD:
                             token = CommonLogic.GetUniqueRefNumber("RS");
+                            url = string.Format("{0}/home/{1}/{2}?value={3}", configuration["app_settings:WebEndpoint"], validationModule.ToString().ToLower(), token, "customer");
                             filePath = Path.Combine(environment.ContentRootPath, @"EmailTemplates\password-reset.html");
                             html = System.IO.File.ReadAllText(filePath.Replace(@"\", "/"));
                             html = html.Replace("{FIRSTNAME}", string.Format("{0} {1}", customer.FirstName, customer.LastName)).Replace("{LINK}", url).Replace("{webroot}", configuration["app_settings:WebEndpoint"]);

@@ -11,5 +11,6 @@ namespace Repositories.Repository
         void DeleteCustomer(string uniqueReference);
         Customer UpdateCustomer(Customer customer);
         Customer GetCustomer(long id);
+        PagedList<Customer> GetCustomers(QueryParams pageParams);
     }
 }
