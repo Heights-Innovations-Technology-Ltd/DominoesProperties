@@ -267,7 +267,7 @@ namespace DominoesProperties.Controllers
             if (!string.IsNullOrEmpty(uniqueRef))
             {
                 var customer = customerRepository.GetCustomer(uniqueRef);
-                customer.Password = password.Password;
+                customer.Password = CommonLogic.Encrypt(password.Password);
                 customer.IsActive = true;
                 customer.IsVerified = true;
                 customerRepository.UpdateCustomer(customer);
