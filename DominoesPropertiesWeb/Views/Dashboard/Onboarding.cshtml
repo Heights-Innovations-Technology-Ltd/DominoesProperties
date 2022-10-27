@@ -6,8 +6,7 @@
 
 <link href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css">
 <link rel="stylesheet" href="https://cdn.datatables.net/select/1.4.0/css/select.dataTables.min.css">
-
-
+<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
 <div class="dashboard-area">
 	<div class="container-fluid">
 		<div class="dashboard-title-wrap">
@@ -517,25 +516,42 @@
 	</div>
 </div>
 
-<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+
 <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/select/1.4.0/js/dataTables.select.min.js"></script>
 
 <script>
     $(document).ready(function() {
-    $('#example').DataTable( {
-        columnDefs: [ {
-            orderable: false,
-            className: 'select-checkbox',
-            targets:   0
-        } ],
-        select: {
-            style:    'os',
-            selector: 'td:first-child'
-        },
-        order: [[ 1, 'asc' ]]
-    } );
+        var myTable = $('#example').DataTable( {
+            columnDefs: [ {
+                targets: 0,
+                orderable: false,
+                className: 'select-checkbox',
+                checkboxes: {
+                    selectRow: true
+                }
+            } ],
+            select: {
+                style:    'multi',
+                selector: 'td:first-child'
+            },
+            order: [[ 1, 'asc' ]],
+        } );
+
+        $('.select-checkbox').on('checked',() => {
+            var rowcollection = myTable.rows({ selected: true }).data();
+            console.log(rowcollection);
+            rowcollection.each(x => {
+                   console.log(x);
+               });
+         
+    });
+           
 } );
+
+ //$('#example').dataTable();
+
+
 </script>
 
 
