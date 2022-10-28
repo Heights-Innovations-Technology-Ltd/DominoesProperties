@@ -311,16 +311,17 @@ namespace DominoesProperties.Controllers
         [Authorize(Roles = "ADMIN, SUPER")]
         public ApiResponse Customers([FromQuery] QueryParams queryParams)
         {
-            PagedList<Customer> customers = customerRepository.GetCustomers(queryParams);
-            (int TotalCount, int PageSize, int CurrentPage, int TotalPages, bool HasNext, bool HasPrevious) metadata = (
-                 customers.TotalCount,
-                 customers.PageSize,
-                 customers.CurrentPage,
-                 customers.TotalPages,
-                 customers.HasNext,
-                 customers.HasPrevious
-             );
+            //PagedList<Customer> customers = customerRepository.GetCustomers(queryParams);
+            //(int TotalCount, int PageSize, int CurrentPage, int TotalPages, bool HasNext, bool HasPrevious) metadata = (
+            //     customers.TotalCount,
+            //     customers.PageSize,
+            //     customers.CurrentPage,
+            //     customers.TotalPages,
+            //     customers.HasNext,
+            //     customers.HasPrevious
+            // );
 
+            var customers = customerRepository.GetCustomers();
             List<NewCustomers> custs = new();
             customers.ForEach(x =>
             {
@@ -332,7 +333,7 @@ namespace DominoesProperties.Controllers
                 });
             });
 
-            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
+            //Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
             response.Success = true;
             response.Message = "Successfull";
             response.Data = custs;
