@@ -2943,16 +2943,12 @@ const resetPassword = () => {
         return;
     }
 
-
-    //$(".btn-activate").html("Processing...").attr("disabled", !0);
-
     let params = {
         "password": password,
         "confirmPassword": confirm,
         "token": token
     }
 
-    console.log(params);
     let xhr = new XMLHttpRequest();
     let url = "/resetpassword";
     xhr.open('POST', url, false);
@@ -3024,7 +3020,6 @@ const getCustomers = () => {
         } else {
             var res = JSON.parse(xhr.responseText);
             var data = JSON.parse(res).data;
-            console.log(data);
             if (JSON.parse(res).success) {
                 customerTmp(data);
             } else {
@@ -3069,9 +3064,6 @@ $('#btn-onboarding').click(function () {
     });
 
     //Display selected Row data in Alert Box.
-    console.log(arrayOfValues);
-
-
     const confirmPropertyUpdate = Swal.mixin({
         customClass: {
             confirmButton: 'btn btn-success mx-2',
@@ -3130,7 +3122,7 @@ $('#btn-onboarding').click(function () {
                     } else {
                         Swal.fire(
                             'Oops!',
-                            messages,
+                            messages != undefined ? messages : data,
                             'error'
                         );
                         $("#btn-onboarding").html("Send Onboarding Email").attr("disabled", !1);
