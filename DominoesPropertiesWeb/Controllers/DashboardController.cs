@@ -8,6 +8,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Dynamic;
 using System.Threading.Tasks;
+using System.Web.Helpers;
 
 namespace DominoesPropertiesWeb.Controllers
 {
@@ -260,6 +261,25 @@ namespace DominoesPropertiesWeb.Controllers
 
             var res = Task.Run(() => httpContext.Delete("Config/property-type/" + id));
             //var data = await res.GetAwaiter().GetResult();
+            await Task.WhenAll(res);
+            var data = res.Status == TaskStatus.RanToCompletion ? res.Result : null;
+            return Json(JsonConvert.SerializeObject(data));
+        }
+
+        [Route("customers")]
+        public async Task<JsonResult> GetCustomers()
+        {
+            var res = Task.Run(() => httpContext.Get("Util/all-customer"));
+            await Task.WhenAll(res);
+            var data = res.Status == TaskStatus.RanToCompletion ? res.Result : null;
+            return Json(JsonConvert.SerializeObject(data));
+        }
+        
+        [Route("onboard-customers")]
+        public async Task<JsonResult> OnboardCustomers([FromBody] dynamic json)
+        {
+            JArray jObjects = JsonConvert.DeserializeObject<JArray>(Convert.ToString(json));
+            var res = Task.Run(() => httpContext.Post("Util/onboard-customers", jObjects));
             await Task.WhenAll(res);
             var data = res.Status == TaskStatus.RanToCompletion ? res.Result : null;
             return Json(JsonConvert.SerializeObject(data));

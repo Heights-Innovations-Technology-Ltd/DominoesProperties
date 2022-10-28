@@ -2943,16 +2943,12 @@ const resetPassword = () => {
         return;
     }
 
-
-    //$(".btn-activate").html("Processing...").attr("disabled", !0);
-
     let params = {
         "password": password,
         "confirmPassword": confirm,
         "token": token
     }
 
-    console.log(params);
     let xhr = new XMLHttpRequest();
     let url = "/resetpassword";
     xhr.open('POST', url, false);
@@ -3009,6 +3005,150 @@ const resetPassword = () => {
         $(".btn-activate").html("Activate").attr("disabled", !1);
     }
 }
+
+const getCustomers = () => {
+    let xhr = new XMLHttpRequest();
+    let url = "/customers";
+    xhr.open('GET', url, false);
+    xhr.setRequestHeader("content-type", "application/json");
+    xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+    try {
+
+        xhr.send();
+        if (xhr.status != 200) {
+            // alert('Something went wrong try again!');
+        } else {
+            var res = JSON.parse(xhr.responseText);
+            var data = JSON.parse(res).data;
+            if (JSON.parse(res).success) {
+                customerTmp(data);
+            } else {
+                Swal.fire(
+                    'Oops!',
+                    data,
+                    'error'
+                );
+            }
+
+        }
+    } catch (err) { // instead of onerror
+        //alert("Request failed");
+    }
+}
+
+const customerTmp = (data) => {
+    $('#example tbody').html('');
+    data.forEach(x => {
+        let res = `<tr>
+                        <td><input type="checkbox" class="selectcheckbox"> </td>
+                        <td>${x.firstName}</td>
+                        <td>${x.lastName}</td>
+                        <td>${x.email}</td>
+                   </tr>`;
+        $('#example tbody').append(res);
+    })
+}
+
+
+var arrayOfValues = [];
+$('#btn-onboarding').click(function () {
+    //Loop through all checked CheckBoxes in GridView.
+    $("#example input[type=checkbox]:checked").each(function () {
+        var row = $(this).closest("tr")[0];
+        param = {
+            firstName: row.cells[1].innerHTML,
+            lastName: row.cells[2].innerHTML,
+            email: row.cells[3].innerHTML
+        };
+        arrayOfValues.push(param);
+    });
+
+    //Display selected Row data in Alert Box.
+    const confirmOnboarding = Swal.mixin({
+        customClass: {
+            confirmButton: 'btn btn-success mx-2',
+            cancelButton: 'btn btn-danger'
+        },
+        buttonsStyling: false
+    })
+
+    confirmOnboarding.fire({
+        title: 'Are you sure?',
+        text: "To onboarding the selected customer's!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes!',
+        cancelButtonText: 'No, cancel!',
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $("#btn-onboarding").html("Processing...").attr("disabled", !0);
+
+            if (arrayOfValues.length < 1) {
+                Swal.fire(
+                    'Oops!',
+                    "No customer selected to onbaord, kinldy select and try again",
+                    'error'
+                );
+                $("#btn-onboarding").html("Send Onboarding Email").attr("disabled", !1);
+                return;
+            }
+
+            let xhr = new XMLHttpRequest();
+            let url = "/onboard-customers";
+            xhr.open('POST', url, false);
+            xhr.setRequestHeader("content-type", "application/json");
+            xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+            try {
+                xhr.send(JSON.stringify(arrayOfValues));
+                if (xhr.status != 200) {
+                    // alert('Something went wrong try again!');
+                    $("#btn-onboarding").html("Send Onboarding Email").attr("disabled", !1);
+                    arrayOfValues = [];
+                } else {
+                    var res = JSON.parse(xhr.responseText);
+                    var data = JSON.parse(res).data;
+                    var messages = JSON.parse(res).message;
+                    if (JSON.parse(res).success) {
+                        window.scrollTo(0, 0);
+                        arrayOfValues = [];
+                        $("#btn-onboarding").html("Send Onboarding Email").attr("disabled", !1);
+                        Swal.fire(
+                            'Good job!',
+                            messages != undefined ? messages : data,
+                            'success'
+                        ).then(() => {
+                            location.reload();
+                        });
+                    } else {
+                        arrayOfValues = [];
+                        Swal.fire(
+                            'Oops!',
+                            messages != undefined ? messages : data,
+                            'error'
+                        );
+                        $("#btn-onboarding").html("Send Onboarding Email").attr("disabled", !1);
+                        window.scrollTo(0, 0);
+                    }
+
+                }
+            } catch (err) { // instead of onerror
+                //alert("Request failed");
+            }
+        } else if (
+            /* Read more about handling dismissals below */
+            result.dismiss === Swal.DismissReason.cancel
+        ) {
+            arrayOfValues = [];
+            confirmPropertyUpdate.fire(
+                'Cancelled',
+                'No onboarding was made :)',
+                'error'
+            )
+        }
+    });
+    return false;
+});
 
 function forgetPassword() {
 
