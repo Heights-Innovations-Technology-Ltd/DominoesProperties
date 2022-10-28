@@ -3064,7 +3064,7 @@ $('#btn-onboarding').click(function () {
     });
 
     //Display selected Row data in Alert Box.
-    const confirmPropertyUpdate = Swal.mixin({
+    const confirmOnboarding = Swal.mixin({
         customClass: {
             confirmButton: 'btn btn-success mx-2',
             cancelButton: 'btn btn-danger'
@@ -3072,7 +3072,7 @@ $('#btn-onboarding').click(function () {
         buttonsStyling: false
     })
 
-    confirmPropertyUpdate.fire({
+    confirmOnboarding.fire({
         title: 'Are you sure?',
         text: "To onboarding the selected customer's!",
         icon: 'warning',
@@ -3104,6 +3104,7 @@ $('#btn-onboarding').click(function () {
                 if (xhr.status != 200) {
                     // alert('Something went wrong try again!');
                     $("#btn-onboarding").html("Send Onboarding Email").attr("disabled", !1);
+                    arrayOfValues = [];
                 } else {
                     var res = JSON.parse(xhr.responseText);
                     var data = JSON.parse(res).data;
@@ -3114,12 +3115,13 @@ $('#btn-onboarding').click(function () {
                         $("#btn-onboarding").html("Send Onboarding Email").attr("disabled", !1);
                         Swal.fire(
                             'Good job!',
-                            messages,
+                            messages != undefined ? messages : data,
                             'success'
                         ).then(() => {
                             location.reload();
                         });
                     } else {
+                        arrayOfValues = [];
                         Swal.fire(
                             'Oops!',
                             messages != undefined ? messages : data,
@@ -3137,6 +3139,7 @@ $('#btn-onboarding').click(function () {
             /* Read more about handling dismissals below */
             result.dismiss === Swal.DismissReason.cancel
         ) {
+            arrayOfValues = [];
             confirmPropertyUpdate.fire(
                 'Cancelled',
                 'No onboarding was made :)',
