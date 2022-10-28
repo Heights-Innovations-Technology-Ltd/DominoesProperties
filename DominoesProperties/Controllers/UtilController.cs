@@ -308,8 +308,7 @@ namespace DominoesProperties.Controllers
         }
 
         [HttpGet("all-customer")]
-        [AllowAnonymous]
-        //[Authorize(Roles = "ADMIN, SUPER")]
+        [Authorize(Roles = "ADMIN, SUPER")]
         public ApiResponse Customers([FromQuery] QueryParams queryParams)
         {
             PagedList<Customer> customers = customerRepository.GetCustomers(queryParams);
