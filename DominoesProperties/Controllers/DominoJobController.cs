@@ -34,5 +34,11 @@ namespace DominoesProperties.Controllers
         {
             backgroundJob.AddOrUpdate("retry-email", () => dominoJob.ResendEmail(), "*/10 * * * *");
         }
+
+        [HttpGet("check-subscription")]
+        public void CheckSubscription()
+        {
+            backgroundJob.AddOrUpdate("check-subscription", () => dominoJob.CheckSubscription(), Cron.Daily(0));
+        }
     }
 }

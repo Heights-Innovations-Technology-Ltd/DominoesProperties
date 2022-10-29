@@ -101,5 +101,11 @@ namespace Repositories.Service
             _context.SaveChanges();
             return customer;
         }
+
+        public void UpdateCustomers(List<Customer> customers)
+        {
+            _context.Customers.UpdateRange(customers);
+            _context.SaveChanges();
+        }
     }
 }

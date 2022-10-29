@@ -31,6 +31,8 @@ namespace Models.Models
         public string PassportUrl { get; set; }
         public string BankName { get; set; }
         public DateTime DateRegistered { get; set; } = DateTime.Now;
+        public DateTime? NextSubscriptionDate { get; set; }
+        public DateTime? PrevSubscriptionDate { get; set; }
 
         public virtual Wallet Wallet { get; set; }
         public virtual ICollection<Investment> Investments { get; set; }
