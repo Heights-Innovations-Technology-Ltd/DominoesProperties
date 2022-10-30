@@ -10,6 +10,7 @@ namespace Repositories.Repository
         List<Customer> GetCustomers();
         void DeleteCustomer(string uniqueReference);
         Customer UpdateCustomer(Customer customer);
+        void UpdateCustomers(List<Customer> customers);
         Customer GetCustomer(long id);
         PagedList<Customer> GetCustomers(QueryParams pageParams);
     }

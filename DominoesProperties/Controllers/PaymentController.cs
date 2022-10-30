@@ -260,10 +260,13 @@ namespace DominoesProperties.Controllers
                 else if (paystack.PaymentModule.Equals(PaymentType.SUBSCRIPTION.ToString()))
                 {
                     customer.IsSubscribed = true;
+                    if(customer.NextSubscriptionDate.HasValue)
+                        customer.PrevSubscriptionDate = customer.NextSubscriptionDate;
+                    customer.NextSubscriptionDate = DateTime.Now.Date.AddYears(1);
                     customer.IsVerified = true;
                     customer.IsActive = true;
                     customerRepository.UpdateCustomer(customer);
-                    sendMail(customer.Email, customer.FirstName, customer.LastName, "subscription.html", "Congratulations!, You are in and have access to co-invest with us");
+                    sendMail(customer.Email, customer.FirstName, customer.LastName, "subscription.html", "Congratulations!, You are in, and have access to co-invest with us");
                 }
 
                 logger.LogInfo($"{transaction.TransactionRef} : {reference} : {paystack.Status}");

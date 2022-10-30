@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using DominoesProperties.Enums;
 using DominoesProperties.Models;
@@ -16,10 +18,11 @@ namespace DominoesProperties.Scheduled
         private readonly ITransactionRepository transactionRepository;
         private readonly IWalletRepository walletRepository;
         private readonly IEmailRetryRepository emailRetryRepository;
+        private readonly ICustomerRepository customerRepository;
         private readonly ILoggerManager logger;
         private readonly EmailSettings _emailSettings;
 
-        public DominoJob(IInvestmentRepository _investmentRepository, IPropertyRepository _propertyRepository, ITransactionRepository _transactionRepository, IWalletRepository _walletRepository, IEmailRetryRepository _emailRetryRepository, ILoggerManager _logger)
+        public DominoJob(IInvestmentRepository _investmentRepository, IPropertyRepository _propertyRepository, ITransactionRepository _transactionRepository, IWalletRepository _walletRepository, IEmailRetryRepository _emailRetryRepository, ILoggerManager _logger, ICustomerRepository _customerRepository)
         {
             investmentRepository = _investmentRepository;
             propertyRepository = _propertyRepository;
@@ -27,6 +30,7 @@ namespace DominoesProperties.Scheduled
             walletRepository = _walletRepository;
             emailRetryRepository = _emailRetryRepository;
             logger = _logger;
+            customerRepository = _customerRepository;
         }
 
         public void PerformPairInvestment()
@@ -198,6 +202,17 @@ namespace DominoesProperties.Scheduled
                 emailClient.Disconnect(true);
                 emailClient.Dispose();
             }
+        }
+
+        public void CheckSubscription()
+        {
+            var xx = customerRepository.GetCustomers().FindAll(x => x.NextSubscriptionDate.HasValue && x.NextSubscriptionDate.Value.CompareTo(DateTime.Now) < 0 && x.IsSubscribed.Value);
+            xx.ForEach(x =>
+            {
+                    x.IsSubscribed = false;
+            });
+
+            customerRepository.UpdateCustomers(xx);
         }
     }
 }
