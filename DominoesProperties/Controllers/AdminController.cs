@@ -143,16 +143,13 @@ namespace DominoesProperties.Controllers
         public async Task<ApiResponse> AdminAsync(string token)
         {
             var uniqueRef = await distributedCache.GetStringAsync(token);
-            if (!string.IsNullOrEmpty(uniqueRef))
-            {
-                var admin = adminRepository.GetUser(uniqueRef);
-                admin.IsActive = true;
-                adminRepository.UpdateUser(admin);
+            if (string.IsNullOrEmpty(uniqueRef)) return response;
+            var admin = adminRepository.GetUser(uniqueRef);
+            admin.IsActive = true;
+            adminRepository.UpdateUser(admin);
 
-                response.Message = $"User {uniqueRef} successfully activated, kindly login to access the application";
-                response.Success = true;
-                return response;
-            }
+            response.Message = $"User {uniqueRef} successfully activated, kindly login to access the application";
+            response.Success = true;
             return response;
         }
 
@@ -161,7 +158,7 @@ namespace DominoesProperties.Controllers
         public ApiResponse DeleteUser([EmailAddress(ErrorMessage = "Not a valid email address")] string email)
         {
             var admin = adminRepository.GetUser(email);
-            if (admin != null && !admin.IsDeleted.Value)
+            if (admin is { IsDeleted: false })
             {
                 admin.IsDeleted = true;
                 admin.IsActive = false;

@@ -12,12 +12,12 @@ namespace DominoesProperties.Controllers
     [ApiController]
     public class ConfigController : Controller
     {
-        private readonly ApiResponse response = new(false, "Error performing request, contact admin");
-        private readonly IConfigRepository configRepository;
+        private readonly ApiResponse _response = new(false, "Error performing request, contact admin");
+        private readonly IConfigRepository _configRepository;
 
-        public ConfigController(IConfigRepository _configRepository)
+        public ConfigController(IConfigRepository configRepository)
         {
-            configRepository = _configRepository;
+            _configRepository = configRepository;
         }
 
         [HttpPut]
@@ -27,13 +27,13 @@ namespace DominoesProperties.Controllers
         {
             if (string.IsNullOrEmpty(role.RoleName))
             {
-                response.Message = "Role name cannot be empty";
-                return response;
+                _response.Message = "Role name cannot be empty";
+                return _response;
             }
-            response.Data = await configRepository.EditRoles(role);
-            response.Success = true;
-            response.Message = "Role update successful";
-            return response;
+            _response.Data = await _configRepository.EditRoles(role);
+            _response.Success = true;
+            _response.Message = "Role update successful";
+            return _response;
         }
 
         [HttpPut]
@@ -43,14 +43,14 @@ namespace DominoesProperties.Controllers
         {
             if (string.IsNullOrEmpty(property.Name))
             {
-                response.Message = "Property type name cannot be empty";
-                return response;
+                _response.Message = "Property type name cannot be empty";
+                return _response;
             }
            
-            response.Data = await configRepository.EditPropertyTypes(property);
-            response.Success = true;
-            response.Message = "Property type updated successful";
-            return response;
+            _response.Data = await _configRepository.EditPropertyTypes(property);
+            _response.Success = true;
+            _response.Message = "Property type updated successful";
+            return _response;
         }
 
         [HttpPost]
@@ -60,17 +60,17 @@ namespace DominoesProperties.Controllers
         {
             if (string.IsNullOrEmpty(propertyName))
             {
-                response.Message = "Property type name cannot be empty";
-                return response;
+                _response.Message = "Property type name cannot be empty";
+                return _response;
             }
             PropertyType pp = new()
             {
                 Name = propertyName
             };
-            response.Data = await configRepository.AddPropertyType(pp);
-            response.Success = true;
-            response.Message = "Property type created successful";
-            return response;
+            _response.Data = await _configRepository.AddPropertyType(pp);
+            _response.Success = true;
+            _response.Message = "Property type created successful";
+            return _response;
         }
 
         [HttpDelete]
@@ -80,18 +80,18 @@ namespace DominoesProperties.Controllers
         {
             if (id <= 0)
             {
-                response.Message = "Property type id cannot be empty";
-                return response;
+                _response.Message = "Property type id cannot be empty";
+                return _response;
             }
-            if(!configRepository.GetPropertyTypes().Exists(x => x.Id.Equals(id)))
+            if(!_configRepository.GetPropertyTypes().Exists(x => x.Id.Equals(id)))
             {
-                response.Message = $"No property type found for id {id}";
-                return response;
+                _response.Message = $"No property type found for id {id}";
+                return _response;
             }
-            await configRepository.DeletePropertyTypes(id);
-            response.Success = true;
-            response.Message = "Property type deleted successfully";
-            return response;
+            await _configRepository.DeletePropertyTypes(id);
+            _response.Success = true;
+            _response.Message = "Property type deleted successfully";
+            return _response;
         }
 
         [HttpDelete]
@@ -101,18 +101,18 @@ namespace DominoesProperties.Controllers
         {
             if (id <= 0)
             {
-                response.Message = "Role id cannot be empty";
-                return response;
+                _response.Message = "Role id cannot be empty";
+                return _response;
             }
-            if (!configRepository.GetRoles().Exists(x => x.Id.Equals(id)))
+            if (!_configRepository.GetRoles().Exists(x => x.Id.Equals(id)))
             {
-                response.Message = $"No role found for id {id}";
-                return response;
+                _response.Message = $"No role found for id {id}";
+                return _response;
             }
-            await configRepository.DeleteRole(id);
-            response.Success = true;
-            response.Message = "Role deleted successfully";
-            return response;
+            await _configRepository.DeleteRole(id);
+            _response.Success = true;
+            _response.Message = "Role deleted successfully";
+            return _response;
         }
 
         [HttpPost]
@@ -122,18 +122,18 @@ namespace DominoesProperties.Controllers
         {
             if (string.IsNullOrEmpty(role.RoleName))
             {
-                response.Message = "Role name cannot be empty";
-                return response;
+                _response.Message = "Role name cannot be empty";
+                return _response;
             }
             Role pp = new()
             {
                 CreatedBy = HttpContext.User.Identity.Name,
                 RoleName =  role.RoleName
             };
-            response.Data =  await configRepository.AddRole(pp);
-            response.Success = true;
-            response.Message = "Role created successfully";
-            return response;
+            _response.Data =  await _configRepository.AddRole(pp);
+            _response.Success = true;
+            _response.Message = "Role created successfully";
+            return _response;
         }
     }
 }

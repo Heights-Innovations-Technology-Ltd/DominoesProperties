@@ -3,6 +3,7 @@ using Models.Models;
 using Helpers;
 using System.Linq;
 using DominoesProperties.Enums;
+using DominoesProperties.Models;
 
 namespace DominoesProperties.Helper
 {
@@ -112,8 +113,8 @@ namespace DominoesProperties.Helper
                 TypeName = property.TypeNavigation.Name,
                 Summary = property.Summary,
                 VideoLink = property.VideoLink,
-                AllowSharing = property.AllowSharing.Value,
-                MinimumSharingPercentage = property.MinimumSharingPercentage.Value
+                AllowSharing = property.AllowSharing.GetValueOrDefault(),
+                MinimumSharingPercentage = property.MinimumSharingPercentage.GetValueOrDefault()
             };
 
             if (property.PropertyUploads != null)
@@ -207,6 +208,44 @@ namespace DominoesProperties.Helper
                 Customer = $"{inv.Customer.FirstName} {inv.Customer.LastName}",
                 Property = inv.Property.Name
             };
+        }
+        
+        internal static BlogModel GetBlogModelFromBlogPost(Blogpost blogPost)
+        {
+            BlogModel model = new();
+            model.BlogTitle = blogPost.BlogTitle;
+            model.UniqueNumber = blogPost.UniqueNumber;
+            model.BlogContent = blogPost.BlogContent;
+            if (blogPost.BlogTags != null)
+                model.BlogTags = blogPost.BlogTags;
+
+            if (blogPost.BlogImage != null)
+                model.BlogImage = blogPost.BlogImage;
+
+            model.CreatedOn = blogPost.CreatedOn.GetValueOrDefault();
+            model.CreatedBy = blogPost.CreatedBy;
+
+            return model;
+        }
+
+        internal static Blogpost GetBlogPostFromModel(BlogModel blogPost)
+        {
+            Blogpost model = new()
+            {
+                BlogTitle = blogPost.BlogTitle,
+                BlogContent = blogPost.BlogContent
+            };
+
+            model.UniqueNumber =  blogPost.UniqueNumber == null ? CommonLogic.GetUniqueNumber("BP") : blogPost.UniqueNumber;
+            if (blogPost.BlogTags != null)
+                model.BlogTags = blogPost.BlogTags;
+
+            if (blogPost.BlogImage != null)
+                model.BlogImage = blogPost.BlogImage;
+
+            model.CreatedOn = DateTime.Now;
+            model.CreatedBy = blogPost.CreatedBy;
+            return model;
         }
     }
 }

@@ -120,14 +120,16 @@ namespace DominoesProperties.Scheduled
                                 {
                                     var amount = y.PercentageShare / 100 * tt.UnitPrice;
 
-                                    Transaction transaction = new();
-                                    transaction.Amount = amount;
-                                    transaction.Channel = Channel.TRANSFER.ToString();
-                                    transaction.CustomerId = y.CustomerId;
-                                    transaction.Module = PaymentType.REVERSAL.ToString();
-                                    transaction.Status = "success";
-                                    transaction.TransactionRef = $"RV||{y.PaymentReference}";
-                                    transaction.TransactionType = TransactionType.DR.ToString();
+                                    Transaction transaction = new()
+                                    {
+                                        Amount = amount,
+                                        Channel = Channel.TRANSFER.ToString(),
+                                        CustomerId = y.CustomerId,
+                                        Module = PaymentType.REVERSAL.ToString(),
+                                        Status = "success",
+                                        TransactionRef = $"RV||{y.PaymentReference}",
+                                        TransactionType = TransactionType.DR.ToString()
+                                    };
 
                                     transactionRepository.NewTransaction(transaction);
 
