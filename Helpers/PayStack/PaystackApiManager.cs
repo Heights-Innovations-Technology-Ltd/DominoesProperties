@@ -1,14 +1,13 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
 using Helpers.Enum;
-using Newtonsoft.Json.Serialization;
 using Helpers.PayStack;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Helpers
 {
@@ -22,14 +21,15 @@ namespace Helpers
         /// <summary>
         /// The test key
         /// </summary>
-        private readonly string TestKey = "sk_test_1bb3d4342a6bbbdf2b3f43663e47d292043b2a18";
+        private readonly string TestKey = "sk_live_92682103661943548b3e401fba6ad282aee263ac";
         //sk_live_be0b6ea293a0a4d8d0a4878d8a9ef8038effd51f
         //sk_test_468c58176cb63135e89444f749d16a5d581a1081
 
         /// <summary>
         /// The resovle account number API
         /// </summary>
-        private readonly string ResovleAccountNumberAPI = "https://api.paystack.co/bank/resolve?account_number={0}&bank_code={1}";
+        private readonly string ResovleAccountNumberAPI =
+            "https://api.paystack.co/bank/resolve?account_number={0}&bank_code={1}";
 
         /// <summary>
         /// The get fetch csutomer
@@ -92,11 +92,13 @@ namespace Helpers
 
         private readonly string PostSubmitOTP = "https://api.paystack.co/charge/submit_otp";
 
-        private readonly string CurrencyApi = "https://free.currconv.com/api/v7/convert?q={0}_NGN&compact=ultra&apiKey=76aa9f467f112b759b7b";
+        private readonly string CurrencyApi =
+            "https://free.currconv.com/api/v7/convert?q={0}_NGN&compact=ultra&apiKey=76aa9f467f112b759b7b";
 
         #endregion
 
         #region public methods
+
         /// <summary>
         /// Gets the bank list.
         /// </summary>
@@ -120,13 +122,13 @@ namespace Helpers
                         response = streamReader.ReadToEnd();
                     }
                 }
+
                 return GetBanks(response);
             }
             catch (Exception ex)
             {
                 throw ex;
             }
-
         }
 
         public string GetCurrencyRate(string currency)
@@ -147,13 +149,13 @@ namespace Helpers
                         response = streamReader.ReadToEnd();
                     }
                 }
+
                 return response;
             }
             catch (Exception)
             {
                 return "{}";
             }
-
         }
 
         /// <summary>
@@ -167,8 +169,8 @@ namespace Helpers
             ResponseModel responseModel = new();
             if (!string.IsNullOrEmpty(accountNumber) && !string.IsNullOrEmpty(bankCode))
             {
-
-                var httpWebRequest = (HttpWebRequest)WebRequest.Create(string.Format(ResovleAccountNumberAPI, accountNumber, bankCode));
+                var httpWebRequest =
+                    (HttpWebRequest)WebRequest.Create(string.Format(ResovleAccountNumberAPI, accountNumber, bankCode));
                 httpWebRequest.Headers.Add("Authorization", "Bearer " + TestKey);
                 httpWebRequest.Method = "GET";
 
@@ -183,6 +185,7 @@ namespace Helpers
                             response = streamReader.ReadToEnd();
                         }
                     }
+
                     if (!string.IsNullOrEmpty(response))
                     {
                         var data = JObject.Parse(response);
@@ -212,6 +215,7 @@ namespace Helpers
                 return responseModel;
             }
         }
+
         public ResponseModel CheckCardNumber(long binnumber)
         {
             ResponseModel responseModel = new ResponseModel();
@@ -258,7 +262,9 @@ namespace Helpers
         /// <param name="customer_code">The customer code.</param>
         /// <param name="transferreceipntcode">The transferreceipntcode.</param>
         /// <returns></returns>
-        public TransferMoneyResponseModel TransferMoney(string firstname, string lastname, string email, string phone, string accountnumber, string accountname, decimal amount, string bancode, string customer_code = null, string transferreceipntcode = null)
+        public TransferMoneyResponseModel TransferMoney(string firstname, string lastname, string email, string phone,
+            string accountnumber, string accountname, decimal amount, string bancode, string customer_code = null,
+            string transferreceipntcode = null)
         {
             ResponseModel responseModel = new ResponseModel();
             TransferMoneyResponseModel transferMoneyResponseModel = new TransferMoneyResponseModel();
@@ -275,27 +281,37 @@ namespace Helpers
 
                     if (string.IsNullOrEmpty(transferreceipntcode))
                     {
-                        string inputJsontransferreceipent = JsonConvert.SerializeObject(new { type = "nuban", name = accountname, account_number = accountnumber, bank_code = bancode });
+                        string inputJsontransferreceipent = JsonConvert.SerializeObject(new
+                        {
+                            type = "nuban", name = accountname, account_number = accountnumber, bank_code = bancode
+                        });
                         responseModel = CallApi(postCreateTransferRecipient, "POST", null, inputJsontransferreceipent);
-                        transferMoneyResponseModel.TransferRecipient = JsonConvert.DeserializeObject<TransferRecipient>(Convert.ToString(responseModel.Data));
+                        transferMoneyResponseModel.TransferRecipient =
+                            JsonConvert.DeserializeObject<TransferRecipient>(Convert.ToString(responseModel.Data));
                         transferreceipntcode = transferMoneyResponseModel.TransferRecipient.recipient_code;
                     }
                     else if (!Transferreceipntexits(transferreceipntcode))
                     {
-                        string inputJsontransferreceipent = JsonConvert.SerializeObject(new { type = "nuban", name = accountname, account_number = accountnumber, bank_code = bancode });
+                        string inputJsontransferreceipent = JsonConvert.SerializeObject(new
+                        {
+                            type = "nuban", name = accountname, account_number = accountnumber, bank_code = bancode
+                        });
                         responseModel = CallApi(postCreateTransferRecipient, "POST", null, inputJsontransferreceipent);
-                        transferMoneyResponseModel.TransferRecipient = JsonConvert.DeserializeObject<TransferRecipient>(Convert.ToString(responseModel.Data));
+                        transferMoneyResponseModel.TransferRecipient =
+                            JsonConvert.DeserializeObject<TransferRecipient>(Convert.ToString(responseModel.Data));
                         transferreceipntcode = transferMoneyResponseModel.TransferRecipient.recipient_code;
                     }
                     else
                     {
-                        transferMoneyResponseModel.TransferRecipient = JsonConvert.DeserializeObject<TransferRecipient>(Convert.ToString(responseModel.Data));
+                        transferMoneyResponseModel.TransferRecipient =
+                            JsonConvert.DeserializeObject<TransferRecipient>(Convert.ToString(responseModel.Data));
                     }
 
                     if (responseModel.Status)
                     {
                         //initlize transfer
-                        transferMoneyResponseModel = InitiateTransfer(transferMoneyResponseModel, responseModel, amount, transferreceipntcode);
+                        transferMoneyResponseModel = InitiateTransfer(transferMoneyResponseModel, responseModel, amount,
+                            transferreceipntcode);
                     }
                     else
                     {
@@ -308,7 +324,6 @@ namespace Helpers
                     transferMoneyResponseModel.status = false;
                     transferMoneyResponseModel.Message = "Customer not created in paystack";
                 }
-
             }
             else
             {
@@ -317,7 +332,8 @@ namespace Helpers
                 if (!responseModel.Status)
                 {
                     //if that customer code deleted from paystack then create that customer 
-                    string inputJsoncreatecustomer = JsonConvert.SerializeObject(new PropsJson(email, firstname, lastname, phone));
+                    string inputJsoncreatecustomer =
+                        JsonConvert.SerializeObject(new PropsJson(email, firstname, lastname, phone));
                     responseModel = CallApi(postCreateCustomer, "POST", parameter, inputJsoncreatecustomer);
                     if (responseModel.Status)
                     {
@@ -327,27 +343,39 @@ namespace Helpers
 
                         if (string.IsNullOrEmpty(transferreceipntcode))
                         {
-                            string inputJsontransferreceipent = JsonConvert.SerializeObject(new { type = "nuban", name = accountname, account_number = accountnumber, bank_code = bancode });
-                            responseModel = CallApi(postCreateTransferRecipient, "POST", null, inputJsontransferreceipent);
-                            transferMoneyResponseModel.TransferRecipient = JsonConvert.DeserializeObject<TransferRecipient>(Convert.ToString(responseModel.Data));
+                            string inputJsontransferreceipent = JsonConvert.SerializeObject(new
+                            {
+                                type = "nuban", name = accountname, account_number = accountnumber, bank_code = bancode
+                            });
+                            responseModel = CallApi(postCreateTransferRecipient, "POST", null,
+                                inputJsontransferreceipent);
+                            transferMoneyResponseModel.TransferRecipient =
+                                JsonConvert.DeserializeObject<TransferRecipient>(Convert.ToString(responseModel.Data));
                             transferreceipntcode = transferMoneyResponseModel.TransferRecipient.recipient_code;
                         }
                         else if (!Transferreceipntexits(transferreceipntcode))
                         {
-                            string inputJsontransferreceipent = JsonConvert.SerializeObject(new { type = "nuban", name = accountname, account_number = accountnumber, bank_code = bancode });
-                            responseModel = CallApi(postCreateTransferRecipient, "POST", null, inputJsontransferreceipent);
-                            transferMoneyResponseModel.TransferRecipient = JsonConvert.DeserializeObject<TransferRecipient>(Convert.ToString(responseModel.Data));
+                            string inputJsontransferreceipent = JsonConvert.SerializeObject(new
+                            {
+                                type = "nuban", name = accountname, account_number = accountnumber, bank_code = bancode
+                            });
+                            responseModel = CallApi(postCreateTransferRecipient, "POST", null,
+                                inputJsontransferreceipent);
+                            transferMoneyResponseModel.TransferRecipient =
+                                JsonConvert.DeserializeObject<TransferRecipient>(Convert.ToString(responseModel.Data));
                             transferreceipntcode = transferMoneyResponseModel.TransferRecipient.recipient_code;
                         }
                         else
                         {
-                            transferMoneyResponseModel.TransferRecipient = JsonConvert.DeserializeObject<TransferRecipient>(Convert.ToString(responseModel.Data));
+                            transferMoneyResponseModel.TransferRecipient =
+                                JsonConvert.DeserializeObject<TransferRecipient>(Convert.ToString(responseModel.Data));
                         }
 
                         if (responseModel.Status)
                         {
                             //initlize transfer
-                            transferMoneyResponseModel = InitiateTransfer(transferMoneyResponseModel, responseModel, amount, transferreceipntcode);
+                            transferMoneyResponseModel = InitiateTransfer(transferMoneyResponseModel, responseModel,
+                                amount, transferreceipntcode);
                         }
                         else
                         {
@@ -360,7 +388,6 @@ namespace Helpers
                         transferMoneyResponseModel.status = false;
                         transferMoneyResponseModel.Message = "Customer not created in paystack";
                     }
-
                 }
                 else
                 {
@@ -372,28 +399,40 @@ namespace Helpers
 
                         if (string.IsNullOrEmpty(transferreceipntcode))
                         {
-                            string inputJsontransferreceipent = JsonConvert.SerializeObject(new { type = "nuban", name = accountname, account_number = accountnumber, bank_code = bancode });
-                            responseModel = CallApi(postCreateTransferRecipient, "POST", null, inputJsontransferreceipent);
-                            transferMoneyResponseModel.TransferRecipient = JsonConvert.DeserializeObject<TransferRecipient>(Convert.ToString(responseModel.Data));
+                            string inputJsontransferreceipent = JsonConvert.SerializeObject(new
+                            {
+                                type = "nuban", name = accountname, account_number = accountnumber, bank_code = bancode
+                            });
+                            responseModel = CallApi(postCreateTransferRecipient, "POST", null,
+                                inputJsontransferreceipent);
+                            transferMoneyResponseModel.TransferRecipient =
+                                JsonConvert.DeserializeObject<TransferRecipient>(Convert.ToString(responseModel.Data));
                             transferreceipntcode = transferMoneyResponseModel.TransferRecipient.recipient_code;
                         }
                         else if (!Transferreceipntexits(transferreceipntcode))
                         {
-                            string inputJsontransferreceipent = JsonConvert.SerializeObject(new { type = "nuban", name = accountname, account_number = accountnumber, bank_code = bancode });
-                            responseModel = CallApi(postCreateTransferRecipient, "POST", null, inputJsontransferreceipent);
-                            transferMoneyResponseModel.TransferRecipient = JsonConvert.DeserializeObject<TransferRecipient>(Convert.ToString(responseModel.Data));
+                            string inputJsontransferreceipent = JsonConvert.SerializeObject(new
+                            {
+                                type = "nuban", name = accountname, account_number = accountnumber, bank_code = bancode
+                            });
+                            responseModel = CallApi(postCreateTransferRecipient, "POST", null,
+                                inputJsontransferreceipent);
+                            transferMoneyResponseModel.TransferRecipient =
+                                JsonConvert.DeserializeObject<TransferRecipient>(Convert.ToString(responseModel.Data));
                             transferreceipntcode = transferMoneyResponseModel.TransferRecipient.recipient_code;
                         }
                         else
                         {
-                            transferMoneyResponseModel.TransferRecipient = JsonConvert.DeserializeObject<TransferRecipient>(Convert.ToString(responseModel.Data));
+                            transferMoneyResponseModel.TransferRecipient =
+                                JsonConvert.DeserializeObject<TransferRecipient>(Convert.ToString(responseModel.Data));
                         }
 
 
                         if (responseModel.Status)
                         {
                             //initlize transfer
-                            transferMoneyResponseModel = InitiateTransfer(transferMoneyResponseModel, responseModel, amount, transferreceipntcode);
+                            transferMoneyResponseModel = InitiateTransfer(transferMoneyResponseModel, responseModel,
+                                amount, transferreceipntcode);
                         }
                         else
                         {
@@ -408,6 +447,7 @@ namespace Helpers
                     }
                 }
             }
+
             return transferMoneyResponseModel;
         }
 
@@ -444,7 +484,8 @@ namespace Helpers
             string[] parameter = { };
             ResponseModel responseModel = new();
             responseModel = CallApi(getCheckBalance, "GET", parameter);
-            List<CheckBalanceList> checkBalanceLists = JsonConvert.DeserializeObject<List<CheckBalanceList>>(Convert.ToString(responseModel.Data));
+            List<CheckBalanceList> checkBalanceLists =
+                JsonConvert.DeserializeObject<List<CheckBalanceList>>(Convert.ToString(responseModel.Data));
             if (checkBalanceLists != null && checkBalanceLists.Count > 0)
             {
                 if (checkBalanceLists[0].balance > amount)
@@ -456,6 +497,7 @@ namespace Helpers
             {
                 return false;
             }
+
             return false;
         }
 
@@ -464,7 +506,8 @@ namespace Helpers
             string[] parameter = { };
             ResponseModel responseModel = new();
             responseModel = CallApi(getCheckBalance, "GET", parameter);
-            List<CheckBalanceList> checkBalanceLists = JsonConvert.DeserializeObject<List<CheckBalanceList>>(Convert.ToString(responseModel.Data));
+            List<CheckBalanceList> checkBalanceLists =
+                JsonConvert.DeserializeObject<List<CheckBalanceList>>(Convert.ToString(responseModel.Data));
             if (checkBalanceLists != null && checkBalanceLists.Count > 0)
             {
                 return checkBalanceLists[0].balance;
@@ -488,9 +531,10 @@ namespace Helpers
         }
 
         // DOB must be yyyy--mm-dd formate
-        public ResponseModel ChargeAPI(string email, string amount, bool IsCard, string bankCode, string bankAccountNumber, string Dob, int? cardCVV, string cardNumber, string cardExpiryMonth, string cardExpiryYear)
+        public ResponseModel ChargeAPI(string email, string amount, bool IsCard, string bankCode,
+            string bankAccountNumber, string Dob, int? cardCVV, string cardNumber, string cardExpiryMonth,
+            string cardExpiryYear)
         {
-
             try
             {
                 ResponseModel responseModel = new();
@@ -529,17 +573,14 @@ namespace Helpers
 
                     inputJson = JsonConvert.SerializeObject(parameters);
                     responseModel = CallApi(PostChargeAPI, "POST", null, inputJson);
-
                 }
+
                 return responseModel;
             }
             catch (Exception ex)
             {
-
                 throw ex;
             }
-
-
         }
 
         public ResponseModel ChargeAuthorization(string emails, string amounts, string authorizationCode)
@@ -577,10 +618,10 @@ namespace Helpers
             }
             catch (Exception ex)
             {
-
                 throw ex;
             }
         }
+
         public ResponseModel SubmitOTP(string otp, string reference)
         {
             try
@@ -589,7 +630,6 @@ namespace Helpers
                 string inputJson = string.Empty;
                 var parameters = new
                 {
-
                     otp = otp,
                     reference = reference
                 };
@@ -599,7 +639,6 @@ namespace Helpers
             }
             catch (Exception ex)
             {
-
                 throw ex;
             }
         }
@@ -621,7 +660,6 @@ namespace Helpers
             }
             catch (Exception ex)
             {
-
                 throw ex;
             }
         }
@@ -630,6 +668,7 @@ namespace Helpers
 
 
         #region Private methods
+
         /// <summary>
         /// Gets the banks.
         /// </summary>
@@ -643,6 +682,7 @@ namespace Helpers
                 var data = JObject.Parse(jsonString);
                 banks = JsonConvert.DeserializeObject<Bank>(jsonString);
             }
+
             return banks;
         }
 
@@ -658,7 +698,8 @@ namespace Helpers
             string[] parameter = { };
             responseModel = CallApi(getCheckrecipientcode, "GET", parameter);
             List<RecipientsModel> recipientsModels = new();
-            recipientsModels = JsonConvert.DeserializeObject<List<RecipientsModel>>(Convert.ToString(responseModel.Data));
+            recipientsModels =
+                JsonConvert.DeserializeObject<List<RecipientsModel>>(Convert.ToString(responseModel.Data));
             var obj = recipientsModels.FirstOrDefault(x => x.recipient_code == transferreceipntcode && !x.is_deleted);
             if (obj != null)
                 yesorno = true;
@@ -673,9 +714,11 @@ namespace Helpers
         /// <param name="amount">The amount.</param>
         /// <param name="transferreceipntcode">The transferreceipntcode.</param>
         /// <returns></returns>
-        private TransferMoneyResponseModel InitiateTransfer(TransferMoneyResponseModel transferMoneyResponseModel, ResponseModel responseModel, decimal amount, string transferreceipntcode)
+        private TransferMoneyResponseModel InitiateTransfer(TransferMoneyResponseModel transferMoneyResponseModel,
+            ResponseModel responseModel, decimal amount, string transferreceipntcode)
         {
-            string inputjsoninittrasnfer = JsonConvert.SerializeObject(new { source = "balance", amount = (amount * 100), recipient = transferreceipntcode, currency = "NGN" });
+            string inputjsoninittrasnfer = JsonConvert.SerializeObject(new
+                { source = "balance", amount = (amount * 100), recipient = transferreceipntcode, currency = "NGN" });
             responseModel = CallApi(postInitiateTransfer, "POST", null, inputjsoninittrasnfer);
             if (responseModel.Status)
             {
@@ -724,6 +767,7 @@ namespace Helpers
                             response = streamReader.ReadToEnd();
                         }
                     }
+
                     if (!string.IsNullOrEmpty(response))
                     {
                         var data = JObject.Parse(response);
@@ -745,6 +789,7 @@ namespace Helpers
                         stream.Write(bytes, 0, bytes.Length);
                         stream.Close();
                     }
+
                     using (WebResponse response1 = (HttpWebResponse)httpWebRequest.GetResponse())
                     {
                         using (StreamReader reader = new(response1.GetResponseStream(), Encoding.UTF8))
@@ -753,11 +798,12 @@ namespace Helpers
                             responseModel = JsonConvert.DeserializeObject<ResponseModel>(respo);
                         }
                     }
+
                     return responseModel;
                 }
+
                 responseModel.Message = "No Data available for this AccountNumber";
                 responseModel.Status = false;
-
             }
             catch (WebException ex)
             {
@@ -768,11 +814,11 @@ namespace Helpers
                     return responseModel;
                 }
             }
+
             return responseModel;
         }
+
         #endregion
-
-
     }
 
     internal record PropsJson(string Email, string First_name, string Last_name, string Phone);
