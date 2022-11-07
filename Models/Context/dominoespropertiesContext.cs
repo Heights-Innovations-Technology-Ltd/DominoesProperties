@@ -19,6 +19,7 @@ namespace Models.Context
         public virtual DbSet<Admin> Admins { get; set; }
         public virtual DbSet<ApplicationSetting> Applicationsettings { get; set; }
         public virtual DbSet<AuditLog> Auditlogs { get; set; }
+        public virtual DbSet<Blogpost> Blogposts { get; set; }
         public virtual DbSet<Customer> Customers { get; set; }
         public virtual DbSet<Description> Descriptions { get; set; }
         public virtual DbSet<EmailRetry> Emailretries { get; set; }
@@ -119,6 +120,35 @@ namespace Models.Context
                 entity.Property(e => e.RequestPayload).HasColumnType("varchar(5000)");
 
                 entity.Property(e => e.ResponsePayload).HasColumnType("varchar(5000)");
+            });
+            
+            modelBuilder.Entity<Blogpost>(entity =>
+            {
+                entity.ToTable("blogpost");
+
+                entity.HasIndex(e => e.CreatedBy, "blogpost_admin_null_fk");
+
+                entity.Property(e => e.BlogImage).HasMaxLength(500);
+
+                entity.Property(e => e.BlogTags).HasMaxLength(500);
+
+                entity.Property(e => e.BlogTitle).HasMaxLength(200);
+
+                entity.Property(e => e.CreatedBy).HasMaxLength(70);
+
+                entity.Property(e => e.CreatedOn).HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                entity.Property(e => e.IsDeleted)
+                    .IsRequired()
+                    .HasColumnType("bit(1)")
+                    .HasDefaultValueSql("b'0'");
+
+                entity.Property(e => e.UniqueNumber).HasMaxLength(200);
+
+                entity.HasOne(d => d.CreatedByNavigation)
+                    .WithMany(p => p.Blogposts)
+                    .HasForeignKey(d => d.CreatedBy)
+                    .HasConstraintName("blogpost_admin_null_fk");
             });
 
             modelBuilder.Entity<Customer>(entity =>

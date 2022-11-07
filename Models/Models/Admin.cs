@@ -26,10 +26,11 @@ namespace Models.Models
 
         [IgnoreDataMember]
         public virtual Role RoleFkNavigation { get; set; }
+        public virtual ICollection<Blogpost> Blogposts { get; set; }
         [IgnoreDataMember]
-        public virtual ICollection<Property> Properties { get; set; }
+        public virtual ICollection<Property> Properties { get; }
         [IgnoreDataMember]
-        public virtual ICollection<Propertyupload> Propertyuploads { get; set; }
-        public virtual ICollection<Enquiry> Enquiries { get; set; }
+        public virtual ICollection<Propertyupload> Propertyuploads { get; }
+        public virtual ICollection<Enquiry> Enquiries { get; }
     }
 }
