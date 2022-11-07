@@ -1,9 +1,9 @@
-﻿using DominoesProperties.Models;
+﻿using System.Threading.Tasks;
+using DominoesProperties.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Models.Models;
 using Repositories.Repository;
-using System.Threading.Tasks;
 
 namespace DominoesProperties.Controllers
 {
@@ -12,8 +12,8 @@ namespace DominoesProperties.Controllers
     [ApiController]
     public class ConfigController : Controller
     {
-        private readonly ApiResponse _response = new(false, "Error performing request, contact admin");
         private readonly IConfigRepository _configRepository;
+        private readonly ApiResponse _response = new(false, "Error performing request, contact admin");
 
         public ConfigController(IConfigRepository configRepository)
         {
@@ -30,6 +30,7 @@ namespace DominoesProperties.Controllers
                 _response.Message = "Role name cannot be empty";
                 return _response;
             }
+
             _response.Data = await _configRepository.EditRoles(role);
             _response.Success = true;
             _response.Message = "Role update successful";
@@ -46,7 +47,7 @@ namespace DominoesProperties.Controllers
                 _response.Message = "Property type name cannot be empty";
                 return _response;
             }
-           
+
             _response.Data = await _configRepository.EditPropertyTypes(property);
             _response.Success = true;
             _response.Message = "Property type updated successful";
@@ -63,6 +64,7 @@ namespace DominoesProperties.Controllers
                 _response.Message = "Property type name cannot be empty";
                 return _response;
             }
+
             PropertyType pp = new()
             {
                 Name = propertyName
@@ -83,11 +85,13 @@ namespace DominoesProperties.Controllers
                 _response.Message = "Property type id cannot be empty";
                 return _response;
             }
-            if(!_configRepository.GetPropertyTypes().Exists(x => x.Id.Equals(id)))
+
+            if (!_configRepository.GetPropertyTypes().Exists(x => x.Id.Equals(id)))
             {
                 _response.Message = $"No property type found for id {id}";
                 return _response;
             }
+
             await _configRepository.DeletePropertyTypes(id);
             _response.Success = true;
             _response.Message = "Property type deleted successfully";
@@ -95,7 +99,7 @@ namespace DominoesProperties.Controllers
         }
 
         [HttpDelete]
-        [Route("role/{id}")]
+        [Route("role/{id:int}")]
         [Authorize(Roles = "SUPER")]
         public async Task<ApiResponse> DeleteRole([FromRoute] int id)
         {
@@ -104,11 +108,13 @@ namespace DominoesProperties.Controllers
                 _response.Message = "Role id cannot be empty";
                 return _response;
             }
+
             if (!_configRepository.GetRoles().Exists(x => x.Id.Equals(id)))
             {
                 _response.Message = $"No role found for id {id}";
                 return _response;
             }
+
             await _configRepository.DeleteRole(id);
             _response.Success = true;
             _response.Message = "Role deleted successfully";
@@ -125,12 +131,13 @@ namespace DominoesProperties.Controllers
                 _response.Message = "Role name cannot be empty";
                 return _response;
             }
+
             Role pp = new()
             {
                 CreatedBy = HttpContext.User.Identity.Name,
-                RoleName =  role.RoleName
+                RoleName = role.RoleName
             };
-            _response.Data =  await _configRepository.AddRole(pp);
+            _response.Data = await _configRepository.AddRole(pp);
             _response.Success = true;
             _response.Message = "Role created successfully";
             return _response;
