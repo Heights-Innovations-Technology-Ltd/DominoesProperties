@@ -1,10 +1,12 @@
 ﻿using DominoesProperties.Scheduled;
 using Hangfire;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DominoesProperties.Controllers
 {
     [ApiController]
+    [Authorize(Roles = "ADMIN, SUPER")]
     public class DominoJobs : Controller
     {
         private readonly IRecurringJobManager backgroundJob;
