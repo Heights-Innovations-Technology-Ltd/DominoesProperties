@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Localization;
 using Models.Models;
 using Newtonsoft.Json;
 using Repositories.Repository;
@@ -22,19 +21,20 @@ namespace DominoesProperties.Controllers
     [ApiController]
     public class InvestmentController : Controller
     {
-        private readonly ApiResponse response = new ApiResponse(false, "Error performing request, contact admin");
-        private readonly IPropertyRepository propertyRepository;
+        private readonly IConfiguration configuration;
         private readonly ICustomerRepository customerRepository;
+        private readonly IEmailService emailService;
+        private readonly IWebHostEnvironment env;
         private readonly IInvestmentRepository investmentRepository;
         private readonly PaymentController paymentController;
-        private readonly IConfiguration configuration;
-        private readonly IWebHostEnvironment env;
-        private readonly IEmailService emailService;
+        private readonly IPropertyRepository propertyRepository;
+        private readonly ApiResponse response = new ApiResponse(false, "Error performing request, contact admin");
         private readonly IUploadRepository uploadRepository;
 
         public InvestmentController(IPropertyRepository _propertyRepository, IConfiguration _configuration,
-        ICustomerRepository _customerRepository, IInvestmentRepository _investmentRepository, PaymentController _paymentController, IWebHostEnvironment _env,
-        IEmailService _emailService, IUploadRepository _uploadRepository)
+            ICustomerRepository _customerRepository, IInvestmentRepository _investmentRepository,
+            PaymentController _paymentController, IWebHostEnvironment _env,
+            IEmailService _emailService, IUploadRepository _uploadRepository)
         {
             propertyRepository = _propertyRepository;
             customerRepository = _customerRepository;
@@ -62,6 +62,7 @@ namespace DominoesProperties.Controllers
             {
                 response.Message = "No available groups for this investment";
             }
+
             response.Data = groups;
             return response;
         }
@@ -106,11 +107,14 @@ namespace DominoesProperties.Controllers
                     Amount = (property.UnitPrice * investment.PercentageShare) / 100,
                     Module = PaymentType.PROPERTY_PAIRING_GROUP,
                     InvestmentId = shg.UniqueId,
-                    Callback = string.Format("{0}/{1}", $"{Request.Scheme}://{Request.Host}{Request.PathBase}", "api/payment/verify-payment")
+                    Callback = string.Format("{0}/{1}", $"{Request.Scheme}://{Request.Host}{Request.PathBase}",
+                        "api/payment/verify-payment")
                 };
                 return paymentController.DoInitPayment(pay, HttpContext.User.Identity.Name);
             }
-            response.Message = "Unable to create new group for this property, either pairing is not allow or property is fully subscribed";
+
+            response.Message =
+                "Unable to create new group for this property, either pairing is not allow or property is fully subscribed";
             return response;
         }
 
@@ -136,7 +140,8 @@ namespace DominoesProperties.Controllers
                 Amount = (property.UnitPrice * investment.PercentageShare) / 100,
                 Module = PaymentType.PROPERTY_PAIRING,
                 InvestmentId = investment.SharingGroupId,
-                Callback = string.Format("{0}/{1}", $"{Request.Scheme}://{Request.Host}{Request.PathBase}", "api/payment/verify-payment")
+                Callback = string.Format("{0}/{1}", $"{Request.Scheme}://{Request.Host}{Request.PathBase}",
+                    "api/payment/verify-payment")
             };
             return paymentController.DoInitPayment(pay, HttpContext.User.Identity.Name);
         }
@@ -156,13 +161,15 @@ namespace DominoesProperties.Controllers
 
             if (investment.Units > property.UnitAvailable)
             {
-                response.Message = $"Not enough investment units available, only {property.UnitAvailable} units available for purchase";
+                response.Message =
+                    $"Not enough investment units available, only {property.UnitAvailable} units available for purchase";
                 return response;
             }
 
             if (investment.Units > property.MaxUnitPerCustomer)
             {
-                response.Message = $"Maximum number of investment units of {property.MaxUnitPerCustomer} allowed per customer exceeded";
+                response.Message =
+                    $"Maximum number of investment units of {property.MaxUnitPerCustomer} allowed per customer exceeded";
                 return response;
             }
 
@@ -172,7 +179,8 @@ namespace DominoesProperties.Controllers
             {
                 if (customer.Wallet.Balance < amount)
                 {
-                    response.Message = "Low wallet balance, please fund your wallet or try a different payment method to complete your investment.";
+                    response.Message =
+                        "Low wallet balance, please fund your wallet or try a different payment method to complete your investment.";
                     return response;
                 }
 
@@ -193,8 +201,14 @@ namespace DominoesProperties.Controllers
                 {
                     string filePath = Path.Combine(env.ContentRootPath, @"EmailTemplates\investment.html");
                     string html = System.IO.File.ReadAllText(filePath.Replace(@"\", "/"));
-                    html = html.Replace("{FIRSTNAME}", string.Format("{0} {1}", customer.FirstName, customer.LastName)).Replace("{I-NAME}", property.Name);
-                    html = html.Replace("{I-UNITS}", investment.Units.ToString()).Replace("{I-PRICE}", property.UnitPrice.ToString()).Replace("{I-TOTAL}", newInvestment.Amount.ToString()).Replace("{I-DATE}", newInvestment.PaymentDate.ToString()).Replace("{webroot}", configuration["app_settings:WebEndpoint"]); ;
+                    html = html.Replace("{FIRSTNAME}", string.Format("{0} {1}", customer.FirstName, customer.LastName))
+                        .Replace("{I-NAME}", property.Name);
+                    html = html.Replace("{I-UNITS}", investment.Units.ToString())
+                        .Replace("{I-PRICE}", property.UnitPrice.ToString())
+                        .Replace("{I-TOTAL}", newInvestment.Amount.ToString())
+                        .Replace("{I-DATE}", newInvestment.PaymentDate.ToString())
+                        .Replace("{webroot}", configuration["app_settings:WebEndpoint"]);
+                    ;
 
                     EmailData emailData = new()
                     {
@@ -216,6 +230,7 @@ namespace DominoesProperties.Controllers
                 {
                     //TODO write offline method code here
                 }
+
                 Investment newInvestment = new()
                 {
                     Amount = amount,
@@ -236,11 +251,13 @@ namespace DominoesProperties.Controllers
                         Amount = newInvestment.Amount,
                         Module = PaymentType.PROPERTY_PURCHASE,
                         InvestmentId = newInvestment.TransactionRef,
-                        Callback = string.Format("{0}/{1}", $"{Request.Scheme}://{Request.Host}{Request.PathBase}", "api/payment/verify-payment")
+                        Callback = string.Format("{0}/{1}", $"{Request.Scheme}://{Request.Host}{Request.PathBase}",
+                            "api/payment/verify-payment")
                     };
                     return paymentController.DoInitPayment(pay, customer.UniqueRef);
                 }
             }
+
             return response;
         }
 
@@ -248,14 +265,16 @@ namespace DominoesProperties.Controllers
         [Authorize(Roles = "ADMIN, CUSTOMER")]
         public ApiResponse Investment(string customerUniqueId)
         {
-            var investments = investmentRepository.GetInvestments(customerRepository.GetCustomer(customerUniqueId).Id);
+            var investments = investmentRepository.GetInvestments(customerRepository.GetCustomer(customerUniqueId).Id)
+                .Where(x => x.Status.Equals("COMPLETED")).ToList();
             List<InvestmentView> investmentViews = new();
             investments.ForEach(x =>
             {
-                
                 var xx = ClassConverter.ConvertInvestmentForView(x);
                 var dd = uploadRepository.GetUploads(x.PropertyId);
-                xx.Data = dd.Any(i => i.UploadType.Equals("COVER")) ? dd.FirstOrDefault(y => y.UploadType.Equals("COVER")).Url : "/images/properties/properties-4.jpg";
+                xx.Data = dd.Any(i => i.UploadType.Equals("COVER"))
+                    ? dd.FirstOrDefault(y => y.UploadType.Equals("COVER")).Url
+                    : "/images/properties/properties-4.jpg";
                 investmentViews.Add(xx);
             });
 
@@ -266,6 +285,7 @@ namespace DominoesProperties.Controllers
                 response.Data = investmentViews;
                 return response;
             }
+
             response.Message = "No record found";
             response.Data = investmentViews;
             return response;
@@ -275,7 +295,9 @@ namespace DominoesProperties.Controllers
         [Authorize(Roles = "ADMIN, SUPER")]
         public ApiResponse PropertyInvestment(string propertyUniqueId)
         {
-            List<Investment> investments = investmentRepository.GetPropertyInvestments(propertyRepository.GetProperty(propertyUniqueId).Id);
+            List<Investment> investments = investmentRepository
+                .GetPropertyInvestments(propertyRepository.GetProperty(propertyUniqueId).Id)
+                .Where(X => X.Status.Equals("COMPLETED")).ToList();
             List<InvestmentView> investments1 = new();
             investments.ForEach(x =>
             {
@@ -293,6 +315,7 @@ namespace DominoesProperties.Controllers
                 response.Data = investments1;
                 return response;
             }
+
             response.Message = "No record found";
             return response;
         }
@@ -303,13 +326,13 @@ namespace DominoesProperties.Controllers
         {
             PagedList<Investment> investments1 = investmentRepository.GetInvestments(queryParams);
             (int TotalCount, int PageSize, int CurrentPage, int TotalPages, bool HasNext, bool HasPrevious) metadata = (
-                 investments1.TotalCount,
-                 investments1.PageSize,
-                 investments1.CurrentPage,
-                 investments1.TotalPages,
-                 investments1.HasNext,
-                 investments1.HasPrevious
-             );
+                investments1.TotalCount,
+                investments1.PageSize,
+                investments1.CurrentPage,
+                investments1.TotalPages,
+                investments1.HasNext,
+                investments1.HasPrevious
+            );
 
             List<InvestmentView> investments = new();
             investments1.ForEach(x =>
