@@ -12,7 +12,8 @@ namespace Repositories.Service
     public class InvestmentService : BaseRepository, IInvestmentRepository
     {
         private readonly ILoggerManager loggerManager;
-        public InvestmentService(dominoespropertiesContext context, ILoggerManager _loggerManager):base(context)
+
+        public InvestmentService(dominoespropertiesContext context, ILoggerManager _loggerManager) : base(context)
         {
             loggerManager = _loggerManager;
         }
@@ -33,24 +34,26 @@ namespace Repositories.Service
         {
             return _context.Investments
                 .Include(x => x.Property)
-                .Where(x => x.CustomerId.Equals(customerId)).ToList();
+                .Where(x => x.CustomerId.Equals(customerId) && x.Status.Equals("COMPLETED")).ToList();
         }
 
         public List<Investment> GetPropertyInvestments(long propertyId)
         {
-            return _context.Investments.Where(x => x.PropertyId.Equals(propertyId)).ToList();
+            return _context.Investments.Where(x => x.PropertyId.Equals(propertyId) && x.Status.Equals("COMPLETED"))
+                .ToList();
         }
 
         public Investment GetNewInvestments(string transactionRef)
         {
             return _context.Investments
                 .Include(x => x.Property)
-                .Where(x => x.TransactionRef.Equals(transactionRef)).FirstOrDefault();
+                .FirstOrDefault(x => x.TransactionRef.Equals(transactionRef));
         }
 
         public PagedList<Investment> GetInvestments(QueryParams pageParams)
         {
-            return PagedList<Investment>.ToPagedList(_context.Investments.OrderBy(on => on.Id),
+            return PagedList<Investment>.ToPagedList(
+                _context.Investments.Where(x => x.Status.Equals("COMPLETED")).OrderBy(on => on.Id),
                 pageParams.PageNumber,
                 pageParams.PageSize);
         }
@@ -63,7 +66,8 @@ namespace Repositories.Service
 
         public List<char> GetUsersOnInvestment(long propertyId)
         {
-            return _context.Investments.Where(x => x.PropertyId == propertyId).Distinct().SelectMany(x => x.Customer.Email).ToList();
+            return _context.Investments.Where(x => x.PropertyId == propertyId && x.Status.Equals("COMPLETED"))
+                .Distinct().SelectMany(x => x.Customer.Email).ToList();
         }
 
         public bool AddInvestmentFromWallet(Investment investment)
@@ -96,6 +100,7 @@ namespace Repositories.Service
                 {
                     property.Status = "CLOSED_FOR_INVESTMENT";
                 }
+
                 _context.Properties.Update(property);
                 _context.Investments.Add(investment);
 
@@ -120,8 +125,7 @@ namespace Repositories.Service
         public Sharinggroup GetSharinggroups(string groupRef)
         {
             return _context.Sharinggroups
-                .Where(x => x.UniqueId == groupRef)
-                .FirstOrDefault();
+                .FirstOrDefault(x => x.UniqueId == groupRef);
         }
 
         public List<Sharinggroup> CompletedSharingGroup()
@@ -182,7 +186,8 @@ namespace Repositories.Service
                 _context.Sharinggroups.Update(group);
                 _context.SaveChanges();
                 return true;
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 loggerManager.LogError(ex.ToString());
                 return false;
