@@ -11,4 +11,3 @@ namespace DominoesProperties.Scheduled
         void ClearPendingInvestments();
     }
 }
-
