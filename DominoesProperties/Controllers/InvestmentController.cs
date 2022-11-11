@@ -228,7 +228,46 @@ namespace DominoesProperties.Controllers
             {
                 if (amount > decimal.Parse(configuration["app_settings:PayLimit"]))
                 {
-                    //TODO write offline method code here
+                    //offline method of payment
+                    OfflineInvestment off = new()
+                    {
+                        Amount = amount,
+                        CustomerId = customer.Id,
+                        PropertyId = property.Id,
+                        Units = investment.Units,
+                        PaymentRef = CommonLogic.GetUniqueRefNumber("INV"),
+                        Status = "PENDING",
+                        UnitPrice = property.UnitPrice
+                    };
+                    if (investmentRepository.AddOfflineInvestment(off))
+                    {
+                        //prepared for email
+                        var accountNumber = configuration["app_settings:AccountNumber"];
+                        var accountName = configuration["app_settings:AccountName"];
+                        var bankName = configuration["app_settings:BankName"];
+                        var paymentId = off.PaymentRef;
+
+                        var filePath = Path.Combine(env.ContentRootPath, @"EmailTemplates\welcome.html");
+                        var html = System.IO.File.ReadAllText(filePath.Replace(@"\", "/"));
+                        html = html.Replace("{FIRSTNAME}",
+                                string.Format("{0} {1}", customer.FirstName, customer.LastName))
+                            .Replace("{webroot}", configuration["app_settings:WebEndpoint"]);
+                        ;
+
+                        EmailData emailRequest = new()
+                        {
+                            EmailBody = html,
+                            EmailSubject = "Offline Investment Payment",
+                            EmailToId = customer.Email,
+                            EmailToName = customer.FirstName
+                        };
+                        emailService.SendEmail(emailRequest);
+
+                        response.Message =
+                            "You are one step into your investment, follow instructions in your email to complete your investment";
+                        response.Success = true;
+                        return response;
+                    }
                 }
 
                 Investment newInvestment = new()

@@ -122,11 +122,11 @@ namespace DominoesProperties.Controllers
                 return Redirect($"{configuration["app_settings:WebEndpoint"]}?reference={reference}status=error");
             }
 
-            JObject jObject = JsonConvert.DeserializeObject<JObject>(returns);
-            JObject cust = JsonConvert.DeserializeObject<JObject>(jObject["customer"].ToString());
+            var jObject = JsonConvert.DeserializeObject<JObject>(returns);
+            var cust = JsonConvert.DeserializeObject<JObject>(jObject["customer"].ToString());
             try
             {
-                PaystackPayment paystack = paystackRepository.GetPaystack(reference);
+                var paystack = paystackRepository.GetPaystack(reference);
                 paystack.Channel = Convert.ToString(jObject["channel"]);
                 paystack.Status = Convert.ToString(jObject["status"]);
                 paystack.Payload = CommonLogic.Encrypt(returns);

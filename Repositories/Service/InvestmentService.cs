@@ -220,5 +220,29 @@ namespace Repositories.Service
                 _context.Investments.RemoveRange(inv);
             _context.SaveChanges();
         }
+
+        public IEnumerable<OfflineInvestment> GetOfflineInvestments(long customerId)
+        {
+            return _context.OfflineInvestments.Where(x => x.CustomerId == customerId);
+        }
+
+        public OfflineInvestment getOfflineInvestment(long id)
+        {
+            return _context.OfflineInvestments.Find(id);
+        }
+
+        public bool AddOfflineInvestment(OfflineInvestment investment)
+        {
+            try
+            {
+                _context.OfflineInvestments.Add(investment);
+                _context.SaveChanges();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
     }
 }

@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿#nullable disable
 
-#nullable disable
+using System;
+using System.Collections.Generic;
 
 namespace Models.Models
 {
@@ -10,6 +10,7 @@ namespace Models.Models
         public Customer()
         {
             Investments = new HashSet<Investment>();
+            OfflineInvestments = new HashSet<OfflineInvestment>();
             Transactions = new HashSet<Transaction>();
             Sharingentries = new HashSet<Sharingentry>();
         }
@@ -36,6 +37,7 @@ namespace Models.Models
 
         public virtual Wallet Wallet { get; set; }
         public virtual ICollection<Investment> Investments { get; set; }
+        public virtual ICollection<OfflineInvestment> OfflineInvestments { get; set; }
         public virtual ICollection<Transaction> Transactions { get; set; }
         public virtual ICollection<Sharingentry> Sharingentries { get; set; }
     }

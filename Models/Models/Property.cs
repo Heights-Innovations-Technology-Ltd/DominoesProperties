@@ -1,8 +1,8 @@
-﻿using System;
+﻿#nullable disable
+
+using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
-
-#nullable disable
 
 namespace Models.Models
 {
@@ -11,6 +11,7 @@ namespace Models.Models
         public Property()
         {
             Investments = new HashSet<Investment>();
+            OfflineInvestments = new HashSet<OfflineInvestment>();
             PropertyUploads = new HashSet<Propertyupload>();
             Sharinggroups = new HashSet<Sharinggroup>();
         }
@@ -45,10 +46,12 @@ namespace Models.Models
 
         public virtual Admin CreatedByNavigation { get; set; }
         public virtual PropertyType TypeNavigation { get; set; }
-        [IgnoreDataMember]
-        public virtual ICollection<Investment> Investments { get; set; }
+
+        [IgnoreDataMember] public virtual ICollection<Investment> Investments { get; set; }
+
+        public virtual ICollection<OfflineInvestment> OfflineInvestments { get; set; }
         public virtual ICollection<Propertyupload> PropertyUploads { get; set; }
-        [IgnoreDataMember]
-        public virtual ICollection<Sharinggroup> Sharinggroups { get; set; }
+
+        [IgnoreDataMember] public virtual ICollection<Sharinggroup> Sharinggroups { get; set; }
     }
 }
