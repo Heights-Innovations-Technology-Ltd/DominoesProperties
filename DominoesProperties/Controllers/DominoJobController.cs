@@ -12,7 +12,9 @@ namespace DominoesProperties.Controllers
         private readonly IRecurringJobManager backgroundJob;
         private readonly IBackgroundJobClient backgroundJobClient;
         private readonly IDominoJob dominoJob;
-        public DominoJobs(IRecurringJobManager _backgroundJob, IBackgroundJobClient _backgroundJobClient, IDominoJob _dominoJob)
+
+        public DominoJobs(IRecurringJobManager _backgroundJob, IBackgroundJobClient _backgroundJobClient,
+            IDominoJob _dominoJob)
         {
             backgroundJob = _backgroundJob;
             backgroundJobClient = _backgroundJobClient;
@@ -28,7 +30,8 @@ namespace DominoesProperties.Controllers
         [HttpGet("incomplete-pairing")]
         public void UncompletedPairing()
         {
-            backgroundJobClient.ContinueJobWith("complete-pairing", () => dominoJob.CheckUnclosedPairing(), JobContinuationOptions.OnlyOnSucceededState);
+            backgroundJobClient.ContinueJobWith("complete-pairing", () => dominoJob.CheckUnclosedPairing(),
+                JobContinuationOptions.OnlyOnSucceededState);
         }
 
         [HttpGet("retry-mail")]
@@ -41,6 +44,13 @@ namespace DominoesProperties.Controllers
         public void CheckSubscription()
         {
             backgroundJob.AddOrUpdate("check-subscription", () => dominoJob.CheckSubscription(), Cron.Daily(0));
+        }
+
+        [HttpGet("incomplete-pairing")]
+        public void DeletePendingInvestment()
+        {
+            backgroundJobClient.ContinueJobWith("check-subscription", () => dominoJob.ClearPendingInvestments(),
+                JobContinuationOptions.OnAnyFinishedState);
         }
     }
 }

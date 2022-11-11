@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using DominoesProperties.Enums;
 using DominoesProperties.Models;
@@ -13,16 +11,19 @@ namespace DominoesProperties.Scheduled
 {
     public class DominoJob : IDominoJob
     {
+        private readonly EmailSettings _emailSettings;
+        private readonly ICustomerRepository customerRepository;
+        private readonly IEmailRetryRepository emailRetryRepository;
         private readonly IInvestmentRepository investmentRepository;
+        private readonly ILoggerManager logger;
         private readonly IPropertyRepository propertyRepository;
         private readonly ITransactionRepository transactionRepository;
         private readonly IWalletRepository walletRepository;
-        private readonly IEmailRetryRepository emailRetryRepository;
-        private readonly ICustomerRepository customerRepository;
-        private readonly ILoggerManager logger;
-        private readonly EmailSettings _emailSettings;
 
-        public DominoJob(IInvestmentRepository _investmentRepository, IPropertyRepository _propertyRepository, ITransactionRepository _transactionRepository, IWalletRepository _walletRepository, IEmailRetryRepository _emailRetryRepository, ILoggerManager _logger, ICustomerRepository _customerRepository)
+        public DominoJob(IInvestmentRepository _investmentRepository, IPropertyRepository _propertyRepository,
+            ITransactionRepository _transactionRepository, IWalletRepository _walletRepository,
+            IEmailRetryRepository _emailRetryRepository, ILoggerManager _logger,
+            ICustomerRepository _customerRepository)
         {
             investmentRepository = _investmentRepository;
             propertyRepository = _propertyRepository;
@@ -40,7 +41,9 @@ namespace DominoesProperties.Scheduled
                 var tt = propertyRepository.GetProperty(x.PropertyId);
                 if (tt.UnitAvailable > 0)
                 {
-                    using (var scope = new System.Transactions.TransactionScope(System.Transactions.TransactionScopeOption.RequiresNew))
+                    using (var scope =
+                           new System.Transactions.TransactionScope(System.Transactions.TransactionScopeOption
+                               .RequiresNew))
                     {
                         try
                         {
@@ -50,6 +53,7 @@ namespace DominoesProperties.Scheduled
                             {
                                 t.IsClosed = true;
                             }
+
                             propertyRepository.UpdateProperty(tt);
                             investmentRepository.UpdateSharingGroup(x);
                             scope.Complete();
@@ -65,7 +69,9 @@ namespace DominoesProperties.Scheduled
                 {
                     foreach (var y in x.Sharingentries)
                     {
-                        using (var scope = new System.Transactions.TransactionScope(System.Transactions.TransactionScopeOption.RequiresNew))
+                        using (var scope =
+                               new System.Transactions.TransactionScope(System.Transactions.TransactionScopeOption
+                                   .RequiresNew))
                         {
                             try
                             {
@@ -97,7 +103,6 @@ namespace DominoesProperties.Scheduled
                                 scope.Dispose();
                             }
                         }
-
                     }
                 }
             });
@@ -114,7 +119,9 @@ namespace DominoesProperties.Scheduled
                     {
                         foreach (var y in x.Sharingentries)
                         {
-                            using (var scope = new System.Transactions.TransactionScope(System.Transactions.TransactionScopeOption.RequiresNew))
+                            using (var scope =
+                                   new System.Transactions.TransactionScope(System.Transactions.TransactionScopeOption
+                                       .RequiresNew))
                             {
                                 try
                                 {
@@ -167,7 +174,8 @@ namespace DominoesProperties.Scheduled
                 var retries = emailRetryRepository.GetRetries();
                 retries.ForEach(x =>
                 {
-                    if (x.DateCreated.Day == DateTime.Now.Day && x.DateCreated.AddMinutes(5) <= DateTime.Now && x.RetryCount < 3)
+                    if (x.DateCreated.Day == DateTime.Now.Day && x.DateCreated.AddMinutes(5) <= DateTime.Now &&
+                        x.RetryCount < 3)
                     {
                         MimeMessage emailMessage = new();
 
@@ -208,13 +216,17 @@ namespace DominoesProperties.Scheduled
 
         public void CheckSubscription()
         {
-            var xx = customerRepository.GetCustomers().FindAll(x => x.NextSubscriptionDate.HasValue && x.NextSubscriptionDate.Value.CompareTo(DateTime.Now) < 0 && x.IsSubscribed.Value);
-            xx.ForEach(x =>
-            {
-                    x.IsSubscribed = false;
-            });
+            var xx = customerRepository.GetCustomers().FindAll(x =>
+                x.NextSubscriptionDate.HasValue && x.NextSubscriptionDate.Value.CompareTo(DateTime.Now) < 0 &&
+                x.IsSubscribed.Value);
+            xx.ForEach(x => { x.IsSubscribed = false; });
 
             customerRepository.UpdateCustomers(xx);
+        }
+
+        public void ClearPendingInvestments()
+        {
+            investmentRepository.DeletePendingInvestments();
         }
     }
 }

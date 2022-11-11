@@ -8,6 +8,6 @@ namespace DominoesProperties.Scheduled
         Task<bool> CheckUnclosedPairing();
         void ResendEmail();
         void CheckSubscription();
+        void ClearPendingInvestments();
     }
 }
-

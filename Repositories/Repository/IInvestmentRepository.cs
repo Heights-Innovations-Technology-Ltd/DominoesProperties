@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Models.Models;
 
@@ -13,7 +12,7 @@ namespace Repositories.Repository
         PagedList<Investment> GetInvestments(QueryParams queryParams);
         Investment GetInvestment(long investmentId);
         Investment GetNewInvestments(string transactionRef);
-        List<Investment> GetPropertyInvestments(long propertyId);
+        IEnumerable<Investment> GetPropertyInvestments(long propertyId);
         bool AddInvestmentFromWallet(Investment investment);
         List<char> GetUsersOnInvestment(long propertyId);
         List<Sharinggroup> GetSharinggroups(long propertyId);
@@ -25,6 +24,7 @@ namespace Repositories.Repository
         void UpdateSharingGroup(Sharinggroup sharinggroup);
         List<Sharinggroup> CompletedSharingGroup();
         List<Sharinggroup> UncompletedSharingGroup();
-        List<Sharingentry> GetSharingEntries(long customerId);
+        IEnumerable<Sharingentry> GetSharingEntries(long customerId);
+        void DeletePendingInvestments();
     }
 }
