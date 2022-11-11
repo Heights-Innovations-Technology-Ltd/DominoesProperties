@@ -216,5 +216,10 @@ namespace DominoesProperties.Scheduled
 
             customerRepository.UpdateCustomers(xx);
         }
+
+        public void ClearPendingInvestments()
+        {
+            investmentRepository.DeletePendingInvestments();
+        }
     }
 }

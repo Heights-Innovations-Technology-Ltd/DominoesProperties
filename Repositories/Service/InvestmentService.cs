@@ -37,7 +37,7 @@ namespace Repositories.Service
                 .Where(x => x.CustomerId.Equals(customerId) && x.Status.Equals("COMPLETED")).ToList();
         }
 
-        public List<Investment> GetPropertyInvestments(long propertyId)
+        public IEnumerable<Investment> GetPropertyInvestments(long propertyId)
         {
             return _context.Investments.Where(x => x.PropertyId.Equals(propertyId) && x.Status.Equals("COMPLETED"))
                 .ToList();
@@ -207,10 +207,18 @@ namespace Repositories.Service
             }
         }
 
-        public List<Sharingentry> GetSharingEntries(long customerId)
+        public IEnumerable<Sharingentry> GetSharingEntries(long customerId)
         {
             return _context.Sharingentries
                 .Where(x => x.CustomerId == customerId).ToList();
+        }
+
+        public void DeletePendingInvestments()
+        {
+            var inv = _context.Investments.Where(x => x.Status.Equals("PENDING"));
+            if (inv.Any())
+                _context.Investments.RemoveRange(inv);
+            _context.SaveChanges();
         }
     }
 }
