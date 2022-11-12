@@ -44,7 +44,7 @@ namespace DominoesProperties.Controllers
             backgroundJob.AddOrUpdate("check-subscription", () => dominoJob.CheckSubscription(), Cron.Daily(0));
         }
 
-        [HttpGet("incomplete-pairing")]
+        [HttpGet("clear-pending")]
         public void DeletePendingInvestment()
         {
             backgroundJobClient.ContinueJobWith("check-subscription", () => dominoJob.ClearPendingInvestments(),
