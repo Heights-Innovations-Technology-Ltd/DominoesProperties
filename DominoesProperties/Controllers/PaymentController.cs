@@ -64,7 +64,7 @@ namespace DominoesProperties.Controllers
         public ApiResponse DoInitPayment(Payment payment, string user)
         {
             var customer = customerRepository.GetCustomer(user);
-            _ = decimal.TryParse(configuration["subscription"], out decimal subscription);
+            _ = decimal.TryParse(configuration["subscription"], out var subscription);
             var amount = payment.Module.Equals(PaymentType.SUBSCRIPTION) ? subscription : payment.Amount;
             var transRef = Guid.NewGuid().ToString();
             PaymentModel m = new()
@@ -73,8 +73,7 @@ namespace DominoesProperties.Controllers
                 email = customer.Email,
                 reference = string.IsNullOrEmpty(payment.InvestmentId) ? transRef : payment.InvestmentId,
                 callback = string.IsNullOrEmpty(payment.Callback)
-                    ? string.Format("{0}/{1}", $"{Request.Scheme}://{Request.Host}{Request.PathBase}",
-                        "api/payment/verify-payment")
+                    ? $"{Request.Scheme}://{Request.Host}{Request.PathBase}/api/payment/verify-payment"
                     : $"{payment.Callback}"
             };
 

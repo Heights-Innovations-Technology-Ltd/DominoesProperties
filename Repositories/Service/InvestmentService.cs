@@ -226,10 +226,13 @@ namespace Repositories.Service
             return _context.OfflineInvestments.Where(x => x.CustomerId == customerId);
         }
 
-        public Dictionary<string, List<OfflineInvestment>> GetOfflineInvestments()
+        public async Task<object> GetOfflineInvestments()
         {
-            return _context.OfflineInvestments.GroupBy(x => x.Status).ToDictionary(g => g.Key, g => g.ToList());
-            // return _context.OfflineInvestments.Where(x => x.Status.Equals("PROCESSING"));
+            var offlineInvestments = await _context.OfflineInvestments
+                .ToListAsync();
+
+            return offlineInvestments.GroupBy(t => t.Status)
+                .Select(b => new { group = b.Key, items = b });
         }
 
         public OfflineInvestment GetOfflineInvestment(long id)

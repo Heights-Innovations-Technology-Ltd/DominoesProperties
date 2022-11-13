@@ -3,7 +3,6 @@ using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
-using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -99,12 +98,12 @@ namespace DominoesProperties.Controllers
             {
                 try
                 {
-                    string token = Guid.NewGuid().ToString();
-                    string url = string.Format("{0}{1}/{2}?value={3}", configuration["app_settings:WebEndpoint"],
+                    var token = Guid.NewGuid().ToString();
+                    var url = string.Format("{0}{1}/{2}?value={3}", configuration["app_settings:WebEndpoint"],
                         ValidationModule.ACTIVATE_ACCOUNT, token, "admin");
-                    string filePath =
+                    var filePath =
                         System.IO.Path.Combine(environment.ContentRootPath, @"EmailTemplates\NewCustomer.html");
-                    string html = System.IO.File.ReadAllText(filePath.Replace(@"\", "/"));
+                    var html = System.IO.File.ReadAllText(filePath.Replace(@"\", "/"));
                     html = html.Replace("{name}", admin.Email).Replace("{link}", HttpUtility.UrlEncode(url));
 
                     await distributedCache.SetStringAsync(token, admin.Email, expiryOptions);
@@ -227,10 +226,11 @@ namespace DominoesProperties.Controllers
 
         [HttpGet("offline-payment")]
         [Authorize(Roles = "ADMIN, SUPER")]
-        public ApiResponse OfflinePayment()
+        public async Task<ApiResponse> OfflinePayment()
         {
-            var inv = _investmentRepository.GetOfflineInvestments();
-            if (inv.Any())
+            var inv = await _investmentRepository.GetOfflineInvestments();
+
+            if (inv != null)
             {
                 response.Message = $"Offline investments fetched.";
                 response.Data = inv;

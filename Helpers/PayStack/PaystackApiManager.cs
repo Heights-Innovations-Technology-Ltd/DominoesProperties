@@ -459,7 +459,7 @@ namespace Helpers
         /// <returns></returns>
         public ResponseModel MobileAppInitTransaction(PaymentModel model)
         {
-            string inputJson = JsonConvert.SerializeObject(model);
+            var inputJson = JsonConvert.SerializeObject(model);
             return CallApi(postinitializeTransaction, "POST", null, inputJson);
         }
 
@@ -759,7 +759,7 @@ namespace Helpers
                     httpWebRequest.Method = apitype;
 
                     var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
-                    string response = string.Empty;
+                    var response = string.Empty;
                     if (httpResponse.StatusCode == HttpStatusCode.OK)
                     {
                         using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))

@@ -32,6 +32,6 @@ namespace Repositories.Repository
         bool AddOfflineInvestment(OfflineInvestment investment);
         OfflineInvestment UpdateOfflineInvestment(OfflineInvestment investment);
         OfflineInvestment GetOfflineInvestment(string paymentRef);
-        Dictionary<string, List<OfflineInvestment>> GetOfflineInvestments();
+        Task<object> GetOfflineInvestments();
     }
 }
