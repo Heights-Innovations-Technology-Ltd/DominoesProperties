@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using DominoesProperties.Enums;
 using DominoesProperties.Helper;
 using DominoesProperties.Models;
@@ -21,6 +22,7 @@ namespace DominoesProperties.Controllers
     [ApiController]
     public class InvestmentController : Controller
     {
+        private readonly IAdminRepository _adminRepository;
         private readonly IConfiguration configuration;
         private readonly ICustomerRepository customerRepository;
         private readonly IEmailService emailService;
@@ -33,7 +35,7 @@ namespace DominoesProperties.Controllers
 
         public InvestmentController(IPropertyRepository _propertyRepository, IConfiguration _configuration,
             ICustomerRepository _customerRepository, IInvestmentRepository _investmentRepository,
-            PaymentController _paymentController, IWebHostEnvironment _env,
+            PaymentController _paymentController, IWebHostEnvironment _env, IAdminRepository adminRepository,
             IEmailService _emailService, IUploadRepository _uploadRepository)
         {
             propertyRepository = _propertyRepository;
@@ -44,6 +46,7 @@ namespace DominoesProperties.Controllers
             env = _env;
             emailService = _emailService;
             uploadRepository = _uploadRepository;
+            _adminRepository = adminRepository;
         }
 
         [HttpGet("pair-groups/{propertyUniqueId}")]
@@ -140,10 +143,9 @@ namespace DominoesProperties.Controllers
                 Amount = (property.UnitPrice * investment.PercentageShare) / 100,
                 Module = PaymentType.PROPERTY_PAIRING,
                 InvestmentId = investment.SharingGroupId,
-                Callback = string.Format("{0}/{1}", $"{Request.Scheme}://{Request.Host}{Request.PathBase}",
-                    "api/payment/verify-payment")
+                Callback = $"{Request.Scheme}://{Request.Host}{Request.PathBase}/api/payment/verify-payment"
             };
-            return paymentController.DoInitPayment(pay, HttpContext.User.Identity.Name);
+            return paymentController.DoInitPayment(pay, HttpContext.User.Identity!.Name);
         }
 
         [HttpPost]
@@ -416,6 +418,24 @@ namespace DominoesProperties.Controllers
             investment.PaymentDate = DateTime.Now;
             if (investmentRepository.UpdateOfflineInvestment(investment) != null)
             {
+                Task.Run(() =>
+                {
+                    var email = _adminRepository.GetUser().SelectMany(x => x.Email);
+                    var filePath = Path.Combine(env.ContentRootPath, @"EmailTemplates\offline-admin-notification.html");
+                    var html = System.IO.File.ReadAllText(filePath.Replace(@"\", "/"));
+                    foreach (var c in email)
+                    {
+                        EmailData emailRequest = new()
+                        {
+                            EmailBody = html,
+                            EmailSubject = "Offline Investment Payment",
+                            EmailToId = c.ToString(),
+                            EmailToName = "RED Admin"
+                        };
+                        emailService.SendEmail(emailRequest);
+                    }
+                });
+
                 response.Success = true;
                 response.Message = "Proof of payment successfully uploaded";
                 return response;
