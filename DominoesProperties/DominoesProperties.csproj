@@ -141,7 +141,7 @@
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
       <Content Include="EmailTemplates\offline-payment.html">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
       <Content Include="EmailTemplates\password-reset.html">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

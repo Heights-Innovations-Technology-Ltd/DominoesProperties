@@ -1,6 +1,9 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
+using System.IO;
+using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,6 +11,7 @@ using System.Web;
 using DominoesProperties.Enums;
 using DominoesProperties.Helper;
 using DominoesProperties.Models;
+using DominoesProperties.Services;
 using Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
@@ -24,17 +28,24 @@ namespace DominoesProperties.Controllers
     [ApiController]
     public class AdminController : Controller
     {
+        private readonly IEmailService _emailService;
+        private readonly IInvestmentRepository _investmentRepository;
+        private readonly IPropertyRepository _propertyRepository;
+        private readonly ITransactionRepository _transactionRepository;
         private readonly IAdminRepository adminRepository;
         private readonly IConfiguration configuration;
-        private readonly IWebHostEnvironment environment;
-        private readonly ApiResponse response = new(false, "Error performing request, contact admin");
-        private readonly DistributedCacheEntryOptions expiryOptions;
-        private readonly IDistributedCache distributedCache;
         private readonly ICustomerRepository customerRepository;
+        private readonly IDistributedCache distributedCache;
+        private readonly IWebHostEnvironment environment;
+        private readonly DistributedCacheEntryOptions expiryOptions;
         private readonly ILoggerManager logger;
+        private readonly ApiResponse response = new(false, "Error performing request, contact admin");
 
-        public AdminController(IAdminRepository _adminRepository, IConfiguration _configuration, IWebHostEnvironment _environment, IDistributedCache _distributedCache,
-            ICustomerRepository _customerRepository, ILoggerManager _logger)
+        public AdminController(IAdminRepository _adminRepository, IConfiguration _configuration,
+            IWebHostEnvironment _environment, IDistributedCache _distributedCache,
+            ICustomerRepository _customerRepository, ILoggerManager _logger, IInvestmentRepository investmentRepository,
+            IPropertyRepository propertyRepository,
+            ITransactionRepository transactionRepository, IEmailService emailService)
         {
             adminRepository = _adminRepository;
             configuration = _configuration;
@@ -42,7 +53,11 @@ namespace DominoesProperties.Controllers
             distributedCache = _distributedCache;
             customerRepository = _customerRepository;
             logger = _logger;
-            expiryOptions = new()
+            _investmentRepository = investmentRepository;
+            _propertyRepository = propertyRepository;
+            _transactionRepository = transactionRepository;
+            _emailService = emailService;
+            expiryOptions = new DistributedCacheEntryOptions
             {
                 AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(20),
                 SlidingExpiration = TimeSpan.FromMinutes(15)
@@ -51,27 +66,33 @@ namespace DominoesProperties.Controllers
 
         [HttpPost]
         [Authorize(Roles = "SUPER")]
-        public async Task<ApiResponse> AdminAsync([FromHeader] string apiKey, [FromHeader] string adminUsername, [FromBody] AdminUser admin)
+        public async Task<ApiResponse> AdminAsync([FromHeader] string apiKey, [FromHeader] string adminUsername,
+            [FromBody] AdminUser admin)
         {
-            if(string.IsNullOrEmpty(apiKey) || !")H@McQfTjWnZr4t7w!z%C*F-JaNdRgUkXp2s5v8x/A?D(G+KbPeShVmYq3t6w9z$".Equals(apiKey))
+            if (string.IsNullOrEmpty(apiKey) ||
+                !")H@McQfTjWnZr4t7w!z%C*F-JaNdRgUkXp2s5v8x/A?D(G+KbPeShVmYq3t6w9z$".Equals(apiKey))
             {
                 throw new UnauthorizedAccessException("Unauthorised user access, kindly contact admin");
             }
-            if (adminRepository.GetUser(adminUsername).RoleFk != (int) Enums.Role.SUPER)
+
+            if (adminRepository.GetUser(adminUsername).RoleFk != (int)Enums.Role.SUPER)
             {
                 response.Message = $"Invalid admin user {admin.Email}";
                 return response;
             }
+
             if (adminRepository.GetUser(admin.Email) != null)
             {
                 response.Message = $"User exist with email {admin.Email}";
                 return response;
             }
-            if(customerRepository.GetCustomers().Exists(x => x.Email.Equals(admin.Email)))
+
+            if (customerRepository.GetCustomers().Exists(x => x.Email.Equals(admin.Email)))
             {
                 response.Message = $"Customer exist with email {admin.Email} and a customer cannot be admin";
                 return response;
             }
+
             var adminEntity = ClassConverter.UserToAdmin(admin);
             adminEntity.CreatedBy = adminUsername;
             if (adminRepository.AddUser(adminEntity))
@@ -79,15 +100,18 @@ namespace DominoesProperties.Controllers
                 try
                 {
                     string token = Guid.NewGuid().ToString();
-                    string url = string.Format("{0}{1}/{2}?value={3}", configuration["app_settings:WebEndpoint"], ValidationModule.ACTIVATE_ACCOUNT, token, "admin");
-                    string filePath = System.IO.Path.Combine(environment.ContentRootPath, @"EmailTemplates\NewCustomer.html");
+                    string url = string.Format("{0}{1}/{2}?value={3}", configuration["app_settings:WebEndpoint"],
+                        ValidationModule.ACTIVATE_ACCOUNT, token, "admin");
+                    string filePath =
+                        System.IO.Path.Combine(environment.ContentRootPath, @"EmailTemplates\NewCustomer.html");
                     string html = System.IO.File.ReadAllText(filePath.Replace(@"\", "/"));
                     html = html.Replace("{name}", admin.Email).Replace("{link}", HttpUtility.UrlEncode(url));
 
                     await distributedCache.SetStringAsync(token, admin.Email, expiryOptions);
 
                     EmailRequest emailRequest = new("Dominoes Society - Account Creation", html, admin.Email);
-                    emailRequest.Settings = new ApplicationSetting { TestingMode = false, SettingName = "EmailNotification" };
+                    emailRequest.Settings = new ApplicationSetting
+                        { TestingMode = false, SettingName = "EmailNotification" };
                     CommonLogic.SendEmail(emailRequest);
                 }
                 catch (Exception ex)
@@ -95,7 +119,7 @@ namespace DominoesProperties.Controllers
                     _ = new ExceptionFormatter(logger, ex);
                 }
             }
-           
+
             response.Message = $"Admin user {admin.Email} created successfully";
             return response;
         }
@@ -104,18 +128,21 @@ namespace DominoesProperties.Controllers
         public ApiResponse Login([FromBody] Login login)
         {
             Admin admin = adminRepository.GetUser(login.Email);
-            if(admin == null)
+            if (admin == null)
             {
                 response.Success = false;
                 response.Message = $"Invalid username {login.Email} or password supplied";
                 return response;
             }
+
             if (!admin.IsActive.Value)
             {
                 response.Success = false;
-                response.Message = $"<html>User not verified, <b><a href='{environment.WebRootPath}/customer/activate/{login.Email}'>click here</a></b> to resend verification link</html>";
+                response.Message =
+                    $"<html>User not verified, <b><a href='{environment.WebRootPath}/customer/activate/{login.Email}'>click here</a></b> to resend verification link</html>";
                 return response;
             }
+
             if (admin == null || admin.IsDeleted.Value)
             {
                 response.Success = false;
@@ -191,27 +218,173 @@ namespace DominoesProperties.Controllers
         [HttpGet("dashboard")]
         [Authorize]
         public ApiResponse Dashboard()
-         {
+        {
             response.Message = $"Password successfully changed.";
             response.Data = adminRepository.AdminDashboard();
             response.Success = true;
             return response;
         }
 
-        protected string GenerateJwtToken(string uniqueRef)
+        [HttpGet("offline-payment")]
+        [Authorize(Roles = "ADMIN, SUPER")]
+        public ApiResponse OfflinePayment()
+        {
+            var inv = _investmentRepository.GetOfflineInvestments();
+            if (inv.Any())
+            {
+                response.Message = $"Offline investments fetched.";
+                response.Data = inv;
+                response.Success = true;
+                return response;
+            }
+
+            response.Message = $"No record found.";
+            return response;
+        }
+
+        [HttpPut("offline-payment/{investmentRef}")]
+        [Authorize(Roles = "ADMIN, SUPER")]
+        public ApiResponse CompleteOfflinePayment([FromBody] OfflineResponse offlineResponse, string investmentRef)
+        {
+            string filePath = "", html = "";
+            EmailData emailData;
+            var inv = _investmentRepository.GetOfflineInvestment(investmentRef);
+            if (inv != null && (inv.Status.Equals(Status.PROCESSING.ToString()) ||
+                                inv.Status.Equals(Status.DECLINED.ToString())))
+            {
+                var customer = customerRepository.GetCustomer(inv.CustomerId);
+                inv.TreatedBy = HttpContext.User.Identity!.Name;
+                inv.TreatedDate = DateTime.Now;
+                inv.Status = offlineResponse.Status.ToString();
+                inv.Comment = offlineResponse.Comment;
+
+                switch (offlineResponse.Status)
+                {
+                    case Status.DECLINED:
+                        filePath = Path.Combine(environment.ContentRootPath,
+                            @"EmailTemplates\declined-investment.html");
+                        html = System.IO.File.ReadAllText(filePath.Replace(@"\", "/"));
+                        html = html.Replace("{FIRSTNAME}", $"{customer.FirstName} {customer.LastName}")
+                            .Replace("{webroot}", configuration["app_settings:WebEndpoint"]);
+
+                        response.Message = "Investment declined and closed";
+                        break;
+                    case Status.APPROVED:
+                    {
+                        var prop = _propertyRepository.GetProperty(inv.PropertyId);
+                        if (prop.UnitAvailable < inv.Units)
+                        {
+                            inv.Comment =
+                                $"Not enough unit left on {prop.Name} to service investment request. Kindly process refund to customer wallet";
+                            inv.Status = Status.DECLINED.ToString();
+                            response.Message = inv.Comment;
+
+                            filePath = Path.Combine(environment.ContentRootPath,
+                                @"EmailTemplates\declined-investment.html");
+                            html = System.IO.File.ReadAllText(filePath.Replace(@"\", "/"));
+                            html = html.Replace("{FIRSTNAME}", $"{customer.FirstName} {customer.LastName}")
+                                .Replace("{webroot}", configuration["app_settings:WebEndpoint"]);
+                        }
+                        else
+                        {
+                            inv.Status = Status.APPROVED.ToString();
+                            inv.Comment = "Investment booked successfully";
+
+                            using (var scope =
+                                   new System.Transactions.TransactionScope(System.Transactions.TransactionScopeOption
+                                       .RequiresNew))
+                            {
+                                Transaction transaction = new()
+                                {
+                                    Amount = inv.Amount,
+                                    Channel = Channel.OFFLINE.ToString(),
+                                    Module = "PROPERTY_PURCHASE",
+                                    Status = "success",
+                                    CustomerId = inv.CustomerId,
+                                    TransactionDate = inv.TreatedDate,
+                                    TransactionType = TransactionType.CR.ToString(),
+                                    TransactionRef = new Guid().ToString()
+                                };
+                                _transactionRepository.NewTransaction(transaction);
+
+                                Investment newInv = new()
+                                {
+                                    CustomerId = inv.CustomerId,
+                                    Amount = inv.Amount,
+                                    Status = Status.COMPLETED.ToString(),
+                                    Units = inv.Units,
+                                    PaymentDate = inv.PaymentDate!.Value,
+                                    TransactionRef = transaction.TransactionRef,
+                                    PropertyId = inv.PropertyId,
+                                    PaymentType = Channel.OFFLINE.ToString(),
+                                    UnitPrice = inv.UnitPrice!.Value,
+                                    Yield = prop.TargetYield,
+                                    YearlyInterestAmount = (prop.TargetYield * inv.Amount) / 100
+                                };
+                                _investmentRepository.AddInvestment(newInv);
+
+                                prop.UnitSold += newInv.Units;
+                                prop.UnitAvailable -= newInv.Units;
+                                if (prop.UnitAvailable == 0)
+                                    prop.Status = Status.CLOSED.ToString();
+                                _propertyRepository.UpdateProperty(prop);
+
+                                scope.Complete();
+
+                                filePath = Path.Combine(environment.ContentRootPath, @"EmailTemplates\investment.html");
+                                html = System.IO.File.ReadAllText(filePath.Replace(@"\", "/"));
+                                html = html.Replace("{FIRSTNAME}", $"{customer.FirstName} {customer.LastName}")
+                                    .Replace("{I-NAME}", prop.Name);
+                                html = html.Replace("{I-UNITS}", inv.Units.ToString())
+                                    .Replace("{I-PRICE}", inv.UnitPrice.ToString())
+                                    .Replace("{I-TOTAL}", inv.Amount.ToString(CultureInfo.CurrentCulture))
+                                    .Replace("{I-DATE}", inv.PaymentDate.ToString())
+                                    .Replace("{webroot}", configuration["app_settings:WebEndpoint"]);
+                            }
+
+                            response.Message = $"Investment successfully completed";
+                            response.Success = true;
+                        }
+
+                        break;
+                    }
+                }
+
+                _investmentRepository.UpdateOfflineInvestment(inv);
+
+                Task.Run(() =>
+                {
+                    emailData = new EmailData()
+                    {
+                        EmailBody = html,
+                        EmailSubject = "Congratulations!!! You just made an investment",
+                        EmailToId = customer.Email,
+                        EmailToName = customer.FirstName
+                    };
+                    _emailService.SendEmail(emailData);
+                });
+            }
+            else
+                response.Message = $"Offline investment record not found or already treated.";
+
+            return response;
+        }
+
+        private string GenerateJwtToken(string uniqueRef)
         {
             var admin = adminRepository.GetUser(uniqueRef);
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["app_settings:Secret"]));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
-            var claims = new[] {
+            var claims = new[]
+            {
                 new Claim(JwtRegisteredClaimNames.UniqueName, uniqueRef),
                 new Claim(JwtRegisteredClaimNames.Jti, uniqueRef),
                 new Claim(ClaimTypes.Role, admin.RoleFkNavigation.RoleName)
             };
 
             var token = new JwtSecurityToken(configuration["app_settings:Issuer"],
-               configuration["app_settings:Issuer"], claims,
+                configuration["app_settings:Issuer"], claims,
                 expires: DateTime.Now.AddMinutes(30),
                 signingCredentials: credentials);
 

@@ -28,7 +28,10 @@ namespace Repositories.Repository
         void DeletePendingInvestments();
 
         IEnumerable<OfflineInvestment> GetOfflineInvestments(long customerId);
-        OfflineInvestment getOfflineInvestment(long id);
+        OfflineInvestment GetOfflineInvestment(long id);
         bool AddOfflineInvestment(OfflineInvestment investment);
+        OfflineInvestment UpdateOfflineInvestment(OfflineInvestment investment);
+        OfflineInvestment GetOfflineInvestment(string paymentRef);
+        Dictionary<string, List<OfflineInvestment>> GetOfflineInvestments();
     }
 }

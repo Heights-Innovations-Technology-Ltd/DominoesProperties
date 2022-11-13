@@ -1,9 +1,9 @@
-﻿using System;
-namespace DominoesPropertiesWeb.Models
+﻿namespace DominoesPropertiesWeb.Models
 {
     public enum UploadType
     {
-        PICTURE, DOCUMENT
+        PICTURE,
+        DOCUMENT,
+        PAYMENT_PROOF
     }
 }
-

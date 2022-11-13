@@ -226,9 +226,20 @@ namespace Repositories.Service
             return _context.OfflineInvestments.Where(x => x.CustomerId == customerId);
         }
 
-        public OfflineInvestment getOfflineInvestment(long id)
+        public Dictionary<string, List<OfflineInvestment>> GetOfflineInvestments()
+        {
+            return _context.OfflineInvestments.GroupBy(x => x.Status).ToDictionary(g => g.Key, g => g.ToList());
+            // return _context.OfflineInvestments.Where(x => x.Status.Equals("PROCESSING"));
+        }
+
+        public OfflineInvestment GetOfflineInvestment(long id)
         {
             return _context.OfflineInvestments.Find(id);
+        }
+
+        public OfflineInvestment GetOfflineInvestment(string paymentRef)
+        {
+            return _context.OfflineInvestments.FirstOrDefault(x => x.PaymentRef.Equals(paymentRef));
         }
 
         public bool AddOfflineInvestment(OfflineInvestment investment)
@@ -243,6 +254,13 @@ namespace Repositories.Service
             {
                 return false;
             }
+        }
+
+        public OfflineInvestment UpdateOfflineInvestment(OfflineInvestment investment)
+        {
+            _context.OfflineInvestments.Update(investment);
+            _context.SaveChanges();
+            return investment;
         }
     }
 }

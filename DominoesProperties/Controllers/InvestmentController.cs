@@ -157,8 +157,7 @@ namespace DominoesProperties.Controllers
                 return response;
             }
 
-            Customer customer = customerRepository.GetCustomer(HttpContext.User.Identity.Name);
-
+            var customer = customerRepository.GetCustomer(HttpContext.User.Identity!.Name);
             if (investment.Units > property.UnitAvailable)
             {
                 response.Message =
@@ -175,32 +174,30 @@ namespace DominoesProperties.Controllers
 
             var amount = property.UnitPrice * investment.Units;
 
-            if (investment.PaymentChannel.Equals(Channel.WALLET))
+            switch (investment.PaymentChannel)
             {
-                if (customer.Wallet.Balance < amount)
-                {
+                case Channel.WALLET when customer.Wallet.Balance < amount:
                     response.Message =
                         "Low wallet balance, please fund your wallet or try a different payment method to complete your investment.";
                     return response;
-                }
-
-                Investment newInvestment = new()
+                case Channel.WALLET:
                 {
-                    Amount = amount,
-                    UnitPrice = property.UnitPrice,
-                    CustomerId = customer.Id,
-                    PropertyId = property.Id,
-                    Units = investment.Units,
-                    YearlyInterestAmount = (property.TargetYield * property.UnitPrice) / 100 * investment.Units,
-                    Yield = property.TargetYield,
-                    PaymentType = PaymentType.PROPERTY_PURCHASE.ToString(),
-                    TransactionRef = Guid.NewGuid().ToString(),
-                    Status = "PENDING"
-                };
-                if (investmentRepository.AddInvestmentFromWallet(newInvestment))
-                {
-                    string filePath = Path.Combine(env.ContentRootPath, @"EmailTemplates\investment.html");
-                    string html = System.IO.File.ReadAllText(filePath.Replace(@"\", "/"));
+                    Investment newInvestment = new()
+                    {
+                        Amount = amount,
+                        UnitPrice = property.UnitPrice,
+                        CustomerId = customer.Id,
+                        PropertyId = property.Id,
+                        Units = investment.Units,
+                        YearlyInterestAmount = (property.TargetYield * property.UnitPrice) / 100 * investment.Units,
+                        Yield = property.TargetYield,
+                        PaymentType = PaymentType.PROPERTY_PURCHASE.ToString(),
+                        TransactionRef = Guid.NewGuid().ToString(),
+                        Status = "PENDING"
+                    };
+                    if (!investmentRepository.AddInvestmentFromWallet(newInvestment)) return response;
+                    var filePath = Path.Combine(env.ContentRootPath, @"EmailTemplates\investment.html");
+                    var html = System.IO.File.ReadAllText(filePath.Replace(@"\", "/"));
                     html = html.Replace("{FIRSTNAME}", string.Format("{0} {1}", customer.FirstName, customer.LastName))
                         .Replace("{I-NAME}", property.Name);
                     html = html.Replace("{I-UNITS}", investment.Units.ToString())
@@ -223,12 +220,8 @@ namespace DominoesProperties.Controllers
                     response.Success = true;
                     return response;
                 }
-            }
-            else
-            {
-                if (amount > decimal.Parse(configuration["app_settings:PayLimit"]))
+                case Channel.OFFLINE:
                 {
-                    //offline method of payment
                     OfflineInvestment off = new()
                     {
                         Amount = amount,
@@ -237,67 +230,63 @@ namespace DominoesProperties.Controllers
                         Units = investment.Units,
                         PaymentRef = CommonLogic.GetUniqueRefNumber("INV"),
                         Status = "PENDING",
-                        UnitPrice = property.UnitPrice
+                        UnitPrice = property.UnitPrice,
+                        CreatedDate = DateTime.Now
                     };
-                    if (investmentRepository.AddOfflineInvestment(off))
+                    if (!investmentRepository.AddOfflineInvestment(off)) return response;
+                    var filePath = Path.Combine(env.ContentRootPath, @"EmailTemplates\offline-payment.html");
+                    var html = System.IO.File.ReadAllText(filePath.Replace(@"\", "/"));
+                    html = html.Replace("{FIRSTNAME}",
+                            $"{customer.FirstName} {customer.LastName}")
+                        .Replace("{webroot}", configuration["app_settings:WebEndpoint"])
+                        .Replace("{BANKNAME}", configuration["app_settings:BankName"]).Replace("{ACCOUNTNAME}",
+                            configuration["app_settings:AccountName"])
+                        .Replace("{ACCOUNTNUMBER}", configuration["app_settings:AccountNumber"])
+                        .Replace("{PAYREF}", off.PaymentRef);
+
+                    EmailData emailRequest = new()
                     {
-                        //prepared for email
-                        var accountNumber = configuration["app_settings:AccountNumber"];
-                        var accountName = configuration["app_settings:AccountName"];
-                        var bankName = configuration["app_settings:BankName"];
-                        var paymentId = off.PaymentRef;
+                        EmailBody = html,
+                        EmailSubject = "Offline Investment Payment",
+                        EmailToId = customer.Email,
+                        EmailToName = customer.FirstName
+                    };
+                    emailService.SendEmail(emailRequest);
 
-                        var filePath = Path.Combine(env.ContentRootPath, @"EmailTemplates\welcome.html");
-                        var html = System.IO.File.ReadAllText(filePath.Replace(@"\", "/"));
-                        html = html.Replace("{FIRSTNAME}",
-                                string.Format("{0} {1}", customer.FirstName, customer.LastName))
-                            .Replace("{webroot}", configuration["app_settings:WebEndpoint"]);
-                        ;
-
-                        EmailData emailRequest = new()
-                        {
-                            EmailBody = html,
-                            EmailSubject = "Offline Investment Payment",
-                            EmailToId = customer.Email,
-                            EmailToName = customer.FirstName
-                        };
-                        emailService.SendEmail(emailRequest);
-
-                        response.Message =
-                            "You are one step into your investment, follow instructions in your email to complete your investment";
-                        response.Success = true;
-                        return response;
-                    }
+                    response.Message =
+                        "You are one step into your investment, follow instructions in your email to complete your investment";
+                    response.Success = true;
+                    return response;
                 }
-
-                Investment newInvestment = new()
+                case Channel.CARD:
+                case Channel.TRANSFER:
                 {
-                    Amount = amount,
-                    CustomerId = customer.Id,
-                    PropertyId = property.Id,
-                    Units = investment.Units,
-                    YearlyInterestAmount = (property.TargetYield * property.UnitPrice) / 100 * investment.Units,
-                    Yield = property.TargetYield,
-                    PaymentType = PaymentType.PROPERTY_PURCHASE.ToString(),
-                    TransactionRef = Guid.NewGuid().ToString(),
-                    Status = "PENDING"
-                };
+                    Investment newInvestment = new()
+                    {
+                        Amount = amount,
+                        CustomerId = customer.Id,
+                        PropertyId = property.Id,
+                        Units = investment.Units,
+                        YearlyInterestAmount = (property.TargetYield * property.UnitPrice) / 100 * investment.Units,
+                        Yield = property.TargetYield,
+                        PaymentType = PaymentType.PROPERTY_PURCHASE.ToString(),
+                        TransactionRef = Guid.NewGuid().ToString(),
+                        Status = "PENDING"
+                    };
 
-                if (investmentRepository.AddInvestment(newInvestment) != 0)
-                {
+                    if (investmentRepository.AddInvestment(newInvestment) == 0) return response;
                     Payment pay = new()
                     {
                         Amount = newInvestment.Amount,
                         Module = PaymentType.PROPERTY_PURCHASE,
                         InvestmentId = newInvestment.TransactionRef,
-                        Callback = string.Format("{0}/{1}", $"{Request.Scheme}://{Request.Host}{Request.PathBase}",
-                            "api/payment/verify-payment")
+                        Callback = $"{Request.Scheme}://{Request.Host}{Request.PathBase}/api/payment/verify-payment"
                     };
                     return paymentController.DoInitPayment(pay, customer.UniqueRef);
                 }
+                default:
+                    return response;
             }
-
-            return response;
         }
 
         [HttpGet("{customerUniqueId}")]
@@ -312,7 +301,7 @@ namespace DominoesProperties.Controllers
                 var xx = ClassConverter.ConvertInvestmentForView(x);
                 var dd = uploadRepository.GetUploads(x.PropertyId);
                 xx.Data = dd.Any(i => i.UploadType.Equals("COVER"))
-                    ? dd.FirstOrDefault(y => y.UploadType.Equals("COVER")).Url
+                    ? dd.FirstOrDefault(y => y.UploadType.Equals("COVER"))!.Url
                     : "/images/properties/properties-4.jpg";
                 investmentViews.Add(xx);
             });
@@ -327,6 +316,27 @@ namespace DominoesProperties.Controllers
 
             response.Message = "No record found";
             response.Data = investmentViews;
+            return response;
+        }
+
+        [HttpGet("offline/{customerUniqueId}")]
+        [Authorize(Roles = "ADMIN, CUSTOMER")]
+        public ApiResponse OfflineInvestment(string customerUniqueId)
+        {
+            var investments = investmentRepository
+                .GetOfflineInvestments(customerRepository.GetCustomer(customerUniqueId).Id)
+                .Where(x => x.Status.Equals(Status.PENDING.ToString())).ToList();
+
+            if (investments.Any())
+            {
+                response.Message = "Successful";
+                response.Success = true;
+                response.Data = investments;
+                return response;
+            }
+
+            response.Message = "No record found";
+            response.Data = new List<OfflineInvestment>();
             return response;
         }
 
@@ -363,8 +373,8 @@ namespace DominoesProperties.Controllers
         [Authorize(Roles = "ADMIN, SUPER")]
         public ApiResponse Investment([FromQuery] QueryParams queryParams)
         {
-            PagedList<Investment> investments1 = investmentRepository.GetInvestments(queryParams);
-            (int TotalCount, int PageSize, int CurrentPage, int TotalPages, bool HasNext, bool HasPrevious) metadata = (
+            var investments1 = investmentRepository.GetInvestments(queryParams);
+            var metadata = (
                 investments1.TotalCount,
                 investments1.PageSize,
                 investments1.CurrentPage,
@@ -385,8 +395,33 @@ namespace DominoesProperties.Controllers
 
             Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
             response.Success = true;
-            response.Message = "Successfull";
+            response.Message = "Successful";
             response.Data = investments;
+            return response;
+        }
+
+        [HttpPut("proof-of-payment/{investmentRef}")]
+        [Authorize(Roles = "CUSTOMER")]
+        public ApiResponse UploadFile([FromBody] string uploadUrl, string investmentRef)
+        {
+            var investment = investmentRepository.GetOfflineInvestment(investmentRef);
+            if (investment == null)
+            {
+                response.Message = "Investment not found, please login with your credentials and try again";
+                return response;
+            }
+
+            investment.ProofUrl = uploadUrl;
+            investment.Status = "PROCESSING";
+            investment.PaymentDate = DateTime.Now;
+            if (investmentRepository.UpdateOfflineInvestment(investment) != null)
+            {
+                response.Success = true;
+                response.Message = "Proof of payment successfully uploaded";
+                return response;
+            }
+
+            response.Message = "Error uploading proof of payment, please try again later";
             return response;
         }
     }

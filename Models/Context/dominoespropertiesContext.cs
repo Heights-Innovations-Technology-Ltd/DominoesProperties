@@ -451,10 +451,14 @@ namespace Models.Context
                     .IsRequired()
                     .HasMaxLength(50);
 
+                entity.Property(e => e.ProofUrl).HasMaxLength(250);
+
                 entity.Property(e => e.Status)
                     .IsRequired()
                     .HasMaxLength(10)
                     .HasDefaultValueSql("'PENDING'");
+
+                entity.Property(e => e.TreatedBy).HasMaxLength(70);
 
                 entity.Property(e => e.UnitPrice)
                     .HasColumnType("decimal(18,2)")
