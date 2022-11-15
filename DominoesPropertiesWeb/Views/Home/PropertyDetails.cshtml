@@ -4,6 +4,43 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+<style>
+	.button {
+	  float: left;
+	  margin: 0 5px 0 0;
+	  width: 200px;
+	  height: 50px;
+	  position: relative;
+	}
+
+.button label,
+.button input {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.button input[type="radio"] {
+  opacity: 0.011;
+  z-index: 100;
+  /*cursor: pointer;*/
+}
+
+.button input[type="radio"]:checked + label {
+  background: #d05a15;
+  border-radius: 4px; 
+}
+
+.button label {
+  cursor: pointer;
+  z-index: 90;
+  line-height: 1.8em;
+}
+</style>
+
 <!-- Start Page Title Area -->
 		<div class="page-title-area style-pb-200 bg-7">
 			<div class="container">
@@ -174,56 +211,6 @@
 									</form>
 								</div>
 							</div>
-							@*<div class="sidebar-widget recent-post">
-								<h3>Recent Posts</h3>
-								
-								<article class="item">
-									<a href="single-blog.html" class="thumb">
-										<span class="fullimage cover bg-1" role="img"></span>
-									</a>
-									<div class="info">
-										<h4 class="title usmall">
-											<a href="single-blog.html">House For Rent</a>
-										</h4>
-										<span class="date">
-											<em class="ri-map-pin-fill"></em>
-											666 E. Hilldale Court, MA 0999
-										</span>
-										<h5>&#8358;24000</h5>
-									</div>
-								</article>
-
-								<article class="item">
-									<a href="single-blog.html" class="thumb">
-										<span class="fullimage cover bg-2" role="img"></span>
-									</a>
-									<div class="info">
-										<h4 class="title usmall">
-											<a href="single-blog.html">House For Sale</a>
-										</h4>
-										<span class="date">
-											<em class="ri-map-pin-fill"></em>
-											444 King Coachella, CA 22233
-										</span>
-										<h5>&#8358;90000</h5>
-									</div>
-								</article>
-								<article class="item">
-									<a href="single-blog.html" class="thumb">
-										<span class="fullimage cover bg-3" role="img"></span>
-									</a>
-									<div class="info">
-										<h4 class="title usmall">
-											<a href="single-blog.html">House For Rent</a>
-										</h4>
-										<span class="date">
-											<em class="ri-map-pin-fill"></em>
-											991 Hill St. Clemmons, NC 77711
-										</span>
-										<h5>&#8358;35000</h5>
-									</div>
-								</article>
-							</div>*@
 						</div>
 					</div>
 				</div>
@@ -239,6 +226,28 @@
 								<input type="number" min="1" value="1" id="unit" oninput="calUnit()" class="form-control">
 							</form>
 									
+							</div>
+							<div class="payment-info">
+							<h3>Payment Option</h3>
+							<div class="row">
+								<div class="col-md-4">
+									<div class="button">
+									<input type="radio" id="card" onclick="cardMode()" name="check-substitution-2" />
+									<label class="btn default-btn" for="card">Card</label>
+									</div>
+								</div>
+								<div class="col-md-4">
+									<div class="button">
+										<input type="radio" id="wallet" onclick="walletMode()" name="check-substitution-2" />
+									<label class="btn default-btn" for="wallet">Wallet</label>
+									</div>
+								</div>
+								<div class="col-md-4">
+									<div class="button">
+									<input type="radio" id="offline" onclick="offlineMode()" name="check-substitution-2" />
+										<label class="btn default-btn" for="offline">Offline</label>
+									</div>
+								</div>
 							</div>
 							<div class="payment-info">
 							<h3>Summary</h3>
