@@ -20,9 +20,18 @@ namespace Repositories.Service
 
         public long AddInvestment(Investment investment)
         {
-            _context.Investments.Add(investment);
-            _context.SaveChanges();
-            return investment.Id;
+            try
+            {
+                var id = _context.Investments.Add(investment).Entity.Id;
+                loggerManager.LogInfo("Investment successfully saved");
+                _context.SaveChanges();
+                return id;
+            }
+            catch (Exception ex)
+            {
+                loggerManager.LogError(ex.StackTrace);
+                return 0;
+            }
         }
 
         public Investment GetInvestment(long Id)
@@ -75,24 +84,26 @@ namespace Repositories.Service
             using var tt = _context.Database.BeginTransaction();
             try
             {
-                var wallet = _context.Wallets.Where(x => x.CustomerId == investment.CustomerId).FirstOrDefault();
+                var wallet = _context.Wallets.FirstOrDefault(x => x.CustomerId == investment.CustomerId);
                 wallet.Balance -= investment.Amount;
                 wallet.LastTransactionDate = DateTime.Now;
                 wallet.LastTransactionAmount = -investment.Amount;
                 _context.Wallets.Update(wallet);
 
-                Transaction transaction = new();
-                transaction.Amount = investment.Amount;
-                transaction.Channel = "wallet";
-                transaction.CustomerId = investment.CustomerId;
-                transaction.Module = "PROPERTY_PURCHASE";
-                transaction.Status = "success";
-                transaction.TransactionRef = investment.TransactionRef;
-                transaction.TransactionType = "CR";
+                Transaction transaction = new()
+                {
+                    Amount = investment.Amount,
+                    Channel = "WALLET",
+                    CustomerId = investment.CustomerId,
+                    Module = "PROPERTY_PURCHASE",
+                    Status = "success",
+                    TransactionRef = investment.TransactionRef,
+                    TransactionType = "CR"
+                };
                 _context.Transactions.Add(transaction);
 
                 investment.Status = "COMPLETED";
-                Property property = _context.Properties.Where(x => x.Id == investment.PropertyId).FirstOrDefault();
+                var property = _context.Properties.FirstOrDefault(x => x.Id == investment.PropertyId);
                 property.UnitAvailable -= investment.Units;
                 property.UnitSold += investment.Units;
 
