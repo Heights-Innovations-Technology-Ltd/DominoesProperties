@@ -59,7 +59,7 @@ namespace DominoesPropertiesWeb.Controllers
 
             obj.PropertyUniqueId = Convert.ToString(jObject["propertyUniqueId"]);
             obj.Units = Convert.ToInt16(jObject["units"]);
-            obj.PaymentChannel = 0;
+            obj.PaymentChannel = Convert.ToInt32(jObject["channel"]);
             obj.IsSharing = 0;
             var res = Task.Run(() => httpContext.Post("Investment", obj));
             var data = await res.GetAwaiter().GetResult();

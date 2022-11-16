@@ -978,6 +978,7 @@ function openModal() {
     });
 
     $('.swal2-styled').css('display', 'none');
+    $('.swal2-popup').css('width', '50em');
     //$('#propertyName').text(singleData.name);
     $('#checkoutPrice').html("&#8358; " + formatToCurrency(singleData.unitPrice) + " / Unit");
     $('.checkoutPrice').html(formatToCurrency(singleData.unitPrice));
@@ -1919,15 +1920,19 @@ const onSubscribe = () => {
         } else {
             var res = JSON.parse(xhr.responseText);
             var data = JSON.parse(res).data;
-
             if (JSON.parse(res).success) {
                 location = data;
                 //window.open(data, "Dominoes Society", "status=1,toolbar=1");
                 $(".btn-subscribe").html("Subscribe to get full access").attr("disabled", !1);
             } else {
+                Swal.fire(
+                    'Oops!',
+                    data,
+                    'error'
+                );
                 $(".btn-subscribe").html("Subscribe to get full access").attr("disabled", !1);
                 window.scrollTo(0, 0);
-                message(data, 'error');
+                //message(data, 'error');
             }
 
         }
@@ -1958,9 +1963,13 @@ $('.btn-subscribe').click(() => {
                 //window.open(data, "Dominoes Society", "status=1,toolbar=1");
                 $(".btn-subscribe").html("Subscribe to get full access").attr("disabled", !1);
             } else {
+                Swal.fire(
+                    'Oops!',
+                    data,
+                    'error'
+                );
                 $(".btn-subscribe").html("Subscribe to get full access").attr("disabled", !1);
                 window.scrollTo(0, 0);
-                message(data, 'error');
             }
 
         }
@@ -2025,7 +2034,20 @@ $('.btn-verify').click(() => {
     }
 });
 
-const propertyInvestment =  () => {
+let paymentMode;
+const walletMode = () => {
+    paymentMode = 1;
+}
+
+const cardMode = () => {
+    paymentMode = 0;
+}
+
+const offlineMode = () => {
+    paymentMode = 3;
+}
+
+const propertyInvestment = () => {
     let price = Number($('#price').text().replace(/[^0-9\.-]+/g, "").replace("₦", ""));
     let unit = $('#unit').val();
     const confirmPropertyUpdate = Swal.mixin({
@@ -2046,12 +2068,15 @@ const propertyInvestment =  () => {
         reverseButtons: true
     }).then((result) => {
         if (result.isConfirmed) {
+           
             $(".btn-property-investment").html("Processing...").attr("disabled", !0);
             let urls = window.location.href.split("/");
             let id = urls[5];
+            
             let params = {
                 propertyUniqueId: id,
-                units: unit
+                units: unit,
+                channel: paymentMode
             }
             let xhr = new XMLHttpRequest();
             let url = "/invest";
@@ -2067,13 +2092,21 @@ const propertyInvestment =  () => {
                     var data = JSON.parse(res).data;
                     if (JSON.parse(res).success) {
                         window.scrollTo(0, 0);
-                        location = data;
+                        if (data.includes('https')) {
+                            location = data;
+                        } else {
+                            Swal.fire(
+                                'Good job!',
+                                JSON.parse(res).message,
+                                'success'
+                            );
+                        }
                         $(".btn-property-investment").html("Invest").attr("disabled", !1);
                     } else {
                         var err = JSON.parse(res).message;
                         Swal.fire(
                             'Oops!',
-                            err == "Forbiden" ?  "You don't have permission to perform this action" :  "Something went wrong, admin has been contacted",
+                            data !=  undefined ? data :  err == "Forbiden" ?  "You don't have permission to perform this action" :  "Something went wrong, admin has been contacted",
                             'error'
                         );
                         $(".btn-property-investment").html("Invest").attr("disabled", !1);
