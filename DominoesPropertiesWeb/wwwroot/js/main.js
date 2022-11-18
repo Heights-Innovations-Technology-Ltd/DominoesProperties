@@ -1727,12 +1727,12 @@ const pendingInvestmentTmp = (data) => {
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <div class="col-md-4">
+                                        <div class="col-md-3">
                                             <h3 style="font-size:14px; font-weight:normal;">
-									         Payment Ref
+									         Reference
 								            </h3>
                                         </div>
-                                        <div class="col-md-8">
+                                        <div class="col-md-9">
                                           <small class="price float-end">${x.paymentRef}</small>
                                         </div>
                                     </div>
@@ -1758,7 +1758,7 @@ const pendingInvestmentTmp = (data) => {
                                     </div>
                                     <div class="row">
                                         <div class="col-md-12">
-                                            <a href="#" onclick="uploadModal('${x.paymentRef}')" class="default-btn">Upload proof of payment</a>
+                                            <a href="#" onclick="uploadModal('${x.paymentRef}')" class="default-btn">Upload payment proof</a>
                                         </div>
                                     </div>
 							    </div>

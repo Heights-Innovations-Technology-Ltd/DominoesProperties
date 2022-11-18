@@ -1,28 +1,28 @@
-﻿using DominoesPropertiesWeb.HttpContext;
+﻿using System;
+using System.Dynamic;
+using System.Threading.Tasks;
+using DominoesPropertiesWeb.HttpContext;
 using DominoesPropertiesWeb.Repository;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using System;
-using System.Dynamic;
-using System.Threading.Tasks;
 
 namespace DominoesPropertiesWeb.Controllers
 {
     public class InvestmentController : Controller
     {
         private readonly IConfiguration _config;
-        private readonly ISession session;
         private readonly IUploadsRepository _uploadRepository;
         private readonly IHttpContext httpContext;
-
-        string url = string.Empty;
+        private readonly ISession session;
         dynamic jsonObj = new JObject();
 
-        public InvestmentController(IConfiguration config, IHttpContextAccessor httpContextAccessor, IHttpContext httpContext, IUploadsRepository uploadRepository)
+        string url = string.Empty;
+
+        public InvestmentController(IConfiguration config, IHttpContextAccessor httpContextAccessor,
+            IHttpContext httpContext, IUploadsRepository uploadRepository)
         {
             _config = config;
             this.session = httpContextAccessor.HttpContext.Session;
@@ -38,6 +38,7 @@ namespace DominoesPropertiesWeb.Controllers
             {
                 return RedirectToAction("SignIn", "Home");
             }
+
             return View();
         }
 
@@ -49,6 +50,7 @@ namespace DominoesPropertiesWeb.Controllers
             {
                 return RedirectToAction("SignIn", "Home");
             }
+
             return View();
         }
 
@@ -67,7 +69,7 @@ namespace DominoesPropertiesWeb.Controllers
             var data = await res.GetAwaiter().GetResult();
             return Json(JsonConvert.SerializeObject(data));
         }
-        
+
         [Route("/get-investments/{customerId}")]
         public async Task<JsonResult> GetCustomerInvestments(string customerId)
         {
@@ -85,7 +87,7 @@ namespace DominoesPropertiesWeb.Controllers
             var data = res.Status == TaskStatus.RanToCompletion ? res.Result : null;
             return Json(JsonConvert.SerializeObject(data));
         }
-        
+
         [Route("/get-pending-investments")]
         public async Task<JsonResult> GetAllPendingInvestments()
         {
@@ -109,17 +111,14 @@ namespace DominoesPropertiesWeb.Controllers
         {
             var json = Request.Form.Files;
 
-            if (json.Count > 0)
-            {
-                IFormFile file = json[0];
-                var uploadResponse = await _uploadRepository.UploadCustomerPassportAsync(file, paymentRef, Request);
-                var res = Task.Run(() => httpContext.Put($"Investment/proof-of-payment/{paymentRef}", uploadResponse));
-                //var data = await res.GetAwaiter().GetResult();
-                await Task.WhenAll(res);
-                var data = res.Status == TaskStatus.RanToCompletion ? res.Result : null;
-                return Json(JsonConvert.SerializeObject(data));
-            }
-            return Json(this.StatusCode(StatusCodes.Status204NoContent, "Empty request body"));
+            if (json.Count <= 0) return Json(this.StatusCode(StatusCodes.Status204NoContent, "Empty request body"));
+            var file = json[0];
+            var uploadResponse = await _uploadRepository.UploadCustomerPassportAsync(file, paymentRef, Request);
+            var res = Task.Run(() => httpContext.Put($"Investment/proof-of-payment/{paymentRef}", uploadResponse));
+            //var data = await res.GetAwaiter().GetResult();
+            await Task.WhenAll(res);
+            var data = res.Status == TaskStatus.RanToCompletion ? res.Result : null;
+            return Json(JsonConvert.SerializeObject(data));
         }
     }
 }
