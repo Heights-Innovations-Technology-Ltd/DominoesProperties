@@ -1,0 +1,68 @@
+﻿
+@{
+    ViewData["Title"] = "PendingInvestments";
+    Layout = "~/Views/Shared/_LayoutDash.cshtml";
+}
+
+<!-- Start Dashboard Area -->
+	<div class="dashboard-area">
+		<div class="container-fluid">
+			<div class="dashboard-title-wrap mb-2">
+				<div class="row align-items-center">
+					<div class="col-lg-6 col-sm-6">
+						<ul class="dashboard-page-title">
+							<li>
+								<a href="/dashboard">
+									Dashboard 
+								</a>
+							</li>
+		
+							<li class="active">Pending Investments</li>
+						</ul>
+					</div>
+					<div class="col-lg-6 col-sm-6">
+						
+					</div>
+				</div>
+			</div>
+
+			<div class="my-listing">
+				<div class="latest-lavel">
+					<div class="row align-items-center">
+						
+					</div>
+				</div>
+
+				<div class="row" id="pendingInvestments">
+
+				</div>
+			</div>
+		</div>
+	<template id="my-template">
+		<swal-html>
+			<div class="model fadeIn">
+				<div class="payment">
+					<div class="receipt-box">
+						<h3>Upload proof of payment</h3>
+						<form>
+							<input type="file" name="fileUpload" id="fileUpload" class="inputfile">
+							<label class="upload">
+								<i class="ri-image-add-line"></i>
+							</label>
+						</form>
+					</div>
+					<div class="payment-info">
+							<button class="default-btn  rounded" type="button" onclick="uploadProof()">Submit</button>
+						</div>
+					</div>
+				</div>
+		</swal-html>
+	</template>
+	</div>
+	<!-- End Dashboard Area -->
+	<script>
+		$(document).ready(() =>{
+			GetPendingInvestments();
+		})
+	</script>
+
