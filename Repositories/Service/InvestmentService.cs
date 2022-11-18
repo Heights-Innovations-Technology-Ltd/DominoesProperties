@@ -20,9 +20,18 @@ namespace Repositories.Service
 
         public long AddInvestment(Investment investment)
         {
-            _context.Investments.Add(investment);
-            _context.SaveChanges();
-            return investment.Id;
+            try
+            {
+                var id = _context.Investments.Add(investment).Entity.Id;
+                loggerManager.LogInfo("Investment successfully saved");
+                _context.SaveChanges();
+                return id;
+            }
+            catch (Exception ex)
+            {
+                loggerManager.LogError(ex.StackTrace);
+                return 0;
+            }
         }
 
         public Investment GetInvestment(long Id)
@@ -75,24 +84,26 @@ namespace Repositories.Service
             using var tt = _context.Database.BeginTransaction();
             try
             {
-                var wallet = _context.Wallets.Where(x => x.CustomerId == investment.CustomerId).FirstOrDefault();
+                var wallet = _context.Wallets.FirstOrDefault(x => x.CustomerId == investment.CustomerId);
                 wallet.Balance -= investment.Amount;
                 wallet.LastTransactionDate = DateTime.Now;
                 wallet.LastTransactionAmount = -investment.Amount;
                 _context.Wallets.Update(wallet);
 
-                Transaction transaction = new();
-                transaction.Amount = investment.Amount;
-                transaction.Channel = "wallet";
-                transaction.CustomerId = investment.CustomerId;
-                transaction.Module = "PROPERTY_PURCHASE";
-                transaction.Status = "success";
-                transaction.TransactionRef = investment.TransactionRef;
-                transaction.TransactionType = "CR";
+                Transaction transaction = new()
+                {
+                    Amount = investment.Amount,
+                    Channel = "WALLET",
+                    CustomerId = investment.CustomerId,
+                    Module = "PROPERTY_PURCHASE",
+                    Status = "success",
+                    TransactionRef = investment.TransactionRef,
+                    TransactionType = "CR"
+                };
                 _context.Transactions.Add(transaction);
 
                 investment.Status = "COMPLETED";
-                Property property = _context.Properties.Where(x => x.Id == investment.PropertyId).FirstOrDefault();
+                var property = _context.Properties.FirstOrDefault(x => x.Id == investment.PropertyId);
                 property.UnitAvailable -= investment.Units;
                 property.UnitSold += investment.Units;
 
@@ -219,6 +230,51 @@ namespace Repositories.Service
             if (inv.Any())
                 _context.Investments.RemoveRange(inv);
             _context.SaveChanges();
+        }
+
+        public IEnumerable<OfflineInvestment> GetOfflineInvestments(long customerId)
+        {
+            return _context.OfflineInvestments.Where(x => x.CustomerId == customerId);
+        }
+
+        public async Task<object> GetOfflineInvestments()
+        {
+            var offlineInvestments = await _context.OfflineInvestments
+                .ToListAsync();
+
+            return offlineInvestments.GroupBy(t => t.Status)
+                .Select(b => new { group = b.Key, items = b });
+        }
+
+        public OfflineInvestment GetOfflineInvestment(long id)
+        {
+            return _context.OfflineInvestments.Find(id);
+        }
+
+        public OfflineInvestment GetOfflineInvestment(string paymentRef)
+        {
+            return _context.OfflineInvestments.FirstOrDefault(x => x.PaymentRef.Equals(paymentRef));
+        }
+
+        public bool AddOfflineInvestment(OfflineInvestment investment)
+        {
+            try
+            {
+                _context.OfflineInvestments.Add(investment);
+                _context.SaveChanges();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public OfflineInvestment UpdateOfflineInvestment(OfflineInvestment investment)
+        {
+            _context.OfflineInvestments.Update(investment);
+            _context.SaveChanges();
+            return investment;
         }
     }
 }

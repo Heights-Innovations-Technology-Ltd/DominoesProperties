@@ -64,7 +64,7 @@ namespace DominoesProperties.Controllers
         public ApiResponse DoInitPayment(Payment payment, string user)
         {
             var customer = customerRepository.GetCustomer(user);
-            _ = decimal.TryParse(configuration["subscription"], out decimal subscription);
+            _ = decimal.TryParse(configuration["subscription"], out var subscription);
             var amount = payment.Module.Equals(PaymentType.SUBSCRIPTION) ? subscription : payment.Amount;
             var transRef = Guid.NewGuid().ToString();
             PaymentModel m = new()
@@ -73,8 +73,7 @@ namespace DominoesProperties.Controllers
                 email = customer.Email,
                 reference = string.IsNullOrEmpty(payment.InvestmentId) ? transRef : payment.InvestmentId,
                 callback = string.IsNullOrEmpty(payment.Callback)
-                    ? string.Format("{0}/{1}", $"{Request.Scheme}://{Request.Host}{Request.PathBase}",
-                        "api/payment/verify-payment")
+                    ? $"{Request.Scheme}://{Request.Host}{Request.PathBase}/api/payment/verify-payment"
                     : $"{payment.Callback}"
             };
 
@@ -122,11 +121,11 @@ namespace DominoesProperties.Controllers
                 return Redirect($"{configuration["app_settings:WebEndpoint"]}?reference={reference}status=error");
             }
 
-            JObject jObject = JsonConvert.DeserializeObject<JObject>(returns);
-            JObject cust = JsonConvert.DeserializeObject<JObject>(jObject["customer"].ToString());
+            var jObject = JsonConvert.DeserializeObject<JObject>(returns);
+            var cust = JsonConvert.DeserializeObject<JObject>(jObject["customer"].ToString());
             try
             {
-                PaystackPayment paystack = paystackRepository.GetPaystack(reference);
+                var paystack = paystackRepository.GetPaystack(reference);
                 paystack.Channel = Convert.ToString(jObject["channel"]);
                 paystack.Status = Convert.ToString(jObject["status"]);
                 paystack.Payload = CommonLogic.Encrypt(returns);

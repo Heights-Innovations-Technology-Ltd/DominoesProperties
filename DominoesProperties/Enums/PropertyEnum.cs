@@ -12,15 +12,14 @@
 
     public enum PropertyStatus
     {
-        ONGOING_CONSTRUCTION=0,
-        OPEN_FOR_INVESTMENT=1,
-        CLOSED_FOR_INVESTMENT=2,
-        RENTED_OUT=3
+        ONGOING_CONSTRUCTION = 0,
+        OPEN_FOR_INVESTMENT = 1,
+        CLOSED_FOR_INVESTMENT = 2,
+        RENTED_OUT = 3
     }
 
     public enum Module
     {
-
     }
 
     public enum TransactionType
@@ -33,7 +32,8 @@
     {
         CARD,
         WALLET,
-        TRANSFER
+        TRANSFER,
+        OFFLINE
     }
 
     public enum PaymentType
@@ -62,6 +62,17 @@
     {
         PICTURE,
         DOCUMENT,
-        COVER
+        COVER,
+        PROOF
+    }
+
+    public enum Status
+    {
+        APPROVED,
+        DECLINED,
+        COMPLETED,
+        PENDING,
+        PROCESSING,
+        CLOSED
     }
 }

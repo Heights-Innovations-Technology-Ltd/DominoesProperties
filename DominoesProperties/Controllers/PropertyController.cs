@@ -6,7 +6,6 @@ using DominoesProperties.Enums;
 using DominoesProperties.Helper;
 using DominoesProperties.Models;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Models.Models;
@@ -18,17 +17,18 @@ namespace DominoesProperties.Controllers
     [Route("api/[controller]")]
     public class PropertyController : Controller
     {
-        private readonly IPropertyRepository propertyRepository;
-        private readonly ILoggerManager logger;
-        private readonly IUtilRepository utilRepository;
-        private readonly ApiResponse response;
-        private readonly IConfiguration configuration;
-        private readonly IUploadRepository uploadRepository;
         private readonly IAdminRepository adminRepository;
+        private readonly IConfiguration configuration;
+        private readonly ILoggerManager logger;
+        private readonly IPropertyRepository propertyRepository;
+        private readonly ApiResponse response;
+        private readonly IUploadRepository uploadRepository;
+        private readonly IUtilRepository utilRepository;
 
 
         public PropertyController(IPropertyRepository _propertyRepository, ILoggerManager _logger,
-            IUtilRepository _utilRepository, IConfiguration _configuration, IUploadRepository _uploadRepository, IAdminRepository _adminRepository)
+            IUtilRepository _utilRepository, IConfiguration _configuration, IUploadRepository _uploadRepository,
+            IAdminRepository _adminRepository)
         {
             propertyRepository = _propertyRepository;
             logger = _logger;
@@ -60,7 +60,9 @@ namespace DominoesProperties.Controllers
                 prop.ForEach(x =>
                 {
                     var prop2 = ClassConverter.EntityToProperty(x);
-                    prop2.Description = ClassConverter.ConvertDescription(propertyRepository.GetDescriptionByPropertyId(prop2.UniqueId));
+                    prop2.Description =
+                        ClassConverter.ConvertDescription(
+                            propertyRepository.GetDescriptionByPropertyId(prop2.UniqueId));
                     properties.Add(prop2);
 
                     //var uploaded = uploadRepository.GetUploads(x.Id).Where(x => x.UploadType.Equals(UploadType.PICTURE.ToString())).Select(x => x.Url).ToList();
@@ -68,7 +70,8 @@ namespace DominoesProperties.Controllers
                 });
 
                 if (propertyFilter.AirConditioned != null)
-                    properties = properties.Where(x => x.Description.AirConditioned == propertyFilter.AirConditioned).ToList();
+                    properties = properties.Where(x => x.Description.AirConditioned == propertyFilter.AirConditioned)
+                        .ToList();
                 if (propertyFilter.Basement != null)
                     properties = properties.Where(x => x.Description.Basement == propertyFilter.Basement).ToList();
                 if (propertyFilter.Bathroom != null)
@@ -86,26 +89,31 @@ namespace DominoesProperties.Controllers
                 if (propertyFilter.Parking != null)
                     properties = properties.Where(x => x.Description.Parking == propertyFilter.Parking).ToList();
                 if (propertyFilter.Refridgerator != null)
-                    properties = properties.Where(x => x.Description.Refrigerator == propertyFilter.Refridgerator).ToList();
+                    properties = properties.Where(x => x.Description.Refrigerator == propertyFilter.Refridgerator)
+                        .ToList();
                 if (propertyFilter.SecurityGuard != null)
-                    properties = properties.Where(x => x.Description.SecurityGuard == propertyFilter.SecurityGuard).ToList();
+                    properties = properties.Where(x => x.Description.SecurityGuard == propertyFilter.SecurityGuard)
+                        .ToList();
                 if (propertyFilter.SwimmingPool != null)
-                    properties = properties.Where(x => x.Description.SwimmingPool == propertyFilter.SwimmingPool).ToList();
+                    properties = properties.Where(x => x.Description.SwimmingPool == propertyFilter.SwimmingPool)
+                        .ToList();
                 if (propertyFilter.Toilet != null)
                     properties = properties.Where(x => x.Description.Toilet == propertyFilter.Toilet).ToList();
 
-                PagedList<Properties> propList = PagedList<Properties>.ToPagedList(properties.OrderBy(on => on.DateCreated).AsQueryable(),
-                queryParams.PageNumber, queryParams.PageSize);
+                PagedList<Properties> propList = PagedList<Properties>.ToPagedList(
+                    properties.OrderBy(on => on.DateCreated).AsQueryable(),
+                    queryParams.PageNumber, queryParams.PageSize);
 
-                (int TotalCount, int PageSize, int CurrentPage, int TotalPages, bool HasNext, bool HasPrevious) metadata2 =
-                (
-                    propList.TotalCount,
-                    propList.PageSize,
-                    propList.CurrentPage,
-                    propList.TotalPages,
-                    propList.HasNext,
-                    propList.HasPrevious
-                );
+                (int TotalCount, int PageSize, int CurrentPage, int TotalPages, bool HasNext, bool HasPrevious)
+                    metadata2 =
+                    (
+                        propList.TotalCount,
+                        propList.PageSize,
+                        propList.CurrentPage,
+                        propList.TotalPages,
+                        propList.HasNext,
+                        propList.HasPrevious
+                    );
 
                 Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata2));
                 logger.LogInfo($"Returned {propList.TotalCount} queryParams from database.");
@@ -114,6 +122,7 @@ namespace DominoesProperties.Controllers
                 response.Data = propList;
                 return response;
             }
+
             return response;
         }
 
@@ -122,12 +131,16 @@ namespace DominoesProperties.Controllers
         {
             Property property = propertyRepository.GetProperty(uniqueId);
             Properties properties = ClassConverter.EntityToProperty(property);
-            properties.Description = ClassConverter.ConvertDescription(propertyRepository.GetDescriptionByPropertyId(property.UniqueId));
+            properties.Description =
+                ClassConverter.ConvertDescription(propertyRepository.GetDescriptionByPropertyId(property.UniqueId));
             Dictionary<string, object> Uploads = new();
             var uploaded = uploadRepository.GetUploads(property.Id);
-            Uploads.Add("Images", uploaded.Where(x => x.UploadType.Equals(UploadType.PICTURE.ToString())).Select(x => x.Url).ToList());
-            Uploads.Add("Document", uploaded.Where(x => x.UploadType.Equals(UploadType.DOCUMENT.ToString())).Select(x => x.Url).ToList());
-            Uploads.Add("Cover", uploaded.Where(x => x.UploadType.Equals(UploadType.COVER.ToString())).Select(x => x.Url).ToList());
+            Uploads.Add("Images",
+                uploaded.Where(x => x.UploadType.Equals(UploadType.PICTURE.ToString())).Select(x => x.Url).ToList());
+            Uploads.Add("Document",
+                uploaded.Where(x => x.UploadType.Equals(UploadType.DOCUMENT.ToString())).Select(x => x.Url).ToList());
+            Uploads.Add("Cover",
+                uploaded.Where(x => x.UploadType.Equals(UploadType.COVER.ToString())).Select(x => x.Url).ToList());
             properties.Data = Uploads;
             response.Success = true;
             response.Message = "Successfull";
@@ -166,20 +179,38 @@ namespace DominoesProperties.Controllers
                 response.Message = "Username not found, kindly check and try again";
                 return response;
             }
-            property.Location = string.IsNullOrEmpty(updateProperty.Location) ? property.Location : updateProperty.Location;
+
+            property.Location = string.IsNullOrEmpty(updateProperty.Location)
+                ? property.Location
+                : updateProperty.Location;
             property.Type = updateProperty.Type == null ? property.Type : updateProperty.Type.Value;
             property.TotalUnits = updateProperty.TotalUnits > 0 ? updateProperty.TotalUnits : property.TotalUnits;
             property.UnitPrice = updateProperty.UnitPrice > 0 ? updateProperty.UnitPrice : property.UnitPrice;
-            property.ClosingDate = updateProperty.ClosingDate == null ? property.ClosingDate : updateProperty.ClosingDate;
-            property.TargetYield = updateProperty.TargetYield.Value > 0 ? updateProperty.TargetYield.Value : property.TargetYield;
-            property.ProjectedGrowth = updateProperty.ProjectedGrowth.Value > 0 ? updateProperty.ProjectedGrowth.Value : property.ProjectedGrowth;
-            property.InterestRate = updateProperty.InterestRate.Value > 0 ? updateProperty.InterestRate.Value : property.InterestRate;
-            property.Longitude = string.IsNullOrEmpty(updateProperty.Longitude) ? property.Longitude : updateProperty.Longitude;
-            property.Latitude = string.IsNullOrEmpty(updateProperty.Latitude) ? property.Latitude : updateProperty.Latitude;
+            property.ClosingDate =
+                updateProperty.ClosingDate == null ? property.ClosingDate : updateProperty.ClosingDate;
+            property.TargetYield = updateProperty.TargetYield.Value > 0
+                ? updateProperty.TargetYield.Value
+                : property.TargetYield;
+            property.ProjectedGrowth = updateProperty.ProjectedGrowth.Value > 0
+                ? updateProperty.ProjectedGrowth.Value
+                : property.ProjectedGrowth;
+            property.InterestRate = updateProperty.InterestRate.Value > 0
+                ? updateProperty.InterestRate.Value
+                : property.InterestRate;
+            property.Longitude = string.IsNullOrEmpty(updateProperty.Longitude)
+                ? property.Longitude
+                : updateProperty.Longitude;
+            property.Latitude = string.IsNullOrEmpty(updateProperty.Latitude)
+                ? property.Latitude
+                : updateProperty.Latitude;
             property.Summary = string.IsNullOrEmpty(updateProperty.Summary) ? property.Summary : updateProperty.Summary;
-            property.VideoLink = string.IsNullOrEmpty(updateProperty.VideoLink) ? property.VideoLink : updateProperty.VideoLink;
+            property.VideoLink = string.IsNullOrEmpty(updateProperty.VideoLink)
+                ? property.VideoLink
+                : updateProperty.VideoLink;
             property.AllowSharing = updateProperty.AllowSharing;
-            property.MinimumSharingPercentage = updateProperty.MinimumSharingPercentage > 0 ? updateProperty.MinimumSharingPercentage : property.MinimumSharingPercentage;
+            property.MinimumSharingPercentage = updateProperty.MinimumSharingPercentage > 0
+                ? updateProperty.MinimumSharingPercentage
+                : property.MinimumSharingPercentage;
 
             response.Data = propertyRepository.UpdateProperty(property);
             response.Success = true;
@@ -197,6 +228,7 @@ namespace DominoesProperties.Controllers
                 response.Message = $"No property with the given name {uniqueId} found";
                 return response;
             }
+
             property.IsDeleted = true;
             response.Success = true;
             response.Message = "Successful";
@@ -248,7 +280,11 @@ namespace DominoesProperties.Controllers
 
         [HttpPost("uploads/{propertyId}")]
         [Authorize(Roles = "SUPER, ADMIN")]
-        public ApiResponse UploadFile(string propertyId, [FromBody][Required(ErrorMessage = "No upload found")][MinLength(1, ErrorMessage = "Upload atleast 1 file")] List<PropertyFileUpload> passport)
+        public ApiResponse UploadFile(string propertyId,
+            [FromBody]
+            [Required(ErrorMessage = "No upload found")]
+            [MinLength(1, ErrorMessage = "Upload atleast 1 file")]
+            List<PropertyFileUpload> passport)
         {
             try
             {
@@ -260,7 +296,7 @@ namespace DominoesProperties.Controllers
                     return response;
                 }
 
-                bool isError = false;
+                var isError = false;
                 passport.ForEach(x =>
                 {
                     if (!string.IsNullOrEmpty(x.ImageName) || !string.IsNullOrEmpty(x.Url))
@@ -286,6 +322,7 @@ namespace DominoesProperties.Controllers
                 {
                     return response;
                 }
+
                 if (uploadRepository.NewUpload(propertyUploads))
                 {
                     response.Success = true;

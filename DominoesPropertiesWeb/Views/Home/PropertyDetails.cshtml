@@ -1,282 +1,291 @@
-﻿
-@{
+﻿@{
     ViewData["Title"] = "PropertyDetails";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+<style>
+	.button {
+	  float: left;
+	  margin: 0 5px 0 0;
+	  width: 200px;
+	  height: 50px;
+	  position: relative;
+	}
+
+.button label,
+.button input {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.button input[type="radio"] {
+  opacity: 0.011;
+  z-index: 100;
+  /*cursor: pointer;*/
+}
+
+.button input[type="radio"]:checked + label {
+  background: #d05a15;
+  border-radius: 4px; 
+}
+
+.button label {
+  cursor: pointer;
+  z-index: 90;
+  line-height: 1.8em;
+}
+</style>
+
 <!-- Start Page Title Area -->
-		<div class="page-title-area style-pb-200 bg-7">
-			<div class="container">
-				<div class="page-title-content">
-					<h2>Property Details</h2>
-					
-					<ul>
-						<li>
-							<a href="/Home/Properties">
-								Properties 
-							</a>
-						</li>
+<div class="page-title-area style-pb-200 bg-7">
+    <div class="container">
+        <div class="page-title-content">
+            <h2>Property Details</h2>
 
-						<li class="active">Property Details</li>
-					</ul>
-				</div>
-			</div>
-		</div>
-		<!-- End Page Title Area -->
+            <ul>
+                <li>
+                    <a href="/Home/Properties">
+                        Properties
+                    </a>
+                </li>
 
-		<!-- Start Single Listing Area -->
-		<div class="single-listing-area pb-70">
-			<div class="container">
-				<div class="row">
-					<div class="single-properties-item single-listing-warp">
-						<div class="row">
-							<div class="col-lg-4 col-md-4 pe-0">
-								<div class="properties-bg-img"></div>
-							</div>
+                <li class="active">Property Details</li>
+            </ul>
+        </div>
+    </div>
+</div>
+<!-- End Page Title Area -->
 
-							<div class="col-lg-8 col-md-8 ps-0">
-								<div class="properties-content">
-									<div class="d-flex justify-content-between">
-										<a href="single-listing.html">
-											<h3 id="name"></h3>
-										</a>
-										<h3 class="price" id="price">&#8358;</h3>
-									</div>
-									<p style="padding-left:0">
-										<em class="ri-map-pin-fill"></em>
-										<span id="location"></span>
-									</p>
-									<ul class="feature-list property-feature">
-										<li>
-											<em class="ri-hotel-bed-fill"></em>
-											3 Bed
-										</li>
-										<li>
-											<em class="ri-wheelchair-fill"></em>
-											3 Bath
-										</li>
-										<li>
-											<em class="ri-ruler-2-line"></em>
-											950 Sqft
-										</li>
-									</ul>
-									
-									<ul class="user d-flex justify-content-between align-items-center">
-										<li>
-											<a href="javascript:void(0)" class="agent-user">
-												@*<img src="~/images/agents/agent-1.jpg" alt="Image">*@
-												<span class="closeDate"></span>
-											</a>
-										</li>
-										<li>
-											<a href="javascript:void(0)" target="_blank" class="agent-user" download>
-												<span class="">Property Document <img alt="Donwload property document" src="~/images/PDF_file_icon.svg.png" width="100" style="border-radius:unset"/></span>
-											</a>
-										</li>
-										<li>
-											<button type="button" class="default-btn rounded" onclick="openModal()">
-											  Checkout
-											</button>
-											@*<button type="button" class="default-btn rounded" data-bs-toggle="modal" data-bs-target="#exampleModalToggle">
+<!-- Start Single Listing Area -->
+<div class="single-listing-area pb-70">
+<div class="container">
+    <div class="row">
+        <div class="single-properties-item single-listing-warp">
+            <div class="row">
+                <div class="col-lg-4 col-md-4 pe-0">
+                    <div class="properties-bg-img"></div>
+                </div>
+
+                <div class="col-lg-8 col-md-8 ps-0">
+                    <div class="properties-content">
+                        <div class="d-flex justify-content-between">
+                            <a href="single-listing.html">
+                                <h3 id="name"></h3>
+                            </a>
+                            <h3 class="price" id="price">&#8358;</h3>
+                        </div>
+                        <p style="padding-left:0">
+                            <em class="ri-map-pin-fill"></em>
+                            <span id="location"></span>
+                        </p>
+                        <ul class="feature-list property-feature">
+                            <li>
+                                <em class="ri-hotel-bed-fill"></em>
+                                3 Bed
+                            </li>
+                            <li>
+                                <em class="ri-wheelchair-fill"></em>
+                                3 Bath
+                            </li>
+                            <li>
+                                <em class="ri-ruler-2-line"></em>
+                                950 Sqft
+                            </li>
+                        </ul>
+
+                        <ul class="user d-flex justify-content-between align-items-center">
+                            <li>
+                                <a href="javascript:void(0)" class="agent-user">
+                                    @*<img src="~/images/agents/agent-1.jpg" alt="Image">*@
+                                    <span class="closeDate"></span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="javascript:void(0)" target="_blank" class="agent-user" download>
+                                    <span class="">Property Document <img alt="Donwload property document" src="~/images/PDF_file_icon.svg.png" width="100" style="border-radius:unset"/></span>
+                                </a>
+                            </li>
+                            <li>
+                                <button type="button" class="default-btn rounded" onclick="openModal()">
+                                    Checkout
+                                </button>
+                                @*<button type="button" class="default-btn rounded" data-bs-toggle="modal" data-bs-target="#exampleModalToggle">
 											  Checkout
 											</button>*@
-										</li>
-									</ul>
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="col-lg-8">
-						<div class="properties-details-content">
-								<div class="properties-about summary"></div>
-								<div class="gap-mb-50"></div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-8">
+            <div class="properties-details-content">
+                <div class="properties-about summary"></div>
+                <div class="gap-mb-50"></div>
 
-								<div class="features-content">
-									<h3>Facilities</h3>
-									<div class="row description"></div>
-								</div>
+                <div class="features-content">
+                    <h3>Facilities</h3>
+                    <div class="row description"></div>
+                </div>
 
-								<div class="gap-mb-50"></div>
-								<div class="gallery-area gallery-popup pt-10 pb-70">
-									<div class="shorting">
-										<h3 class="d-none gallery-title">Gallery</h3>
-										<div class="row justify-content-center property-img"></div>
-									</div>
-								</div>
-								
-								<!-- End Gallery Area -->
+                <div class="gap-mb-50"></div>
+                <div class="gallery-area gallery-popup pt-10 pb-70">
+                    <div class="shorting">
+                        <h3 class="d-none gallery-title">Gallery</h3>
+                        <div class="row justify-content-center property-img"></div>
+                    </div>
+                </div>
 
-								<div class="gap-mb-50"></div>
-								<div class="video-img">
-									<h3>Property Video</h3>
-									<div class="video-wrap">
-										<img src="/images/properties/properties-4.jpg" class="video-img" alt="Image" style="height:700px; width:auto">
+                <!-- End Gallery Area -->
 
-										<div class="video-button">
-											<a href="" class="video-btn popup-youtube video-url">
-												<em class="ri-play-fill"></em>
-											</a>
-										</div>
-									</div>
-								</div>
+                <div class="gap-mb-50"></div>
+                <div class="video-img">
+                    <h3>Property Video</h3>
+                    <div class="video-wrap">
+                        <img src="/images/properties/properties-4.jpg" class="video-img" alt="Image" style="height:700px; width:auto">
 
-								<div class="gap-mb-50"></div>
+                        <div class="video-button">
+                            <a href="" class="video-btn popup-youtube video-url">
+                                <em class="ri-play-fill"></em>
+                            </a>
+                        </div>
+                    </div>
+                </div>
 
-								@*<div class="video-img floor-plan"></div>*@
-							</div>
-					</div>
-					
-					<div class="col-lg-4">
-						<div class="widget-sidebar ml-15">
-							<div class="sidebar-widget agent-contact">
-								<div class="viewed-list">
-									<h4>Request Information</h4>
-								</div>
-								<div class="contact-form ps-0">
-									<form id="contactForm">
-										<div class="row">
-											<div class="col-lg-12 col-sm-6">
-												<div class="form-group">
-													<label>Your Subject</label>
-													<input type="hidden" class="fill-me" />
-													
-													<input type="text" name="msg_subject" id="msg_subject" class="form-control" required data-error="Please enter your subject">
-													<div class="help-block with-errors"></div>
-												</div>
-											</div>
-				
-											<div class="col-lg-12">
-												<div class="form-group">
-													<label>Your Message</label>
-													<textarea name="message" class="form-control" id="message" cols="30" rows="6" required data-error="Write your message"></textarea>
-													<div class="help-block with-errors"></div>
-												</div>
-											</div>
-				
-											<div class="col-lg-12 col-md-12">
-												<div class="d-flex justify-content-between align-items-center">
-													<div class="">
-														<button type="button" class="default-btn btn-request">
-															Request Information
-														</button>
-														@*<div id="msgSubmit" class="h3 text-center hidden"></div>*@
-														<div class="clearfix"></div>
-													</div>
-													<div class="call">
-														<a href="https://api.whatsapp.com/send?phone=2348094822156&text=I%20am%20interested%20in%20one%20of%20your%20properties" target="_blank">
-															<em class="fa fa-whatsapp" aria-hidden="true"></em>
-														</a>
-													</div>
-												</div>
-												<div id="msgSubmit" class="h3 text-center hidden"></div>
-											</div>
-										</div>
-									</form>
-								</div>
-							</div>
-							@*<div class="sidebar-widget recent-post">
-								<h3>Recent Posts</h3>
-								
-								<article class="item">
-									<a href="single-blog.html" class="thumb">
-										<span class="fullimage cover bg-1" role="img"></span>
-									</a>
-									<div class="info">
-										<h4 class="title usmall">
-											<a href="single-blog.html">House For Rent</a>
-										</h4>
-										<span class="date">
-											<em class="ri-map-pin-fill"></em>
-											666 E. Hilldale Court, MA 0999
-										</span>
-										<h5>&#8358;24000</h5>
-									</div>
-								</article>
+                <div class="gap-mb-50"></div>
 
-								<article class="item">
-									<a href="single-blog.html" class="thumb">
-										<span class="fullimage cover bg-2" role="img"></span>
-									</a>
-									<div class="info">
-										<h4 class="title usmall">
-											<a href="single-blog.html">House For Sale</a>
-										</h4>
-										<span class="date">
-											<em class="ri-map-pin-fill"></em>
-											444 King Coachella, CA 22233
-										</span>
-										<h5>&#8358;90000</h5>
-									</div>
-								</article>
-								<article class="item">
-									<a href="single-blog.html" class="thumb">
-										<span class="fullimage cover bg-3" role="img"></span>
-									</a>
-									<div class="info">
-										<h4 class="title usmall">
-											<a href="single-blog.html">House For Rent</a>
-										</h4>
-										<span class="date">
-											<em class="ri-map-pin-fill"></em>
-											991 Hill St. Clemmons, NC 77711
-										</span>
-										<h5>&#8358;35000</h5>
-									</div>
-								</article>
-							</div>*@
-						</div>
-					</div>
-				</div>
-			</div>
-			<template id="my-template">
-				<swal-html>
-					<div class="model fadeIn">
-						<div class="payment">
-							<div class="receipt-box">
-							<h3>Details</h3>
-							<form>
-								<label>Quantity</label>
-								<input type="number" min="1" value="1" id="unit" oninput="calUnit()" class="form-control">
-							</form>
-									
-							</div>
-							<div class="payment-info">
-							<h3>Summary</h3>
-							<table class="table">
-								<tr>
-								<td> <span class="checkoutPrice"></span> x <span class="unit">1</span></td>
-								<td class="total">Nill</td>
-								</tr>
-								<tr>
-								<td>Projected Interest</td>
-								<td class="interest">0</td>
-								</tr>
-								<tr>
-								<td>Projected Yield</td>
-								<td class="yield">0</td>
-								</tr>
-								@* <tr>
-								<td>Matured Date</td>
-								<td>31-09-2022</td>
-								</tr>*@
-								<tfoot>
-								<tr>
-									<td>Grand Total</td>
-									<td class="groundTotal">Nill</td>
-								</tr>
-								</tfoot>
-							</table>
+                @*<div class="video-img floor-plan"></div>*@
+            </div>
+        </div>
 
-							<button class="default-btn  rounded" type="button" onclick="propertyInvestment()">Continue <em class="fa fa-arrow-right"></em></button>
-							</div>
-						</div>
-					</div>
-				  </swal-html>
-			</template>
-		</div>
-		<!-- End Single Listing Area -->
+        <div class="col-lg-4">
+            <div class="widget-sidebar ml-15">
+                <div class="sidebar-widget agent-contact">
+                    <div class="viewed-list">
+                        <h4>Request Information</h4>
+                    </div>
+                    <div class="contact-form ps-0">
+                        <form id="contactForm">
+                            <div class="row">
+                                <div class="col-lg-12 col-sm-6">
+                                    <div class="form-group">
+                                        <label>Your Subject</label>
+                                        <input type="hidden" class="fill-me"/>
 
-		<script>
+                                        <input type="text" name="msg_subject" id="msg_subject" class="form-control" required data-error="Please enter your subject">
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-12">
+                                    <div class="form-group">
+                                        <label>Your Message</label>
+                                        <textarea name="message" class="form-control" id="message" cols="30" rows="6" required data-error="Write your message"></textarea>
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-12 col-md-12">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div class="">
+                                            <button type="button" class="default-btn btn-request">
+                                                Request Information
+                                            </button>
+                                            @*<div id="msgSubmit" class="h3 text-center hidden"></div>*@
+                                            <div class="clearfix"></div>
+                                        </div>
+                                        <div class="call">
+                                            <a href="https://api.whatsapp.com/send?phone=2348094822156&text=I%20am%20interested%20in%20one%20of%20your%20properties" target="_blank">
+                                                <em class="fa fa-whatsapp" aria-hidden="true"></em>
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div id="msgSubmit" class="h3 text-center hidden"></div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<template id="my-template">
+    <swal-html>
+        <div class="model fadeIn">
+            <div class="payment">
+                <div class="receipt-box">
+                    <h3>Details</h3>
+                    <form>
+                        <label>Quantity</label>
+                        <input type="number" min="1" value="1" id="unit" oninput="calUnit()" class="form-control">
+                    </form>
+
+                </div>
+                <div class="payment-info">
+                    <h3>Payment Option</h3>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="button">
+                                <input type="radio" id="card" onclick="cardMode()" name="check-substitution-2"/>
+                                <label class="btn default-btn" for="card">Card</label>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="button">
+                                <input type="radio" id="wallet" onclick="walletMode()" name="check-substitution-2"/>
+                                <label class="btn default-btn" for="wallet">Wallet</label>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="button">
+                                <input type="radio" id="offline" onclick="offlineMode()" name="check-substitution-2"/>
+                                <label class="btn default-btn" for="offline">Offline</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="payment-info">
+                        <h3>Summary</h3>
+                        <table class="table">
+                            <tr>
+                                <td> <span class="checkoutPrice"></span> x <span class="unit">1</span></td>
+                                <td class="total">Nill</td>
+                            </tr>
+                            <tr>
+                                <td>Projected Interest</td>
+                                <td class="interest">0</td>
+                            </tr>
+                            <tr>
+                                <td>Projected Yield</td>
+                                <td class="yield">0</td>
+                            </tr>
+                            @* <tr>
+								    <td>Matured Date</td>
+								    <td>31-09-2022</td>
+								    </tr>*@
+                            <tfoot>
+                            <tr>
+                                <td>Grand Total</td>
+                                <td class="groundTotal">Nill</td>
+                            </tr>
+                            </tfoot>
+                        </table>
+
+                        <button class="default-btn  rounded" type="button" onclick="propertyInvestment()">Continue <em class="fa fa-arrow-right"></em></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </swal-html>
+</template>
+</div>
+<!-- End Single Listing Area -->
+
+<script>
 			$(document).ready(() =>{
 				getSingleProperty();
 			})

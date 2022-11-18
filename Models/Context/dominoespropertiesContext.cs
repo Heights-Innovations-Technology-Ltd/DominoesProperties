@@ -1,7 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Models.Models;
+﻿#nullable disable
 
-#nullable disable
+using Microsoft.EntityFrameworkCore;
+using Models.Models;
 
 namespace Models.Context
 {
@@ -26,6 +26,7 @@ namespace Models.Context
         public virtual DbSet<Enquiry> Enquiries { get; set; }
         public virtual DbSet<Investment> Investments { get; set; }
         public virtual DbSet<Newsletter> Newsletters { get; set; }
+        public virtual DbSet<OfflineInvestment> OfflineInvestments { get; set; }
         public virtual DbSet<PaystackPayment> Paystackpayments { get; set; }
         public virtual DbSet<Property> Properties { get; set; }
         public virtual DbSet<PropertyType> PropertyTypes { get; set; }
@@ -121,7 +122,7 @@ namespace Models.Context
 
                 entity.Property(e => e.ResponsePayload).HasColumnType("varchar(5000)");
             });
-            
+
             modelBuilder.Entity<Blogpost>(entity =>
             {
                 entity.ToTable("blogpost");
@@ -427,6 +428,53 @@ namespace Models.Context
                 entity.Property(e => e.Email)
                     .IsRequired()
                     .HasMaxLength(70);
+            });
+
+            modelBuilder.Entity<OfflineInvestment>(entity =>
+            {
+                entity.ToTable("offline_investment");
+
+                entity.HasIndex(e => e.PaymentRef, "investment_Payment_TransactionRef_fk");
+
+                entity.HasIndex(e => e.Id, "off_investment_Id_uindex")
+                    .IsUnique();
+
+                entity.HasIndex(e => e.Status, "off_investment_Status_index");
+
+                entity.HasIndex(e => e.CustomerId, "off_investment_customer_Id_fk");
+
+                entity.HasIndex(e => e.PropertyId, "off_investment_property_Id_fk");
+
+                entity.Property(e => e.Amount).HasColumnType("decimal(18,2)");
+
+                entity.Property(e => e.PaymentRef)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.ProofUrl).HasMaxLength(250);
+
+                entity.Property(e => e.Status)
+                    .IsRequired()
+                    .HasMaxLength(10)
+                    .HasDefaultValueSql("'PENDING'");
+
+                entity.Property(e => e.TreatedBy).HasMaxLength(70);
+
+                entity.Property(e => e.UnitPrice)
+                    .HasColumnType("decimal(18,2)")
+                    .HasDefaultValueSql("'0.00'");
+
+                entity.HasOne(d => d.Customer)
+                    .WithMany(p => p.OfflineInvestments)
+                    .HasForeignKey(d => d.CustomerId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("off_investment_customer_Id_fk");
+
+                entity.HasOne(d => d.Property)
+                    .WithMany(p => p.OfflineInvestments)
+                    .HasForeignKey(d => d.PropertyId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("off_investment_property_Id_fk");
             });
 
             modelBuilder.Entity<PaystackPayment>(entity =>

@@ -26,5 +26,12 @@ namespace Repositories.Repository
         List<Sharinggroup> UncompletedSharingGroup();
         IEnumerable<Sharingentry> GetSharingEntries(long customerId);
         void DeletePendingInvestments();
+
+        IEnumerable<OfflineInvestment> GetOfflineInvestments(long customerId);
+        OfflineInvestment GetOfflineInvestment(long id);
+        bool AddOfflineInvestment(OfflineInvestment investment);
+        OfflineInvestment UpdateOfflineInvestment(OfflineInvestment investment);
+        OfflineInvestment GetOfflineInvestment(string paymentRef);
+        Task<object> GetOfflineInvestments();
     }
 }
