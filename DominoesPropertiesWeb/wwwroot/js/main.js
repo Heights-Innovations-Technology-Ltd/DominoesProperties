@@ -1556,6 +1556,34 @@ const GetInvestments = () => {
     }
 }
 
+const GetPendingInvestments = () => {
+    let uniqueId = $('#refId').val();
+    let xhr = new XMLHttpRequest();
+    let url = "/get-pending-investments/" + uniqueId;
+    xhr.open('GET', url, false);
+    xhr.setRequestHeader("content-type", "application/json");
+    xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+    try {
+
+        xhr.send();
+        if (xhr.status != 200) {
+            // alert('Something went wrong try again!');
+        } else {
+            var res = JSON.parse(xhr.responseText);
+            var data = JSON.parse(res).data;
+            console.log(data);
+            if (JSON.parse(res).success) {
+                pendingInvestmentTmp(data);
+            } else {
+                window.scrollTo(0, 0);
+            }
+
+        }
+    } catch (err) { // instead of onerror
+        //alert("Request failed");
+    }
+}
+
 const GetInvestmentById = () => {
     let urls = window.location.href.split("/");
     let token = urls[5];
@@ -1665,6 +1693,81 @@ const investmentTmp = (data) => {
         $('#investments').append(res);
     });
 }
+const pendingInvestmentTmp = (data) => {
+    $('#pendingInvestments').html('');
+    data.forEach(x => {
+        let res = `<div class="col-lg-3 col-md-3">
+					    <div class="single-featured-item">
+						    <div class="canvas-img" mb-0 p-4">
+                                <img src="${x.data != undefined ? x.data : '/images/properties/properties-4.jpg'}" style="height:300px; width:415px" alt="Image">
+
+						    </div>
+						    <div class="featured-content style-three">
+							    <div>
+
+                                    <div class="row">
+                                        <div class="col-md-8">
+                                            <h3 style="font-size:14px; font-weight:normal;">
+									            Status
+								            </h3>
+                                        </div>
+                                        <div class="col-md-4">
+                                           <small class="float-end text-warning">${x.status}</small>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <h3 style="font-size:14px; font-weight:normal;">
+									           Amount
+								            </h3>
+                                        </div>
+                                        <div class="col-md-8">
+                                           <small class="price float-end"><sup>&#8358;</sup>${currency(x.amount)}</small>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <h3 style="font-size:14px; font-weight:normal;">
+									         Payment Ref
+								            </h3>
+                                        </div>
+                                        <div class="col-md-8">
+                                          <small class="price float-end">${x.paymentRef}</small>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <h3 style="font-size:14px; font-weight:normal;">
+									         Unit
+								            </h3>
+                                        </div>
+                                        <div class="col-md-8">
+                                          <small class="float-end">${x.units}</small>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <h3 style="font-size:14px; font-weight:normal;">
+									            Date
+								            </h3>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <small class="float-end">${moment(x.createdDate).format('ll')}</small>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <a href="#" onclick="uploadModal('${x.paymentRef}')" class="default-btn">Upload proof of payment</a>
+                                        </div>
+                                    </div>
+							    </div>
+						    </div>
+					    </div>
+				    </div>`;
+        $('#pendingInvestments').append(res);
+    });
+}
 
 function LoadCurrentData(result) {
     $('#example').DataTable({
@@ -1741,6 +1844,67 @@ const adminInvestmentsTmp = (data) => {
         $('#exampleData').append(res);
         myChart(i, ctx);
     });
+}
+
+let paymentRef = "";
+const uploadModal = (ref) => {
+    if (ref == '') {
+        return;
+    }
+    paymentRef = ref;
+    Swal.fire({
+        template: '#my-template',
+        showCancelButton: false,
+        showConfirmButton: false,
+        allowOutsideClick: false,
+    });
+}
+
+const uploadProof = () => {
+    var fileUpload = $("#fileUpload").get(0);
+    var files = fileUpload.files;
+
+    if (files.length == 0) {
+        Swal.fire(
+            'Oops!',
+            'Proof of payment document is required',
+            'error'
+        );
+        return;
+    }
+
+    var formData = new FormData();
+    formData.append("files", files[0]);
+
+    $.ajax(
+        {
+            url: "/upload-proof/" + paymentRef,
+            data: formData,
+            processData: false,
+            contentType: false,
+            type: "POST",
+            success: function (data) {
+                var success = JSON.parse(data).success;
+                var message = JSON.parse(data).message;
+                if (success) {
+                    Swal.fire(
+                        'Good job!',
+                        message,
+                        'success'
+                    ).then(() => {
+                        location.reload();
+                    });
+                }
+                else {
+                    Swal.fire(
+                        'Oops!',
+                        message,
+                        'error'
+                    );
+                }
+            }
+        }
+    );
 }
 
 const myChart = (i, ctx) => new Chart(ctx, {
