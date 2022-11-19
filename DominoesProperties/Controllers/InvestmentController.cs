@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using DominoesProperties.Enums;
 using DominoesProperties.Helper;
 using DominoesProperties.Models;
@@ -21,6 +23,9 @@ namespace DominoesProperties.Controllers
     [ApiController]
     public class InvestmentController : Controller
     {
+        private readonly IAdminRepository _adminRepository;
+        private readonly ITransactionRepository _transactionRepository;
+        private readonly IWalletRepository _walletRepository;
         private readonly IConfiguration configuration;
         private readonly ICustomerRepository customerRepository;
         private readonly IEmailService emailService;
@@ -33,8 +38,9 @@ namespace DominoesProperties.Controllers
 
         public InvestmentController(IPropertyRepository _propertyRepository, IConfiguration _configuration,
             ICustomerRepository _customerRepository, IInvestmentRepository _investmentRepository,
-            PaymentController _paymentController, IWebHostEnvironment _env,
-            IEmailService _emailService, IUploadRepository _uploadRepository)
+            PaymentController _paymentController, IWebHostEnvironment _env, IAdminRepository adminRepository,
+            IEmailService _emailService, IUploadRepository _uploadRepository, IWalletRepository walletRepository,
+            ITransactionRepository transactionRepository)
         {
             propertyRepository = _propertyRepository;
             customerRepository = _customerRepository;
@@ -44,6 +50,9 @@ namespace DominoesProperties.Controllers
             env = _env;
             emailService = _emailService;
             uploadRepository = _uploadRepository;
+            _adminRepository = adminRepository;
+            _walletRepository = walletRepository;
+            _transactionRepository = transactionRepository;
         }
 
         [HttpGet("pair-groups/{propertyUniqueId}")]
@@ -77,7 +86,7 @@ namespace DominoesProperties.Controllers
                 response.Message = "Invalid parameter in request, check to confirm property identifier is valid";
                 return response;
             }
-            else if (!property.AllowSharing.Value)
+            else if (!property.AllowSharing!.Value)
             {
                 response.Message = "Pairing is not allowed on this property";
                 return response;
@@ -91,10 +100,10 @@ namespace DominoesProperties.Controllers
             Sharinggroup shg = new()
             {
                 Alias = investment.Alias,
-                CustomerUniqueId = HttpContext.User.Identity.Name,
+                CustomerUniqueId = HttpContext.User.Identity!.Name,
                 PropertyId = property.Id,
                 Date = DateTime.Now,
-                MaxCount = 100 / property.MinimumSharingPercentage.Value,
+                MaxCount = 100 / property.MinimumSharingPercentage!.Value,
                 UniqueId = CommonLogic.GetUniqueRefNumber("pg"),
                 IsClosed = false,
                 UnitPrice = property.UnitPrice
@@ -140,10 +149,9 @@ namespace DominoesProperties.Controllers
                 Amount = (property.UnitPrice * investment.PercentageShare) / 100,
                 Module = PaymentType.PROPERTY_PAIRING,
                 InvestmentId = investment.SharingGroupId,
-                Callback = string.Format("{0}/{1}", $"{Request.Scheme}://{Request.Host}{Request.PathBase}",
-                    "api/payment/verify-payment")
+                Callback = $"{Request.Scheme}://{Request.Host}{Request.PathBase}/api/payment/verify-payment"
             };
-            return paymentController.DoInitPayment(pay, HttpContext.User.Identity.Name);
+            return paymentController.DoInitPayment(pay, HttpContext.User.Identity!.Name);
         }
 
         [HttpPost]
@@ -182,30 +190,63 @@ namespace DominoesProperties.Controllers
                     return response;
                 case Channel.WALLET:
                 {
-                    Investment newInvestment = new()
+                    using (var scope =
+                           new System.Transactions.TransactionScope(System.Transactions.TransactionScopeOption
+                               .RequiresNew))
                     {
-                        Amount = amount,
-                        UnitPrice = property.UnitPrice,
-                        CustomerId = customer.Id,
-                        PropertyId = property.Id,
-                        Units = investment.Units,
-                        YearlyInterestAmount = (property.TargetYield * property.UnitPrice) / 100 * investment.Units,
-                        Yield = property.TargetYield,
-                        PaymentType = PaymentType.PROPERTY_PURCHASE.ToString(),
-                        TransactionRef = Guid.NewGuid().ToString(),
-                        Status = "PENDING"
-                    };
-                    if (!investmentRepository.AddInvestmentFromWallet(newInvestment)) return response;
+                        customer.Wallet.Balance -= amount;
+                        customer.Wallet.LastTransactionAmount = amount;
+                        customer.Wallet.LastTransactionDate = DateTime.Now;
+                        _walletRepository.UpdateCustomerWallet(customer.Wallet);
+
+                        Transaction transaction = new()
+                        {
+                            Amount = amount,
+                            Channel = Channel.WALLET.ToString(),
+                            Module = PaymentType.PROPERTY_PURCHASE.ToString(),
+                            Status = "success",
+                            CustomerId = customer.Id,
+                            TransactionDate = DateTime.Now,
+                            TransactionType = TransactionType.CR.ToString(),
+                            TransactionRef = Guid.NewGuid().ToString()
+                        };
+                        _transactionRepository.NewTransaction(transaction);
+
+                        Investment newInvestment = new()
+                        {
+                            Amount = amount,
+                            UnitPrice = property.UnitPrice,
+                            CustomerId = customer.Id,
+                            PropertyId = property.Id,
+                            Units = investment.Units,
+                            YearlyInterestAmount = (property.TargetYield * property.UnitPrice) / 100 * investment.Units,
+                            Yield = property.TargetYield,
+                            PaymentType = PaymentType.PROPERTY_PURCHASE.ToString(),
+                            TransactionRef = transaction.TransactionRef,
+                            Status = Status.COMPLETED.ToString()
+                        };
+                        if (investmentRepository.AddInvestment(newInvestment) != 0) return response;
+                        property.UnitAvailable -= investment.Units;
+                        property.UnitSold += investment.Units;
+                        if (property.UnitAvailable == 0)
+                        {
+                            property.Status = "CLOSED_FOR_INVESTMENT";
+                        }
+
+                        propertyRepository.UpdateProperty(property);
+
+                        scope.Complete();
+                    }
+
                     var filePath = Path.Combine(env.ContentRootPath, @"EmailTemplates\investment.html");
                     var html = System.IO.File.ReadAllText(filePath.Replace(@"\", "/"));
-                    html = html.Replace("{FIRSTNAME}", string.Format("{0} {1}", customer.FirstName, customer.LastName))
+                    html = html.Replace("{FIRSTNAME}", $"{customer.FirstName} {customer.LastName}")
                         .Replace("{I-NAME}", property.Name);
                     html = html.Replace("{I-UNITS}", investment.Units.ToString())
-                        .Replace("{I-PRICE}", property.UnitPrice.ToString())
-                        .Replace("{I-TOTAL}", newInvestment.Amount.ToString())
-                        .Replace("{I-DATE}", newInvestment.PaymentDate.ToString())
+                        .Replace("{I-PRICE}", property.UnitPrice.ToString(CultureInfo.CurrentCulture))
+                        .Replace("{I-TOTAL}", amount.ToString(CultureInfo.CurrentCulture))
+                        .Replace("{I-DATE}", DateTime.Now.ToString(CultureInfo.CurrentCulture))
                         .Replace("{webroot}", configuration["app_settings:WebEndpoint"]);
-                    ;
 
                     EmailData emailData = new()
                     {
@@ -229,7 +270,7 @@ namespace DominoesProperties.Controllers
                         PropertyId = property.Id,
                         Units = investment.Units,
                         PaymentRef = CommonLogic.GetUniqueRefNumber("INV"),
-                        Status = "PENDING",
+                        Status = Status.PENDING.ToString(),
                         UnitPrice = property.UnitPrice,
                         CreatedDate = DateTime.Now
                     };
@@ -271,7 +312,7 @@ namespace DominoesProperties.Controllers
                         Yield = property.TargetYield,
                         PaymentType = PaymentType.PROPERTY_PURCHASE.ToString(),
                         TransactionRef = Guid.NewGuid().ToString(),
-                        Status = "PENDING"
+                        Status = Status.PENDING.ToString()
                     };
 
                     if (investmentRepository.AddInvestment(newInvestment) == 0) return response;
@@ -346,7 +387,7 @@ namespace DominoesProperties.Controllers
         {
             List<Investment> investments = investmentRepository
                 .GetPropertyInvestments(propertyRepository.GetProperty(propertyUniqueId).Id)
-                .Where(X => X.Status.Equals("COMPLETED")).ToList();
+                .Where(x => x.Status.Equals("COMPLETED")).ToList();
             List<InvestmentView> investments1 = new();
             investments.ForEach(x =>
             {
@@ -416,6 +457,24 @@ namespace DominoesProperties.Controllers
             investment.PaymentDate = DateTime.Now;
             if (investmentRepository.UpdateOfflineInvestment(investment) != null)
             {
+                Task.Run(() =>
+                {
+                    var email = _adminRepository.GetUser().SelectMany(x => x.Email);
+                    var filePath = Path.Combine(env.ContentRootPath, @"EmailTemplates\offline-admin-notification.html");
+                    var html = System.IO.File.ReadAllText(filePath.Replace(@"\", "/"));
+                    foreach (var c in email)
+                    {
+                        EmailData emailRequest = new()
+                        {
+                            EmailBody = html,
+                            EmailSubject = "Offline Investment Payment",
+                            EmailToId = c.ToString(),
+                            EmailToName = "RED Admin"
+                        };
+                        emailService.SendEmail(emailRequest);
+                    }
+                });
+
                 response.Success = true;
                 response.Message = "Proof of payment successfully uploaded";
                 return response;

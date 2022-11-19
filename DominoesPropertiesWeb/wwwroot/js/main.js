@@ -978,6 +978,7 @@ function openModal() {
     });
 
     $('.swal2-styled').css('display', 'none');
+    $('.swal2-popup').css('width', '50em');
     //$('#propertyName').text(singleData.name);
     $('#checkoutPrice').html("&#8358; " + formatToCurrency(singleData.unitPrice) + " / Unit");
     $('.checkoutPrice').html(formatToCurrency(singleData.unitPrice));
@@ -1555,6 +1556,34 @@ const GetInvestments = () => {
     }
 }
 
+const GetPendingInvestments = () => {
+    let uniqueId = $('#refId').val();
+    let xhr = new XMLHttpRequest();
+    let url = "/get-pending-investments/" + uniqueId;
+    xhr.open('GET', url, false);
+    xhr.setRequestHeader("content-type", "application/json");
+    xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+    try {
+
+        xhr.send();
+        if (xhr.status != 200) {
+            // alert('Something went wrong try again!');
+        } else {
+            var res = JSON.parse(xhr.responseText);
+            var data = JSON.parse(res).data;
+            console.log(data);
+            if (JSON.parse(res).success) {
+                pendingInvestmentTmp(data);
+            } else {
+                window.scrollTo(0, 0);
+            }
+
+        }
+    } catch (err) { // instead of onerror
+        //alert("Request failed");
+    }
+}
+
 const GetInvestmentById = () => {
     let urls = window.location.href.split("/");
     let token = urls[5];
@@ -1664,6 +1693,81 @@ const investmentTmp = (data) => {
         $('#investments').append(res);
     });
 }
+const pendingInvestmentTmp = (data) => {
+    $('#pendingInvestments').html('');
+    data.forEach(x => {
+        let res = `<div class="col-lg-3 col-md-3">
+					    <div class="single-featured-item">
+						    <div class="canvas-img" mb-0 p-4">
+                                <img src="${x.data != undefined ? x.data : '/images/properties/properties-4.jpg'}" style="height:300px; width:415px" alt="Image">
+
+						    </div>
+						    <div class="featured-content style-three">
+							    <div>
+
+                                    <div class="row">
+                                        <div class="col-md-8">
+                                            <h3 style="font-size:14px; font-weight:normal;">
+									            Status
+								            </h3>
+                                        </div>
+                                        <div class="col-md-4">
+                                           <small class="float-end text-warning">${x.status}</small>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <h3 style="font-size:14px; font-weight:normal;">
+									           Amount
+								            </h3>
+                                        </div>
+                                        <div class="col-md-8">
+                                           <small class="price float-end"><sup>&#8358;</sup>${currency(x.amount)}</small>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <h3 style="font-size:14px; font-weight:normal;">
+									         Reference
+								            </h3>
+                                        </div>
+                                        <div class="col-md-9">
+                                          <small class="price float-end">${x.paymentRef}</small>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <h3 style="font-size:14px; font-weight:normal;">
+									         Unit
+								            </h3>
+                                        </div>
+                                        <div class="col-md-8">
+                                          <small class="float-end">${x.units}</small>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <h3 style="font-size:14px; font-weight:normal;">
+									            Date
+								            </h3>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <small class="float-end">${moment(x.createdDate).format('ll')}</small>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <a href="#" onclick="uploadModal('${x.paymentRef}')" class="default-btn">Upload payment proof</a>
+                                        </div>
+                                    </div>
+							    </div>
+						    </div>
+					    </div>
+				    </div>`;
+        $('#pendingInvestments').append(res);
+    });
+}
 
 function LoadCurrentData(result) {
     $('#example').DataTable({
@@ -1740,6 +1844,67 @@ const adminInvestmentsTmp = (data) => {
         $('#exampleData').append(res);
         myChart(i, ctx);
     });
+}
+
+let paymentRef = "";
+const uploadModal = (ref) => {
+    if (ref == '') {
+        return;
+    }
+    paymentRef = ref;
+    Swal.fire({
+        template: '#my-template',
+        showCancelButton: false,
+        showConfirmButton: false,
+        allowOutsideClick: false,
+    });
+}
+
+const uploadProof = () => {
+    var fileUpload = $("#fileUpload").get(0);
+    var files = fileUpload.files;
+
+    if (files.length == 0) {
+        Swal.fire(
+            'Oops!',
+            'Proof of payment document is required',
+            'error'
+        );
+        return;
+    }
+
+    var formData = new FormData();
+    formData.append("files", files[0]);
+
+    $.ajax(
+        {
+            url: "/upload-proof/" + paymentRef,
+            data: formData,
+            processData: false,
+            contentType: false,
+            type: "POST",
+            success: function (data) {
+                var success = JSON.parse(data).success;
+                var message = JSON.parse(data).message;
+                if (success) {
+                    Swal.fire(
+                        'Good job!',
+                        message,
+                        'success'
+                    ).then(() => {
+                        location.reload();
+                    });
+                }
+                else {
+                    Swal.fire(
+                        'Oops!',
+                        message,
+                        'error'
+                    );
+                }
+            }
+        }
+    );
 }
 
 const myChart = (i, ctx) => new Chart(ctx, {
@@ -1919,15 +2084,19 @@ const onSubscribe = () => {
         } else {
             var res = JSON.parse(xhr.responseText);
             var data = JSON.parse(res).data;
-
             if (JSON.parse(res).success) {
                 location = data;
                 //window.open(data, "Dominoes Society", "status=1,toolbar=1");
                 $(".btn-subscribe").html("Subscribe to get full access").attr("disabled", !1);
             } else {
+                Swal.fire(
+                    'Oops!',
+                    data,
+                    'error'
+                );
                 $(".btn-subscribe").html("Subscribe to get full access").attr("disabled", !1);
                 window.scrollTo(0, 0);
-                message(data, 'error');
+                //message(data, 'error');
             }
 
         }
@@ -1958,9 +2127,13 @@ $('.btn-subscribe').click(() => {
                 //window.open(data, "Dominoes Society", "status=1,toolbar=1");
                 $(".btn-subscribe").html("Subscribe to get full access").attr("disabled", !1);
             } else {
+                Swal.fire(
+                    'Oops!',
+                    data,
+                    'error'
+                );
                 $(".btn-subscribe").html("Subscribe to get full access").attr("disabled", !1);
                 window.scrollTo(0, 0);
-                message(data, 'error');
             }
 
         }
@@ -2025,7 +2198,20 @@ $('.btn-verify').click(() => {
     }
 });
 
-const propertyInvestment =  () => {
+let paymentMode;
+const walletMode = () => {
+    paymentMode = 1;
+}
+
+const cardMode = () => {
+    paymentMode = 0;
+}
+
+const offlineMode = () => {
+    paymentMode = 3;
+}
+
+const propertyInvestment = () => {
     let price = Number($('#price').text().replace(/[^0-9\.-]+/g, "").replace("₦", ""));
     let unit = $('#unit').val();
     const confirmPropertyUpdate = Swal.mixin({
@@ -2046,12 +2232,15 @@ const propertyInvestment =  () => {
         reverseButtons: true
     }).then((result) => {
         if (result.isConfirmed) {
+           
             $(".btn-property-investment").html("Processing...").attr("disabled", !0);
             let urls = window.location.href.split("/");
             let id = urls[5];
+            
             let params = {
                 propertyUniqueId: id,
-                units: unit
+                units: unit,
+                channel: paymentMode
             }
             let xhr = new XMLHttpRequest();
             let url = "/invest";
@@ -2067,13 +2256,21 @@ const propertyInvestment =  () => {
                     var data = JSON.parse(res).data;
                     if (JSON.parse(res).success) {
                         window.scrollTo(0, 0);
-                        location = data;
+                        if (data.includes('https')) {
+                            location = data;
+                        } else {
+                            Swal.fire(
+                                'Good job!',
+                                JSON.parse(res).message,
+                                'success'
+                            );
+                        }
                         $(".btn-property-investment").html("Invest").attr("disabled", !1);
                     } else {
                         var err = JSON.parse(res).message;
                         Swal.fire(
                             'Oops!',
-                            err == "Forbiden" ?  "You don't have permission to perform this action" :  "Something went wrong, admin has been contacted",
+                            data !=  undefined ? data :  err == "Forbiden" ?  "You don't have permission to perform this action" :  "Something went wrong, admin has been contacted",
                             'error'
                         );
                         $(".btn-property-investment").html("Invest").attr("disabled", !1);

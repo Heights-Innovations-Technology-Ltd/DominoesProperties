@@ -77,6 +77,15 @@ namespace DominoesPropertiesWeb.Controllers
             }
             return View();
         }
+        public IActionResult PendingInvestments()
+        {
+            var isAuthAdmin = this.session.GetString("Token");
+            if (isAuthAdmin == null || isAuthAdmin.Equals(string.Empty))
+            {
+                return RedirectToAction("SignIn", "Home");
+            }
+            return View();
+        }
 
         [Route("customer-dashboard")]
         public async Task<JsonResult> CustomerDashboard()

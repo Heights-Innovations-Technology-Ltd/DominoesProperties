@@ -23,10 +23,11 @@ namespace DominoesPropertiesWeb.Service
         public async Task<string> UploadCustomerPassportAsync(IFormFile file, string customerUniqueId,
             HttpRequest request)
         {
-            string url = "";
+            var url = "";
+            var pathSuffix = customerUniqueId.StartsWith("INV") ? "uploads/investment" : "uploads/passport";
             try
             {
-                string path = Path.GetFullPath(Path.Combine(hostEnvironment.WebRootPath, "uploads/passport"));
+                var path = Path.GetFullPath(Path.Combine(hostEnvironment.WebRootPath, pathSuffix));
                 if (!Directory.Exists(path))
                 {
                     Directory.CreateDirectory(path);
@@ -40,14 +41,14 @@ namespace DominoesPropertiesWeb.Service
 
                 if (file.Length > 0)
                 {
-                    string filename =
+                    var filename =
                         $"{customerUniqueId.Replace("-", "")}{DateTime.Now.Millisecond}{fileInfo.Extension}";
 
-                    using var fileStream = new FileStream(Path.Combine(path, filename), FileMode.Create);
+                    await using var fileStream = new FileStream(Path.Combine(path, filename), FileMode.Create);
                     await file.CopyToAsync(fileStream);
 
                     url =
-                        $"{request.HttpContext.Request.Scheme}://{request.HttpContext.Request.Host}{request.HttpContext.Request.PathBase}/Uploads/Passport/{filename}";
+                        $"{request.HttpContext.Request.Scheme}://{request.HttpContext.Request.Host}{request.HttpContext.Request.PathBase}/{pathSuffix}/{filename}";
                 }
             }
             catch (Exception ex)

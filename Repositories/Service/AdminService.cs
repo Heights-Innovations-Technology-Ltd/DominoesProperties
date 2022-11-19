@@ -10,7 +10,7 @@ namespace Repositories.Service
 {
     public class AdminService : BaseRepository, IAdminRepository
     {
-        public AdminService(dominoespropertiesContext context):base(context)
+        public AdminService(dominoespropertiesContext context) : base(context)
         {
         }
 
@@ -35,7 +35,9 @@ namespace Repositories.Service
 
         public Admin GetUser(string email)
         {
-            return _context.Admins.Include(x => x.RoleFkNavigation).Where(x => x.Email.Equals(email)).FirstOrDefault();
+            return _context.Admins
+                .Include(x => x.RoleFkNavigation)
+                .FirstOrDefault(x => x.Email.Equals(email));
         }
 
         public List<Admin> GetUser()
@@ -58,9 +60,11 @@ namespace Repositories.Service
             var customers = _context.Customers.ToList();
             figures.Add("Investments", investments.Count());
             figures.Add("Properties", properties.Count());
-            figures.Add("ActiveProperties", properties.Where(x => "ONGOING_CONSTRUCTION".Equals(x.Status) || "OPEN_FOR_INVESTMENT".Equals(x.Status)).Count());
+            figures.Add("ActiveProperties",
+                properties.Count(x =>
+                    "ONGOING_CONSTRUCTION".Equals(x.Status) || "OPEN_FOR_INVESTMENT".Equals(x.Status)));
             figures.Add("Customers", customers.Count());
-            figures.Add("NewCustomers", customers.Where(x => x.DateRegistered.Date.Equals(DateTime.Now.Date)).Count());
+            figures.Add("NewCustomers", customers.Count(x => x.DateRegistered.Date.Equals(DateTime.Now.Date)));
 
             return figures;
         }
