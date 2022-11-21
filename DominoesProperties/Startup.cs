@@ -11,7 +11,6 @@ using DominoesProperties.Services;
 using Hangfire;
 using Hangfire.Dashboard;
 using Hangfire.MySql;
-using HangfireBasicAuthenticationFilter;
 using Helpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -47,7 +46,9 @@ namespace DominoesProperties
         public void ConfigureServices(IServiceCollection services)
         {
             // configure jwt authentication
+
             #region JWT Token
+
             var appSettingsSection = Configuration.GetSection("app_settings");
             services.Configure<AppSettings>(appSettingsSection);
             var appSettings = appSettingsSection.Get<AppSettings>();
@@ -55,7 +56,6 @@ namespace DominoesProperties
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
             {
-
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuer = true,
@@ -68,6 +68,7 @@ namespace DominoesProperties
                     IssuerSigningKey = new SymmetricSecurityKey(key)
                 };
             });
+
             #endregion
 
             services.AddScoped<ICustomerRepository, CustomerService>();
@@ -87,7 +88,9 @@ namespace DominoesProperties
             services.AddScoped<IConfigRepository, ConfigService>();
             services.AddScoped<IBlogPostRepository, BlogPostService>();
 
-            services.AddMvc().AddViewLocalization(Microsoft.AspNetCore.Mvc.Razor.LanguageViewLocationExpanderFormat.Suffix).AddDataAnnotationsLocalization();
+            services.AddMvc()
+                .AddViewLocalization(Microsoft.AspNetCore.Mvc.Razor.LanguageViewLocationExpanderFormat.Suffix)
+                .AddDataAnnotationsLocalization();
 
             services.AddControllers().AddNewtonsoftJson(options =>
                 options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore
@@ -115,8 +118,8 @@ namespace DominoesProperties
                         {
                             Reference = new OpenApiReference
                             {
-                                Type=ReferenceType.SecurityScheme,
-                                Id="Bearer"
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
                             }
                         },
                         Array.Empty<string>()
@@ -127,17 +130,23 @@ namespace DominoesProperties
             });
 
             #region Connection String
+
             services.AddDbContext<dominoespropertiesContext>(opts =>
                 opts.UseMySQL(Configuration.GetConnectionString("DominoProps_String"))
             );
+
             #endregion
+
             services.Configure<EmailSettings>(Configuration.GetSection("EmailSettings"));
 
             var deltaBackOffMilliseconds = Convert.ToInt32(TimeSpan.FromSeconds(5).TotalMilliseconds);
             var maxDeltaBackOffMilliseconds = Convert.ToInt32(TimeSpan.FromSeconds(20).TotalMilliseconds);
             var configurationOptions = new ConfigurationOptions
             {
-                EndPoints = { $"{Configuration.GetValue<string>("Redis:Host")}:{Configuration.GetValue<int>("Redis:Port")}" },
+                EndPoints =
+                {
+                    $"{Configuration.GetValue<string>("Redis:Host")}:{Configuration.GetValue<int>("Redis:Port")}"
+                },
                 Ssl = Configuration.GetValue<bool>("Redis:Ssl"),
                 AbortOnConnectFail = false,
                 ConnectRetry = 5,
@@ -156,12 +165,12 @@ namespace DominoesProperties
             services.AddCors(options =>
             {
                 options.AddPolicy("AllowAllHeaders",
-                      builder =>
-                      {
-                          builder.AllowAnyOrigin()
-                                 .AllowAnyHeader()
-                                 .AllowAnyMethod();
-                      });
+                    builder =>
+                    {
+                        builder.AllowAnyOrigin()
+                            .AllowAnyHeader()
+                            .AllowAnyMethod();
+                    });
             });
 
             // Add Hangfire services.
@@ -199,14 +208,17 @@ namespace DominoesProperties
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Domino Properties v1"));
             }
-            
+
             app.UseExceptionHandler(a => a.Run(async context =>
             {
                 var exceptionHandlerPathFeature = context.Features.Get<IExceptionHandlerPathFeature>();
                 var exception = exceptionHandlerPathFeature.Error;
-                var result = JsonConvert.SerializeObject(new { error = "Some technical error Occurred, please visit after sometime" });
+                var result = JsonConvert.SerializeObject(new
+                    { error = "Some technical error Occurred, please visit after sometime" });
                 context.Response.ContentType = "application/json";
-                CommonLogic.SendExceptionEmail("Exception Occurred", "Error On Method :  " + MethodBase.GetCurrentMethod().DeclaringType.Name + " and Message : " + exception.Message + "<br> StackTrace : " + exception.StackTrace);
+                CommonLogic.SendExceptionEmail("Exception Occurred",
+                    "Error On Method :  " + MethodBase.GetCurrentMethod().DeclaringType.Name + " and Message : " +
+                    exception.Message + "<br> StackTrace : " + exception.StackTrace);
                 await context.Response.WriteAsync(result);
             }));
 
