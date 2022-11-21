@@ -105,6 +105,29 @@ namespace DominoesPropertiesWeb.Controllers
             var data = res.Status == TaskStatus.RanToCompletion ? res.Result : null;
             return Json(JsonConvert.SerializeObject(data));
         }
+        
+        [Route("/get-offline-payment")]
+        public async Task<JsonResult> GetOfflinePayment()
+        {
+            var res = Task.Run(() => httpContext.Get("Admin/offline-payment"));
+            await Task.WhenAll(res);
+            var data = res.Status == TaskStatus.RanToCompletion ? res.Result : null;
+            return Json(JsonConvert.SerializeObject(data));
+        }
+
+        [Route("/approve-disapprove-payment/{paymentRef}")]
+        public async Task<JsonResult> ApprovePayment([FromBody] dynamic property, string paymentRef)
+        {
+            JObject jObject = JsonConvert.DeserializeObject<JObject>(Convert.ToString(property));
+
+            dynamic obj = new ExpandoObject();
+
+            obj.Comment = Convert.ToString(jObject["comment"]);
+            obj.Status = Convert.ToInt32(jObject["status"]);
+            var res = Task.Run(() => httpContext.Put($"Admin/offline-payment/{paymentRef}", obj));
+            var data = await res.GetAwaiter().GetResult();
+            return Json(JsonConvert.SerializeObject(data));
+        }
 
         [HttpPost("/upload-proof/{paymentRef}")]
         public async Task<JsonResult> UploadDoc(string paymentRef)
