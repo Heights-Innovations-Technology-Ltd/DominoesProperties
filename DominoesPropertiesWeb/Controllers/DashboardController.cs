@@ -77,6 +77,16 @@ namespace DominoesPropertiesWeb.Controllers
             }
             return View();
         }
+        public IActionResult OfflinePayment()
+        {
+            var userAuth = this.session.GetString("Token");
+            if (userAuth == null || userAuth.Equals(string.Empty))
+            {
+                return RedirectToAction("SignIn", "Home");
+            }
+
+            return View();
+        }
         public IActionResult PendingInvestments()
         {
             var isAuthAdmin = this.session.GetString("Token");
