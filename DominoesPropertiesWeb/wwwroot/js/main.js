@@ -1571,7 +1571,6 @@ const GetPendingInvestments = () => {
         } else {
             var res = JSON.parse(xhr.responseText);
             var data = JSON.parse(res).data;
-            console.log(data);
             if (JSON.parse(res).success) {
                 pendingInvestmentTmp(data);
             } else {
@@ -1811,6 +1810,232 @@ function LoadCurrentData(result) {
         ]
     });
 }
+let offLineDataResponsne = [];
+const getOfflinePayment = () => {
+    let xhr = new XMLHttpRequest();
+    let url = `/get-offline-payment`;
+    xhr.open('GET', url, false);
+    xhr.setRequestHeader("content-type", "application/json");
+    xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+    try {
+
+        xhr.send();
+        if (xhr.status != 200) {
+            // alert('Something went wrong try again!');
+        } else {
+            var res = JSON.parse(xhr.responseText);
+            var data = JSON.parse(res).data;
+            if (JSON.parse(res).success) {
+                const groups = data.map(({ group }) => group);
+                $('#dropDown').html(`<option>Select </option>`);
+                groups.forEach(x => {
+                    let res = `<option value="${x}">${x}</option>`;
+                    $('#dropDown').append(res);
+                });
+                offLineDataResponsne = data;
+                $("#dropDown option[value='" + groups[0] + "']").prop('selected', true);
+                $('#dropDown').change();
+            } else {
+                window.scrollTo(0, 0);
+            }
+        }
+    } catch (err) { // instead of onerror
+        //alert("Request failed");
+    }
+}
+$('#dropDown').on('change', function () {
+    var indexOfObj = offLineDataResponsne.findIndex(item => item.group === $('#dropDown').val());
+    if (indexOfObj != -1) {
+        processingTmp(offLineDataResponsne[indexOfObj].items, $('#dropDown').val());
+    }
+})
+
+const processingTmp = (data, key) => {
+    $('#example tbody').html('');
+    data.forEach(x => {
+        let res = `<tr>
+                    <td><sup>&#8358;</sup>${currency(x.amount)}</td >
+                    <td>${x.paymentRef}</td>
+                    <td><span class="badge ${key === 'PROCESSING' ? 'bg-primary' :
+                                            key === 'APPROVED' ? 'bg-success' :
+                                            key === 'PENDING' ? 'bg-dark' : 'bg-danger'} ">${key}</span></td>
+                    <td>${x.paymentDate !=  null ? moment(x.paymentDate).format('ll') : '-' }</td>
+                    <td>${moment(x.createdDate).format('ll')}</td>
+                    <td>
+                        ${key == "PROCESSING" ? `<a href="${x.proofUrl}" target="_blank" class="btn btn-primary"><i class="fa fa-eye" aria-hidden="true"></i></a>
+                        <a href="javascript:void(0)" onclick="approvePayment('${x.paymentRef}')" class="btn btn-success"><i class="fa fa-check" aria-hidden="true"></i></a>
+                        <a href="javascript:void(0)" onclick="openReasonModal('${x.paymentRef}')" class="btn btn-danger"><i class="fa fa-times" aria-hidden="true"></i></a>` :
+            key === 'APPROVED' ? `<a href="${x.proofUrl}" target="_blank" class="btn btn-primary"><i class="fa fa-eye" aria-hidden="true"></i></a>`
+                        : '...'}
+
+                    </td>
+                </tr>`;
+        $('#example tbody').append(res);
+    })
+}
+
+const approvePayment = (paymentRef) => {
+    const confirmPropertyUpdate = Swal.mixin({
+        customClass: {
+            confirmButton: 'btn btn-success mx-2',
+            cancelButton: 'btn btn-danger'
+        },
+        buttonsStyling: false
+    })
+
+    confirmPropertyUpdate.fire({
+        title: 'Are you sure?',
+        text: "To approve this payment!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes!',
+        cancelButtonText: 'No, cancel!',
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+
+            let params = {
+                comment: "Approved",
+                status: 0
+            }
+            let xhr = new XMLHttpRequest();
+            let url = "/approve-disapprove-payment/" + paymentRef;
+            xhr.open('POST', url, false);
+            xhr.setRequestHeader("content-type", "application/json");
+            xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+            try {
+                xhr.send(JSON.stringify(params));
+                if (xhr.status != 200) {
+                    // alert('Something went wrong try again!');
+                } else {
+                    var res = JSON.parse(xhr.responseText);
+                    var data = JSON.parse(res).data;
+                    if (JSON.parse(res).success) {
+                        window.scrollTo(0, 0);
+                        Swal.fire(
+                            'Good job!',
+                            JSON.parse(res).message,
+                            'success'
+                        ).then(() => location.reload());
+                    } else {
+                        var err = JSON.parse(res).message;
+                        Swal.fire(
+                            'Oops!',
+                            data != undefined ? data : err,
+                            'error'
+                        );
+                        window.scrollTo(0, 0);
+                    }
+
+                }
+            } catch (err) { // instead of onerror
+                //alert("Request failed");
+            }
+        } else if (
+            /* Read more about handling dismissals below */
+            result.dismiss === Swal.DismissReason.cancel
+        ) {
+            //confirmPropertyUpdate.fire(
+            //    'Cancelled',
+            //    'No changes was made :)',
+            //    'error'
+            //)
+        }
+    });
+}
+
+const openReasonModal = (ref) => {
+    if (ref == '') {
+        return;
+    }
+    paymentRef = ref;
+    Swal.fire({
+        template: '#my-template',
+        showCancelButton: false,
+        showConfirmButton: false,
+        allowOutsideClick: false,
+    });
+} 
+
+const declinePayment = () =>{
+    if ($('#reason').val() == "") {
+        Swal.fire(
+            'Oops!',
+            "Reason for rejecting is required!",
+            'error'
+        );
+        return;
+    }
+
+    let reason = $('#reason').val();
+    const confirmPropertyUpdate = Swal.mixin({
+        customClass: {
+            confirmButton: 'btn btn-success mx-2',
+            cancelButton: 'btn btn-danger'
+        },
+        buttonsStyling: false
+    })
+
+    confirmPropertyUpdate.fire({
+        title: 'Are you sure?',
+        text: "To decline this payment!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes!',
+        cancelButtonText: 'No, cancel!',
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+
+            let params = {
+                comment: reason,
+                status: 1
+            }
+            let xhr = new XMLHttpRequest();
+            let url = "/approve-disapprove-payment/" + paymentRef;
+            xhr.open('POST', url, false);
+            xhr.setRequestHeader("content-type", "application/json");
+            xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+            try {
+                xhr.send(JSON.stringify(params));
+                if (xhr.status != 200) {
+                    // alert('Something went wrong try again!');
+                } else {
+                    var res = JSON.parse(xhr.responseText);
+                    var data = JSON.parse(res).data;
+                    if (JSON.parse(res).success) {
+                        window.scrollTo(0, 0);
+                        Swal.fire(
+                            'Good job!',
+                            JSON.parse(res).message,
+                            'success'
+                        ).then(() => location.reload());
+                    } else {
+                        var err = JSON.parse(res).message;
+                        Swal.fire(
+                            'Oops!',
+                            data != undefined ? data : err,
+                            'error'
+                        );
+                        window.scrollTo(0, 0);
+                    }
+
+                }
+            } catch (err) { // instead of onerror
+                //alert("Request failed");
+            }
+        } else if (
+            /* Read more about handling dismissals below */
+            result.dismiss === Swal.DismissReason.cancel
+        ) {
+            //confirmPropertyUpdate.fire(
+            //    'Cancelled',
+            //    'No changes was made :)',
+            //    'error'
+            //)
+        }
+    });
+};
 
 const adminInvestmentsTmp = (data) => {
     $('#exampleData').html('');
@@ -2738,7 +2963,7 @@ $(document).ready(function () {
         if ($('#email').val().trim() == "") {
             Swal.fire(
                 'Oops!',
-                'Kindlyt provide active email address',
+                'Kindly provide active email address',
                 'error'
             );
             return;
@@ -2783,7 +3008,7 @@ $(document).ready(function () {
         } catch (err) { // instead of onerror
             //alert("Request failed");
         }
-    })
+    });
 });
 
 const getNewSubscribers = () => {
