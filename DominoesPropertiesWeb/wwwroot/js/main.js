@@ -805,6 +805,7 @@ const getSingleProperty = () => {
         } else {
             var res = JSON.parse(xhr.responseText);
             var data = JSON.parse(res).data;
+            console.log(data);
             if (JSON.parse(res).success) {
                 singleData = data;
                 if (data.data.Cover.length > 0) {
@@ -2435,10 +2436,14 @@ const cardMode = () => {
 const offlineMode = () => {
     paymentMode = 3;
 }
-
+let pairGroup = [];
 const propertyInvestment = () => {
     let price = Number($('#price').text().replace(/[^0-9\.-]+/g, "").replace("₦", ""));
     let unit = $('#unit').val();
+    let percentage = $('.investment-dropdown').val();
+    console.log(percentage);
+    let alias = $('#alias').val();
+    console.log(alias);
     const confirmPropertyUpdate = Swal.mixin({
         customClass: {
             confirmButton: 'btn btn-success mx-2',
@@ -2457,18 +2462,52 @@ const propertyInvestment = () => {
         reverseButtons: true
     }).then((result) => {
         if (result.isConfirmed) {
+
+            if (paymentMode == undefined) {
+                Swal.fire(
+                    'Oops!',
+                    "Please select your mode of payment to proceed!",
+                    'error'
+                );
+                return;
+            }
+
            
+            let investmentMode = "investment";
+            let params = {};
             $(".btn-property-investment").html("Processing...").attr("disabled", !0);
             let urls = window.location.href.split("/");
             let id = urls[5];
-            
-            let params = {
-                propertyUniqueId: id,
-                units: unit,
-                channel: paymentMode
+            if (percentage == 0) {
+                params.propertyUniqueId = id;
+                params.units = unit;
+                params.channel= paymentMode;
+            } else {
+                if (pairGroup < 1) {
+                    if (alias == "" || alias == null) {
+                        Swal.fire(
+                            'Oops!',
+                            "Group alias is required!",
+                            'error'
+                        );
+                        return;
+                    }
+                    investmentMode = "group";
+                    params.propertyUniqueId = id;
+                    params.percentageShare = percentage;
+                    params.alias = alias;
+                } else {
+                    investmentMode = "pair";
+                    params.propertyUniqueId = id;
+                    params.percentageShare = percentage;
+                    params.sharingGroupId = "-";
+                }
+                
             }
+
+            
             let xhr = new XMLHttpRequest();
-            let url = "/invest";
+            let url = "/invest/" + investmentMode;
             xhr.open('POST', url, false);
             xhr.setRequestHeader("content-type", "application/json");
             xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
@@ -2519,6 +2558,47 @@ const propertyInvestment = () => {
         }
     });
 };
+
+const getPairGroup = () => {
+    let urls = window.location.href.split("/");
+    let id = urls[5];
+    let xhr = new XMLHttpRequest();
+    let url = "/get-pair-group/" + id;
+    xhr.open('GET', url, false);
+    xhr.setRequestHeader("content-type", "application/json");
+    xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+    try {
+        xhr.send();
+        if (xhr.status != 200) {
+            // alert('Something went wrong try again!');
+        } else {
+            var res = JSON.parse(xhr.responseText);
+            var data = JSON.parse(res).data;
+            pairGroup = data;
+            console.log(data);
+            if (JSON.parse(res).success) {
+                
+            } else {
+                if (data.length < 1) {
+                    let sharePercentage = singleData.minimumSharingPercentage;
+                    let percentLength = 100 / sharePercentage;
+                    let percent = 0;
+                    $('.investment-dropdown').removeClass('d-none').css('display', "block");
+                    $('.alias').removeClass('d-none').css('display', "block");
+                    for (var i = 0; i < percentLength; i++) {
+                        percent = percent + sharePercentage;
+                        console.log(percent);
+                        let res = `<option value="${percent}">${percent}<sup>%</sup></option>`
+                        $('.investment-dropdown').append(res);
+                    }
+
+                }
+            }
+        }
+    } catch (err) { // instead of onerror
+        //alert("Request failed");
+    }
+}
 
 
 $(".btn-change-password").on("submit", function () {
