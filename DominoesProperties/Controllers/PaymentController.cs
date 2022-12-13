@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.IO;
 using DominoesProperties.Enums;
 using DominoesProperties.Models;
@@ -56,7 +57,7 @@ namespace DominoesProperties.Controllers
         [Authorize]
         public ApiResponse InitiateTransaction([FromBody] Payment payment)
         {
-            return DoInitPayment(payment, HttpContext.User.Identity.Name);
+            return DoInitPayment(payment, HttpContext.User.Identity!.Name);
         }
 
         [HttpPost("init")]
@@ -78,17 +79,24 @@ namespace DominoesProperties.Controllers
             };
 
             var initResponse = payStackApi.MobileAppInitTransaction(m).Data;
-
+            if (initResponse == null)
+                throw new InvalidOperationException("Payment platform error, please try again later");
             try
             {
-                var jObject = JsonConvert.DeserializeObject<JObject>(Convert.ToString(initResponse));
-                PaystackPayment paystack = new();
-                paystack.AccessCode = Convert.ToString(jObject["access_code"]);
-                paystack.Amount = amount;
-                paystack.TransactionRef = m.reference;
-                paystack.PaystackRef = Convert.ToString(jObject["reference"]);
-                paystack.PaymentModule = payment.Module.ToString();
-                paystack.Type = TransactionType.CR.ToString();
+                var jObject = JsonConvert.DeserializeObject<JObject>(Convert.ToString(initResponse)!);
+                if (jObject == null)
+                    throw new InvalidOperationException("Payment platform error, please try again later");
+                PaystackPayment paystack = new()
+                {
+                    Payload = initResponse.ToString(),
+                    AccessCode = Convert.ToString(jObject["access_code"]),
+                    Amount = amount,
+                    TransactionRef = m.reference,
+                    PaystackRef = Convert.ToString(jObject["reference"]),
+                    PaymentModule = payment.Module.ToString(),
+                    Type = TransactionType.CR.ToString(),
+                    Date = DateTime.Now
+                };
                 paystackRepository.NewPayment(paystack);
                 response.Success = true;
                 response.Message = "Successfully initialized payment link";
@@ -113,18 +121,23 @@ namespace DominoesProperties.Controllers
         [HttpGet("verify-payment")]
         public RedirectResult Subscribe([FromQuery] string reference)
         {
-            var returns = Convert.ToString(payStackApi.VerifyTransaction(reference).Data);
-            if (string.IsNullOrWhiteSpace(returns))
-            {
-                logger.LogError(
-                    $"{DateTime.Now} : Payment : verify-payment: {reference} | Unsuccessful transaction for reference");
-                return Redirect($"{configuration["app_settings:WebEndpoint"]}?reference={reference}status=error");
-            }
-
-            var jObject = JsonConvert.DeserializeObject<JObject>(returns);
-            var cust = JsonConvert.DeserializeObject<JObject>(jObject["customer"].ToString());
             try
             {
+                var returns = Convert.ToString(payStackApi.VerifyTransaction(reference).Data);
+
+                if (string.IsNullOrWhiteSpace(returns))
+                {
+                    logger.LogError(
+                        $"{DateTime.Now} : Payment : verify-payment: {reference} | Unsuccessful transaction for reference");
+                    return Redirect($"{configuration["app_settings:WebEndpoint"]}?reference={reference}status=error");
+                }
+
+                logger.LogInfo($"Paystack callback \n {returns}");
+                var jObject = JsonConvert.DeserializeObject<JObject>(returns);
+                if (jObject == null)
+                    throw new InvalidOperationException("Payment platform error, please try again later");
+                var cust = JsonConvert.DeserializeObject<JObject>(jObject["customer"]!.ToString());
+
                 var paystack = paystackRepository.GetPaystack(reference);
                 paystack.Channel = Convert.ToString(jObject["channel"]);
                 paystack.Status = Convert.ToString(jObject["status"]);
@@ -132,10 +145,13 @@ namespace DominoesProperties.Controllers
                 paystack.Date = Convert.ToDateTime(jObject["transaction_date"]);
 
                 paystackRepository.UpdatePayment(paystack);
+                logger.LogInfo("Paystack table updated successfully");
 
-                Transaction transaction = new();
-                transaction.Amount = Convert.ToDecimal(jObject["amount"]) / 100;
-                transaction.Channel = paystack.Channel;
+                Transaction transaction = new()
+                {
+                    Amount = Convert.ToDecimal(jObject["amount"]) / 100,
+                    Channel = paystack.Channel
+                };
                 var customer = customerRepository.GetCustomer(Convert.ToString(cust["email"]));
                 transaction.CustomerId = customer.Id;
                 transaction.Module = paystack.PaymentModule;
@@ -147,22 +163,23 @@ namespace DominoesProperties.Controllers
                 transaction.TransactionDate = DateTime.Now;
 
                 transactionRepository.NewTransaction(transaction);
+                logger.LogInfo("Transaction table updated successfully");
 
                 if (paystack.PaymentModule.Equals(PaymentType.FUND_WALLET.ToString()))
                 {
-                    Wallet wallet = walletRepository.GetCustomerWallet(transaction.CustomerId);
+                    var wallet = walletRepository.GetCustomerWallet(transaction.CustomerId);
                     wallet.Balance += paystack.Amount;
                     wallet.LastTransactionAmount = paystack.Amount;
                     wallet.LastTransactionDate = DateTime.Now;
                     walletRepository.UpdateCustomerWallet(wallet);
 
-                    sendMail(customer.Email, customer.FirstName, customer.LastName, "wallet.html",
+                    SendMail(customer.Email, customer.FirstName, customer.LastName, "wallet.html",
                         "Your wallet has been successfully funded", paystack.Amount);
                 }
                 else if (paystack.PaymentModule.Equals(PaymentType.PROPERTY_PAIRING_GROUP.ToString()))
                 {
                     var group = investmentRepository.GetSharinggroups(paystack.TransactionRef);
-                    if (!paystack.Status.ToLower().Equals("success"))
+                    if (!paystack.Status!.ToLower().Equals("success"))
                     {
                         investmentRepository.DeleteGroup(group);
                         response.Message = "Payment was not successful, group was not created";
@@ -171,25 +188,23 @@ namespace DominoesProperties.Controllers
                         logger.LogInfo($"{paystack.TransactionRef} : Payment unsuccessfull");
                         return Redirect($"{configuration["app_settings:WebEndpoint"]}?status={paystack.Status}");
                     }
-                    else
+
+                    var property = propertyRepository.GetProperty(group.PropertyId);
+                    Sharingentry entry = new()
                     {
-                        var property = propertyRepository.GetProperty(group.PropertyId);
-                        Sharingentry entry = new()
-                        {
-                            CustomerId = customer.Id,
-                            GroupId = group.UniqueId,
-                            PercentageShare = (int)(transaction.Amount / property.UnitPrice) * 100,
-                            Date = DateTime.Now,
-                            IsClosed = false
-                        };
-                        if (investmentRepository.AddSharingentry(entry))
-                        {
-                            group.PercentageSubscribed += entry.PercentageShare;
-                            investmentRepository.UpdateSharingGroup(group);
-                            logger.LogInfo($"{transaction.TransactionRef} : {reference} : {paystack.Status}");
-                            logger.LogInfo($"{paystack.TransactionRef} : Payment successfully done");
-                            return Redirect($"{configuration["app_settings:WebEndpoint"]}?status=success");
-                        }
+                        CustomerId = customer.Id,
+                        GroupId = group.UniqueId,
+                        PercentageShare = (int)(transaction.Amount / property.UnitPrice) * 100,
+                        Date = DateTime.Now,
+                        IsClosed = false
+                    };
+                    if (investmentRepository.AddSharingentry(entry))
+                    {
+                        group.PercentageSubscribed += entry.PercentageShare;
+                        investmentRepository.UpdateSharingGroup(group);
+                        logger.LogInfo($"{transaction.TransactionRef} : {reference} : {paystack.Status}");
+                        logger.LogInfo($"{paystack.TransactionRef} : Payment successfully done");
+                        return Redirect($"{configuration["app_settings:WebEndpoint"]}?status=success");
                     }
                 }
                 else if (paystack.PaymentModule.Equals(PaymentType.PROPERTY_PAIRING.ToString()))
@@ -243,7 +258,7 @@ namespace DominoesProperties.Controllers
                             .Replace("{webroot}", configuration["app_settings:WebEndpoint"]);
                         ;
 
-                        emailData = new()
+                        emailData = new EmailData
                         {
                             EmailBody = html,
                             EmailSubject = $"{investment.Property.Name}  is fully subscribed. Thank you!",
@@ -266,7 +281,7 @@ namespace DominoesProperties.Controllers
                         .Replace("{webroot}", configuration["app_settings:WebEndpoint"]);
                     ;
 
-                    emailData = new()
+                    emailData = new EmailData
                     {
                         EmailBody = html,
                         EmailSubject = "Congratulations!!! You just made an investment",
@@ -284,7 +299,7 @@ namespace DominoesProperties.Controllers
                     customer.IsVerified = true;
                     customer.IsActive = true;
                     customerRepository.UpdateCustomer(customer);
-                    sendMail(customer.Email, customer.FirstName, customer.LastName, "subscription.html",
+                    SendMail(customer.Email, customer.FirstName, customer.LastName, "subscription.html",
                         "Congratulations!, You are in, and have access to co-invest with us");
                 }
 
@@ -301,21 +316,22 @@ namespace DominoesProperties.Controllers
             }
         }
 
-        private void sendMail(string Email, string FirstName, string LastName, string Filename, string Subject,
+        private void SendMail(string email, string firstName, string lastName, string filename, string subject,
             decimal sum = 0)
         {
-            string filePath = Path.Combine(environment.ContentRootPath, @"EmailTemplates\" + Filename);
-            string html = System.IO.File.ReadAllText(filePath.Replace(@"\", "/"));
-            html = html.Replace("{FIRSTNAME}", string.Format("{0} {1}", FirstName, LastName))
-                .Replace("{SUM}", sum.ToString()).Replace("{webroot}", configuration["app_settings:WebEndpoint"]);
+            var filePath = Path.Combine(environment.ContentRootPath, @"EmailTemplates\" + filename);
+            var html = System.IO.File.ReadAllText(filePath.Replace(@"\", "/"));
+            html = html.Replace("{FIRSTNAME}", string.Format("{0} {1}", firstName, lastName))
+                .Replace("{SUM}", sum.ToString(CultureInfo.CurrentCulture))
+                .Replace("{webroot}", configuration["app_settings:WebEndpoint"]);
             ;
 
             EmailData emailData = new()
             {
                 EmailBody = html,
-                EmailSubject = Subject,
-                EmailToId = Email,
-                EmailToName = FirstName
+                EmailSubject = subject,
+                EmailToId = email,
+                EmailToName = firstName
             };
             emailService.SendEmail(emailData);
         }
