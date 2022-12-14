@@ -227,22 +227,30 @@
 
                 </div>
                 <div class="payment-info">
+                    <div class="pair-investment d-none">
                         <div class="alert alert-success" role="alert">
                             <h4 class="alert-heading">Shareable investment!</h4>
                             <p>Kindly note that if you can't afford single investment, you can share with other investor</p>
                             <hr>
-                            <p class="mb-0"><a class="default-btn" href="javascript:void(0)" onclick="getPairGroup()">Get started</a></p>
+                            <p class="mb-0">
+                                <a class="default-btn btn-group" href="javascript:void(0)" onclick="getPairGroup()">Get started</a>
+                                <a class="default-btn btn-join-group d-none" href="javascript:void(0)" onclick="joinGroup()">Join Exisiting Group</a>
+                            </p>
                         </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                    <select class="form-select investment-dropdown d-none" aria-label="Default select example">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <select class="form-select investment-dropdown d-none" onchange="onChangeOfGroupDropDown()" aria-label="Default select example">
                                         <option value="0" selected>Select your percentage</option>
                                     </select>
+                                </div>
+                                <div class="form-group alias d-none">
+                                    <label>Group Alias</label>
+                                    <input type="text" id="alias" class="form-control">
+                                </div>
                             </div>
-                            <div class="form-group alias d-none">
-                                <label>Group Alias</label>
-                                <input type="text" id="alias" class="form-control">
+                            <div class="col-md-12">
+                                <div class="accordion" id="accordionExample"></div>
                             </div>
                         </div>
                     </div>
