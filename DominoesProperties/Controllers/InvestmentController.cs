@@ -476,7 +476,7 @@ namespace DominoesProperties.Controllers
                 });
 
                 response.Success = true;
-                response.Message = "Proof of payment successfully uploaded";
+                response.Message = "Proof of payment successfully uploaded. Your investment will be completed within the next 24 hours";
                 return response;
             }
 

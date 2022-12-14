@@ -178,13 +178,15 @@ namespace DominoesProperties.Controllers
                         {
                             CustomerId = customer.Id,
                             GroupId = group.UniqueId,
-                            PercentageShare = (int)(transaction.Amount / property.UnitPrice) * 100,
+                            PercentageShare = decimal.ToInt32(decimal.Round(
+                            decimal.Divide(transaction.Amount, property.UnitPrice) * 100, MidpointRounding.ToZero)),
                             Date = DateTime.Now,
                             IsClosed = false
                         };
                         if (investmentRepository.AddSharingentry(entry))
                         {
                             group.PercentageSubscribed += entry.PercentageShare;
+                            group.IsClosed = group.PercentageSubscribed == 100;
                             investmentRepository.UpdateSharingGroup(group);
                             logger.LogInfo($"{transaction.TransactionRef} : {reference} : {paystack.Status}");
                             logger.LogInfo($"{paystack.TransactionRef} : Payment successfully done");
@@ -217,6 +219,7 @@ namespace DominoesProperties.Controllers
                     if (investmentRepository.AddSharingentry(entry))
                     {
                         group.PercentageSubscribed += entry.PercentageShare;
+                        group.IsClosed = group.PercentageSubscribed == 100;
                         investmentRepository.UpdateSharingGroup(group);
 
                         logger.LogInfo($"{transaction.TransactionRef} : {reference} : {paystack.Status}");
