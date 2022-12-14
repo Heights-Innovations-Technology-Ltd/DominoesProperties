@@ -2440,6 +2440,7 @@ const offlineMode = () => {
 }
 let pairGroup = [];
 let groupId = "";
+let isCreateNewGroup = false;
 let percentage = 0;
 const propertyInvestment = () => {
     let unit = $('#unit').val();
@@ -2482,7 +2483,7 @@ const propertyInvestment = () => {
                 params.units = unit;
                 params.channel= paymentMode;
             } else {
-                if (pairGroup < 1) {
+                if (pairGroup < 1 || isCreateNewGroup) {
                     if (alias == "" || alias == null) {
                         Swal.fire(
                             'Oops!',
@@ -2572,6 +2573,7 @@ const getPairGroup = () => {
         } else {
             var res = JSON.parse(xhr.responseText);
             var data = JSON.parse(res).data;
+            console.log(data);
             pairGroup = data;
             if (JSON.parse(res).success) {
 
@@ -2583,7 +2585,7 @@ const getPairGroup = () => {
                 data.forEach((x, index) => {
                     let res = `<div class="accordion-item">
                                     <h2 class="accordion-header" id="heading${index}">
-                                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse${index}" aria-expanded="${index == 0 ? 'true' : 'false'}" aria-controls="collapse${index}">
+                                        <button class="accordion-button ${index > 0 ? 'collapsed' : ''}" type="button" data-bs-toggle="collapse" data-bs-target="#collapse${index}" aria-expanded="${index == 0 ? true : false}" aria-controls="collapse${index}">
                                             ${x.alias} Investment
                                         </button>
                                     </h2>
@@ -2649,6 +2651,7 @@ const pairInvestmentDropDown = (index) => {
     let percent = 0;
     groupId = pairGroup[index].uniqueId;
     $('.pair-investment-dropdown'+index).removeClass('d-none').css('display', "block");
+    $('.pair-investment-dropdown' + index).html(`<option value="0" selected>Select your percentage</option>`);
     for (var i = 0; i < percentLength; i++) {
         percent = percent + sharePercentage;
         let res = `<option value="${percent}">${percent}<sup>%</sup></option>`
@@ -2667,6 +2670,7 @@ const onChangeOfPairDropDown = (index) => {
         $('.total').html("&#8358; " + formatToCurrency(sharePercentage));
         $('.yield').html("&#8358; " + formatToCurrency(projectYield));
         $('.groundTotal').html("&#8358; " + formatToCurrency(sharePercentage));
+        isCreateNewGroup = false;
     }
 }
 
@@ -2674,14 +2678,15 @@ const onChangeOfGroupDropDown = () => {
     $('#card').trigger("click");
     let price = Number($('#price').text().replace(/[^0-9\.-]+/g, "").replace("₦", ""));
     var percent = $('.investment-dropdown').val();
-    percentage = percent;
     if (percent > 0) {
+        percentage = percent;
         var sharePercentage = (percent / 100) * price;
         var projectYield = (singleData.targetYield / 100) * sharePercentage;
         $('.unit').text(percent + "%");
         $('.total').html("&#8358; " + formatToCurrency(sharePercentage));
         $('.yield').html("&#8358; " + formatToCurrency(projectYield));
         $('.groundTotal').html("&#8358; " + formatToCurrency(sharePercentage));
+        isCreateNewGroup = true;
     }
 }
 
