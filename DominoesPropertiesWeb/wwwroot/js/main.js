@@ -977,6 +977,9 @@ function openModal() {
         template: '#my-template'
     });
 
+    if (singleData.allowSharing) {
+        $('.pair-investment').removeClass('d-none').css('display', 'block');
+    }
     $('.swal2-styled').css('display', 'none');
     $('.swal2-popup').css('width', '50em');
     //$('#propertyName').text(singleData.name);
@@ -2435,10 +2438,13 @@ const cardMode = () => {
 const offlineMode = () => {
     paymentMode = 3;
 }
-
+let pairGroup = [];
+let groupId = "";
+let isCreateNewGroup = false;
+let percentage = 0;
 const propertyInvestment = () => {
-    let price = Number($('#price').text().replace(/[^0-9\.-]+/g, "").replace("₦", ""));
     let unit = $('#unit').val();
+    let alias = $('#alias').val();
     const confirmPropertyUpdate = Swal.mixin({
         customClass: {
             confirmButton: 'btn btn-success mx-2',
@@ -2457,18 +2463,50 @@ const propertyInvestment = () => {
         reverseButtons: true
     }).then((result) => {
         if (result.isConfirmed) {
-           
+
+            if (paymentMode == undefined) {
+                Swal.fire(
+                    'Oops!',
+                    "Please select your mode of payment to proceed!",
+                    'error'
+                );
+                return;
+            }
+
+            let investmentMode = "investment";
+            let params = {};
             $(".btn-property-investment").html("Processing...").attr("disabled", !0);
             let urls = window.location.href.split("/");
             let id = urls[5];
-            
-            let params = {
-                propertyUniqueId: id,
-                units: unit,
-                channel: paymentMode
+            if (percentage == 0 ) {
+                params.propertyUniqueId = id;
+                params.units = unit;
+                params.channel= paymentMode;
+            } else {
+                if (pairGroup < 1 || isCreateNewGroup) {
+                    if (alias == "" || alias == null) {
+                        Swal.fire(
+                            'Oops!',
+                            "Group alias is required!",
+                            'error'
+                        );
+                        return;
+                    }
+                    investmentMode = "group";
+                    params.propertyUniqueId = id;
+                    params.percentageShare = percentage;
+                    params.alias = alias;
+                } else {
+                    investmentMode = "pair";
+                    params.propertyUniqueId = id;
+                    params.percentageShare = percentage;
+                    params.sharingGroupId = groupId;
+                }
+                
             }
+
             let xhr = new XMLHttpRequest();
-            let url = "/invest";
+            let url = "/invest/" + investmentMode;
             xhr.open('POST', url, false);
             xhr.setRequestHeader("content-type", "application/json");
             xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
@@ -2519,6 +2557,163 @@ const propertyInvestment = () => {
         }
     });
 };
+
+const getPairGroup = () => {
+    let urls = window.location.href.split("/");
+    let id = urls[5];
+    let xhr = new XMLHttpRequest();
+    let url = "/get-pair-group/" + id;
+    xhr.open('GET', url, false);
+    xhr.setRequestHeader("content-type", "application/json");
+    xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+    try {
+        xhr.send();
+        if (xhr.status != 200) {
+            // alert('Something went wrong try again!');
+        } else {
+            var res = JSON.parse(xhr.responseText);
+            var data = JSON.parse(res).data;
+            console.log(data);
+            pairGroup = data;
+            if (JSON.parse(res).success) {
+
+                $('.btn-group').fadeOut("slow");
+                $('#wallet').css('cursor', 'not-allowed').attr("disabled", 'disabled');
+                $('#offline').css('cursor', 'not-allowed').attr("disabled", 'disabled');
+
+                $('#accordionExample').html('');
+                data.forEach((x, index) => {
+                    let res = `<div class="accordion-item">
+                                    <h2 class="accordion-header" id="heading${index}">
+                                        <button class="accordion-button ${index > 0 ? 'collapsed' : ''}" type="button" data-bs-toggle="collapse" data-bs-target="#collapse${index}" aria-expanded="${index == 0 ? true : false}" aria-controls="collapse${index}">
+                                            ${x.alias} Investment
+                                        </button>
+                                    </h2>
+                                    <div id="collapse${index}" class="accordion-collapse collapse ${index == 0 ? 'show' : ''}" aria-labelledby="heading${index}" data-bs-parent="#accordionExample">
+                                        <div class="accordion-body">
+                                            <strong>This is an open group of investment you can join.</strong> The progress bar shows percentage of investment purchased.
+                                                          
+                                            <div class="progress mt-2">
+                                                <div class="progress-bar progress-bar-striped progress-bar-animated " role="progressbar" style="width: ${x.percentageSubscribed}%" aria-valuenow="${x.percentageSubscribed}" aria-valuemin="0" aria-valuemax="100">${x.percentageSubscribed}%</div>
+                                            </div>
+                                            ${x.isClosed == false ?
+                                            `<a href="javascript:void(0)" class="default-btn text-white mt-3" onclick="pairInvestmentDropDown(${index})">Join this group now</a>
+                                                <a href="javascript:void(0)" class="default-btn text-white float-end mt-3" onclick="newGroup()"> Or Create new group</a>
+
+                                                <div class="form-group">
+                                                    <select class="form-select pair-investment-dropdown${index} d-none" onchange="onChangeOfPairDropDown(${index})" aria-label="Default select example">
+                                                        <option value="0" selected>Select your percentage</option>
+                                                    </select>
+                                                </div>`
+                                            : ''}
+                                        </div>
+                                    </div>
+
+                                </div>`;
+                    $('#accordionExample').append(res);
+                });
+            } else {
+                if (data.length < 1) {
+                    $('.btn-group').fadeOut("slow");
+                    let sharePercentage = singleData.minimumSharingPercentage;
+                    let percentLength = 100 / sharePercentage;
+                    let percent = 0;
+                    $('.investment-dropdown').removeClass('d-none').css('display', "block");
+                    $('.alias').removeClass('d-none').css('display', "block");
+                    $('.investment-dropdown').html(`<option value="0" selected>Select your percentage</option>`);
+                    for (var i = 0; i < percentLength; i++) {
+                        percent = percent + sharePercentage;
+                        let res = `<option value="${percent}">${percent}<sup>%</sup></option>`
+                        $('.investment-dropdown').append(res);
+                    }
+
+                }
+            }
+        }
+    } catch (err) { // instead of onerror
+        //alert("Request failed");
+    }
+}
+
+const pairInvestmentDropDown = (index) => {
+    $('#card').trigger("click");
+    let sharePercentage = singleData.minimumSharingPercentage;
+
+    let percentLength = 100 / sharePercentage;
+    if (pairGroup[index].percentageSubscribed != 0) {
+        if (pairGroup[index].percentageSubscribed == 25) {
+            percentLength = 3;
+        } else {
+            percentLength = Math.floor(100 / pairGroup[index].percentageSubscribed);
+        }
+    }
+
+    let percent = 0;
+    groupId = pairGroup[index].uniqueId;
+    $('.pair-investment-dropdown'+index).removeClass('d-none').css('display', "block");
+    $('.pair-investment-dropdown' + index).html(`<option value="0" selected>Select your percentage</option>`);
+    for (var i = 0; i < percentLength; i++) {
+        percent = percent + sharePercentage;
+        let res = `<option value="${percent}">${percent}<sup>%</sup></option>`
+        $('.pair-investment-dropdown' + index).append(res);
+    }
+}
+
+const onChangeOfPairDropDown = (index) => {
+    let price = Number($('#price').text().replace(/[^0-9\.-]+/g, "").replace("₦", ""));
+    var percent = $('.pair-investment-dropdown' + index).val();
+    percentage = percent;
+    if (percent > 0) {
+        var sharePercentage = (percent / 100) * price;
+        var projectYield = (singleData.targetYield / 100) * sharePercentage;
+        $('.unit').text(percent + "%");
+        $('.total').html("&#8358; " + formatToCurrency(sharePercentage));
+        $('.yield').html("&#8358; " + formatToCurrency(projectYield));
+        $('.groundTotal').html("&#8358; " + formatToCurrency(sharePercentage));
+        isCreateNewGroup = false;
+    }
+}
+
+const onChangeOfGroupDropDown = () => {
+    $('#card').trigger("click");
+    let price = Number($('#price').text().replace(/[^0-9\.-]+/g, "").replace("₦", ""));
+    var percent = $('.investment-dropdown').val();
+    if (percent > 0) {
+        percentage = percent;
+        var sharePercentage = (percent / 100) * price;
+        var projectYield = (singleData.targetYield / 100) * sharePercentage;
+        $('.unit').text(percent + "%");
+        $('.total').html("&#8358; " + formatToCurrency(sharePercentage));
+        $('.yield').html("&#8358; " + formatToCurrency(projectYield));
+        $('.groundTotal').html("&#8358; " + formatToCurrency(sharePercentage));
+        isCreateNewGroup = true;
+    }
+}
+
+const newGroup = () => {
+    $('.btn-group').fadeOut("slow");
+    $('.btn-join-group').removeClass('d-none').fadeIn('slow');
+    $('#accordionExample').css('display', 'none');
+    let sharePercentage = singleData.minimumSharingPercentage;
+    let percentLength = 100 / sharePercentage;
+    let percent = 0;
+    $('.investment-dropdown').removeClass('d-none').css('display', "block");
+    $('.alias').removeClass('d-none').css('display', "block");
+    $('.investment-dropdown').html(`<option value="0" selected>Select your percentage</option>`);
+    for (var i = 0; i < percentLength; i++) {
+        percent = percent + sharePercentage;
+        let res = `<option value="${percent}">${percent}<sup>%</sup></option>`
+        $('.investment-dropdown').append(res);
+    }
+}
+
+const joinGroup = () => {
+    $('.btn-join-group').fadeOut('slow');
+    $('.investment-dropdown').addClass('d-none');
+    $('.investment-dropdown').html(`<option value="0" selected>Select your percentage</option>`);
+    $('.alias').addClass('d-none');
+    $('#accordionExample').css('display', 'block');
+}
 
 
 $(".btn-change-password").on("submit", function () {

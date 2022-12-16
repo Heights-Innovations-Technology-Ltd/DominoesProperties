@@ -54,19 +54,14 @@ namespace DominoesPropertiesWeb.Controllers
             return View();
         }
 
-        [Route("/invest")]
-        public async Task<JsonResult> propertyInvestment([FromBody] dynamic property)
+        [Route("/invest/{mode}")]
+        public async Task<JsonResult> propertyInvestment(string mode, [FromBody] dynamic property)
         {
             JObject jObject = JsonConvert.DeserializeObject<JObject>(Convert.ToString(property));
-
-            dynamic obj = new ExpandoObject();
-
-            obj.PropertyUniqueId = Convert.ToString(jObject["propertyUniqueId"]);
-            obj.Units = Convert.ToInt16(jObject["units"]);
-            obj.PaymentChannel = Convert.ToInt32(jObject["channel"]);
-            obj.IsSharing = 0;
-            var res = Task.Run(() => httpContext.Post("Investment", obj));
-            var data = await res.GetAwaiter().GetResult();
+            var url = mode == "investment" ? "Investment" : mode == "group" ? "Investment/pair-groups" : "Investment/pair-invest";
+            var res = Task.Run(() => httpContext.Post(url, jObject));
+            await Task.WhenAll(res);
+            var data = res.Status == TaskStatus.RanToCompletion ? res.Result : null;
             return Json(JsonConvert.SerializeObject(data));
         }
 

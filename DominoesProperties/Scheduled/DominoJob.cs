@@ -38,11 +38,14 @@ namespace DominoesProperties.Scheduled
 
         public void PerformPairInvestment()
         {
-            investmentRepository.CompletedSharingGroup().ForEach(x =>
+            var xxx = investmentRepository.CompletedSharingGroup();
+            xxx.ForEach(x =>
             {
+                logger.LogInfo("Pairing completion started++++++++++");
                 var tt = propertyRepository.GetProperty(x.PropertyId);
                 if (tt.UnitAvailable > 0)
                 {
+                    logger.LogInfo($"Pairing started with avaialable units on property {tt.Name} ++++++++++");
                     using (var scope =
                            new System.Transactions.TransactionScope(System.Transactions.TransactionScopeOption
                                .RequiresNew))
@@ -66,9 +69,12 @@ namespace DominoesProperties.Scheduled
                             scope.Dispose();
                         }
                     }
+
+                    logger.LogInfo($"Pairing completed with on property {tt.Name} ++++++++++");
                 }
                 else
                 {
+                    logger.LogInfo($"Pairing reversal started property {tt.Name}, units exhausted ++++++++++");
                     foreach (var y in x.Sharingentries)
                     {
                         using (var scope =
@@ -106,6 +112,8 @@ namespace DominoesProperties.Scheduled
                             }
                         }
                     }
+
+                    logger.LogInfo($"Pairing reversal completed on property {tt.Name} ++++++++++");
                 }
             });
         }

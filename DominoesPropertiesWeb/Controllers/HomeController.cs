@@ -219,5 +219,14 @@ namespace DominoesPropertiesWeb.Controllers
             return Json(JsonConvert.SerializeObject(data));
         }
 
+        [Route("get-pair-group/{propetyUniqueId}")]
+        public async Task<JsonResult> GetPairGroup(string propetyUniqueId)
+        {
+            var res = Task.Run(() => httpContext.Get($"Investment/pair-groups/{propetyUniqueId}"));
+            await Task.WhenAll(res);
+            var data = res.Status == TaskStatus.RanToCompletion ? res.Result : null;
+            return Json(JsonConvert.SerializeObject(data));
+        }
+
     }
 }

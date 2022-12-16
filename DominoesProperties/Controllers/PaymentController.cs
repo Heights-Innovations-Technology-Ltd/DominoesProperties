@@ -70,28 +70,34 @@ namespace DominoesProperties.Controllers
             var transRef = Guid.NewGuid().ToString();
             PaymentModel m = new()
             {
-                amount = amount * 100,
-                email = customer.Email,
-                reference = string.IsNullOrEmpty(payment.InvestmentId) ? transRef : payment.InvestmentId,
-                callback = string.IsNullOrEmpty(payment.Callback)
+                Amount = AddPaystackCharges(amount) * 100,
+                Email = customer.Email,
+                Reference = string.IsNullOrEmpty(payment.InvestmentId) ? transRef : payment.InvestmentId,
+                Bearer = "subaccount",
+                Callback = string.IsNullOrEmpty(payment.Callback)
                     ? $"{Request.Scheme}://{Request.Host}{Request.PathBase}/api/payment/verify-payment"
                     : $"{payment.Callback}"
             };
-
-            var initResponse = payStackApi.MobileAppInitTransaction(m).Data;
-            if (initResponse == null)
-                throw new InvalidOperationException("Payment platform error, please try again later");
+            
+            logger.LogInfo($"Transaction initialized payload \n {Convert.ToString(m)}");
             try
             {
-                var jObject = JsonConvert.DeserializeObject<JObject>(Convert.ToString(initResponse)!);
+                var initResponse = payStackApi.MobileAppInitTransaction(m).Data;
+                if (initResponse == null)
+                    throw new InvalidOperationException("Payment platform error, please try again later");
+
+                logger.LogInfo($"Transaction initialization completed with payload \n {initResponse}");
+
+                var jObject = JsonConvert.DeserializeObject<JObject>(Convert.ToString(initResponse));
                 if (jObject == null)
                     throw new InvalidOperationException("Payment platform error, please try again later");
+
                 PaystackPayment paystack = new()
                 {
                     Payload = initResponse.ToString(),
-                    AccessCode = Convert.ToString(jObject["access_code"]),
-                    Amount = amount,
-                    TransactionRef = m.reference,
+                    AccessCode = Convert.ToString(jObject["access_code"]);
+                    Amount = m.Amount,
+                    TransactionRef = m.Reference,
                     PaystackRef = Convert.ToString(jObject["reference"]),
                     PaymentModule = payment.Module.ToString(),
                     Type = TransactionType.CR.ToString(),
@@ -194,7 +200,8 @@ namespace DominoesProperties.Controllers
                     {
                         CustomerId = customer.Id,
                         GroupId = group.UniqueId,
-                        PercentageShare = (int)(transaction.Amount / property.UnitPrice) * 100,
+                        PercentageShare = decimal.ToInt32(decimal.Round(
+                            decimal.Divide(transaction.Amount, property.UnitPrice) * 100, MidpointRounding.ToZero)),
                         Date = DateTime.Now,
                         IsClosed = false
                     };
@@ -209,7 +216,8 @@ namespace DominoesProperties.Controllers
                 }
                 else if (paystack.PaymentModule.Equals(PaymentType.PROPERTY_PAIRING.ToString()))
                 {
-                    var spp = transaction.TransactionRef[..transaction.TransactionRef.LastIndexOf("-")];
+                    var spp = transaction.TransactionRef[
+                        ..transaction.TransactionRef.LastIndexOf("-", StringComparison.Ordinal)];
                     var group = investmentRepository.GetSharinggroups(spp);
                     var property = propertyRepository.GetProperty(group.PropertyId);
 
@@ -322,9 +330,7 @@ namespace DominoesProperties.Controllers
             var filePath = Path.Combine(environment.ContentRootPath, @"EmailTemplates\" + filename);
             var html = System.IO.File.ReadAllText(filePath.Replace(@"\", "/"));
             html = html.Replace("{FIRSTNAME}", string.Format("{0} {1}", firstName, lastName))
-                .Replace("{SUM}", sum.ToString(CultureInfo.CurrentCulture))
-                .Replace("{webroot}", configuration["app_settings:WebEndpoint"]);
-            ;
+                .Replace("{SUM}", sum.ToString()).Replace("{webroot}", configuration["app_settings:WebEndpoint"]);
 
             EmailData emailData = new()
             {
@@ -334,6 +340,17 @@ namespace DominoesProperties.Controllers
                 EmailToName = firstName
             };
             emailService.SendEmail(emailData);
+        }
+
+        private static decimal AddPaystackCharges(decimal amount)
+        {
+            decimal fee;
+            if (amount < 2500)
+                fee = amount * Convert.ToDecimal(1.5 / 100);
+            else
+                fee = amount * Convert.ToDecimal(1.5 / 100) + 100;
+
+            return amount + (fee > 2000 ? 2000 : fee);
         }
     }
 }

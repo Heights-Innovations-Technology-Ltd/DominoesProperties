@@ -22,13 +22,15 @@ namespace Repositories.Service
         {
             try
             {
-                var id = _context.Investments.Add(investment).Entity.Id;
-                loggerManager.LogInfo("Investment successfully saved");
+                var inv = _context.Investments.Add(investment);
                 _context.SaveChanges();
+                var id = inv.Entity.Id;
+                loggerManager.LogInfo($"Investment successfully saved with id {id}");
                 return id;
             }
             catch (Exception ex)
             {
+                loggerManager.LogInfo($"Investment failed with id {ex.StackTrace}");
                 loggerManager.LogError(ex.StackTrace);
                 return 0;
             }
@@ -143,6 +145,7 @@ namespace Repositories.Service
         {
             return _context.Sharinggroups
                 .Where(x => x.PercentageSubscribed == 100 && !x.IsClosed.Value)
+                .Include(x => x.Sharingentries)
                 .ToList();
         }
 

@@ -99,18 +99,19 @@ namespace DominoesProperties.Controllers
                 try
                 {
                     var token = Guid.NewGuid().ToString();
-                    var url = string.Format("{0}{1}/{2}?value={3}", configuration["app_settings:WebEndpoint"],
-                        ValidationModule.ACTIVATE_ACCOUNT, token, "admin");
-                    var filePath =
-                        System.IO.Path.Combine(environment.ContentRootPath, @"EmailTemplates\NewCustomer.html");
-                    var html = System.IO.File.ReadAllText(filePath.Replace(@"\", "/"));
+                    var url =
+                        $"{configuration["app_settings:WebEndpoint"]}{ValidationModule.ACTIVATE_ACCOUNT}/{token}?value={"admin"}";
+                    var filePath = Path.Combine(environment.ContentRootPath, @"EmailTemplates\NewCustomer.html");
+                    var html = await System.IO.File.ReadAllTextAsync(filePath.Replace(@"\", "/"));
                     html = html.Replace("{name}", admin.Email).Replace("{link}", HttpUtility.UrlEncode(url));
 
                     await distributedCache.SetStringAsync(token, admin.Email, expiryOptions);
 
-                    EmailRequest emailRequest = new("Dominoes Society - Account Creation", html, admin.Email);
-                    emailRequest.Settings = new ApplicationSetting
-                        { TestingMode = false, SettingName = "EmailNotification" };
+                    EmailRequest emailRequest = new("Dominoes Society - Account Creation", html, admin.Email)
+                    {
+                        Settings = new ApplicationSetting
+                            { TestingMode = false, SettingName = "EmailNotification" }
+                    };
                     CommonLogic.SendEmail(emailRequest);
                 }
                 catch (Exception ex)

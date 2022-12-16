@@ -1,17 +1,17 @@
-﻿using System;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 namespace Helpers.PayStack
 {
     public class PaymentModel
     {
-        [JsonProperty("amount")]
-        public decimal amount;
-        [JsonProperty("email")]
-        public string email;
-        [JsonProperty("ref")]
-        public string reference;
-        [JsonProperty("callback_url")]
-        public string callback;
+        [JsonProperty("amount")] public decimal Amount;
+
+        [JsonProperty("bearer")] public string Bearer;
+
+        [JsonProperty("callback_url")] public string Callback;
+
+        [JsonProperty("email")] public string Email;
+
+        [JsonProperty("ref")] public string Reference;
     }
 }
