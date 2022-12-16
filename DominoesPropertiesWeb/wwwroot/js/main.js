@@ -3661,6 +3661,10 @@ const customerTmp = (data) => {
                         <td>${x.firstName}</td>
                         <td>${x.lastName}</td>
                         <td>${x.email}</td>
+                        <td>${x.phone}</td>
+                        <td>${x.isActive ? `<span class="badge bg-success">Active</span>` : `<span class="badge bg-danger">In Active</span>`}</td>
+                        <td>${x.isSubscribed ? `<span class="badge bg-success">Subscribed</span>` : ` <span class="badge bg-danger">Not Subscribed</span>`}</td>
+                        <td>${moment(x.nextSubDate).format('ll')}</td>
                    </tr>`;
         $('#example tbody').append(res);
     })
