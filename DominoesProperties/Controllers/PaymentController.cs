@@ -78,7 +78,7 @@ namespace DominoesProperties.Controllers
                     ? $"{Request.Scheme}://{Request.Host}{Request.PathBase}/api/payment/verify-payment"
                     : $"{payment.Callback}"
             };
-            
+
             logger.LogInfo($"Transaction initialized payload \n {Convert.ToString(m)}");
             try
             {
@@ -88,14 +88,14 @@ namespace DominoesProperties.Controllers
 
                 logger.LogInfo($"Transaction initialization completed with payload \n {initResponse}");
 
-                var jObject = JsonConvert.DeserializeObject<JObject>(Convert.ToString(initResponse));
+                var jObject = JsonConvert.DeserializeObject<JObject>(Convert.ToString(initResponse)!);
                 if (jObject == null)
                     throw new InvalidOperationException("Payment platform error, please try again later");
 
                 PaystackPayment paystack = new()
                 {
                     Payload = initResponse.ToString(),
-                    AccessCode = Convert.ToString(jObject["access_code"]);
+                    AccessCode = Convert.ToString(jObject["access_code"]),
                     Amount = m.Amount,
                     TransactionRef = m.Reference,
                     PaystackRef = Convert.ToString(jObject["reference"]),
@@ -280,12 +280,12 @@ namespace DominoesProperties.Controllers
 
                     filePath = Path.Combine(environment.ContentRootPath, @"EmailTemplates\investment.html");
                     html = System.IO.File.ReadAllText(filePath.Replace(@"\", "/"));
-                    html = html.Replace("{FIRSTNAME}", string.Format("{0} {1}", customer.FirstName, customer.LastName))
+                    html = html.Replace("{FIRSTNAME}", $"{customer.FirstName} {customer.LastName}")
                         .Replace("{I-NAME}", investment.Property.Name);
                     html = html.Replace("{I-UNITS}", investment.Units.ToString())
-                        .Replace("{I-PRICE}", investment.Property.UnitPrice.ToString())
-                        .Replace("{I-TOTAL}", paystack.Amount.ToString())
-                        .Replace("{I-DATE}", investment.PaymentDate.ToString())
+                        .Replace("{I-PRICE}", investment.Property.UnitPrice.ToString(CultureInfo.CurrentCulture))
+                        .Replace("{I-TOTAL}", paystack.Amount.ToString(CultureInfo.CurrentCulture))
+                        .Replace("{I-DATE}", investment.PaymentDate.ToString(CultureInfo.CurrentCulture))
                         .Replace("{webroot}", configuration["app_settings:WebEndpoint"]);
                     ;
 
@@ -329,8 +329,9 @@ namespace DominoesProperties.Controllers
         {
             var filePath = Path.Combine(environment.ContentRootPath, @"EmailTemplates\" + filename);
             var html = System.IO.File.ReadAllText(filePath.Replace(@"\", "/"));
-            html = html.Replace("{FIRSTNAME}", string.Format("{0} {1}", firstName, lastName))
-                .Replace("{SUM}", sum.ToString()).Replace("{webroot}", configuration["app_settings:WebEndpoint"]);
+            html = html.Replace("{FIRSTNAME}", $"{firstName} {lastName}")
+                .Replace("{SUM}", sum.ToString(CultureInfo.CurrentCulture))
+                .Replace("{webroot}", configuration["app_settings:WebEndpoint"]);
 
             EmailData emailData = new()
             {
