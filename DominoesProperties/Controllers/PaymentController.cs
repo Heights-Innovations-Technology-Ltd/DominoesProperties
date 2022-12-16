@@ -56,7 +56,7 @@ namespace DominoesProperties.Controllers
         [Authorize]
         public ApiResponse InitiateTransaction([FromBody] Payment payment)
         {
-            return DoInitPayment(payment, HttpContext.User.Identity.Name);
+            return DoInitPayment(payment, HttpContext.User.Identity!.Name);
         }
 
         [HttpPost("init")]
@@ -69,23 +69,26 @@ namespace DominoesProperties.Controllers
             var transRef = Guid.NewGuid().ToString();
             PaymentModel m = new()
             {
-                amount = amount * 100,
-                email = customer.Email,
-                reference = string.IsNullOrEmpty(payment.InvestmentId) ? transRef : payment.InvestmentId,
-                callback = string.IsNullOrEmpty(payment.Callback)
+                Amount = AddPaystackCharges(amount) * 100,
+                Email = customer.Email,
+                Reference = string.IsNullOrEmpty(payment.InvestmentId) ? transRef : payment.InvestmentId,
+                Bearer = "subaccount",
+                Callback = string.IsNullOrEmpty(payment.Callback)
                     ? $"{Request.Scheme}://{Request.Host}{Request.PathBase}/api/payment/verify-payment"
                     : $"{payment.Callback}"
             };
-
-            var initResponse = payStackApi.MobileAppInitTransaction(m).Data;
-
+            logger.LogInfo($"Transaction initialized payload \n {Convert.ToString(m)}");
             try
             {
+                var initResponse = payStackApi.MobileAppInitTransaction(m).Data;
+
+                logger.LogInfo($"Transaction initialization completed with payload \n {initResponse}");
+
                 var jObject = JsonConvert.DeserializeObject<JObject>(Convert.ToString(initResponse));
                 PaystackPayment paystack = new();
                 paystack.AccessCode = Convert.ToString(jObject["access_code"]);
-                paystack.Amount = amount;
-                paystack.TransactionRef = m.reference;
+                paystack.Amount = m.Amount;
+                paystack.TransactionRef = m.Reference;
                 paystack.PaystackRef = Convert.ToString(jObject["reference"]);
                 paystack.PaymentModule = payment.Module.ToString();
                 paystack.Type = TransactionType.CR.ToString();
@@ -162,7 +165,7 @@ namespace DominoesProperties.Controllers
                 else if (paystack.PaymentModule.Equals(PaymentType.PROPERTY_PAIRING_GROUP.ToString()))
                 {
                     var group = investmentRepository.GetSharinggroups(paystack.TransactionRef);
-                    if (!paystack.Status.ToLower().Equals("success"))
+                    if (!paystack.Status!.ToLower().Equals("success"))
                     {
                         investmentRepository.DeleteGroup(group);
                         response.Message = "Payment was not successful, group was not created";
@@ -171,32 +174,31 @@ namespace DominoesProperties.Controllers
                         logger.LogInfo($"{paystack.TransactionRef} : Payment unsuccessfull");
                         return Redirect($"{configuration["app_settings:WebEndpoint"]}?status={paystack.Status}");
                     }
-                    else
+
+                    var property = propertyRepository.GetProperty(group.PropertyId);
+                    Sharingentry entry = new()
                     {
-                        var property = propertyRepository.GetProperty(group.PropertyId);
-                        Sharingentry entry = new()
-                        {
-                            CustomerId = customer.Id,
-                            GroupId = group.UniqueId,
-                            PercentageShare = decimal.ToInt32(decimal.Round(
+                        CustomerId = customer.Id,
+                        GroupId = group.UniqueId,
+                        PercentageShare = decimal.ToInt32(decimal.Round(
                             decimal.Divide(transaction.Amount, property.UnitPrice) * 100, MidpointRounding.ToZero)),
-                            Date = DateTime.Now,
-                            IsClosed = false
-                        };
-                        if (investmentRepository.AddSharingentry(entry))
-                        {
-                            group.PercentageSubscribed += entry.PercentageShare;
-                            group.IsClosed = group.PercentageSubscribed == 100;
-                            investmentRepository.UpdateSharingGroup(group);
-                            logger.LogInfo($"{transaction.TransactionRef} : {reference} : {paystack.Status}");
-                            logger.LogInfo($"{paystack.TransactionRef} : Payment successfully done");
-                            return Redirect($"{configuration["app_settings:WebEndpoint"]}?status=success");
-                        }
+                        Date = DateTime.Now,
+                        IsClosed = false
+                    };
+                    if (investmentRepository.AddSharingentry(entry))
+                    {
+                        group.PercentageSubscribed += entry.PercentageShare;
+                        // group.IsClosed = group.PercentageSubscribed == 100;
+                        investmentRepository.UpdateSharingGroup(group);
+                        logger.LogInfo($"{transaction.TransactionRef} : {reference} : {paystack.Status}");
+                        logger.LogInfo($"{paystack.TransactionRef} : Payment successfully done");
+                        return Redirect($"{configuration["app_settings:WebEndpoint"]}?status=success");
                     }
                 }
                 else if (paystack.PaymentModule.Equals(PaymentType.PROPERTY_PAIRING.ToString()))
                 {
-                    var spp = transaction.TransactionRef[..transaction.TransactionRef.LastIndexOf("-")];
+                    var spp = transaction.TransactionRef[
+                        ..transaction.TransactionRef.LastIndexOf("-", StringComparison.Ordinal)];
                     var group = investmentRepository.GetSharinggroups(spp);
                     var property = propertyRepository.GetProperty(group.PropertyId);
 
@@ -307,8 +309,8 @@ namespace DominoesProperties.Controllers
         private void sendMail(string Email, string FirstName, string LastName, string Filename, string Subject,
             decimal sum = 0)
         {
-            string filePath = Path.Combine(environment.ContentRootPath, @"EmailTemplates\" + Filename);
-            string html = System.IO.File.ReadAllText(filePath.Replace(@"\", "/"));
+            var filePath = Path.Combine(environment.ContentRootPath, @"EmailTemplates\" + Filename);
+            var html = System.IO.File.ReadAllText(filePath.Replace(@"\", "/"));
             html = html.Replace("{FIRSTNAME}", string.Format("{0} {1}", FirstName, LastName))
                 .Replace("{SUM}", sum.ToString()).Replace("{webroot}", configuration["app_settings:WebEndpoint"]);
             ;
@@ -321,6 +323,17 @@ namespace DominoesProperties.Controllers
                 EmailToName = FirstName
             };
             emailService.SendEmail(emailData);
+        }
+
+        private static decimal AddPaystackCharges(decimal amount)
+        {
+            decimal fee;
+            if (amount < 2500)
+                fee = amount * Convert.ToDecimal(1.5 / 100);
+            else
+                fee = amount * Convert.ToDecimal(1.5 / 100) + 100;
+
+            return amount + (fee > 2000 ? 2000 : fee);
         }
     }
 }

@@ -13,8 +13,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Models.Models;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Repositories.Repository;
 
 namespace DominoesProperties.Controllers
@@ -23,15 +21,17 @@ namespace DominoesProperties.Controllers
     [ApiController]
     public class UtilController : Controller
     {
-        private readonly IConfiguration configuration;
-        private readonly IWebHostEnvironment environment;
-        private readonly ApiResponse response = new(false, "Error performing request, contact admin");
         private readonly IEmailService _emailService;
+        private readonly IConfiguration configuration;
         private readonly ICustomerRepository customerRepository;
+        private readonly IWebHostEnvironment environment;
         private readonly IPropertyRepository propertyRepository;
+        private readonly ApiResponse response = new(false, "Error performing request, contact admin");
         private readonly IUtilRepository utilRepository;
-        public UtilController(IConfiguration _configuration, IWebHostEnvironment _environment, IEmailService emailService, ICustomerRepository _customerRepository,
-        IPropertyRepository _propertyRepository, IUtilRepository _utilRepository)
+
+        public UtilController(IConfiguration _configuration, IWebHostEnvironment _environment,
+            IEmailService emailService, ICustomerRepository _customerRepository,
+            IPropertyRepository _propertyRepository, IUtilRepository _utilRepository)
         {
             configuration = _configuration;
             environment = _environment;
@@ -62,14 +62,17 @@ namespace DominoesProperties.Controllers
             if (utilRepository.AddEnquiry(enquiry))
             {
                 response.Success = true;
-                response.Message = "Your request has been received. One of our agent will be in touch with you shortly.";
+                response.Message =
+                    "Your request has been received. One of our agent will be in touch with you shortly.";
 
                 string filePath = Path.Combine(environment.ContentRootPath, @"EmailTemplates\enquiry.html");
                 string html = System.IO.File.ReadAllText(filePath.Replace(@"\", "/"));
 
                 string filePath2 = Path.Combine(environment.ContentRootPath, @"EmailTemplates\enquiry-admin.html");
                 string html2 = System.IO.File.ReadAllText(filePath2.Replace(@"\", "/"));
-                html2 = html2.Replace("{PROPERTY}", property.Name).Replace("{CUSTOMER}", $"{customer.FirstName} {customer.LastName}").Replace("{SUBJECT}", enquiry.Subject).Replace("{MESSAGE}", enquiry.Message);
+                html2 = html2.Replace("{PROPERTY}", property.Name)
+                    .Replace("{CUSTOMER}", $"{customer.FirstName} {customer.LastName}")
+                    .Replace("{SUBJECT}", enquiry.Subject).Replace("{MESSAGE}", enquiry.Message);
 
                 _ = _emailService.SendEmail(new EmailData
                 {
@@ -89,15 +92,17 @@ namespace DominoesProperties.Controllers
 
                 return response;
             }
+
             return response;
         }
 
         [HttpGet("enquiry")]
         [Authorize(Roles = "SUPER, ADMIN")]
-        public ApiResponse Enquiry([FromQuery] QueryParams queryParams, [FromQuery] string propertyId, [FromQuery] string customerId)
+        public ApiResponse Enquiry([FromQuery] QueryParams queryParams, [FromQuery] string propertyId,
+            [FromQuery] string customerId)
         {
             var enquiries = utilRepository.GetEnquiries();
-            if(enquiries == null || enquiries.Count < 1)
+            if (enquiries == null || enquiries.Count < 1)
             {
                 response.Success = true;
                 response.Message = "No record found";
@@ -115,7 +120,8 @@ namespace DominoesProperties.Controllers
                 enquiries = enquiries.Where(x => x.PropertyReference.Equals(propertyId)).ToList();
             }
 
-            PagedList<Enquiry> enqList = PagedList<Enquiry>.ToPagedList(enquiries.OrderBy(on => on.DateCreated).AsQueryable(),
+            PagedList<Enquiry> enqList = PagedList<Enquiry>.ToPagedList(
+                enquiries.OrderBy(on => on.DateCreated).AsQueryable(),
                 queryParams.PageNumber, queryParams.PageSize);
 
             //(int TotalCount, int PageSize, int CurrentPage, int TotalPages, bool HasNext, bool HasPrevious) metadata2 =
@@ -143,7 +149,7 @@ namespace DominoesProperties.Controllers
             {
                 var enquiry = utilRepository.GetEnquiry(enquiryId);
                 enquiry.Status = Enum.Parse<EnquiryStatus>(status).ToString();
-                enquiry.ClosedBy = HttpContext.User.Identity.Name;
+                enquiry.ClosedBy = HttpContext.User.Identity!.Name;
                 utilRepository.CloseEnquiry(enquiry);
                 response.Message = "Enquiry closed successfully";
                 response.Success = true;
@@ -168,6 +174,7 @@ namespace DominoesProperties.Controllers
                 response.Message = "Successful";
                 return response;
             }
+
             return response;
         }
 
@@ -182,8 +189,12 @@ namespace DominoesProperties.Controllers
         }
 
         [HttpPost("subscribers")]
-        [Authorize(Roles = "SUPER, ADMIN")]
-        public ApiResponse Subscribe([FromBody][Required(ErrorMessage = "Email is required")][MaxLength(100)][EmailAddress(ErrorMessage = "Not a valid email address")] string Email)
+        public ApiResponse Subscribe(
+            [FromBody]
+            [Required(ErrorMessage = "Email is required")]
+            [MaxLength(100)]
+            [EmailAddress(ErrorMessage = "Not a valid email address")]
+            string Email)
         {
             Newsletter newsletter = new()
             {
@@ -192,9 +203,8 @@ namespace DominoesProperties.Controllers
             var xx = utilRepository.AddSubscibers(newsletter);
             if (xx == 0)
             {
-
-                string filePath = Path.Combine(environment.ContentRootPath, @"EmailTemplates\newsletter.html");
-                string html = System.IO.File.ReadAllText(filePath.Replace(@"\", "/"));
+                var filePath = Path.Combine(environment.ContentRootPath, @"EmailTemplates\newsletter.html");
+                var html = System.IO.File.ReadAllText(filePath.Replace(@"\", "/"));
 
                 _emailService.SendEmail(new EmailData
                 {
@@ -207,12 +217,12 @@ namespace DominoesProperties.Controllers
                 response.Message = "You have been added to our mailing list successfully";
                 return response;
             }
-            else
-            {
-                response.Success = false;
-                response.Message = xx == 1 ? "You seem to already have subscribed to our newsletter" : "Error saving your email, please try again shortly";
-                return response;
-            }
+
+            response.Success = false;
+            response.Message = xx == 1
+                ? "You seem to already have subscribed to our newsletter"
+                : "Error saving your email, please try again shortly";
+            return response;
         }
 
         [HttpGet("subscribers")]
@@ -227,44 +237,44 @@ namespace DominoesProperties.Controllers
 
         [HttpPost("onboard-customers")]
         [Authorize(Roles = "SUPER, ADMIN")]
-        public ApiResponse OnboardCustomers([FromBody] HashSet<NewCustomers> Customers)
+        public ApiResponse OnboardCustomers([FromBody] HashSet<NewCustomers> customers)
         {
             if (configuration.GetValue<bool>("app_settings:onboard"))
             {
-                if (Customers == null)
+                if (customers == null)
                 {
                     response.Success = false;
                     response.Message = "No customer selected, please select a customer to onboard";
                     return response;
                 }
 
-                OnboardCustomers(Customers.ToList());
+                OnboardCustomers(customers.ToList());
 
                 response.Success = true;
-                response.Message = "Onboarding email sending in process";
+                response.Message = "On-boarding email sending in process";
                 return response;
             }
-            else
-            {
-                response.Success = false;
-                response.Message = "Onboarding email sending is disabled";
-                return response;
-            }
+
+            response.Success = false;
+            response.Message = "On-boarding email sending is disabled";
+            return response;
         }
 
-        private void OnboardCustomers(List<NewCustomers> Customers)
+        private void OnboardCustomers(IReadOnlyCollection<NewCustomers> customers)
         {
-            Task.Run(() => Customers.ToList().ForEach(x =>
+            Task.Run(() => customers.ToList().ForEach(x =>
             {
-                string filePath = Path.Combine(environment.ContentRootPath, @"EmailTemplates\account-setup.html");
-                string html = System.IO.File.ReadAllText(filePath.Replace(@"\", "/"));
-                html = html.Replace("{FIRSTNAME}", string.Format("{0} {1}", x.FirstName, x.LastName).ToUpper()).Replace("{webroot}", configuration["app_settings:WebEndpoint"]).Replace("{USERNAME}", x.Email).Replace("{PASSWORD}", "Welcome@2022");
+                var filePath = Path.Combine(environment.ContentRootPath, @"EmailTemplates\account-setup.html");
+                var html = System.IO.File.ReadAllText(filePath.Replace(@"\", "/"));
+                html = html.Replace("{FIRSTNAME}", $"{x.FirstName} {x.LastName}".ToUpper())
+                    .Replace("{webroot}", configuration["app_settings:WebEndpoint"]).Replace("{USERNAME}", x.Email)
+                    .Replace("{PASSWORD}", "Welcome@2022");
 
                 _ = _emailService.SendEmail(new EmailData
                 {
                     EmailBody = html,
-                    EmailSubject = "Customer Onboarding -  Real Estate Dominoes",
-                    EmailToName = string.Format("{0} {1}", x.FirstName, x.LastName),
+                    EmailSubject = "Customer On-boarding -  Real Estate Dominoes",
+                    EmailToName = $"{x.FirstName} {x.LastName}",
                     EmailToId = x.Email
                 });
             }));
@@ -274,10 +284,11 @@ namespace DominoesProperties.Controllers
         [Authorize(Roles = "SUPER, ADMIN")]
         public string SendTestMail(string email, string encoded)
         {
-            string token = CommonLogic.GetUniqueRefNumber("AT");
-            string url = string.Format("{0}{1}/{2}?value={3}", configuration["app_settings:WebEndpoint"], ValidationModule.ACTIVATE_ACCOUNT.ToString().ToLower(), token, "customer");
-            string filePath = Path.Combine(environment.ContentRootPath, @"EmailTemplates\welcome.html");
-            string html = System.IO.File.ReadAllText(filePath.Replace(@"\", "/"));
+            var token = CommonLogic.GetUniqueRefNumber("AT");
+            var url = string.Format("{0}{1}/{2}?value={3}", configuration["app_settings:WebEndpoint"],
+                ValidationModule.ACTIVATE_ACCOUNT.ToString().ToLower(), token, "customer");
+            var filePath = Path.Combine(environment.ContentRootPath, @"EmailTemplates\welcome.html");
+            var html = System.IO.File.ReadAllText(filePath.Replace(@"\", "/"));
             html = html.Replace("{name}", string.Format("{0} {1}", "Dominoes", "Tester")).Replace("{link}", url);
 
             _ = _emailService.SendEmail(new EmailData
@@ -298,7 +309,10 @@ namespace DominoesProperties.Controllers
             Dictionary<string, string> result = new();
             foreach (var keyValuePairs in keyValues)
             {
-                result.Add(keyValuePairs.Key, "encrypt".Equals("encrypt") ? CommonLogic.Encrypt(keyValuePairs.Value) : CommonLogic.Decrypt(keyValuePairs.Value));
+                result.Add(keyValuePairs.Key,
+                    "encrypt".Equals("encrypt")
+                        ? CommonLogic.Encrypt(keyValuePairs.Value)
+                        : CommonLogic.Decrypt(keyValuePairs.Value));
             }
 
             response.Success = true;
@@ -329,13 +343,17 @@ namespace DominoesProperties.Controllers
                 {
                     Email = x.Email,
                     FirstName = x.FirstName,
-                    LastName = x.LastName
+                    LastName = x.LastName,
+                    Phone = x.Phone,
+                    IsActive = x.IsActive!.Value,
+                    IsSubscribed = x.IsSubscribed!.Value,
+                    NextSubDate = x.NextSubscriptionDate.ToString()
                 });
             });
 
             //Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
             response.Success = true;
-            response.Message = "Successfull";
+            response.Message = "Successful";
             response.Data = custs;
             return response;
         }
@@ -344,7 +362,11 @@ namespace DominoesProperties.Controllers
 
 public class NewCustomers
 {
-    public string Email { get; set; }
-    public string FirstName { get; set; }
-    public string LastName { get; set; }
+    public string Email { get; init; }
+    public string FirstName { get; init; }
+    public string LastName { get; init; }
+    public string Phone { get; set; }
+    public bool IsActive { get; set; }
+    public bool IsSubscribed { get; set; }
+    public string NextSubDate { get; set; }
 }

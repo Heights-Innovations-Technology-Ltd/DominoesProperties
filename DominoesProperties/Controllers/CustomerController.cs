@@ -205,33 +205,31 @@ namespace DominoesProperties.Controllers
         {
             var db = distributedCache.GetDatabase();
             var uniqueRef = await db.StringGetAsync(token);
-            if (!string.IsNullOrEmpty(uniqueRef))
+            if (string.IsNullOrEmpty(uniqueRef)) return response;
+            var customer = customerRepository.GetCustomer(uniqueRef);
+            customer.IsVerified = true;
+            customer.IsActive = true;
+            if (customerRepository.UpdateCustomer(customer) != null)
             {
-                var customer = customerRepository.GetCustomer(uniqueRef);
-                customer.IsVerified = true;
-                customer.IsActive = true;
-                if (customerRepository.UpdateCustomer(customer) != null)
+                string filePath = Path.Combine(environment.ContentRootPath, @"EmailTemplates\welcome.html");
+                string html = System.IO.File.ReadAllText(filePath.Replace(@"\", "/"));
+                html = html.Replace("{FIRSTNAME}", string.Format("{0} {1}", customer.FirstName, customer.LastName))
+                    .Replace("{webroot}", configuration["app_settings:WebEndpoint"]);
+                ;
+
+                EmailData emailData = new()
                 {
-                    string filePath = Path.Combine(environment.ContentRootPath, @"EmailTemplates\welcome.html");
-                    string html = System.IO.File.ReadAllText(filePath.Replace(@"\", "/"));
-                    html = html.Replace("{FIRSTNAME}", string.Format("{0} {1}", customer.FirstName, customer.LastName))
-                        .Replace("{webroot}", configuration["app_settings:WebEndpoint"]);
-                    ;
+                    EmailBody = html,
+                    EmailSubject = "Welcome!",
+                    EmailToId = customer.Email,
+                    EmailToName = customer.FirstName
+                };
+                emailService.SendEmail(emailData);
 
-                    EmailData emailData = new()
-                    {
-                        EmailBody = html,
-                        EmailSubject = "Welcome!",
-                        EmailToId = customer.Email,
-                        EmailToName = customer.FirstName
-                    };
-                    emailService.SendEmail(emailData);
-
-                    response.Message = string.Format("Customer account {0} successfully activated", customer.Email);
-                    response.Success = true;
-                    response.Data = ClassConverter.ConvertCustomerToProfile(customer);
-                    return response;
-                }
+                response.Message = string.Format("Customer account {0} successfully activated", customer.Email);
+                response.Success = true;
+                response.Data = ClassConverter.ConvertCustomerToProfile(customer);
+                return response;
             }
 
             return response;
@@ -241,7 +239,7 @@ namespace DominoesProperties.Controllers
         [Authorize]
         public ApiResponse Customer()
         {
-            var customer = customerRepository.GetCustomer(HttpContext.User.Identity.Name);
+            var customer = customerRepository.GetCustomer(HttpContext.User.Identity!.Name);
             if (customer != null)
             {
                 response.Data = ClassConverter.ConvertCustomerToFullProfile(customer);
@@ -249,11 +247,8 @@ namespace DominoesProperties.Controllers
                 response.Success = true;
                 return response;
             }
-            else
-            {
-                response.Message = "Invalid username provided";
-            }
 
+            response.Message = "Invalid username provided";
             return response;
         }
 

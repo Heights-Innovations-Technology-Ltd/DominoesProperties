@@ -33,7 +33,7 @@ namespace DominoesProperties.Controllers
         private readonly IInvestmentRepository investmentRepository;
         private readonly PaymentController paymentController;
         private readonly IPropertyRepository propertyRepository;
-        private readonly ApiResponse response = new ApiResponse(false, "Error performing request, contact admin");
+        private readonly ApiResponse response = new(false, "Error performing request, contact admin");
         private readonly IUploadRepository uploadRepository;
 
         public InvestmentController(IPropertyRepository _propertyRepository, IConfiguration _configuration,
@@ -315,7 +315,17 @@ namespace DominoesProperties.Controllers
                         Status = Status.PENDING.ToString()
                     };
 
-                    if (investmentRepository.AddInvestment(newInvestment) == 0) return response;
+                    var ii = 0L;
+                    try
+                    {
+                        ii = investmentRepository.AddInvestment(newInvestment);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.StackTrace);
+                    }
+
+                    if (ii == 0) return response;
                     Payment pay = new()
                     {
                         Amount = newInvestment.Amount,
@@ -476,7 +486,8 @@ namespace DominoesProperties.Controllers
                 });
 
                 response.Success = true;
-                response.Message = "Proof of payment successfully uploaded. Your investment will be completed within the next 24 hours";
+                response.Message =
+                    "Proof of payment successfully uploaded. Your investment will be completed within the next 24 hours";
                 return response;
             }
 

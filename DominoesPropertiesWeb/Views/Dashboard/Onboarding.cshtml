@@ -1,5 +1,4 @@
-﻿
-@{
+﻿@{
     ViewData["Title"] = "Onboarding";
     Layout = "~/Views/Shared/_LayoutDash.cshtml";
 }
@@ -8,44 +7,48 @@
 <link rel="stylesheet" href="https://cdn.datatables.net/select/1.4.0/css/select.dataTables.min.css">
 <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
 <div class="dashboard-area">
-	<div class="container-fluid">
-		<div class="dashboard-title-wrap">
-			<div class="row align-items-center">
-				<div class="col-lg-6 col-sm-6">
-					<ul class="dashboard-page-title">
-						<li>
-							<a href="/dashboard">
-								Home
-							</a>
-						</li>
+    <div class="container-fluid">
+        <div class="dashboard-title-wrap">
+            <div class="row align-items-center">
+                <div class="col-lg-6 col-sm-6">
+                    <ul class="dashboard-page-title">
+                        <li>
+                            <a href="/dashboard">
+                                Home
+                            </a>
+                        </li>
 
-						<li class="active">Onboarding</li>
-					</ul>
-				</div>
-				<div class="col-lg-6 col-sm-6">
-				</div>
-			</div>
-		</div>
+                        <li class="active">On-boarding</li>
+                    </ul>
+                </div>
+                <div class="col-lg-6 col-sm-6">
+                </div>
+            </div>
+        </div>
 
-		<div class="add-listing">
-			<div class="row">
-				<div class="col-md-9 mx-auto">
-                    <button class="default-btn mb-3 float-end" id="btn-onboarding" type="button">Send Onboarding Email</button>
-					<table id="example" class="display" style="width:100%">
+        <div class="add-listing">
+            <div class="row">
+                <div class="col-md-9 mx-auto">
+                    <button class="default-btn mb-3 float-end" id="btn-onboarding" type="button">Send On-boarding Email</button>
+                    <table id="example" class="display" style="width:100%">
                         <thead>
-                            <tr>
-                                <th></th>
-                                <th>First Name</th>
-                                <th>Last Name</th>
-                                <th>Email</th>
-                            </tr>
+                        <tr>
+                            <th></th>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Email</th>
+                            @* <th>Phone</th> *@
+                            @* <th>Active</th> *@
+                            @* <th>Subscribed</th> *@
+                            @* <th>Next Subscription</th> *@
+                        </tr>
                         </thead>
                         <tbody></tbody>
                     </table>
-				</div>
-			</div>
-		</div>
-	</div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 
@@ -74,6 +77,3 @@
         } );      
 } );
 </script>
-
-
-
