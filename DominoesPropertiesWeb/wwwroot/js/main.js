@@ -974,7 +974,8 @@ const calUnit =  () => {
 
 function openModal() {
     Swal.fire({
-        template: '#my-template'
+        template: '#my-template',
+        reverseButtons: true
     });
 
     if (singleData.allowSharing) {
@@ -2445,6 +2446,11 @@ let percentage = 0;
 const propertyInvestment = () => {
     let unit = $('#unit').val();
     let alias = $('#alias').val();
+    if (percentage == -1) {
+        window.scrollTo(0, 0);
+        $('.investment-dropdown').focus();
+        return;
+    }
     const confirmPropertyUpdate = Swal.mixin({
         customClass: {
             confirmButton: 'btn btn-success mx-2',
@@ -2478,7 +2484,8 @@ const propertyInvestment = () => {
             $(".btn-property-investment").html("Processing...").attr("disabled", !0);
             let urls = window.location.href.split("/");
             let id = urls[5];
-            if (percentage == 0 ) {
+           
+            if (percentage == 0) {
                 params.propertyUniqueId = id;
                 params.units = unit;
                 params.channel= paymentMode;
@@ -2573,7 +2580,6 @@ const getPairGroup = () => {
         } else {
             var res = JSON.parse(xhr.responseText);
             var data = JSON.parse(res).data;
-            console.log(data);
             pairGroup = data;
             if (JSON.parse(res).success) {
 
@@ -2675,18 +2681,34 @@ const onChangeOfPairDropDown = (index) => {
 }
 
 const onChangeOfGroupDropDown = () => {
+    $('.group-warning').html('');
     $('#card').trigger("click");
+    let openGroup = false;
     let price = Number($('#price').text().replace(/[^0-9\.-]+/g, "").replace("₦", ""));
     var percent = $('.investment-dropdown').val();
     if (percent > 0) {
-        percentage = percent;
-        var sharePercentage = (percent / 100) * price;
-        var projectYield = (singleData.targetYield / 100) * sharePercentage;
-        $('.unit').text(percent + "%");
-        $('.total').html("&#8358; " + formatToCurrency(sharePercentage));
-        $('.yield').html("&#8358; " + formatToCurrency(projectYield));
-        $('.groundTotal').html("&#8358; " + formatToCurrency(sharePercentage));
-        isCreateNewGroup = true;
+        pairGroup.forEach(x => {
+            if (x.percentageSubscribed == percent) {
+                calUnit();
+                $('.group-warning').html(` <div class="alert alert-warning" role="alert">
+                                    <h4 class="alert-heading">Warning!</h4>
+                                    <p>Please note that we have an open investment that can accommodate your investment type, kindly check <strong>${x.alias} investment </strong> group</p>
+                                </div>`);
+                openGroup = true;
+                percentage = -1;
+                return;
+            }
+        });
+        if (!openGroup) {
+            percentage = percent;
+            var sharePercentage = (percent / 100) * price;
+            var projectYield = (singleData.targetYield / 100) * sharePercentage;
+            $('.unit').text(percent + "%");
+            $('.total').html("&#8358; " + formatToCurrency(sharePercentage));
+            $('.yield').html("&#8358; " + formatToCurrency(projectYield));
+            $('.groundTotal').html("&#8358; " + formatToCurrency(sharePercentage));
+            isCreateNewGroup = true;
+        }
     }
 }
 
