@@ -219,7 +219,7 @@
         <div class="model fadeIn">
             <div class="payment">
                 <div class="receipt-box">
-                    <h3>Details</h3>
+                    <h3>Complete Investment</h3>
                     <form>
                         <label>Quantity</label>
                         <input type="number" min="1" value="1" id="unit" oninput="calUnit()" class="form-control">
@@ -229,11 +229,29 @@
                 <div class="payment-info">
                     <div class="pair-investment d-none">
                         <div class="alert alert-success" role="alert">
-                            <h4 class="alert-heading">Shareable investment!</h4>
-                            <p>Kindly note that if you can't afford single investment, you can share with other investor</p>
+                            <h4 class="alert-heading">Paired to Invest</h4>
+                            <h6 class="alert-heading">You asked and we listened!</h6>
+                            <p>
+                                This is how we provide you with opportunity to co-invest with other investors to own less than a unit share as we have in our more expensive projects.
+                                <br/>
+                                Have you wanted to own part of a property that is more than you can currently pay for? Sign up to be paired to Invest and we will do the rest of the work for you so that you can start earning income easy as ABC.
+                            </p>
+                            <p>
+                                Terms & Condition
+                                <ul>
+                                    <li>You can only buy a share of a unit investment in the sizes that have been created</li>
+                                    <li>A single investor cannot purchase 100% in a paired investment</li>
+                                    <li>A group can only be created if and only if there is no existing group that can accommodate the percentage share you want</li>
+                                    <li>If you want more than the remaining percentage share in an open group, you can create new group to start another paired investment</li>
+                                    <li>A paired investment is only completed when 100% unit is purchased in a group</li>
+                                    <li>A record of the Investment will be reflected in investors account only after paired to invest units are fully subscribed to </li>
+                                    <li>Investment is only completed if and only if as and at time of complete purchase, at least one unit of property is available</li>
+                                    <li>If for any reason, a pairing cannot be completed the amount paid will be reversed to your customer wallet on the platform so you can use it to join another investment round.</li>
+                                </ul>
+                            </p>
                             <hr>
                             <p class="mb-0">
-                                <a class="default-btn btn-group" href="javascript:void(0)" onclick="getPairGroup()">Get started</a>
+                                <a class="default-btn btn-group" href="javascript:void(0)" onclick="getPairGroup()">Start Pairing</a>
                                 <a class="default-btn btn-join-group d-none" href="javascript:void(0)" onclick="joinGroup()">Join Exisiting Group</a>
                             </p>
                         </div>
@@ -241,9 +259,10 @@
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <select class="form-select investment-dropdown d-none" onchange="onChangeOfGroupDropDown()" aria-label="Default select example">
-                                        <option value="0" selected>Select your percentage</option>
+                                        <option value="0" selected>Select percentage share</option>
                                     </select>
                                 </div>
+                                <div class="group-warning"></div>
                                 <div class="form-group alias d-none">
                                     <label>Group Alias</label>
                                     <input type="text" id="alias" class="form-control">
@@ -280,7 +299,7 @@
                         <table class="table">
                             <tr>
                                 <td> <span class="checkoutPrice"></span> x <span class="unit">1</span></td>
-                                <td class="total">Nill</td>
+                                <td class="total">0.00</td>
                             </tr>
                             <tr>
                                 <td>Projected Interest</td>
@@ -293,7 +312,7 @@
                             <tfoot>
                             <tr>
                                 <td>Grand Total</td>
-                                <td class="groundTotal">Nill</td>
+                                <td class="groundTotal">0.00</td>
                             </tr>
                             </tfoot>
                         </table>
@@ -309,7 +328,7 @@
 <!-- End Single Listing Area -->
 
 <script>
-			$(document).ready(() =>{
-				getSingleProperty();
-			})
-		</script>
+    $(document).ready(() =>{
+        getSingleProperty();
+    })
+</script>

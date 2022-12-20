@@ -1,8 +1,8 @@
-﻿using System;
+﻿#nullable disable
+
+using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
-
-#nullable disable
 
 namespace Models.Models
 {
@@ -22,9 +22,10 @@ namespace Models.Models
         public bool? IsClosed { get; set; }
         public int PercentageSubscribed { get; set; }
         public decimal UnitPrice { get; set; }
+        public bool IsInvested { get; set; } = false;
 
-        [IgnoreDataMember]
-        public virtual Property Property { get; set; }
+        [IgnoreDataMember] public virtual Property Property { get; set; }
+
         public virtual ICollection<Sharingentry> Sharingentries { get; set; }
     }
 }

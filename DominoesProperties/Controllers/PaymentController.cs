@@ -203,11 +203,13 @@ namespace DominoesProperties.Controllers
                         PercentageShare = decimal.ToInt32(decimal.Round(
                             decimal.Divide(transaction.Amount, property.UnitPrice) * 100, MidpointRounding.ToZero)),
                         Date = DateTime.Now,
-                        IsClosed = false
+                        IsClosed = false,
+                        PaymentReference = paystack.TransactionRef
                     };
                     if (investmentRepository.AddSharingentry(entry))
                     {
                         group.PercentageSubscribed += entry.PercentageShare;
+                        group.IsClosed = group.PercentageSubscribed == 100;
                         investmentRepository.UpdateSharingGroup(group);
                         logger.LogInfo($"{transaction.TransactionRef} : {reference} : {paystack.Status}");
                         logger.LogInfo($"{paystack.TransactionRef} : Payment successfully done");
@@ -240,8 +242,8 @@ namespace DominoesProperties.Controllers
                     if (investmentRepository.AddSharingentry(entry))
                     {
                         group.PercentageSubscribed += entry.PercentageShare;
+                        group.IsClosed = group.PercentageSubscribed == 100;
                         investmentRepository.UpdateSharingGroup(group);
-
                         logger.LogInfo($"{transaction.TransactionRef} : {reference} : {paystack.Status}");
                         logger.LogInfo($"{paystack.TransactionRef} : Payment successfully done");
                         return Redirect($"{configuration["app_settings:WebEndpoint"]}?status=success");
@@ -250,9 +252,9 @@ namespace DominoesProperties.Controllers
                 else if (paystack.PaymentModule.Equals(PaymentType.PROPERTY_PURCHASE.ToString()))
                 {
                     var investment = investmentRepository.GetNewInvestments(paystack.TransactionRef);
-                    investment.Status = paystack.Status.ToLower().Equals("success") ? "COMPLETED" : "DECLINED";
-                    investment.Property.UnitAvailable = investment.Property.UnitAvailable - investment.Units;
-                    investment.Property.UnitSold = investment.Property.UnitSold + investment.Units;
+                    investment.Status = paystack.Status!.ToLower().Equals("success") ? "COMPLETED" : "DECLINED";
+                    investment.Property.UnitAvailable -= investment.Units;
+                    investment.Property.UnitSold += investment.Units;
 
                     string filePath = "", html = "";
                     EmailData emailData;
@@ -264,7 +266,6 @@ namespace DominoesProperties.Controllers
                         html = System.IO.File.ReadAllText(filePath.Replace(@"\", "/"));
                         html = html.Replace("{I-NAME}", investment.Property.Name)
                             .Replace("{webroot}", configuration["app_settings:WebEndpoint"]);
-                        ;
 
                         emailData = new EmailData
                         {
