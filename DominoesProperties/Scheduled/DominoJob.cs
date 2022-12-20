@@ -51,7 +51,7 @@ namespace DominoesProperties.Scheduled
                         try
                         {
                             tt.UnitAvailable--;
-                            x.IsClosed = true;
+                            x.IsInvested = true;
                             foreach (var t in x.Sharingentries)
                             {
                                 t.IsClosed = true;
@@ -81,16 +81,18 @@ namespace DominoesProperties.Scheduled
                         {
                             try
                             {
-                                var amount = y.PercentageShare / 100 * tt.UnitPrice;
+                                var amount = decimal.Divide(y.PercentageShare, 100) * tt.UnitPrice;
 
-                                Transaction transaction = new();
-                                transaction.Amount = amount;
-                                transaction.Channel = Channel.TRANSFER.ToString();
-                                transaction.CustomerId = y.CustomerId;
-                                transaction.Module = PaymentType.REVERSAL.ToString();
-                                transaction.Status = "success";
-                                transaction.TransactionRef = $"RV||{y.PaymentReference}";
-                                transaction.TransactionType = TransactionType.DR.ToString();
+                                Transaction transaction = new()
+                                {
+                                    Amount = amount,
+                                    Channel = Channel.TRANSFER.ToString(),
+                                    CustomerId = y.CustomerId,
+                                    Module = PaymentType.REVERSAL.ToString(),
+                                    Status = "success",
+                                    TransactionRef = $"RV||{y.PaymentReference}",
+                                    TransactionType = TransactionType.DR.ToString()
+                                };
 
                                 transactionRepository.NewTransaction(transaction);
 
