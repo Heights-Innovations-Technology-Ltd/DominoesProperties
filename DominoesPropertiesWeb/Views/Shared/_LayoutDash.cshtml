@@ -26,11 +26,12 @@
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
 
-
 		<script src="~/js/jquery.min.js"></script>
 		<script src="~/js/sweetalert.min.js"></script>
-		 <script src="~/js/moment.js"></script>
-		 <script src="~/js/chart.min.js"></script>
+		<script src="~/js/moment.js"></script>
+		<script src="~/js/chart.min.js"></script>
+		@*<script src="~/js/ckeditor/styles.js"></script>*@
+		@*<script src="~/js/ckeditor/ckeditor.js"></script>*@
 
 		<link href="//cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css" rel="stylesheet" type="text/css">
 		<script src="//cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
@@ -66,7 +67,7 @@
 		@Html.Hidden("fullname", userFullName)
 		@Html.Hidden("isAdmin", isAdmin)
 		@Html.Hidden("createdBy", @HttpContextAccessor.HttpContext.Session.GetString("Email"))
-@Html.Hidden("isLogIn", userLogin)
+		@Html.Hidden("isLogIn", userLogin)
     <body>
 		<script>
 			$(function(){
@@ -252,6 +253,12 @@
 						<a href="/Dashboard" class="active" id="dashboard-link">
 							<i class="ri-dashboard-line"></i>
 							Dashboard
+						</a>
+					</li>
+					<li>
+						<a asp-controller="Admin" asp-action="Blogs" id="property-link">
+							<i class="ri-building-2-fill"></i>
+							Blogs
 						</a>
 					</li>
 					<li>

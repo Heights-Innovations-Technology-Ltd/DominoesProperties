@@ -1,0 +1,63 @@
+﻿
+@{
+    ViewData["Title"] = "CreateBlog";
+    Layout = "~/Views/Shared/_LayoutDash.cshtml";
+}
+
+<script src="https://cdn.ckeditor.com/4.20.1/standard/ckeditor.js"></script>
+<!-- Start Dashboard Area -->
+<div class="dashboard-area">
+	<div class="container-fluid">
+		<div class="dashboard-title-wrap">
+			<div class="row align-items-center">
+				<div class="col-lg-6 col-sm-6">
+					<ul class="dashboard-page-title">
+						<li>
+							<a href="/dashboard">
+								Home
+							</a>
+						</li>
+						<li>
+							<a asp-controller="Admin" asp-action="Blogs">
+								Blogs
+							</a>
+						</li>
+
+						<li class="active">Add Blog</li>
+					</ul>
+				</div>
+				<div class="col-lg-6 col-sm-6">
+				</div>
+			</div>
+		</div>
+
+		<div class="add-listing">
+			<div id="msg"></div>
+			<form class="decline_form">
+				<div class="form-group">
+					<label>Blog Title</label>
+					<input type="text" class="form-control" style="border: 1px solid #babec0;" name="title" id="title" required>
+				</div>
+				<div class="form-group">
+					<label>Header Image</label>
+					<input type="file" class="form-control" style="border: 1px solid #babec0;" id="blogImage" required>
+				</div>
+				<div class="form-group">
+					<label>Blog Content</label>
+					<textarea id="editor1" name="editor1"></textarea>
+				</div>
+				<button type="button" class="default-btn btn-createBlog">
+					Submit
+				</button>
+			</form>
+		</div>
+	</div>
+</div>
+<!-- End Dashboard Area -->
+<script>
+	CKEDITOR.replace('editor1');
+	$(() => {
+		//GetPropertyTypes();
+	})
+</script>
+

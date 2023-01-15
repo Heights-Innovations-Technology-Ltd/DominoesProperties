@@ -3793,6 +3793,319 @@ $('#btn-onboarding').click(function () {
     return false;
 });
 
+$('.btn-createBlog').on('click', function () {
+    const confirmOnboarding = Swal.mixin({
+        customClass: {
+            confirmButton: 'btn btn-success mx-2',
+            cancelButton: 'btn btn-danger'
+        },
+        buttonsStyling: false
+    })
+
+    confirmOnboarding.fire({
+        title: 'Are you sure?',
+        text: "To create this blog content!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes!',
+        cancelButtonText: 'No, cancel!',
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            let t = false;
+            var e = "";
+            $(".btn-createBlog").attr("disabled", !0).html(`Processing...`)
+            if (
+                ($("#blog-form")
+                    .find("input")
+                    .each(function () {
+                        $(this).prop("required") && ($(this).val() || ((t = !0), (name = $(this).attr("id")), (e += name + ", ")));
+                    })
+                )
+            )
+                if (t) return $('#msg').html(message("error", "Validation error:  the following field are required ( " +
+                    e.substring(0, e.length - 2) + " )")), window.scrollTo(0, 0), $(".btn-createBlog").attr("disabled", !1).html(`<i data-acorn-icon="save"></i><span>Submit</span>`);
+            var editor = CKEDITOR.instances.editor1.getData();
+            var params = {
+                BlogTitle: $("#title").val(),
+                BlogContent: editor,
+                BlogTags: 'Agriculture',
+                CreatedBy: $("#createdBy").val(),
+            };
+
+            console.log(params);
+
+            var fileUpload = $("#blogImage").get(0);
+
+            var files = fileUpload.files;
+
+            if (files.length == 0) {
+                $('#msg').html(message("error", "Blog image is required!"));
+                $(".btn-createBlog").attr("disabled", !1).html(`<i data-acorn-icon="save"></i><span>Submit</span>`);
+                return;
+            }
+
+            var data = new FormData();
+            if (files.length != 0) {
+                var fname = files[0].name;
+                var extension = fname.substr(fname.lastIndexOf("."))
+                var re = /(\.jpg|\.jpeg|\.gif|\.png)$/i;
+                if (!re.exec(extension)) {
+                    alert("File extension not supported!");
+                    $(".btn-createBlog").attr("disabled", !1).html(`<i data-acorn-icon="save"></i><span>Submit</span>`);
+                    return;
+                }
+
+                data.append(files[0].name, files[0]);
+            }
+
+            var oReq = new XMLHttpRequest();
+            oReq.open("POST", "/new-blog", false);
+            oReq.onload = function (oEvent) {
+                if (oReq.status == 200) {
+                    var res = JSON.parse(oReq.responseText);
+                    let data = JSON.parse(res).data;
+
+                    if (JSON.parse(res).success)
+                        
+                            $("#title").val(''), $("#editor").val(''), $("#blogImage").val(''),
+                            $('#msg').html(message("success", data)),
+                            window.scrollTo(0, 0),
+                            setTimeout(() => {
+                                location.reload();
+                            }, 500);
+
+                    else {
+                        $('#msg').html(message("error", JSON.parse(res).message));
+                        window.scrollTo(0, 0);
+                        $(".btn-createBlog").attr("disabled", !1).html(`Submit`);
+                        params = {};
+                    }
+                } else {
+                    $('#msg').html(message("error", "Error performing operation, contact admin or try again in few minutes"));
+                    $(".btn-createBlog").attr("disabled", !1).html(`Submit`);
+                }
+            };
+
+            data.append("params", JSON.stringify(params));
+
+            oReq.send(data);
+        } else if (
+            /* Read more about handling dismissals below */
+            result.dismiss === Swal.DismissReason.cancel
+        ) {
+            arrayOfValues = [];
+            confirmPropertyUpdate.fire(
+                'Cancelled',
+                'No onboarding was made :)',
+                'error'
+            )
+        }
+    });
+    return false;
+});
+
+function getBlogs() {
+
+    let xhr = new XMLHttpRequest();
+    let url = "/getblogs";
+    xhr.open('GET', url, false);
+    xhr.setRequestHeader("content-type", "application/json");
+    xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+    try {
+        xhr.send();
+        if (xhr.status != 200) {
+            $('#msg').html(message("error", "Error performing operation, contact admin or try again in few minutes"));
+            /* alert('Something went wrong try again!');*/
+        } else {
+
+            var res = JSON.parse(xhr.responseText);
+            let data = JSON.parse(res).data;
+            console.log(data);
+            if (JSON.parse(res).success && data.length >= 1)
+                openNegotiaonData = data,
+                    $('#checkboxTable').html('').pagination({
+                        dataSource: data,
+                        callback: function (data, pagination) {
+                            // template method of yourself
+                            var html = blogTemp(data);
+                            dataContainer.html(html);
+                        }
+                    })
+
+            else {
+                $('#checkboxTable').html(`<div class="card mb-2">
+                        <div class="card-body pt-0 pb-0 sh-21 sh-md-8">
+                            <div class="row g-0 h-100 align-content-center">
+                                <div class="col-md-12 d-flex flex-column justify-content-center">
+                                    <div class="text-alternate text-center">No data found!</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>`);
+            }
+        }
+    } catch (err) { // instead of onerror
+        //alert("Request failed");
+    }
+}
+
+function blogTemp(data) {
+    $('#example tbody').html('');
+    data.forEach((x, index, array) => {
+        let res = `<tr>
+                        <td>${x.blogTitle}</td>
+                        <td>${x.createdBy}</td>
+                        <td>${moment(x.createdOn).format('L')}</td>
+                        <td>
+                             <a href="#" class="btn btn-info" onclick="viewBlog('${x.uniqueNumber}')"><i class="fa fa-eye"></i></a>
+                             <a href="#" class="btn btn-warning" onclick="editBlog('${x.uniqueNumber}')"><i class="fa fa-pencile"></i></a>
+                             <a href="#" class="btn btn-danger" onclick="deleteBlog('${x.uniqueNumber}')"><i class="fa fa-trash"></i></a>
+                        </td>
+                   </tr>`;
+        $('#example tbody').append(res);
+    });
+}
+
+const viewBlog = (id) => {
+    if (!id) {
+        return;
+    }
+    let xhr = new XMLHttpRequest();
+    let url = "/getBlogById/" + id;
+    xhr.open('GET', url, false);
+    xhr.setRequestHeader("content-type", "application/json");
+    xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+    try {
+        xhr.send();
+        if (xhr.status != 200) {
+            $('#msg').html(message("error", "Error performing operation, contact admin or try again in few minutes"));
+            /* alert('Something went wrong try again!');*/
+        } else {
+
+            var res = JSON.parse(xhr.responseText);
+            let data = JSON.parse(res).data;
+            if (JSON.parse(res).success)
+                $('.blogTitle').html(data.blogTitle),
+                    $('.blogImage').attr("src", data.blogImage),
+                    $('.blogContent').html(data.blogContent),
+                    $('#viewBlogModal').modal('show');
+        }
+    } catch (err) { // instead of onerror
+        //alert("Request failed");
+    }
+
+}
+
+const editBlog = (id) => {
+    if (!id) {
+        return;
+    }
+    let xhr = new XMLHttpRequest();
+    let url = "/getBlogById/" + id;
+    xhr.open('GET', url, false);
+    xhr.setRequestHeader("content-type", "application/json");
+    xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+    try {
+        xhr.send();
+        if (xhr.status != 200) {
+            $('#msg').html(message("error", "Error performing operation, contact admin or try again in few minutes"));
+            /* alert('Something went wrong try again!');*/
+        } else {
+
+            var res = JSON.parse(xhr.responseText);
+            let data = JSON.parse(res).data;
+            console.log(data);
+            if (JSON.parse(res).success) {
+                $('#editBlogModal').modal('show');
+                $('#editTitle').val(data.blogTitle);
+                //$('#editImage').val(data.blogImage);
+                //$('textarea.editContent').val(data.blogContent);
+                //CKEDITOR.instances['editContent'].setData(data.blogContent);
+                //CKEDITOR.instances['editor'].setData(`<p>Hello</p>`);
+                CKEDITOR.instances.editor.setData('<p>Hello</p>');
+
+            }
+
+            //$('.blogTitle').html(data.blogTitle),
+            //    $('.blogImage').attr("src", data.blogImage),
+            //    $('.blogContent').html(data.blogContent),
+            //    $('#viewBlogModal').modal('show');
+        }
+    } catch (err) { // instead of onerror
+        //alert("Request failed");
+    }
+}
+
+const deleteBlog = (id) => {
+    if (!id) {
+        return;
+    }
+    const confirmPropertyUpdate = Swal.mixin({
+        customClass: {
+            confirmButton: 'btn btn-success mx-2',
+            cancelButton: 'btn btn-danger'
+        },
+        buttonsStyling: false
+    })
+
+    confirmPropertyUpdate.fire({
+        title: 'Are you sure?',
+        text: "To delete this blog content!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes',
+        cancelButtonText: 'No, cancel!',
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            let xhr = new XMLHttpRequest();
+            let url = "/deleteBlog/" + id;
+            xhr.open('GET', url, false);
+            xhr.setRequestHeader("content-type", "application/json");
+            xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+            try {
+                xhr.send();
+                if (xhr.status != 200) {
+                    $('#msg').html(message("error", "Error performing operation, contact admin or try again in few minutes"));
+                    /* alert('Something went wrong try again!');*/
+                } else {
+
+                    var res = JSON.parse(xhr.responseText);
+                    let data = JSON.parse(res).message;
+                    console.log(data);
+                    if (JSON.parse(res).success) {
+                        Swal.fire(
+                            'Good job!',
+                            data,
+                            'success'
+                        ).then(() => {
+                            location.reload();
+                        })
+                    } else {
+                        Swal.fire(
+                            'Oops!',
+                            data,
+                            'error'
+                        );
+                    }
+                }
+            } catch (err) { // instead of onerror
+                //alert("Request failed");
+            }
+        } else if (
+            /* Read more about handling dismissals below */
+            result.dismiss === Swal.DismissReason.cancel
+        ) {
+            //confirmPropertyUpdate.fire(
+            //    'Cancelled',
+            //    'No changes was made :)',
+            //    'error'
+            //)
+        }
+    });
+}
+
 function forgetPassword() {
 
     (async () => {
