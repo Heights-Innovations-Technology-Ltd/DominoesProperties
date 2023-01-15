@@ -1,9 +1,9 @@
 ﻿using System;
-using Models.Models;
-using Helpers;
 using System.Linq;
 using DominoesProperties.Enums;
 using DominoesProperties.Models;
+using Helpers;
+using Models.Models;
 
 namespace DominoesProperties.Helper
 {
@@ -121,6 +121,7 @@ namespace DominoesProperties.Helper
             {
                 prop.Data = property.PropertyUploads;
             }
+
             return prop;
         }
 
@@ -209,7 +210,7 @@ namespace DominoesProperties.Helper
                 Property = inv.Property.Name
             };
         }
-        
+
         internal static BlogModel GetBlogModelFromBlogPost(Blogpost blogPost)
         {
             BlogModel model = new();
@@ -233,10 +234,12 @@ namespace DominoesProperties.Helper
             Blogpost model = new()
             {
                 BlogTitle = blogPost.BlogTitle,
-                BlogContent = blogPost.BlogContent
+                BlogContent = blogPost.BlogContent,
+                UniqueNumber = string.IsNullOrEmpty(blogPost.UniqueNumber)
+                    ? CommonLogic.GetUniqueNumber("BP")
+                    : blogPost.UniqueNumber
             };
 
-            model.UniqueNumber =  blogPost.UniqueNumber == null ? CommonLogic.GetUniqueNumber("BP") : blogPost.UniqueNumber;
             if (blogPost.BlogTags != null)
                 model.BlogTags = blogPost.BlogTags;
 

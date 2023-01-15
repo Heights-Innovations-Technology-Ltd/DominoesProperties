@@ -2603,15 +2603,15 @@ const getPairGroup = () => {
                                                 <div class="progress-bar progress-bar-striped progress-bar-animated " role="progressbar" style="width: ${x.percentageSubscribed}%" aria-valuenow="${x.percentageSubscribed}" aria-valuemin="0" aria-valuemax="100">${x.percentageSubscribed}%</div>
                                             </div>
                                             ${x.isClosed == false ?
-                                            `<a href="javascript:void(0)" class="default-btn text-white mt-3" onclick="pairInvestmentDropDown(${index})">Join this group now</a>
-                                                <a href="javascript:void(0)" class="default-btn text-white float-end mt-3" onclick="newGroup()"> Or Create new group</a>
+                        `<a href="javascript:void(0)" class="default-btn text-white mt-3" onclick="pairInvestmentDropDown(${index})">Join this group</a>
+                                                <a href="javascript:void(0)" class="default-btn text-white float-end mt-3" onclick="newGroup()">Create new group</a>
 
                                                 <div class="form-group">
                                                     <select class="form-select pair-investment-dropdown${index} d-none" onchange="onChangeOfPairDropDown(${index})" aria-label="Default select example">
                                                         <option value="0" selected>Select your percentage</option>
                                                     </select>
                                                 </div>`
-                                            : ''}
+                        : ''}
                                         </div>
                                     </div>
 

@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using DominoesProperties.Enums;
 using DominoesProperties.Models;
 using MailKit.Net.Smtp;
+using Microsoft.Extensions.Options;
 using MimeKit;
 using Models.Models;
 using Repositories.Repository;
@@ -23,7 +24,7 @@ namespace DominoesProperties.Scheduled
         public DominoJob(IInvestmentRepository _investmentRepository, IPropertyRepository _propertyRepository,
             ITransactionRepository _transactionRepository, IWalletRepository _walletRepository,
             IEmailRetryRepository _emailRetryRepository, ILoggerManager _logger,
-            ICustomerRepository _customerRepository)
+            ICustomerRepository _customerRepository, IOptions<EmailSettings> options)
         {
             investmentRepository = _investmentRepository;
             propertyRepository = _propertyRepository;
@@ -32,6 +33,7 @@ namespace DominoesProperties.Scheduled
             emailRetryRepository = _emailRetryRepository;
             logger = _logger;
             customerRepository = _customerRepository;
+            _emailSettings = options.Value;
         }
 
         public void PerformPairInvestment()
@@ -51,7 +53,7 @@ namespace DominoesProperties.Scheduled
                         try
                         {
                             tt.UnitAvailable--;
-                            x.IsClosed = true;
+                            x.IsInvested = true;
                             foreach (var t in x.Sharingentries)
                             {
                                 t.IsClosed = true;
@@ -81,16 +83,18 @@ namespace DominoesProperties.Scheduled
                         {
                             try
                             {
-                                var amount = y.PercentageShare / 100 * tt.UnitPrice;
+                                var amount = decimal.Divide(y.PercentageShare, 100) * tt.UnitPrice;
 
-                                Transaction transaction = new();
-                                transaction.Amount = amount;
-                                transaction.Channel = Channel.TRANSFER.ToString();
-                                transaction.CustomerId = y.CustomerId;
-                                transaction.Module = PaymentType.REVERSAL.ToString();
-                                transaction.Status = "success";
-                                transaction.TransactionRef = $"RV||{y.PaymentReference}";
-                                transaction.TransactionType = TransactionType.DR.ToString();
+                                Transaction transaction = new()
+                                {
+                                    Amount = amount,
+                                    Channel = Channel.TRANSFER.ToString(),
+                                    CustomerId = y.CustomerId,
+                                    Module = PaymentType.REVERSAL.ToString(),
+                                    Status = "success",
+                                    TransactionRef = $"RV||{y.PaymentReference}",
+                                    TransactionType = TransactionType.DR.ToString()
+                                };
 
                                 transactionRepository.NewTransaction(transaction);
 
@@ -182,32 +186,30 @@ namespace DominoesProperties.Scheduled
                 var retries = emailRetryRepository.GetRetries();
                 retries.ForEach(x =>
                 {
-                    if (x.DateCreated.Day == DateTime.Now.Day && x.DateCreated.AddMinutes(5) <= DateTime.Now &&
-                        x.RetryCount < 3)
+                    if (x.DateCreated.Day != DateTime.Now.Day || DateTime.Now > x.DateCreated.AddMinutes(5) ||
+                        x.RetryCount >= 3) return;
+                    MimeMessage emailMessage = new();
+
+                    MailboxAddress emailFrom = new(_emailSettings.Name, _emailSettings.EmailId);
+                    emailMessage.From.Add(emailFrom);
+
+                    MailboxAddress emailTo = new(x.RecipientName, x.Recipient);
+                    emailMessage.To.Add(emailTo);
+
+                    emailMessage.Subject = x.Subject;
+
+                    BodyBuilder emailBodyBuilder = new()
                     {
-                        MimeMessage emailMessage = new();
+                        HtmlBody = x.Body
+                    };
+                    emailMessage.Body = emailBodyBuilder.ToMessageBody();
+                    emailClient.Send(emailMessage);
 
-                        MailboxAddress emailFrom = new(_emailSettings.Name, _emailSettings.EmailId);
-                        emailMessage.From.Add(emailFrom);
+                    x.DateCreated = DateTime.Now;
+                    x.StatusCode = "200";
+                    x.RetryCount += 1;
 
-                        MailboxAddress emailTo = new(x.RecipientName, x.Recipient);
-                        emailMessage.To.Add(emailTo);
-
-                        emailMessage.Subject = x.Subject;
-
-                        BodyBuilder emailBodyBuilder = new()
-                        {
-                            HtmlBody = x.Body
-                        };
-                        emailMessage.Body = emailBodyBuilder.ToMessageBody();
-                        emailClient.Send(emailMessage);
-
-                        x.DateCreated = DateTime.Now;
-                        x.StatusCode = "200";
-                        x.RetryCount += 1;
-
-                        emailRetryRepository.UpdateRetry(x);
-                    }
+                    emailRetryRepository.UpdateRetry(x);
                 });
 
                 emailClient.Disconnect(true);
@@ -225,7 +227,8 @@ namespace DominoesProperties.Scheduled
         public void CheckSubscription()
         {
             var xx = customerRepository.GetCustomers().FindAll(x =>
-                x.NextSubscriptionDate.HasValue && x.NextSubscriptionDate.Value.CompareTo(DateTime.Now) < 0 &&
+                x.IsSubscribed != null && x.NextSubscriptionDate.HasValue &&
+                x.NextSubscriptionDate.Value.CompareTo(DateTime.Now) < 0 &&
                 x.IsSubscribed.Value);
             xx.ForEach(x => { x.IsSubscribed = false; });
 

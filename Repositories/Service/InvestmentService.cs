@@ -144,7 +144,7 @@ namespace Repositories.Service
         public List<Sharinggroup> CompletedSharingGroup()
         {
             return _context.Sharinggroups
-                .Where(x => x.PercentageSubscribed == 100 && !x.IsClosed.Value)
+                .Where(x => x.PercentageSubscribed == 100 && x.IsClosed.Value && !x.IsInvested)
                 .Include(x => x.Sharingentries)
                 .ToList();
         }
