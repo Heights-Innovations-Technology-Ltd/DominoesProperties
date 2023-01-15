@@ -248,20 +248,20 @@ namespace DominoesProperties.Controllers
             return _response;
         }
 
-        [Route("delete-post/{postId:long}")]
+        [Route("delete-post/{postId}")]
         [HttpDelete]
         [Authorize]
-        public ApiResponse DeleteBlog(long postId)
+        public ApiResponse DeleteBlog(string postId)
         {
             _response.Success = false;
             _response.Message = "Error adding blog post, try again in a short period";
 
             try
             {
-                if (postId > 0)
+                if (string.IsNullOrEmpty(postId))
                 {
                     var blog = _blogPostRepository.BlogPosts()
-                        .FirstOrDefault(x => x.Id == postId || x.UniqueNumber.Equals(postId.ToString()));
+                        .FirstOrDefault(x => x.UniqueNumber.Equals(postId));
                     blog!.IsDeleted = true;
                     if (_blogPostRepository.UpdateBlogPosts(blog))
                     {
