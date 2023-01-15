@@ -1,17 +1,17 @@
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using DominoesProperties.Enums;
 using DominoesProperties.Helper;
 using DominoesProperties.Models;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 using Repositories.Repository;
-using Role = DominoesProperties.Enums.Role;
 
 namespace DominoesProperties.Controllers
 {
@@ -19,14 +19,15 @@ namespace DominoesProperties.Controllers
     [ApiController]
     public class BlogController : Controller
     {
-        private readonly IBlogPostRepository _blogPostRepository;
-        private readonly ILoggerManager _logger;
         private readonly IAdminRepository _adminRepository;
-        private readonly IWebHostEnvironment _hostingEnvironment;
+        private readonly IBlogPostRepository _blogPostRepository;
         private readonly IConfiguration _config;
+        private readonly IWebHostEnvironment _hostingEnvironment;
+        private readonly ILoggerManager _logger;
         private readonly ApiResponse _response = new(false, "Error performing request, contact admin");
 
-        public BlogController(IBlogPostRepository blogPostRepository, ILoggerManager logger, IConfiguration config, IAdminRepository adminRepository,
+        public BlogController(IBlogPostRepository blogPostRepository, ILoggerManager logger, IConfiguration config,
+            IAdminRepository adminRepository,
             IWebHostEnvironment hostingEnvironment)
         {
             _blogPostRepository = blogPostRepository;
@@ -35,9 +36,12 @@ namespace DominoesProperties.Controllers
             _hostingEnvironment = hostingEnvironment;
             _config = config;
         }
+
         private string GetBlogPhoto(HttpRequest httpRequest)
         {
-            return (from formFile in httpRequest.Form.Files where formFile.Name.Equals("blogImage") select formFile.FileName).FirstOrDefault();
+            return (from formFile in httpRequest.Form.Files
+                where formFile.Name.Equals("blogImage")
+                select formFile.FileName).FirstOrDefault();
         }
 
         [Route("posts")]
@@ -52,7 +56,8 @@ namespace DominoesProperties.Controllers
                 foreach (var blog in blogs)
                 {
                     var blogPostModel = ClassConverter.GetBlogModelFromBlogPost(blog);
-                    blogPostModel.BlogImage = !string.IsNullOrEmpty(blog.BlogImage) ? $"{_config["app_settings:UIHostURL"]}{_config["app_settings:blogUploadFilePath"]}/{blog.BlogImage}"
+                    blogPostModel.BlogImage = !string.IsNullOrEmpty(blog.BlogImage)
+                        ? $"{_config["app_settings:UIHostURL"]}{_config["app_settings:blogUploadFilePath"]}/{blog.BlogImage}"
                         : "";
                     blogModelList.Add(blogPostModel);
                 }
@@ -83,12 +88,14 @@ namespace DominoesProperties.Controllers
         {
             try
             {
-                var blog = _blogPostRepository.BlogPosts().Find(x => (x.UniqueNumber.Equals(postId)) && !x.IsDeleted.GetValueOrDefault());
-               
+                var blog = _blogPostRepository.BlogPosts()
+                    .Find(x => (x.UniqueNumber.Equals(postId)) && !x.IsDeleted.GetValueOrDefault());
+
                 if (blog != null)
                 {
                     var blogPostModel = ClassConverter.GetBlogModelFromBlogPost(blog);
-                    blogPostModel.BlogImage = !string.IsNullOrEmpty(blog.BlogImage) ? $"{_config["app_settings:HostURL"]}{_config["app_settings:blogUploadFilePath"]}/{blog.BlogImage}"
+                    blogPostModel.BlogImage = !string.IsNullOrEmpty(blog.BlogImage)
+                        ? $"{_config["app_settings:HostURL"]}{_config["app_settings:blogUploadFilePath"]}/{blog.BlogImage}"
                         : "";
 
                     _response.Success = true;
@@ -115,7 +122,8 @@ namespace DominoesProperties.Controllers
             foreach (var formFile in httpRequest.Form.Files)
             {
                 if (formFile.Length <= 0) continue;
-                var filePath = Path.Combine(_hostingEnvironment.WebRootPath, _config["app_settings:blogUploadFilePath"]);
+                var filePath = Path.Combine(_hostingEnvironment.WebRootPath,
+                    _config["app_settings:blogUploadFilePath"]);
                 if (!Directory.Exists(filePath))
                     Directory.CreateDirectory(filePath);
 
@@ -124,15 +132,18 @@ namespace DominoesProperties.Controllers
                 {
                     formFile.CopyTo(stream);
                 }
+
                 if (formFile.Name.Equals("blogImage"))
                     fileNameListOfCustomerFiles.Add(paddedFileName);
             }
+
             return fileNameListOfCustomerFiles;
         }
 
         private List<BlogModel> GetBlogPosts()
         {
-            return _blogPostRepository.BlogPosts().Where(x => x.IsDeleted == false).ToList().Select(ClassConverter.GetBlogModelFromBlogPost).ToList();
+            return _blogPostRepository.BlogPosts().Where(x => x.IsDeleted == false).ToList()
+                .Select(ClassConverter.GetBlogModelFromBlogPost).ToList();
         }
 
         [Route("new-post")]
@@ -154,18 +165,16 @@ namespace DominoesProperties.Controllers
                 _response.Message = "Blog title is required";
                 return _response;
             }
+
             if (string.IsNullOrEmpty(blogPostModel.BlogContent))
             {
                 _response.Message = "Blog contenet cannot be empty";
                 return _response;
             }
-            if (string.IsNullOrEmpty(blogPostModel.CreatedBy))
-            {
-                _response.Message = "Username of creator required";
-                return _response;
-            }
-            
-            if(_adminRepository.GetUser(blogPostModel.CreatedBy).RoleFk.GetValueOrDefault().Equals((int)Role.ADMIN))
+
+            blogPostModel.CreatedBy = HttpContext.User.Identity!.Name;
+
+            if (_adminRepository.GetUser(blogPostModel.CreatedBy).RoleFk.GetValueOrDefault().Equals((int)Role.ADMIN))
             {
                 _response.Message = "You do not have required permission for this operation";
                 return _response;
@@ -173,7 +182,8 @@ namespace DominoesProperties.Controllers
 
             try
             {
-                if (_blogPostRepository.AddBlogPosts(ClassConverter.GetBlogPostFromModel(blogPostModel)))
+                var blog = ClassConverter.GetBlogPostFromModel(blogPostModel);
+                if (_blogPostRepository.AddBlogPosts(blog))
                 {
                     _response.Success = true;
                     _response.Message = "Blog post successfully created";
@@ -182,12 +192,13 @@ namespace DominoesProperties.Controllers
             }
             catch (Exception ex)
             {
-                string errorData = JsonConvert.SerializeObject(new
+                var errorData = JsonConvert.SerializeObject(new
                 {
                     BlogModel = blogPostModel,
                 });
                 _logger.LogInfo(ex.StackTrace);
             }
+
             return _response;
         }
 
@@ -196,11 +207,10 @@ namespace DominoesProperties.Controllers
         [Authorize]
         public ApiResponse UpdateBlogPost(BlogModel blogPostModel)
         {
-            
             _response.Success = false;
             _response.Message = "Error updating blog post, try again in a short period";
 
-            if(blogPostModel.UniqueNumber == null)
+            if (blogPostModel.UniqueNumber == null)
             {
                 _response.Message = "Unique number must be supplied";
                 return _response;
@@ -225,7 +235,8 @@ namespace DominoesProperties.Controllers
                     _response.Message = "Blog post successfully created";
                     return _response;
                 }
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 var errorData = JsonConvert.SerializeObject(new
                 {
@@ -233,6 +244,7 @@ namespace DominoesProperties.Controllers
                 });
                 _logger.LogInfo(ex.StackTrace);
             }
+
             return _response;
         }
 
@@ -241,7 +253,6 @@ namespace DominoesProperties.Controllers
         [Authorize]
         public ApiResponse DeleteBlog(long postId)
         {
-            
             _response.Success = false;
             _response.Message = "Error adding blog post, try again in a short period";
 
@@ -249,7 +260,8 @@ namespace DominoesProperties.Controllers
             {
                 if (postId > 0)
                 {
-                    var blog = _blogPostRepository.BlogPosts().FirstOrDefault(x => x.Id == postId || x.UniqueNumber.Equals(postId.ToString()));
+                    var blog = _blogPostRepository.BlogPosts()
+                        .FirstOrDefault(x => x.Id == postId || x.UniqueNumber.Equals(postId.ToString()));
                     blog!.IsDeleted = true;
                     if (_blogPostRepository.UpdateBlogPosts(blog))
                     {
@@ -271,8 +283,8 @@ namespace DominoesProperties.Controllers
                     Id = postId,
                 });
                 _logger.LogInfo(ex.StackTrace);
-
             }
+
             return _response;
         }
     }

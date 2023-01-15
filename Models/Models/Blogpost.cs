@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿#nullable disable
 
-#nullable disable
+using System;
 
 namespace Models.Models
 {
@@ -14,7 +13,7 @@ namespace Models.Models
         public string CreatedBy { get; set; }
         public string BlogTags { get; set; }
         public string BlogImage { get; set; }
-        public bool? IsDeleted { get; set; }
+        public bool? IsDeleted { get; set; } = false;
         public string UniqueNumber { get; set; }
 
         public virtual Admin CreatedByNavigation { get; }
