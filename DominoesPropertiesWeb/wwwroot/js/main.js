@@ -1259,7 +1259,8 @@ $('.btn-update-property').click(() => {
                 Summary: $("#description").val(),
                 VideoLink: $("#videoLink").val(),
                 AllowSharing: Number($("#allowSharing").val()),
-                MinimumSharing: $("#minimumSharing").val()
+                MinimumSharing: $("#minimumSharing").val(),
+                Status: $("#status").val()
 
             };
 

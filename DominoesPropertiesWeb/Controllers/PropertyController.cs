@@ -155,6 +155,7 @@ namespace DominoesPropertiesWeb.Controllers
             obj.ClosingDate = Convert.ToDateTime(jObject["ClosingDate"]);
             obj.Summary = Convert.ToString(jObject["Summary"]);
             obj.VideoLink = Convert.ToString(jObject["VideoLink"]);
+            obj.Status = Convert.ToString(jObject["Status"]);
 
             var res = Task.Run(() => httpContext.Put("Property/" + propertyId, obj));
             var data = await res.GetAwaiter().GetResult();
