@@ -1,4 +1,3 @@
-
 using System;
 
 namespace DominoesProperties.Models
@@ -15,10 +14,10 @@ namespace DominoesProperties.Models
         public decimal? InterestRate { get; set; }
         public string Longitude { get; set; }
         public string Latitude { get; set; }
+        public string Status { get; set; }
         public string Summary { get; set; }
         public string VideoLink { get; set; }
         public bool AllowSharing { get; set; }
         public int MinimumSharingPercentage { get; set; }
-
     }
 }
