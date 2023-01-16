@@ -61,7 +61,7 @@ namespace DominoesProperties.Helper
 
         internal static Property PropertyToEntity(Models.Properties property)
         {
-            return new Property
+            var prop = new Property
             {
                 UniqueId = Guid.NewGuid().ToString(),
                 Name = property.Name,
@@ -71,22 +71,26 @@ namespace DominoesProperties.Helper
                 Latitude = property.Latitude,
                 Longitude = property.Longitude,
                 Location = property.Location,
-                TargetYield = property.TargetYield.Value,
                 UnitAvailable = property.UnitAvailable = property.TotalUnits - property.UnitSold,
                 UnitPrice = property.UnitPrice,
                 Status = ((PropertyStatus)int.Parse(property.Status)).ToString(),
-                Type = property.Type.Value,
                 TotalUnits = property.TotalUnits,
                 UnitSold = property.UnitSold,
                 Bank = property.BankName,
                 Account = property.AccountNumber,
                 TotalPrice = property.TotalUnits * property.UnitPrice,
-                ProjectedGrowth = property.TargetYield.Value / 100 * property.TotalUnits * property.UnitPrice,
+                ProjectedGrowth = property.TargetYield!.Value / 100 * property.TotalUnits * property.UnitPrice,
                 Summary = property.Summary,
                 VideoLink = property.VideoLink,
                 AllowSharing = property.AllowSharing,
                 MinimumSharingPercentage = property.MinimumSharingPercentage
             };
+            if (property.TargetYield != null)
+                prop.TargetYield = property.TargetYield.Value;
+            if (property.Type != null)
+                prop.Type = property.Type.Value;
+
+            return prop;
         }
 
         internal static Models.Properties EntityToProperty(Property property)

@@ -158,10 +158,10 @@ namespace DominoesProperties.Controllers
                 return response;
             }
 
-            Property property = ClassConverter.PropertyToEntity(properties);
-            property.CreatedBy = adminRepository.GetUser(HttpContext.User.Identity.Name).Email;
+            var property = ClassConverter.PropertyToEntity(properties);
+            property.CreatedBy = adminRepository.GetUser(HttpContext.User.Identity!.Name).Email;
 
-            Description description = ClassConverter.DescriptionToEntity(properties.Description);
+            var description = ClassConverter.DescriptionToEntity(properties.Description);
             description.PropertyId = propertyRepository.AddNewProperty(property).UniqueId;
             propertyRepository.AddPropertyDescription(description);
             response.Success = true;
@@ -173,7 +173,7 @@ namespace DominoesProperties.Controllers
         [Authorize(Roles = "ADMIN")]
         public ApiResponse Property(string uniqueId, [FromBody] UpdateProperty updateProperty)
         {
-            Property property = propertyRepository.GetProperty(uniqueId);
+            var property = propertyRepository.GetProperty(uniqueId);
             if (property == null)
             {
                 response.Message = "Username not found, kindly check and try again";
@@ -183,18 +183,18 @@ namespace DominoesProperties.Controllers
             property.Location = string.IsNullOrEmpty(updateProperty.Location)
                 ? property.Location
                 : updateProperty.Location;
-            property.Type = updateProperty.Type == null ? property.Type : updateProperty.Type.Value;
+            property.Type = updateProperty.Type ?? property.Type;
             property.TotalUnits = updateProperty.TotalUnits > 0 ? updateProperty.TotalUnits : property.TotalUnits;
             property.UnitPrice = updateProperty.UnitPrice > 0 ? updateProperty.UnitPrice : property.UnitPrice;
             property.ClosingDate =
-                updateProperty.ClosingDate == null ? property.ClosingDate : updateProperty.ClosingDate;
-            property.TargetYield = updateProperty.TargetYield.Value > 0
+                updateProperty.ClosingDate ?? property.ClosingDate;
+            property.TargetYield = updateProperty.TargetYield > 0
                 ? updateProperty.TargetYield.Value
                 : property.TargetYield;
-            property.ProjectedGrowth = updateProperty.ProjectedGrowth.Value > 0
+            property.ProjectedGrowth = updateProperty.ProjectedGrowth > 0
                 ? updateProperty.ProjectedGrowth.Value
                 : property.ProjectedGrowth;
-            property.InterestRate = updateProperty.InterestRate.Value > 0
+            property.InterestRate = updateProperty.InterestRate > 0
                 ? updateProperty.InterestRate.Value
                 : property.InterestRate;
             property.Longitude = string.IsNullOrEmpty(updateProperty.Longitude)
@@ -211,6 +211,7 @@ namespace DominoesProperties.Controllers
             property.MinimumSharingPercentage = updateProperty.MinimumSharingPercentage > 0
                 ? updateProperty.MinimumSharingPercentage
                 : property.MinimumSharingPercentage;
+            property.Status = string.IsNullOrEmpty(updateProperty.Status) ? property.Status : updateProperty.Status;
 
             response.Data = propertyRepository.UpdateProperty(property);
             response.Success = true;
