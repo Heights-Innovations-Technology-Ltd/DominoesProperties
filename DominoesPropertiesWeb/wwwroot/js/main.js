@@ -3865,19 +3865,26 @@ $('.btn-createBlog').on('click', function () {
                 if (oReq.status == 200) {
                     var res = JSON.parse(oReq.responseText);
                     let data = JSON.parse(res).data;
+                    let messages = JSON.parse(res).message;
+                    if (JSON.parse(res).success) {
+                        $("#title").val(''), $("#editor").val(''), $("#blogImage").val('');
+                        $('#msg').html(message("success", data));
 
-                    if (JSON.parse(res).success)
-                        
-                            $("#title").val(''), $("#editor").val(''), $("#blogImage").val(''),
-                            $('#msg').html(message("success", data)),
-                            window.scrollTo(0, 0),
-                            setTimeout(() => {
-                                location.reload();
-                            }, 500);
-
-                    else {
-                        $('#msg').html(message("error", JSON.parse(res).message));
                         window.scrollTo(0, 0);
+                        Swal.fire(
+                            'Well done!',
+                            messages != undefined ? messages : data,
+                            'success'
+                        ).then(() => location.reload());
+                    }   
+                    else {
+                        //$('#msg').html(message("error", JSON.parse(res).message));
+                        window.scrollTo(0, 0);
+                        Swal.fire(
+                            'Oops!',
+                            messages != undefined ? messages : data,
+                            'error'
+                        );
                         $(".btn-createBlog").attr("disabled", !1).html(`Submit`);
                         params = {};
                     }
@@ -3923,27 +3930,19 @@ function getBlogs() {
             let data = JSON.parse(res).data;
             console.log(data);
             if (JSON.parse(res).success && data.length >= 1)
-                openNegotiaonData = data,
-                    $('#checkboxTable').html('').pagination({
-                        dataSource: data,
-                        callback: function (data, pagination) {
-                            // template method of yourself
-                            var html = blogTemp(data);
-                            dataContainer.html(html);
-                        }
-                    })
+                blogTemp(data);   
 
-            else {
-                $('#checkboxTable').html(`<div class="card mb-2">
-                        <div class="card-body pt-0 pb-0 sh-21 sh-md-8">
-                            <div class="row g-0 h-100 align-content-center">
-                                <div class="col-md-12 d-flex flex-column justify-content-center">
-                                    <div class="text-alternate text-center">No data found!</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>`);
-            }
+            //else {
+            //    $('#checkboxTable').html(`<div class="card mb-2">
+            //            <div class="card-body pt-0 pb-0 sh-21 sh-md-8">
+            //                <div class="row g-0 h-100 align-content-center">
+            //                    <div class="col-md-12 d-flex flex-column justify-content-center">
+            //                        <div class="text-alternate text-center">No data found!</div>
+            //                    </div>
+            //                </div>
+            //            </div>
+            //        </div>`);
+            //}
         }
     } catch (err) { // instead of onerror
         //alert("Request failed");
@@ -3955,12 +3954,11 @@ function blogTemp(data) {
     data.forEach((x, index, array) => {
         let res = `<tr>
                         <td>${x.blogTitle}</td>
-                        <td>${x.createdBy}</td>
                         <td>${moment(x.createdOn).format('L')}</td>
                         <td>
-                             <a href="#" class="btn btn-info" onclick="viewBlog('${x.uniqueNumber}')"><i class="fa fa-eye"></i></a>
-                             <a href="#" class="btn btn-warning" onclick="editBlog('${x.uniqueNumber}')"><i class="fa fa-pencile"></i></a>
-                             <a href="#" class="btn btn-danger" onclick="deleteBlog('${x.uniqueNumber}')"><i class="fa fa-trash"></i></a>
+                             <a href="#" class="btn btn-primary" title="View content" onclick="viewBlog('${x.uniqueNumber}')"><i class="fa fa-eye"></i></a>
+                             <a href="#" class="btn btn-warning text-white" title="Edit" onclick="editBlog('${x.uniqueNumber}')"><i class="fa fa-pencil"></i></a>
+                             <a href="#" class="btn btn-danger" title="Delete" onclick="deleteBlog('${x.uniqueNumber}')"><i class="fa fa-trash"></i></a>
                         </td>
                    </tr>`;
         $('#example tbody').append(res);
@@ -4072,20 +4070,19 @@ const deleteBlog = (id) => {
                 } else {
 
                     var res = JSON.parse(xhr.responseText);
-                    let data = JSON.parse(res).message;
+                    let data = JSON.parse(res).data;
+                    let messages = JSON.parse(res).message;
                     console.log(data);
                     if (JSON.parse(res).success) {
                         Swal.fire(
                             'Good job!',
-                            data,
+                            messages != undefined ? messages : data,
                             'success'
-                        ).then(() => {
-                            location.reload();
-                        })
+                        ).then(() => { location.reload(); })
                     } else {
                         Swal.fire(
                             'Oops!',
-                            data,
+                            messages != undefined ? messages : data,
                             'error'
                         );
                     }

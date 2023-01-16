@@ -112,7 +112,7 @@ namespace DominoesPropertiesWeb.Controllers
         [Route("/getblogs")]
         public async Task<JsonResult> GetBlogs()
         {
-            var res = Task.Run(() => httpContext.Get("BlogPost/posts"));
+            var res = Task.Run(() => httpContext.Get("Blog/posts"));
             await Task.WhenAll(res);
             var data = res.Status == TaskStatus.RanToCompletion ? res.Result : null;
             return Json(JsonConvert.SerializeObject(data));
@@ -122,7 +122,7 @@ namespace DominoesPropertiesWeb.Controllers
         [Route("/getBlogById/{blogId}")]
         public async Task<JsonResult> GetSingleBlog([FromRoute] string blogId)
         {
-            var res = Task.Run(() => httpContext.Get("BlogPost/post/" + blogId));
+            var res = Task.Run(() => httpContext.Get("Blog/post/" + blogId));
             await Task.WhenAll(res);
             var data = res.Status == TaskStatus.RanToCompletion ? res.Result : null;
             return Json(JsonConvert.SerializeObject(data));
@@ -132,7 +132,7 @@ namespace DominoesPropertiesWeb.Controllers
         [Route("/deleteBlog/{blogId}")]
         public async Task<JsonResult> DeleteBlog([FromRoute] string blogId)
         {
-            var res = Task.Run(() => httpContext.Delete("BlogPost/delete-post/" + blogId));
+            var res = Task.Run(() => httpContext.Delete("Blog/delete-post/" + blogId));
             await Task.WhenAll(res);
             var data = res.Status == TaskStatus.RanToCompletion ? res.Result : null;
             return Json(JsonConvert.SerializeObject(data));
