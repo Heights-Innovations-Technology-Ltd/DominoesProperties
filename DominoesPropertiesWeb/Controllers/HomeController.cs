@@ -72,11 +72,15 @@ namespace DominoesPropertiesWeb.Controllers
         [HttpGet("/Home/PropertyDetails/{uniqueid}")]
         public IActionResult PropertyDetails(string uniqueid)
         {
-            //var userAuth = this.session.GetString("Token");
-            //if (userAuth == null || userAuth.Equals(string.Empty))
-            //{
-            //    return RedirectToAction("SignIn", "Home");
-            //}
+            return View();
+        }
+
+        public IActionResult Blog()
+        {
+            return View();
+        }
+        public IActionResult BlogDetail()
+        {
             return View();
         }
 
