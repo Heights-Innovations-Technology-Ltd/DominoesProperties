@@ -1276,7 +1276,7 @@ $('.btn-update-property').click(() => {
                 if (xhr.status != 200) {
                     // alert('Something went wrong try again!');
                     Swal.fire(
-                        'Good job!',
+                        'Opps!',
                         'Oops! something went wrong.',
                         'error'
                     );
@@ -1294,6 +1294,11 @@ $('.btn-update-property').click(() => {
                         );
                     } else {
                         $(".btn-update-property").html("Edit").attr("disabled", !1);
+                        Swal.fire(
+                            'Opps!',
+                            JSON.parse(res).message,
+                            'error'
+                        );
                         window.scrollTo(0, 0);
                     }
 
