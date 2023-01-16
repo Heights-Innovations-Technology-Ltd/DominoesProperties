@@ -215,6 +215,7 @@ namespace DominoesProperties.Controllers
             property.Status = string.IsNullOrEmpty(updateProperty.Status)
                 ? property.Status
                 : ((PropertyStatus)int.Parse(property.Status)).ToString();
+            property.UnitAvailable = property.TotalUnits - property.UnitSold;
 
             response.Data = propertyRepository.UpdateProperty(property);
             response.Success = true;
