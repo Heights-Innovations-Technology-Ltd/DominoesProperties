@@ -1,0 +1,81 @@
+﻿
+@{
+    ViewData["Title"] = "Blogs";
+    Layout = "~/Views/Shared/_LayoutDash.cshtml";
+}
+
+<link href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/select/1.4.0/css/select.dataTables.min.css">
+<style>
+	.nav_link {
+		color: #d05a15;
+		font-size: 18px;
+	}
+
+	.nav-tabs .nav_link {
+		border: 1px solid #d05a15;
+	}
+
+		.nav-tabs .nav_link.active {
+			border-color: #d05a15 #d05a15 #fff;
+		}
+
+		.nav-tabs .nav_link:hover {
+			border-color: #d05a15 #d05a15 #fff;
+			color: #000;
+		}
+
+</style>
+<!-- Start Dashboard Area -->
+<div class="dashboard-area">
+	<div class="container-fluid">
+		<div class="dashboard-title-wrap">
+			<div class="row align-items-center">
+				<div class="col-lg-6 col-sm-6">
+					<ul class="dashboard-page-title">
+						<li>
+							<a href="/dashboard">
+								Home
+							</a>
+						</li>
+
+						<li class="active">Blogs</li>
+					</ul>
+				</div>
+				<div class="col-lg-6 col-sm-6">
+				</div>
+			</div>
+		</div>
+
+		<div class="add-listing">
+			<div class="row">
+				<div class="col-md-6"></div>
+				<div class="col-md-6">
+					<a asp-controller="Admin" asp-action="CreateBlog" class="default-btn float-end mb-3">
+						Add New Blog
+					</a>
+				</div>
+			</div>
+			<table id="example">
+				<thead>
+					<tr>
+						<th>Title</th>
+						<th>Date</th>
+						<th>Action</th>
+					</tr>
+				</thead>
+				<tbody></tbody>
+			</table>
+		</div>
+	</div>
+</div>
+<!-- End Dashboard Area -->
+<script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+<script>
+	
+	$(() => {
+		getBlogs();
+		$('#example').DataTable();
+		
+	});
+</script>
