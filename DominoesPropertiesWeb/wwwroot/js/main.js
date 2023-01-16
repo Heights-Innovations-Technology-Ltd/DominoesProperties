@@ -1018,6 +1018,7 @@ const editSingleProperty = () => {
         } else {
             var res = JSON.parse(xhr.responseText);
             var data = JSON.parse(res).data;
+            console.log(data);
             if (JSON.parse(res).success) {
                
                 $("#name").val(data.name);
@@ -1249,7 +1250,6 @@ $('.btn-update-property').click(() => {
                 UnitPrice: Number($("#price").val()),
                 ClosingDate: $("#date").val(),
                 UnitAvailable: Number($("#unit").val()),
-                InterestRate: Number($("#interest").val()),
                 Longitude: Number($("#logitude").val()),
                 Latitude: Number($("#latitude").val()),
                 TargetYield: Number($("#targetYield").val()),
@@ -1263,6 +1263,8 @@ $('.btn-update-property').click(() => {
                 Status: $("#status").val()
 
             };
+
+            
 
             let xhr = new XMLHttpRequest();
             let url = "/update-property/" + id;

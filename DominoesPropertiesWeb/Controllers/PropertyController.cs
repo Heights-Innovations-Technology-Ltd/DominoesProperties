@@ -142,13 +142,10 @@ namespace DominoesPropertiesWeb.Controllers
             obj.Type = Convert.ToInt32(jObject["Type"]);
             obj.UnitPrice = Convert.ToInt32(jObject["UnitPrice"]);
             obj.TotalUnits = Convert.ToInt32(jObject["UnitAvailable"]);
-            obj.InterestRate = Convert.ToInt32(jObject["InterestRate"]);
             obj.Longitude = Convert.ToString(jObject["Longitude"]);
             obj.Latitude = Convert.ToString(jObject["Latitude"]);
             obj.AllowSharing = Convert.ToBoolean(jObject["AllowSharing"]);
             obj.MinimumSharingPercentage = Convert.ToInt32(jObject["MinimumSharing"]);
-            //obj.TargetYield = jObject["TargetYield"] != null ? Convert.ToDecimal(jObject["TargetYield"]) : 0;
-            //obj.ProjectedGrowth = jObject["ProjectedGrowth"] != null ? Convert.ToDecimal(jObject["ProjectedGrowth"]) : 0;
             obj.AccountNumber = Convert.ToString(jObject["Account"]);
             obj.BankName = Convert.ToString(jObject["Bank"]);
             obj.MaxUnitPerCustomer = Convert.ToInt32(jObject["MaxUnitPerCustomer"]);
