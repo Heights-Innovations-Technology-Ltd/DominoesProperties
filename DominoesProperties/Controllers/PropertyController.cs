@@ -6,6 +6,7 @@ using DominoesProperties.Enums;
 using DominoesProperties.Helper;
 using DominoesProperties.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Models.Models;
@@ -169,7 +170,8 @@ namespace DominoesProperties.Controllers
         }
 
         [HttpPut("{uniqueId}")]
-        [Authorize(Roles = "ADMIN")]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [Authorize(Roles = "ADMIN, SUPER")]
         public ApiResponse Property(string uniqueId, [FromBody] UpdateProperty updateProperty)
         {
             var property = propertyRepository.GetProperty(uniqueId);
@@ -210,11 +212,13 @@ namespace DominoesProperties.Controllers
             property.MinimumSharingPercentage = updateProperty.MinimumSharingPercentage > 0
                 ? updateProperty.MinimumSharingPercentage
                 : property.MinimumSharingPercentage;
-            property.Status = string.IsNullOrEmpty(updateProperty.Status) ? property.Status : updateProperty.Status;
+            property.Status = string.IsNullOrEmpty(updateProperty.Status)
+                ? property.Status
+                : ((PropertyStatus)int.Parse(property.Status)).ToString();
 
             response.Data = propertyRepository.UpdateProperty(property);
             response.Success = true;
-            response.Message = "Successful";
+            response.Message = "Update Successful";
             return response;
         }
 

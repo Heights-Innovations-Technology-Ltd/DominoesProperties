@@ -11,8 +11,8 @@ namespace DominoesProperties.Extensions
 {
     public class ExceptionMiddleware
     {
-        private readonly RequestDelegate _next;
         private readonly ILoggerManager _logger;
+        private readonly RequestDelegate _next;
 
         public ExceptionMiddleware(RequestDelegate next, ILoggerManager logger)
         {
@@ -33,7 +33,7 @@ namespace DominoesProperties.Extensions
             }
         }
 
-        private async Task HandleExceptionAsync(HttpContext context, Exception exception)
+        private static async Task HandleExceptionAsync(HttpContext context, Exception exception)
         {
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
@@ -42,6 +42,7 @@ namespace DominoesProperties.Extensions
             {
                 BadHttpRequestException => "Invalid request payload supplied",
                 NotImplementedException => "Method not implemented in logic",
+                UnauthorizedAccessException => "User does not have required permission to access this endpoint",
                 DbUpdateException => exception.Message,
                 MySqlException => "Error performing operation, kindly try again later or contact admin for support",
                 _ => exception.Message
