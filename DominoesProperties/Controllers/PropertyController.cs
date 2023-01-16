@@ -214,7 +214,7 @@ namespace DominoesProperties.Controllers
                 : property.MinimumSharingPercentage;
             property.Status = string.IsNullOrEmpty(updateProperty.Status)
                 ? property.Status
-                : ((PropertyStatus)int.Parse(property.Status)).ToString();
+                : ((PropertyStatus)int.Parse(updateProperty.Status)).ToString();
             property.UnitAvailable = property.TotalUnits - property.UnitSold;
 
             response.Data = propertyRepository.UpdateProperty(property);
