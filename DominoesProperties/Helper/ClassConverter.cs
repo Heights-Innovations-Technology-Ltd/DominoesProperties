@@ -118,7 +118,9 @@ namespace DominoesProperties.Helper
                 Summary = property.Summary,
                 VideoLink = property.VideoLink,
                 AllowSharing = property.AllowSharing.GetValueOrDefault(),
-                MinimumSharingPercentage = property.MinimumSharingPercentage.GetValueOrDefault()
+                MinimumSharingPercentage = property.MinimumSharingPercentage.GetValueOrDefault(),
+                AccountNumber = property.Account,
+                BankName = property.Bank
             };
 
             if (property.PropertyUploads != null)

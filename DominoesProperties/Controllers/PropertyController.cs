@@ -100,20 +100,19 @@ namespace DominoesProperties.Controllers
                 if (propertyFilter.Toilet != null)
                     properties = properties.Where(x => x.Description.Toilet == propertyFilter.Toilet).ToList();
 
-                PagedList<Properties> propList = PagedList<Properties>.ToPagedList(
+                var propList = PagedList<Properties>.ToPagedList(
                     properties.OrderBy(on => on.DateCreated).AsQueryable(),
                     queryParams.PageNumber, queryParams.PageSize);
 
-                (int TotalCount, int PageSize, int CurrentPage, int TotalPages, bool HasNext, bool HasPrevious)
-                    metadata2 =
-                    (
-                        propList.TotalCount,
-                        propList.PageSize,
-                        propList.CurrentPage,
-                        propList.TotalPages,
-                        propList.HasNext,
-                        propList.HasPrevious
-                    );
+                var metadata2 =
+                (
+                    propList.TotalCount,
+                    propList.PageSize,
+                    propList.CurrentPage,
+                    propList.TotalPages,
+                    propList.HasNext,
+                    propList.HasPrevious
+                );
 
                 Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata2));
                 logger.LogInfo($"Returned {propList.TotalCount} queryParams from database.");
@@ -129,8 +128,8 @@ namespace DominoesProperties.Controllers
         [HttpGet("{uniqueId}")]
         public ApiResponse Property(string uniqueId)
         {
-            Property property = propertyRepository.GetProperty(uniqueId);
-            Properties properties = ClassConverter.EntityToProperty(property);
+            var property = propertyRepository.GetProperty(uniqueId);
+            var properties = ClassConverter.EntityToProperty(property);
             properties.Description =
                 ClassConverter.ConvertDescription(propertyRepository.GetDescriptionByPropertyId(property.UniqueId));
             Dictionary<string, object> Uploads = new();
