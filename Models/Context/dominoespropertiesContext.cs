@@ -509,6 +509,8 @@ namespace Models.Context
 
                 entity.Property(e => e.ToAccount).HasMaxLength(10);
 
+                entity.Property(e => e.Charges).HasColumnType("decimal(10,2)");
+
                 entity.Property(e => e.TransactionRef)
                     .IsRequired()
                     .HasMaxLength(50);
