@@ -1,6 +1,7 @@
-﻿using System;
+﻿#nullable disable
 
-#nullable disable
+using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Models.Models
 {
@@ -19,5 +20,8 @@ namespace Models.Models
         public string Payload { get; set; }
         public string PaymentModule { get; set; }
         public string PaystackRef { get; set; }
+
+        [Column("Charges", TypeName = "decimal(10,2)")]
+        public decimal Charges { get; set; }
     }
 }
