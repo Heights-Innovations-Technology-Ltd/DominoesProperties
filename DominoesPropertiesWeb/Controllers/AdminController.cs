@@ -50,6 +50,11 @@ namespace DominoesPropertiesWeb.Controllers
         {
             return View();
         }
+        [Route("/Admin/editblog/{blodId}")]
+        public IActionResult EditBlog()
+        {
+            return View();
+        }
 
         [Route("/authadmin")]
         public async Task<JsonResult> Auth([FromBody] Login login)
@@ -109,6 +114,7 @@ namespace DominoesPropertiesWeb.Controllers
             }
             return Json(this.StatusCode(StatusCodes.Status204NoContent, "Empty request body"));
         }
+
         [Route("/getblogs")]
         public async Task<JsonResult> GetBlogs()
         {
@@ -138,6 +144,39 @@ namespace DominoesPropertiesWeb.Controllers
             return Json(JsonConvert.SerializeObject(data));
 
         }
+
+        [HttpPost("/update-blog")]
+        public async Task<JsonResult> UpdateBlog()
+        {
+            var json = Request.Form["params"];
+
+            JObject jObject = JsonConvert.DeserializeObject<JObject>(Convert.ToString(json));
+
+            if (((JObject)jObject).Count > 0)
+            {
+                string filename = string.Empty;
+                if (Request.Form.Files.Count > 0)
+                {
+                    foreach (var customerfilename in GetUploadedFileName(Request, "BlogUpload"))
+                    {
+                        filename = customerfilename;
+                    }
+
+                }
+                dynamic obj = new ExpandoObject();
+                obj.UniqueNumber = Convert.ToString(jObject["UniqueNumber"]);
+                obj.BlogTitle = Convert.ToString(jObject["BlogTitle"]);
+                obj.BlogContent = Convert.ToString(jObject["BlogContent"]);
+                obj.BlogTags = Convert.ToString(jObject["BlogTags"]);
+                obj.CreatedBy = Convert.ToString(jObject["CreatedBy"]);
+                obj.BlogImage = filename != "" ? filename : Convert.ToString(jObject["ImageURL"]);
+                var res = Task.Run(() => httpContext.Put("Blog/post", obj));
+                var data = await res.GetAwaiter().GetResult();
+                return Json(JsonConvert.SerializeObject(data));
+            }
+            return Json(this.StatusCode(StatusCodes.Status204NoContent, "Empty request body"));
+        }
+
 
         private List<string> GetUploadedFileName(HttpRequest httpRequest, string path)
         {
