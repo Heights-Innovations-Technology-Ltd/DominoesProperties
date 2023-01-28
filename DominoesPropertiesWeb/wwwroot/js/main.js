@@ -983,11 +983,9 @@ function openModal() {
     }
     $('.swal2-styled').css('display', 'none');
     $('.swal2-popup').css('width', '50em');
-    //$('#propertyName').text(singleData.name);
     $('#checkoutPrice').html("&#8358; " + formatToCurrency(singleData.unitPrice) + " / Unit");
     $('.checkoutPrice').html(formatToCurrency(singleData.unitPrice));
     $('#availableUnit').html("Available Unit: " + singleData.unitAvailable);
-    //$('#closeDate').html("Investment End On " + moment(data.closingDate).format('MMMM Do YYYY'));
     $('.total').html("&#8358; " + formatToCurrency(singleData.unitPrice));
     let price = Number($('#price').text().replace(/[^0-9\.-]+/g, "").replace("₦", ""));
     $('.groundTotal').html("&#8358; " + formatToCurrency(price * $('#unit').val()));
@@ -1018,7 +1016,6 @@ const editSingleProperty = () => {
         } else {
             var res = JSON.parse(xhr.responseText);
             var data = JSON.parse(res).data;
-            console.log(data);
             if (JSON.parse(res).success) {
                
                 $("#name").val(data.name);
@@ -3714,7 +3711,7 @@ $('#btn-onboarding').click(function () {
         arrayOfValues.push(param);
     });
 
-    //Display selected Row data in Alert Box.
+     //Display selected Row data in Alert Box.
     const confirmOnboarding = Swal.mixin({
         customClass: {
             confirmButton: 'btn btn-success mx-2',
@@ -3841,8 +3838,6 @@ $('.btn-createBlog').on('click', function () {
                 CreatedBy: $("#createdBy").val(),
             };
 
-            console.log(params);
-
             var fileUpload = $("#blogImage").get(0);
 
             var files = fileUpload.files;
@@ -3936,21 +3931,8 @@ function getBlogs() {
 
             var res = JSON.parse(xhr.responseText);
             let data = JSON.parse(res).data;
-            console.log(data);
             if (JSON.parse(res).success && data.length >= 1)
-                blogTemp(data);   
-
-            //else {
-            //    $('#checkboxTable').html(`<div class="card mb-2">
-            //            <div class="card-body pt-0 pb-0 sh-21 sh-md-8">
-            //                <div class="row g-0 h-100 align-content-center">
-            //                    <div class="col-md-12 d-flex flex-column justify-content-center">
-            //                        <div class="text-alternate text-center">No data found!</div>
-            //                    </div>
-            //                </div>
-            //            </div>
-            //        </div>`);
-            //}
+                blogTemp(data);
         }
     } catch (err) { // instead of onerror
         //alert("Request failed");
@@ -3965,7 +3947,7 @@ function blogTemp(data) {
                         <td>${moment(x.createdOn).format('L')}</td>
                         <td>
                              <a href="#" class="btn btn-primary" title="View content" onclick="viewBlog('${x.uniqueNumber}')"><i class="fa fa-eye"></i></a>
-                             <a href="#" class="btn btn-warning text-white" title="Edit" onclick="editBlog('${x.uniqueNumber}')"><i class="fa fa-pencil"></i></a>
+                             <a href="/Admin/editblog/${x.uniqueNumber}" class="btn btn-warning text-white" title="Edit"><i class="fa fa-pencil"></i></a>
                              <a href="#" class="btn btn-danger" title="Delete" onclick="deleteBlog('${x.uniqueNumber}')"><i class="fa fa-trash"></i></a>
                         </td>
                    </tr>`;
@@ -3973,10 +3955,75 @@ function blogTemp(data) {
     });
 }
 
+function Blogs() {
+
+    let xhr = new XMLHttpRequest();
+    let url = "/getblogs";
+    xhr.open('GET', url, false);
+    xhr.setRequestHeader("content-type", "application/json");
+    xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+    try {
+        xhr.send();
+        if (xhr.status != 200) {
+            $('#msg').html(message("error", "Error performing operation, contact admin or try again in few minutes"));
+            /* alert('Something went wrong try again!');*/
+        } else {
+
+            var res = JSON.parse(xhr.responseText);
+            let data = JSON.parse(res).data;
+            if (JSON.parse(res).success && data.length >= 1)
+                landingBlogTemp(data);
+        }
+    } catch (err) { // instead of onerror
+        //alert("Request failed");
+    }
+}
+
+function landingBlogTemp(data) {
+    $('.blog').html('');
+    data.forEach((x, index, array) => {
+        let res = `<div class="col-lg-12">
+						<div class="single-blog wow animate__animated animate__fadeInUp delay-0-2s ">
+							<a href="/Home/blogdetail/${x.uniqueNumber}">
+								<img src="/uploads/bloguploads/${x.blogImage}" alt="Image">
+							</a>
+							<div class="blog-content">
+								<ul>
+									<li>
+										<i class="ri-calendar-line"></i>
+										${moment(x.createdOn).format('L')}
+									</li>
+								</ul>
+								<h3>
+									<a href="single-blog.html">
+										${x.blogTitle}
+									</a>
+								</h3>
+								<p>${x.blogContent.split('.')[0]}</p>
+
+								<a href="/Home/blogdetail/${x.uniqueNumber}" class="default-btn">
+									Read More
+								</a>
+							</div>
+						</div>
+					</div>`;
+        $('.blog').append(res);
+    });
+}
+
 const viewBlog = (id) => {
     if (!id) {
         return;
     }
+
+    Swal.fire({
+        template: '#my-template',
+        reverseButtons: true
+    });
+
+    $('.swal2-styled').css('display', 'none');
+    $('.swal2-popup').css('width', '70em');
+
     let xhr = new XMLHttpRequest();
     let url = "/getBlogById/" + id;
     xhr.open('GET', url, false);
@@ -3991,11 +4038,12 @@ const viewBlog = (id) => {
 
             var res = JSON.parse(xhr.responseText);
             let data = JSON.parse(res).data;
-            if (JSON.parse(res).success)
-                $('.blogTitle').html(data.blogTitle),
-                    $('.blogImage').attr("src", data.blogImage),
-                    $('.blogContent').html(data.blogContent),
-                    $('#viewBlogModal').modal('show');
+            if (JSON.parse(res).success) {
+                $('#title').html(data.blogTitle);
+                $('#imgPreview').attr("src", "/uploads/bloguploads" + data.blogImage);
+                $('#content').html(data.blogContent);
+            }
+                
         }
     } catch (err) { // instead of onerror
         //alert("Request failed");
@@ -4003,10 +4051,14 @@ const viewBlog = (id) => {
 
 }
 
-const editBlog = (id) => {
-    if (!id) {
+const getBlogDetail = () => {
+    let urls = window.location.href.split("/");
+    let id = urls[5];
+    if (id == "" || id == undefined) {
+        window.location.replace("/Home/blog");
         return;
     }
+
     let xhr = new XMLHttpRequest();
     let url = "/getBlogById/" + id;
     xhr.open('GET', url, false);
@@ -4021,27 +4073,203 @@ const editBlog = (id) => {
 
             var res = JSON.parse(xhr.responseText);
             let data = JSON.parse(res).data;
-            console.log(data);
             if (JSON.parse(res).success) {
-                $('#editBlogModal').modal('show');
-                $('#editTitle').val(data.blogTitle);
-                //$('#editImage').val(data.blogImage);
-                //$('textarea.editContent').val(data.blogContent);
-                //CKEDITOR.instances['editContent'].setData(data.blogContent);
-                //CKEDITOR.instances['editor'].setData(`<p>Hello</p>`);
-                CKEDITOR.instances.editor.setData('<p>Hello</p>');
-
+                $('#title').html(data.blogTitle);
+                $('#blogImg').attr("src", "/uploads/bloguploads" + data.blogImage);
+                $('#content').html(data.blogContent);
+                $('#blogDate').html(moment(data.createdOn).format('L'));
             }
 
-            //$('.blogTitle').html(data.blogTitle),
-            //    $('.blogImage').attr("src", data.blogImage),
-            //    $('.blogContent').html(data.blogContent),
-            //    $('#viewBlogModal').modal('show');
+        }
+    } catch (err) { // instead of onerror
+        //alert("Request failed");
+    }
+
+}
+let imgUrl = "";
+const editBlog = () => {
+    let urls = window.location.href.split("/");
+    let id = urls[5];
+    if (id == "" || id == undefined) {
+        window.location.replace("/Admin/Blogs");
+        return;
+    }
+
+    let xhr = new XMLHttpRequest();
+    let url = "/getBlogById/" + id;
+    xhr.open('GET', url, false);
+    xhr.setRequestHeader("content-type", "application/json");
+    xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+    try {
+        xhr.send();
+        if (xhr.status != 200) {
+            $('#msg').html(message("error", "Error performing operation, contact admin or try again in few minutes"));
+            /* alert('Something went wrong try again!');*/
+        } else {
+
+            var res = JSON.parse(xhr.responseText);
+            let data = JSON.parse(res).data;
+            if (JSON.parse(res).success) {
+                $('#title').val(data.blogTitle);
+                $('#imgPreview').attr("src", "/uploads/bloguploads" + data.blogImage);
+                CKEDITOR.instances.editor1.setData(data.blogContent);
+                imgUrl = data.blogImage;
+            }
         }
     } catch (err) { // instead of onerror
         //alert("Request failed");
     }
 }
+
+let isChangeClick = 0;
+$('.btn-changeImg').click(() => {
+    if (isChangeClick == 0) {
+        $('#blogImage').removeClass('d-none').css("display", "block");
+        $('#imgPreview').addClass('d-none');
+        isChangeClick = 1;
+        $('.btn-changeImg').html('Keep old header image');
+        return;
+    }
+
+    if (isChangeClick == 1) {
+        $('#blogImage').addClass('d-none').css("display", "none");
+        $('#imgPreview').removeClass('d-none').css("display", "block");
+        isChangeClick = 0;
+        $('.btn-changeImg').html('Change header image');
+        return;
+    }
+});
+
+$('.btn-updateBlog').on('click', function () {
+    const confirmOnboarding = Swal.mixin({
+        customClass: {
+            confirmButton: 'btn btn-success mx-2',
+            cancelButton: 'btn btn-danger'
+        },
+        buttonsStyling: false
+    })
+
+    confirmOnboarding.fire({
+        title: 'Are you sure?',
+        text: "To edit this blog post!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes!',
+        cancelButtonText: 'No, cancel!',
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            let t = false;
+            var e = "";
+            $(".btn-updateBlog").attr("disabled", !0).html(`Processing...`)
+            if (
+                ($("#blog-form")
+                    .find("input")
+                    .each(function () {
+                        $(this).prop("required") && ($(this).val() || ((t = !0), (name = $(this).attr("id")), (e += name + ", ")));
+                    })
+                )
+            )
+                if (t) return $('#msg').html(message("error", "Validation error:  the following field are required ( " +
+                    e.substring(0, e.length - 2) + " )")), window.scrollTo(0, 0), $(".btn-updateBlog").attr("disabled", !1).html(`Update`);
+            var editor = CKEDITOR.instances.editor1.getData();
+            let urls = window.location.href.split("/");
+            let id = urls[5];
+            if (id == "" || id == undefined) {
+                Swal.fire(
+                    'Oops!',
+                    "Invalid request, kindly refresh and try again!",
+                    'error'
+                );
+                return;
+            }
+            var params = {
+                UniqueNumber: id,
+                BlogTitle: $("#title").val(),
+                BlogContent: editor,
+                BlogTags: 'Real Estate',
+                CreatedBy: $("#createdBy").val(),
+                ImageURL: isChangeClick == 0 ? imgUrl : ''
+            };
+
+            var data = new FormData();
+            if (isChangeClick == 1) {
+                var fileUpload = $("#blogImage").get(0);
+
+                var files = fileUpload.files;
+
+                if (files.length == 0) {
+                    $('#msg').html(message("error", "Blog image is required!"));
+                    $(".btn-updateBlog").attr("disabled", !1).html(`Update`);
+                    return;
+                }
+               
+                if (files.length != 0) {
+                    var fname = files[0].name;
+                    var extension = fname.substr(fname.lastIndexOf("."))
+                    var re = /(\.jpg|\.jpeg|\.gif|\.png)$/i;
+                    if (!re.exec(extension)) {
+                        alert("File extension not supported!");
+                        $(".btn-createBlog").attr("disabled", !1).html(`Update`);
+                        return;
+                    }
+                    data.append(files[0].name, files[0]);
+                }
+            }
+
+            var oReq = new XMLHttpRequest();
+            oReq.open("POST", "/update-blog", false);
+            oReq.onload = function (oEvent) {
+                if (oReq.status == 200) {
+                    var res = JSON.parse(oReq.responseText);
+                    let data = JSON.parse(res).data;
+                    let messages = JSON.parse(res).message;
+                    if (JSON.parse(res).success) {
+                        $("#title").val(''),
+                            CKEDITOR.instances.editor1.setData(''), $("#blogImage").val('');
+                        $('#msg').html(message("success", data));
+
+                        window.scrollTo(0, 0);
+                        Swal.fire(
+                            'Well done!',
+                            messages != undefined ? messages : data,
+                            'success'
+                        ).then(() => window.location.replace("/Admin/Blogs"));
+                    }
+                    else {
+                        window.scrollTo(0, 0);
+                        Swal.fire(
+                            'Oops!',
+                            messages != undefined ? messages : data,
+                            'error'
+                        );
+                        $(".btn-updateBlog").attr("disabled", !1).html(`Update`);
+                        params = {};
+                    }
+                } else {
+                    $('#msg').html(message("error", "Error performing operation, contact admin or try again in few minutes"));
+                    $(".btn-updateBlog").attr("disabled", !1).html(`Update`);
+                }
+            };
+           
+            data.append("params", JSON.stringify(params));
+            
+
+            oReq.send(data);
+        } else if (
+            /* Read more about handling dismissals below */
+            result.dismiss === Swal.DismissReason.cancel
+        ) {
+            arrayOfValues = [];
+            confirmPropertyUpdate.fire(
+                'Cancelled',
+                'No onboarding was made :)',
+                'error'
+            )
+        }
+    });
+    return false;
+});
 
 const deleteBlog = (id) => {
     if (!id) {
@@ -4080,7 +4308,6 @@ const deleteBlog = (id) => {
                     var res = JSON.parse(xhr.responseText);
                     let data = JSON.parse(res).data;
                     let messages = JSON.parse(res).message;
-                    console.log(data);
                     if (JSON.parse(res).success) {
                         Swal.fire(
                             'Good job!',

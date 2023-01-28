@@ -79,6 +79,7 @@ namespace DominoesPropertiesWeb.Controllers
         {
             return View();
         }
+        [Route("/Home/blogdetail/{id}")]
         public IActionResult BlogDetail()
         {
             return View();

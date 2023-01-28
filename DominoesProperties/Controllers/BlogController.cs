@@ -232,7 +232,7 @@ namespace DominoesProperties.Controllers
                 if (_blogPostRepository.UpdateBlogPosts(blog))
                 {
                     _response.Success = true;
-                    _response.Message = "Blog post successfully created";
+                    _response.Message = "Blog post successfully updated";
                     return _response;
                 }
             }
@@ -254,11 +254,10 @@ namespace DominoesProperties.Controllers
         public ApiResponse DeleteBlog(string postId)
         {
             _response.Success = false;
-            _response.Message = "Error adding blog post, try again in a short period";
 
             try
             {
-                if (string.IsNullOrEmpty(postId))
+                if (!string.IsNullOrEmpty(postId))
                 {
                     var blog = _blogPostRepository.BlogPosts()
                         .FirstOrDefault(x => x.UniqueNumber.Equals(postId));
@@ -266,7 +265,7 @@ namespace DominoesProperties.Controllers
                     if (_blogPostRepository.UpdateBlogPosts(blog))
                     {
                         _response.Success = true;
-                        _response.Message = "Blog post successfully created";
+                        _response.Message = "Blog post successfully deleted";
                         return _response;
                     }
                 }
