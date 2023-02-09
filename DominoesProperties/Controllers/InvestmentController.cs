@@ -182,7 +182,7 @@ namespace DominoesProperties.Controllers
 
             var amount = property.UnitPrice * investment.Units;
 
-            switch (investment.PaymentChannel)
+            switch (investment.Channel)
             {
                 case Channel.WALLET when customer.Wallet.Balance < amount:
                     response.Message =
