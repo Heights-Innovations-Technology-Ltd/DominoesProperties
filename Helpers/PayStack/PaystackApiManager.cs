@@ -21,7 +21,7 @@ namespace Helpers
         /// <summary>
         /// The test key
         /// </summary>
-        private readonly string TestKey = "sk_test_4a20080664df282defc8128b161c15701fae1788";
+        private readonly string TestKey = "sk_live_92682103661943548b3e401fba6ad282aee263ac";
         //sk_live_be0b6ea293a0a4d8d0a4878d8a9ef8038effd51f
         //sk_test_468c58176cb63135e89444f749d16a5d581a1081
 

@@ -263,6 +263,14 @@ namespace DominoesProperties.Controllers
                 }
                 case Channel.OFFLINE:
                 {
+                    if (investmentRepository.GetOpenOfflineInvestments(customer.Id, amount, property.Id))
+                    {
+                        response.Message =
+                            "Possible duplicate transaction detected or a previous transaction is not yet treated.";
+                        response.Success = false;
+                        return response;
+                    }
+
                     OfflineInvestment off = new()
                     {
                         Amount = amount,
@@ -463,7 +471,7 @@ namespace DominoesProperties.Controllers
             }
 
             investment.ProofUrl = uploadUrl;
-            investment.Status = "PROCESSING";
+            investment.Status = Status.PROCESSING.ToString();
             investment.PaymentDate = DateTime.Now;
             if (investmentRepository.UpdateOfflineInvestment(investment) != null)
             {
