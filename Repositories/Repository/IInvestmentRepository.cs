@@ -33,5 +33,6 @@ namespace Repositories.Repository
         OfflineInvestment UpdateOfflineInvestment(OfflineInvestment investment);
         OfflineInvestment GetOfflineInvestment(string paymentRef);
         Task<object> GetOfflineInvestments();
+        bool GetOpenOfflineInvestments(long customerId, decimal amount, long propertyId);
     }
 }

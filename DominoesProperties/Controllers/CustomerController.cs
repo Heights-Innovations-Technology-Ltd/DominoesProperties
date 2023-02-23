@@ -321,7 +321,7 @@ namespace DominoesProperties.Controllers
         [Authorize(Roles = "CUSTOMER")]
         public ApiResponse UploadFile([FromBody] string UploadUrl)
         {
-            var customer = customerRepository.GetCustomer(HttpContext.User.Identity.Name);
+            var customer = customerRepository.GetCustomer(HttpContext.User.Identity!.Name);
             if (customer == null)
             {
                 response.Message = "Customer not found, please login with your credentials and try again";
