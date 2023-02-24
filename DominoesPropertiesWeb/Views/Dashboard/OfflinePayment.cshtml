@@ -73,31 +73,15 @@
 	</div>
 	<template id="my-template">
 		<swal-html>
-			<div class="model fadeIn modal-lg">
-				<div class="payment w-100">
-					<div class="receipt-box">
-						<div class="message">
-							<div class="row">
-								<div class="col-lg-12">
-									<div class="message-wrap">
-										<form class="decline_form">
-											<div class="form-group">
-												<label>Reason for rejecting</label>
-												<input type="text" class="form-control" style="border: 1px solid #babec0;" name="reason" id="reason" required>
-											</div>
-											<button type="button" onclick="declinePayment()" class="default-btn btn-decline">
-												Submit
-											</button>
-										</form>
-									</div>
-								</div>
-							</div>
-						</div>
-
-					</div>
-					
+			<form class="decline_form">
+				<div class="form-group">
+					<label>Reason for rejecting</label>
+					<input type="text" class="form-control" style="border: 1px solid #babec0;" name="reason" id="reason" required>
 				</div>
-			</div>
+				<button type="button" onclick="declinePayment()" class="default-btn btn-decline">
+					Submit
+				</button>
+			</form>
 		</swal-html>
 	</template>
 </div>
