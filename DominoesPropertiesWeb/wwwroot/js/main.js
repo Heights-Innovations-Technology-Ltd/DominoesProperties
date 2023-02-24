@@ -2514,7 +2514,6 @@ const propertyInvestment = () => {
                     params.percentageShare = percentage;
                     params.sharingGroupId = groupId;
                 }
-                
             }
 
             let xhr = new XMLHttpRequest();
@@ -2973,7 +2972,6 @@ $('.logout').click(() => {
         }
     });
 });
-
 
 const message = (msg, _class) => $('#msg').append(`<div class="alert alert-${_class == "error" ? 'danger' : 'success'} alert-dismissible fade show" role="alert">
 							${msg}
