@@ -304,7 +304,7 @@ namespace DominoesProperties.Controllers
                                     CustomerId = inv.CustomerId,
                                     TransactionDate = inv.TreatedDate,
                                     TransactionType = TransactionType.CR.ToString(),
-                                    TransactionRef = new Guid().ToString()
+                                    TransactionRef = Guid.NewGuid().ToString()
                                 };
                                 _transactionRepository.NewTransaction(transaction);
 

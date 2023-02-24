@@ -68,9 +68,10 @@ namespace DominoesProperties.Controllers
             _ = decimal.TryParse(configuration["subscription"], out var subscription);
             var amount = payment.Module.Equals(PaymentType.SUBSCRIPTION) ? subscription : payment.Amount;
             var transRef = Guid.NewGuid().ToString();
+            var amountCharges = AddPaystackCharges(amount);
             PaymentModel m = new()
             {
-                Amount = AddPaystackCharges(amount) * 100,
+                Amount = amountCharges * 100,
                 Email = customer.Email,
                 Reference = string.IsNullOrEmpty(payment.InvestmentId) ? transRef : payment.InvestmentId,
                 Bearer = "subaccount",
@@ -96,12 +97,13 @@ namespace DominoesProperties.Controllers
                 {
                     Payload = initResponse.ToString(),
                     AccessCode = Convert.ToString(jObject["access_code"]),
-                    Amount = m.Amount,
+                    Amount = amount,
                     TransactionRef = m.Reference,
                     PaystackRef = Convert.ToString(jObject["reference"]),
                     PaymentModule = payment.Module.ToString(),
                     Type = TransactionType.CR.ToString(),
-                    Date = DateTime.Now
+                    Date = DateTime.Now,
+                    Charges = amountCharges - amount
                 };
                 paystackRepository.NewPayment(paystack);
                 response.Success = true;
@@ -144,7 +146,14 @@ namespace DominoesProperties.Controllers
                     throw new InvalidOperationException("Payment platform error, please try again later");
                 var cust = JsonConvert.DeserializeObject<JObject>(jObject["customer"]!.ToString());
 
+                var newAmount = Convert.ToDecimal(jObject["amount"]) / 100;
                 var paystack = paystackRepository.GetPaystack(reference);
+
+                if (paystack.Amount + paystack.Charges != newAmount)
+                {
+                    return Redirect($"{configuration["app_settings:WebEndpoint"]}?reference={reference}&status=error");
+                }
+
                 paystack.Channel = Convert.ToString(jObject["channel"]);
                 paystack.Status = Convert.ToString(jObject["status"]);
                 paystack.Payload = CommonLogic.Encrypt(returns);
@@ -155,7 +164,7 @@ namespace DominoesProperties.Controllers
 
                 Transaction transaction = new()
                 {
-                    Amount = Convert.ToDecimal(jObject["amount"]) / 100,
+                    Amount = paystack.Amount,
                     Channel = paystack.Channel
                 };
                 var customer = customerRepository.GetCustomer(Convert.ToString(cust["email"]));

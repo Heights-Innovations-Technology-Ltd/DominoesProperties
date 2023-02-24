@@ -321,7 +321,7 @@ namespace DominoesProperties.Controllers
         [Authorize(Roles = "CUSTOMER")]
         public ApiResponse UploadFile([FromBody] string UploadUrl)
         {
-            var customer = customerRepository.GetCustomer(HttpContext.User.Identity.Name);
+            var customer = customerRepository.GetCustomer(HttpContext.User.Identity!.Name);
             if (customer == null)
             {
                 response.Message = "Customer not found, please login with your credentials and try again";
@@ -394,14 +394,14 @@ namespace DominoesProperties.Controllers
                         url = string.Format("{0}/home/{1}/{2}?value={3}", configuration["app_settings:WebEndpoint"],
                             validationModule.ToString().ToLower(), token, "customer");
                         filePath = Path.Combine(environment.ContentRootPath, @"EmailTemplates\password-reset.html");
-                        html = System.IO.File.ReadAllText(filePath.Replace(@"\", "/"));
+                        html = await System.IO.File.ReadAllTextAsync(filePath.Replace(@"\", "/"));
                         html = html
                             .Replace("{FIRSTNAME}", string.Format("{0} {1}", customer.FirstName, customer.LastName))
                             .Replace("{LINK}", url).Replace("{webroot}", configuration["app_settings:WebEndpoint"]);
                         subject = "Real Estate Dominoes - Reset Account Password";
                         break;
                     default:
-                        break;
+                        throw new ArgumentOutOfRangeException(nameof(validationModule), validationModule, null);
                 }
 
                 var db = distributedCache.GetDatabase();

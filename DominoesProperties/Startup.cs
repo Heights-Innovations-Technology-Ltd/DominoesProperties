@@ -197,6 +197,7 @@ namespace DominoesProperties
 
             // Add the processing server as IHostedService
             services.AddHangfireServer(options => options.WorkerCount = 1);
+            services.AddRouting(options => options.LowercaseUrls = true);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

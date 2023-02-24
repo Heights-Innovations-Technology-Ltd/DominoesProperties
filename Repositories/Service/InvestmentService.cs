@@ -249,6 +249,13 @@ namespace Repositories.Service
                 .Select(b => new { group = b.Key, items = b });
         }
 
+        public bool GetOpenOfflineInvestments(long customerId, decimal amount, long propertyId)
+        {
+            return _context.OfflineInvestments.Any(x => x.PropertyId == propertyId
+                                                        && x.CustomerId == customerId && x.Amount == amount &&
+                                                        x.Status.Equals("PROCESSING"));
+        }
+
         public OfflineInvestment GetOfflineInvestment(long id)
         {
             return _context.OfflineInvestments.Find(id);
