@@ -55,15 +55,15 @@ namespace Repositories.Service
         public Dictionary<string, int> AdminDashboard()
         {
             Dictionary<string, int> figures = new();
-            var investments = _context.Investments.ToList();
+            var investments = _context.Investments.Where(x => x.Status.Equals("COMPLETED")).ToList();
             var properties = _context.Properties.ToList();
             var customers = _context.Customers.ToList();
-            figures.Add("Investments", investments.Count());
-            figures.Add("Properties", properties.Count());
+            figures.Add("Investments", investments.Sum(x => x.Units));
+            figures.Add("Properties", properties.Count);
             figures.Add("ActiveProperties",
                 properties.Count(x =>
                     "ONGOING_CONSTRUCTION".Equals(x.Status) || "OPEN_FOR_INVESTMENT".Equals(x.Status)));
-            figures.Add("Customers", customers.Count());
+            figures.Add("Customers", customers.Count);
             figures.Add("NewCustomers", customers.Count(x => x.DateRegistered.Date.Equals(DateTime.Now.Date)));
 
             return figures;
