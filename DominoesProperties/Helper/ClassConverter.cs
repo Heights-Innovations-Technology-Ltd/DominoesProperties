@@ -256,5 +256,19 @@ namespace DominoesProperties.Helper
             model.CreatedBy = blogPost.CreatedBy;
             return model;
         }
+
+        internal static CustomerReq ThirdPartyCustomerToCustomer(AffiliateCustomer customer)
+        {
+            const string password = "@Dominoes3Party!";
+            return new CustomerReq
+            {
+                Email = customer.Email,
+                Phone = customer.Phone,
+                LastName = customer.LastName,
+                FirstName = customer.FirstName,
+                Password = password,
+                ConfirmPassword = password
+            };
+        }
     }
 }

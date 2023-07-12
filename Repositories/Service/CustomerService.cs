@@ -13,7 +13,7 @@ namespace Repositories.Service
     {
         private readonly ILoggerManager logger;
 
-        public CustomerService(dominoespropertiesContext context, ILoggerManager _logger):base(context)
+        public CustomerService(dominoespropertiesContext context, ILoggerManager _logger) : base(context)
         {
             logger = _logger;
         }
@@ -39,7 +39,32 @@ namespace Repositories.Service
             }
             catch (Exception ex)
             {
-                logger.LogInfo("Error creating customer"+ ex);
+                logger.LogInfo("Error creating customer" + ex);
+                throw;
+            }
+        }
+
+        public Thirdpartycustomer CreateThirdPartyCustomer(string email, string phone, string lastName,
+            string firstName, int channel)
+        {
+            try
+            {
+                var customerEntity = new Thirdpartycustomer()
+                {
+                    Email = email,
+                    Phone = phone,
+                    LastName = lastName,
+                    FirstName = firstName,
+                    Channel = channel
+                };
+
+                var f = _context.Thirdpartycustomers.Add(customerEntity).Entity;
+                _context.SaveChanges();
+                return f;
+            }
+            catch (Exception ex)
+            {
+                logger.LogInfo("Error creating customer" + ex);
                 throw;
             }
         }
@@ -56,7 +81,9 @@ namespace Repositories.Service
 
         public Customer GetCustomer(string identifier)
         {
-            var customer = _context.Customers.Local.Where(x => x.Email.Equals(identifier) || x.UniqueRef.Equals(identifier) || x.Phone == identifier).SingleOrDefault();
+            var customer = _context.Customers.Local
+                .Where(x => x.Email.Equals(identifier) || x.UniqueRef.Equals(identifier) || x.Phone == identifier)
+                .SingleOrDefault();
             if (customer == null)
             {
                 customer = _context.Customers
@@ -75,16 +102,18 @@ namespace Repositories.Service
             {
                 customer = _context.Customers.Where(x => x.Id == id).FirstOrDefault();
             }
+
             return customer;
         }
 
         public List<Customer> GetCustomers()
         {
             var customers = _context.Customers.Local.ToList();
-            if(customers.Count < 1)
+            if (customers.Count < 1)
             {
                 customers = _context.Customers.ToList();
             }
+
             return customers;
         }
 
