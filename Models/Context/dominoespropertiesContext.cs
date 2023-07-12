@@ -38,6 +38,7 @@ namespace Models.Context
         public virtual DbSet<Wallet> Wallets { get; set; }
         public virtual DbSet<Thirdpartycustomer> Thirdpartycustomers { get; set; }
         public virtual DbSet<Thirdpartyclient> Thirdpartyclients { get; set; }
+        public virtual DbSet<Thirdpartyinvestment> ThirdPartyInvestments { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -827,6 +828,46 @@ namespace Models.Context
 
                 entity.Property(e => e.Channel)
                     .IsRequired();
+            });
+
+            modelBuilder.Entity<Thirdpartyinvestment>(entity =>
+            {
+                entity.ToTable("thirdpartyinvestment");
+
+                entity.HasIndex(e => e.Id, "tp_investment_Id_uindex")
+                    .IsUnique();
+
+                entity.HasIndex(e => e.CustomerId, "tp_investment_customer_Id_fk");
+
+                entity.HasIndex(e => e.PropertyId, "tp_investment_property_Id_fk");
+
+                entity.HasIndex(e => e.TransactionRef, "tp_investment_transaction_TransactionRef_fk");
+
+                entity.Property(e => e.Amount).HasColumnType("decimal(18,2)");
+
+                entity.Property(e => e.PaymentType)
+                    .IsRequired()
+                    .HasMaxLength(20);
+
+                entity.Property(e => e.TransactionRef)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.UnitPrice)
+                    .HasColumnType("decimal(18,2)")
+                    .HasDefaultValueSql("'0.00'");
+
+                entity.HasOne(d => d.Customer)
+                    .WithMany(p => p.Thirdpartyinvestments)
+                    .HasForeignKey(d => d.CustomerId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("tp_investment_customer_Id_fk");
+
+                entity.HasOne(d => d.Property)
+                    .WithMany(p => p.Thirdpartyinvestments)
+                    .HasForeignKey(d => d.PropertyId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("tp_investment_property_Id_fk");
             });
 
             modelBuilder.Entity<Transaction>(entity =>

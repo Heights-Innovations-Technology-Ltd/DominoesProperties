@@ -53,5 +53,6 @@ namespace Models.Models
         public virtual ICollection<Propertyupload> PropertyUploads { get; set; }
 
         [IgnoreDataMember] public virtual ICollection<Sharinggroup> Sharinggroups { get; set; }
+        [IgnoreDataMember] public virtual ICollection<Thirdpartyinvestment> Thirdpartyinvestments { get; set; }
     }
 }

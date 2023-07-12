@@ -44,6 +44,15 @@ namespace Repositories.Service
             }
         }
 
+        public Thirdpartycustomer GetThirdPartyCustomer(string identifier)
+        {
+            var customer = _context.Thirdpartycustomers.Local
+                .SingleOrDefault(x =>
+                    x.Email.Equals(identifier) || x.Phone == identifier);
+
+            return customer;
+        }
+
         public Thirdpartycustomer CreateThirdPartyCustomer(string email, string phone, string lastName,
             string firstName, int channel)
         {
@@ -74,7 +83,7 @@ namespace Repositories.Service
 
         public void DeleteCustomer(string uniqueReference)
         {
-            var customer = _context.Customers.Where(x => x.UniqueRef.Equals(uniqueReference)).SingleOrDefault();
+            var customer = _context.Customers.SingleOrDefault(x => x.UniqueRef.Equals(uniqueReference));
             customer.IsDeleted = true;
             _context.Customers.Update(customer);
             _context.SaveChanges();
@@ -86,24 +95,21 @@ namespace Repositories.Service
         {
             var customer = _context.Customers.Local
                 .SingleOrDefault(x =>
-                    x.Email.Equals(identifier) || x.UniqueRef.Equals(identifier) || x.Phone == identifier);
-            if (customer == null)
-            {
-                customer = _context.Customers
-                    .Where(x => x.Email.Equals(identifier) || x.UniqueRef.Equals(identifier))
-                    .Include(x => x.Wallet)
-                    .SingleOrDefault();
-            }
+                    x.Email.Equals(identifier) || x.UniqueRef.Equals(identifier) || x.Phone == identifier) ?? _context
+                .Customers
+                .Where(x => x.Email.Equals(identifier) || x.UniqueRef.Equals(identifier))
+                .Include(x => x.Wallet)
+                .SingleOrDefault();
 
             return customer;
         }
 
         public Customer GetCustomer(long id)
         {
-            var customer = _context.Customers.Local.Where(x => x.Id == id).FirstOrDefault();
+            var customer = _context.Customers.Local.FirstOrDefault(x => x.Id == id);
             if (customer == null)
             {
-                customer = _context.Customers.Where(x => x.Id == id).FirstOrDefault();
+                customer = _context.Customers.FirstOrDefault(x => x.Id == id);
             }
 
             return customer;
