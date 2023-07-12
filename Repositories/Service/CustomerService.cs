@@ -49,6 +49,9 @@ namespace Repositories.Service
         {
             try
             {
+                if (_context.Thirdpartycustomers.Any(x => x.Email.Equals(email) || x.Phone.Equals(phone)))
+                    return null;
+
                 var customerEntity = new Thirdpartycustomer()
                 {
                     Email = email,
@@ -82,8 +85,8 @@ namespace Repositories.Service
         public Customer GetCustomer(string identifier)
         {
             var customer = _context.Customers.Local
-                .Where(x => x.Email.Equals(identifier) || x.UniqueRef.Equals(identifier) || x.Phone == identifier)
-                .SingleOrDefault();
+                .SingleOrDefault(x =>
+                    x.Email.Equals(identifier) || x.UniqueRef.Equals(identifier) || x.Phone == identifier);
             if (customer == null)
             {
                 customer = _context.Customers

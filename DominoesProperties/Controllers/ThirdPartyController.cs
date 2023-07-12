@@ -47,9 +47,10 @@ namespace DominoesProperties.Controllers
             var tt = _customerRepository.CreateThirdPartyCustomer(customer.Email, customer.Phone, customer.LastName,
                 customer.FirstName, client.ClientId);
             if (tt != null) return _customerController.RegisterAsync(customerReq);
+
             _response.Success = false;
             _response.Message =
-                $"Error creating customer on dominoes platform";
+                $"Error creating customer on dominoes platform, existing user {customer.Email} or {customer.Phone}";
             return _response;
         }
     }
