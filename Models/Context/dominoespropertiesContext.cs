@@ -36,6 +36,8 @@ namespace Models.Context
         public virtual DbSet<Sharinggroup> Sharinggroups { get; set; }
         public virtual DbSet<Transaction> Transactions { get; set; }
         public virtual DbSet<Wallet> Wallets { get; set; }
+        public virtual DbSet<Thirdpartycustomer> Thirdpartycustomers { get; set; }
+        public virtual DbSet<Thirdpartyclient> Thirdpartyclients { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -763,6 +765,68 @@ namespace Models.Context
                     .HasForeignKey(d => d.PropertyId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("sharinggroup_property_Id_fk");
+            });
+
+            modelBuilder.Entity<Thirdpartyclient>(entity =>
+            {
+                entity.ToTable("thirdpartyclient");
+
+                entity.HasIndex(e => e.ClientName, "td_client_name_uindex")
+                    .IsUnique();
+
+                entity.HasIndex(e => e.Id, "td_id_uindex")
+                    .IsUnique();
+
+                entity.HasIndex(e => e.ClientId, "td_client_id_uindex")
+                    .IsUnique();
+
+                entity.Property(e => e.CreatedOn).HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                entity.Property(e => e.ClientId)
+                    .IsRequired();
+
+                entity.Property(e => e.ClientName)
+                    .IsRequired()
+                    .HasMaxLength(200);
+
+                entity.Property(e => e.ApiKey)
+                    .IsRequired()
+                    .HasMaxLength(500);
+            });
+
+            modelBuilder.Entity<Thirdpartycustomer>(entity =>
+            {
+                entity.ToTable("thirdpartycustomer");
+
+                entity.HasIndex(e => e.Email, "tdc_Email_uindex")
+                    .IsUnique();
+
+                entity.HasIndex(e => e.Id, "tdc_Id_uindex")
+                    .IsUnique();
+
+                entity.HasIndex(e => e.Phone, "tdc_Phone_uindex")
+                    .IsUnique();
+
+                entity.Property(e => e.DateRegistered).HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                entity.Property(e => e.Email)
+                    .IsRequired()
+                    .HasMaxLength(200);
+
+                entity.Property(e => e.FirstName)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.LastName)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.Phone)
+                    .IsRequired()
+                    .HasMaxLength(14);
+
+                entity.Property(e => e.Channel)
+                    .IsRequired();
             });
 
             modelBuilder.Entity<Transaction>(entity =>
