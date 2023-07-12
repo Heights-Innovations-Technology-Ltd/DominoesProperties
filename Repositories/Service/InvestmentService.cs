@@ -11,11 +11,11 @@ namespace Repositories.Service
 {
     public class InvestmentService : BaseRepository, IInvestmentRepository
     {
-        private readonly ILoggerManager loggerManager;
+        private readonly ILoggerManager _loggerManager;
 
         public InvestmentService(dominoespropertiesContext context, ILoggerManager _loggerManager) : base(context)
         {
-            loggerManager = _loggerManager;
+            this._loggerManager = _loggerManager;
         }
 
         public long AddInvestment(Investment investment)
@@ -25,15 +25,38 @@ namespace Repositories.Service
                 var inv = _context.Investments.Add(investment);
                 _context.SaveChanges();
                 var id = inv.Entity.Id;
-                loggerManager.LogInfo($"Investment successfully saved with id {id}");
+                _loggerManager.LogInfo($"Investment successfully saved with id {id}");
                 return id;
             }
             catch (Exception ex)
             {
-                loggerManager.LogInfo($"Investment failed with id {ex.StackTrace}");
-                loggerManager.LogError(ex.StackTrace);
+                _loggerManager.LogInfo($"Investment failed with id {ex.StackTrace}");
+                _loggerManager.LogError(ex.StackTrace);
                 return 0;
             }
+        }
+
+        public long AddThirdPartyInvestment(Thirdpartyinvestment investment)
+        {
+            try
+            {
+                var inv = _context.ThirdPartyInvestments.Add(investment);
+                _context.SaveChanges();
+                var id = inv.Entity.Id;
+                _loggerManager.LogInfo($"Investment successfully saved with id {id}");
+                return id;
+            }
+            catch (Exception ex)
+            {
+                _loggerManager.LogInfo($"Investment failed with id {ex.StackTrace}");
+                _loggerManager.LogError(ex.StackTrace);
+                return 0;
+            }
+        }
+
+        public Thirdpartyinvestment GetThirdPartyInvestment(string transactionRef)
+        {
+            return _context.ThirdPartyInvestments.FirstOrDefault(x => x.TransactionRef.Equals(transactionRef));
         }
 
         public Investment GetInvestment(long Id)
@@ -203,7 +226,7 @@ namespace Repositories.Service
             }
             catch (Exception ex)
             {
-                loggerManager.LogError(ex.ToString());
+                _loggerManager.LogError(ex.ToString());
                 return false;
             }
         }
@@ -217,7 +240,7 @@ namespace Repositories.Service
             }
             catch (Exception ex)
             {
-                loggerManager.LogError(ex.ToString());
+                _loggerManager.LogError(ex.ToString());
             }
         }
 

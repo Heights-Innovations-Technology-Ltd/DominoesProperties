@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 namespace Models.Models
 {
@@ -40,5 +41,7 @@ namespace Models.Models
         public virtual ICollection<OfflineInvestment> OfflineInvestments { get; set; }
         public virtual ICollection<Transaction> Transactions { get; set; }
         public virtual ICollection<Sharingentry> Sharingentries { get; set; }
+
+        [IgnoreDataMember] public virtual ICollection<Thirdpartyinvestment> Thirdpartyinvestments { get; set; }
     }
 }
