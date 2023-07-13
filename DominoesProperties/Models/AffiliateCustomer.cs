@@ -22,17 +22,5 @@ namespace DominoesProperties.Models
         [Required(ErrorMessage = "Phone number is required")]
         [MaxLength(14)]
         public string Phone { get; set; }
-
-        [Required(ErrorMessage = "The unique identifier of the property is required")]
-        public string PropertyId { get; set; }
-
-        [Required(ErrorMessage = "No of investment units is required")]
-        public int Units { get; set; }
-
-        [Required(ErrorMessage = "Amount paid is required")]
-        public decimal Amount { get; set; }
-
-        [Required(ErrorMessage = "Please supply the payment transaction reference")]
-        public string TransactionRef { get; set; }
     }
 }

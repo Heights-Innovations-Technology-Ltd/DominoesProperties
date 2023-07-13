@@ -31,7 +31,7 @@ namespace DominoesProperties.Controllers
         }
 
         [HttpPost("affiliate-investment")]
-        public ApiResponse ThirdPartyPurchase([FromBody] AffiliateCustomer customer, [FromHeader] int clientId,
+        public ApiResponse ThirdPartyPurchase([FromBody] AffiliateInvestment customer, [FromHeader] int clientId,
             [FromHeader] string apiKey)
         {
             if (clientId == 100)
@@ -70,43 +70,20 @@ namespace DominoesProperties.Controllers
                 return _response;
             }
 
-            var customerReq = ClassConverter.ThirdPartyCustomerToCustomer(customer);
-            var tt =
-                _customerRepository.GetThirdPartyCustomer(customer.Email == null ? customer.Email : customer.Phone) ??
-                _customerRepository.CreateThirdPartyCustomer(customer.Email, customer.Phone, customer.LastName,
-                    customer.FirstName, client.ClientId);
-
-            if (tt == null)
+            var tf = _customerRepository.GetCustomer(customer.Email);
+            if (tf == null)
             {
                 _response.Success = false;
                 _response.Message =
-                    $"Error creating investment for third party customer {customer.FirstName} {customer.LastName}";
+                    $"Error! No record found for customer {customer.Email}";
                 return _response;
             }
-
-            var tf = _customerRepository.GetCustomer(customer.Email == null ? customer.Email : customer.Phone);
-            long customerId;
-            if (tf == null)
-            {
-                var cust = _customerController.RegisterAsync(customerReq, true);
-                if (!cust.Success)
-                {
-                    _response.Success = false;
-                    _response.Message =
-                        $"Error creating investment for customer {customer.FirstName} {customer.LastName}";
-                    return _response;
-                }
-
-                customerId = (long)cust.Data;
-            }
-            else
-                customerId = tf.Id;
 
             var thirdPartyInvestment = new Thirdpartyinvestment
             {
                 Amount = customer.Amount,
                 Units = customer.Units,
-                CustomerId = customerId,
+                CustomerId = tf.Id,
                 PaymentDate = DateTime.Now,
                 PaymentType = PaymentType.SUBSCRIPTION.ToString(),
                 UnitPrice = property.UnitPrice,
@@ -128,7 +105,57 @@ namespace DominoesProperties.Controllers
 
             _response.Success = false;
             _response.Message =
-                $"Error creating customer on dominoes platform, existing user {customer.Email} or {customer.Phone}";
+                $"Error creating customer investment on dominoes platform";
+            return _response;
+        }
+
+        [HttpPost("affiliate-customer")]
+        public ApiResponse ThirdPartySignUp([FromBody] AffiliateCustomer customer, [FromHeader] int clientId,
+            [FromHeader] string apiKey)
+        {
+            if (clientId == 100)
+            {
+                _response.Success = false;
+                _response.Message =
+                    $"Forbidden: This client id is not permitted to create a third party customer";
+                return _response;
+            }
+
+            var client = _clientRepository.GetClient(clientId, apiKey);
+            if (client == null)
+            {
+                _response.Success = false;
+                _response.Message =
+                    $"Unauthorized access: Invalid API key supplied";
+                return _response;
+            }
+
+            var customerReq = ClassConverter.ThirdPartyCustomerToCustomer(customer);
+            var tt =
+                _customerRepository.GetThirdPartyCustomer(customer.Email == null ? customer.Email : customer.Phone);
+            if (tt == null)
+            {
+                tt = _customerRepository.CreateThirdPartyCustomer(customer.Email, customer.Phone, customer.LastName,
+                    customer.FirstName, client.ClientId);
+                if (tt != null)
+                {
+                    var newCustomer = _customerController.RegisterAsync(customerReq, true);
+                    if (newCustomer.Success)
+                    {
+                        var cust = _customerRepository.GetCustomer(customer.Email);
+                        cust.IsActive = true;
+                        cust.IsSubscribed = true;
+                        cust.IsVerified = true;
+                        cust.NextSubscriptionDate = DateTime.Now.AddMonths(6);
+
+                        _customerRepository.UpdateCustomer(cust);
+                    }
+                }
+            }
+
+            _response.Success = true;
+            _response.Message =
+                $"Customer {customer.FirstName} {customer.LastName} successfully registered";
             return _response;
         }
     }
