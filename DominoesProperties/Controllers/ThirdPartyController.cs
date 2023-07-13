@@ -99,7 +99,7 @@ namespace DominoesProperties.Controllers
 
                 _response.Success = true;
                 _response.Message =
-                    $"User created and investment has been successfully added";
+                    $"Customer investment has been successfully added";
                 return _response;
             }
 
