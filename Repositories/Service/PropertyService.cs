@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Models.Models;
-using Models.Context;
-using Repositories.Repository;
 using Microsoft.EntityFrameworkCore;
+using Models.Context;
+using Models.Models;
+using Repositories.Repository;
 
 namespace Repositories.Service
 {
@@ -15,6 +15,8 @@ namespace Repositories.Service
 
         public Property AddNewProperty(Property property)
         {
+            var id = _context.Properties.Max(x => x.Id);
+            property.ThirdPartyId = (id + 1).ToString().PadLeft(7, '0');
             _context.Properties.Add(property);
             _context.SaveChanges();
             return property;
@@ -47,11 +49,11 @@ namespace Repositories.Service
 
         public Property GetProperty(string uniqueId)
         {
-            var property = _context.Properties.Local.SingleOrDefault(x => x.UniqueId.Equals(uniqueId));
-            if (property == null)
-            {
-                property = _context.Properties.Include(x => x.TypeNavigation).SingleOrDefault(x => x.UniqueId.Equals(uniqueId));
-            }
+            var property =
+                _context.Properties.Local.SingleOrDefault(x =>
+                    x.UniqueId.Equals(uniqueId) || x.ThirdPartyId.Equals(uniqueId)) ??
+                _context.Properties.Include(x => x.TypeNavigation).SingleOrDefault(x =>
+                    x.UniqueId.Equals(uniqueId) || x.ThirdPartyId.Equals(uniqueId));
             return property;
         }
 
@@ -62,6 +64,7 @@ namespace Repositories.Service
             {
                 property = _context.Properties.SingleOrDefault(x => x.Id == uniqueId);
             }
+
             return property;
         }
 
@@ -72,6 +75,7 @@ namespace Repositories.Service
             {
                 description = _context.Descriptions.SingleOrDefault(x => x.PropertyId.Equals(propertyId));
             }
+
             return description;
         }
 
@@ -93,7 +97,8 @@ namespace Repositories.Service
 
         public PagedList<Property> GetProperties(QueryParams pageParams)
         {
-            return PagedList<Property>.ToPagedList(_context.Properties.Include(x => x.TypeNavigation).OrderBy(on => on.Id),
+            return PagedList<Property>.ToPagedList(
+                _context.Properties.Include(x => x.TypeNavigation).OrderBy(on => on.Id),
                 pageParams.PageNumber,
                 pageParams.PageSize);
         }

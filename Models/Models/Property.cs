@@ -41,6 +41,7 @@ namespace Models.Models
         public string Bank { get; set; }
         public int MaxUnitPerCustomer { get; set; } = 1000;
         public string VideoLink { get; set; }
+        public string ThirdPartyId { get; set; }
         public bool? AllowSharing { get; set; }
         public int? MinimumSharingPercentage { get; set; }
 
