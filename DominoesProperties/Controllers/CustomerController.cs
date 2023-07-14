@@ -61,7 +61,7 @@ namespace DominoesProperties.Controllers
 
         [HttpPost]
         [Route("register")]
-        public ApiResponse RegisterAsync([FromBody] CustomerReq customer)
+        public ApiResponse RegisterAsync([FromBody] CustomerReq customer, bool? isThirdParty)
         {
             if (customerRepository.GetCustomer(customer.Email) != null)
             {
@@ -71,7 +71,7 @@ namespace DominoesProperties.Controllers
 
             if (customerRepository.GetCustomer(customer.Phone) != null)
             {
-                response.Message = $"Customer with phone numer {customer.Phone} already exist";
+                response.Message = $"Customer with phone number {customer.Phone} already exist";
                 return response;
             }
 
@@ -83,17 +83,20 @@ namespace DominoesProperties.Controllers
             }
 
             var customerReg = customerRepository.CreateCustomer(ClassConverter.ConvertCustomerToEntity(customer));
-            var setting = applicationSettingsRepository.GetApplicationSettingsByName("EmailNotification");
-            if (customerReg != null)
+            if (isThirdParty != null && isThirdParty.Value)
             {
-                _ = ActivationLink(customer.Email, ValidationModule.ACTIVATE_ACCOUNT, setting);
-
                 response.Success = true;
-                response.Message = "Customer account successfully created!";
-                logger.LogInfo(response.Message);
+                response.Data = customerReg.Id;
                 return response;
             }
 
+            var setting = applicationSettingsRepository.GetApplicationSettingsByName("EmailNotification");
+            if (customerReg == null) return response;
+            _ = ActivationLink(customer.Email, ValidationModule.ACTIVATE_ACCOUNT, setting);
+
+            response.Success = true;
+            response.Message = "Customer account successfully created!";
+            logger.LogInfo(response.Message);
             return response;
         }
 

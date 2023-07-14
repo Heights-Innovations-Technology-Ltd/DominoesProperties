@@ -10,6 +10,7 @@ namespace Repositories.Repository
         Thirdpartycustomer CreateThirdPartyCustomer(string email, string phone, string lastName, string firstName,
             int channel);
 
+        Thirdpartycustomer GetThirdPartyCustomer(string identifier);
         Customer GetCustomer(string identifier);
         List<Customer> GetCustomers();
         void DeleteCustomer(string uniqueReference);
