@@ -129,7 +129,6 @@ namespace DominoesPropertiesWeb.Controllers
             DesObj.Basement = Convert.ToInt32(jObject["Description"]["Basement"]);
             obj.Description = DesObj;
 
-
             var res = Task.Run(() => httpContext.Post("Property", obj));
             var data = await res.GetAwaiter().GetResult();
             return Json(JsonConvert.SerializeObject(data));
