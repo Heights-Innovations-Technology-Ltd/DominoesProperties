@@ -7,6 +7,7 @@ namespace Repositories.Repository
     public interface IInvestmentRepository
     {
         long AddInvestment(Investment investment);
+        long AddThirdPartyInvestment(Thirdpartyinvestment investment);
         void UpdateInvestment(Investment investment);
         List<Investment> GetInvestments(long customerId);
         PagedList<Investment> GetInvestments(QueryParams queryParams);
@@ -26,7 +27,7 @@ namespace Repositories.Repository
         List<Sharinggroup> UncompletedSharingGroup();
         IEnumerable<Sharingentry> GetSharingEntries(long customerId);
         void DeletePendingInvestments();
-
+        Thirdpartyinvestment GetThirdPartyInvestment(string transactionRef);
         IEnumerable<OfflineInvestment> GetOfflineInvestments(long customerId);
         OfflineInvestment GetOfflineInvestment(long id);
         bool AddOfflineInvestment(OfflineInvestment investment);

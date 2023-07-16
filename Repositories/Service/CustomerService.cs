@@ -13,7 +13,7 @@ namespace Repositories.Service
     {
         private readonly ILoggerManager logger;
 
-        public CustomerService(dominoespropertiesContext context, ILoggerManager _logger):base(context)
+        public CustomerService(dominoespropertiesContext context, ILoggerManager _logger) : base(context)
         {
             logger = _logger;
         }
@@ -39,14 +39,51 @@ namespace Repositories.Service
             }
             catch (Exception ex)
             {
-                logger.LogInfo("Error creating customer"+ ex);
+                logger.LogInfo("Error creating customer" + ex);
+                throw;
+            }
+        }
+
+        public Thirdpartycustomer GetThirdPartyCustomer(string identifier)
+        {
+            var customer = _context.Thirdpartycustomers.Local
+                .SingleOrDefault(x =>
+                    x.Email.Equals(identifier) || x.Phone == identifier);
+
+            return customer;
+        }
+
+        public Thirdpartycustomer CreateThirdPartyCustomer(string email, string phone, string lastName,
+            string firstName, int channel)
+        {
+            try
+            {
+                if (_context.Thirdpartycustomers.Any(x => x.Email.Equals(email) || x.Phone.Equals(phone)))
+                    return null;
+
+                var customerEntity = new Thirdpartycustomer()
+                {
+                    Email = email,
+                    Phone = phone,
+                    LastName = lastName,
+                    FirstName = firstName,
+                    Channel = channel
+                };
+
+                var f = _context.Thirdpartycustomers.Add(customerEntity).Entity;
+                _context.SaveChanges();
+                return f;
+            }
+            catch (Exception ex)
+            {
+                logger.LogInfo("Error creating customer" + ex);
                 throw;
             }
         }
 
         public void DeleteCustomer(string uniqueReference)
         {
-            var customer = _context.Customers.Where(x => x.UniqueRef.Equals(uniqueReference)).SingleOrDefault();
+            var customer = _context.Customers.SingleOrDefault(x => x.UniqueRef.Equals(uniqueReference));
             customer.IsDeleted = true;
             _context.Customers.Update(customer);
             _context.SaveChanges();
@@ -56,35 +93,36 @@ namespace Repositories.Service
 
         public Customer GetCustomer(string identifier)
         {
-            var customer = _context.Customers.Local.Where(x => x.Email.Equals(identifier) || x.UniqueRef.Equals(identifier) || x.Phone == identifier).SingleOrDefault();
-            if (customer == null)
-            {
-                customer = _context.Customers
-                    .Where(x => x.Email.Equals(identifier) || x.UniqueRef.Equals(identifier))
-                    .Include(x => x.Wallet)
-                    .SingleOrDefault();
-            }
+            var customer = _context.Customers.Local
+                .SingleOrDefault(x =>
+                    x.Email.Equals(identifier) || x.UniqueRef.Equals(identifier) || x.Phone == identifier) ?? _context
+                .Customers
+                .Where(x => x.Email.Equals(identifier) || x.UniqueRef.Equals(identifier))
+                .Include(x => x.Wallet)
+                .SingleOrDefault();
 
             return customer;
         }
 
         public Customer GetCustomer(long id)
         {
-            var customer = _context.Customers.Local.Where(x => x.Id == id).FirstOrDefault();
+            var customer = _context.Customers.Local.FirstOrDefault(x => x.Id == id);
             if (customer == null)
             {
-                customer = _context.Customers.Where(x => x.Id == id).FirstOrDefault();
+                customer = _context.Customers.FirstOrDefault(x => x.Id == id);
             }
+
             return customer;
         }
 
         public List<Customer> GetCustomers()
         {
             var customers = _context.Customers.Local.ToList();
-            if(customers.Count < 1)
+            if (customers.Count < 1)
             {
                 customers = _context.Customers.ToList();
             }
+
             return customers;
         }
 

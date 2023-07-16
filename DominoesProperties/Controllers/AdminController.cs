@@ -219,7 +219,7 @@ namespace DominoesProperties.Controllers
         [Authorize]
         public ApiResponse Dashboard()
         {
-            response.Message = $"Password successfully changed.";
+            response.Message = $"Dashboard fetched successfully";
             response.Data = adminRepository.AdminDashboard();
             response.Success = true;
             return response;

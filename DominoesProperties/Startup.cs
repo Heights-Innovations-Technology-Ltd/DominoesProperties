@@ -87,6 +87,8 @@ namespace DominoesProperties
             services.AddScoped<IEmailRetryRepository, EmailRetryService>();
             services.AddScoped<IConfigRepository, ConfigService>();
             services.AddScoped<IBlogPostRepository, BlogPostService>();
+            services.AddScoped<CustomerController, CustomerController>();
+            services.AddScoped<IThirdPartyClientRepository, ThirdPartyClientService>();
 
             services.AddMvc()
                 .AddViewLocalization(Microsoft.AspNetCore.Mvc.Razor.LanguageViewLocationExpanderFormat.Suffix)
