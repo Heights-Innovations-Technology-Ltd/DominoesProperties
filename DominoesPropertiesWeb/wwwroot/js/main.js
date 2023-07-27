@@ -15,8 +15,8 @@
             }),
             $("#password").val() != $("#confirm_password").val())
     )
-        return message("Password do not match!", 'error'), $("#confirm_password").val(""), $("#confirm_password").focus(), window.scrollTo(0, 0), void $(".btn-register").html("Register").attr("disabled", !1);
-    if (t) message("Validation error the following field are required " + e.substring(0, e.length - 2),  'error'), window.scrollTo(0, 0), $(".btn-register").attr("disabled", !1).html("Register");
+        return messageFunc("Password do not match!", 'error'), $("#confirm_password").val(""), $("#confirm_password").focus(), window.scrollTo(0, 0), void $(".btn-register").html("Register").attr("disabled", !1);
+    if (t) messageFunc("Validation error the following field are required " + e.substring(0, e.length - 2),  'error'), window.scrollTo(0, 0), $(".btn-register").attr("disabled", !1).html("Register");
     else {
         var a = {
             FirstName: $("#firstName").val(),
@@ -50,7 +50,7 @@
 
                 } else {
                     for (const [key, value] of Object.entries(res.message.errors)) {
-                        message(`<li>${key} </li> ${value.join("<br/>")}`, 'error');
+                        messageFunc(`<li>${key} </li> ${value.join("<br/>")}`, 'error');
                     }
                     window.scrollTo(0, 0);
                         $(".btn-register").html("Register").attr("disabled", !1);
@@ -84,7 +84,7 @@ $('.btn-login').click(() => {
         )
     )
         
-    if (t) message("Validation error the following field are required " + e.substring(0, e.length - 2), 'error'), window.scrollTo(0, 0), $(".btn-login").attr("disabled", !1).html("Login");
+    if (t) messageFunc("Validation error the following field are required " + e.substring(0, e.length - 2), 'error'), window.scrollTo(0, 0), $(".btn-login").attr("disabled", !1).html("Login");
     $(".btn-login").html("Processing...").attr("disabled", !0);
     var params = {
         Email: $("#logEmail").val().trim(),
@@ -151,7 +151,7 @@ $('.btn-adminlogin').click(() => {
         )
     )
         
-    if (t) message("Validation error the following field are required " + e.substring(0, e.length - 2), 'error'), window.scrollTo(0, 0), $(".btn-login").attr("disabled", !1).html("Login");
+    if (t) messageFunc("Validation error the following field are required " + e.substring(0, e.length - 2), 'error'), window.scrollTo(0, 0), $(".btn-login").attr("disabled", !1).html("Login");
 
     var params = {
         Email: $("#logEmail").val().trim(),
@@ -1062,138 +1062,184 @@ const editSingleProperty = () => {
     }
 }
 
-$(document).ready(function () {
-    $('.btn-property').click((e) => {
-        e.preventDefault();
-        const confirmPropertyUpdate = Swal.mixin({
-            customClass: {
-                confirmButton: 'btn btn-success mx-2',
-                cancelButton: 'btn btn-danger'
-            },
-            buttonsStyling: false
-        })
+$('.btn-property').click((e) => {
+    e.preventDefault();
+    const confirmPropertyUpdate = Swal.mixin({
+        customClass: {
+            confirmButton: 'btn btn-success mx-2',
+            cancelButton: 'btn btn-danger'
+        },
+        buttonsStyling: false
+    })
 
-        confirmPropertyUpdate.fire({
-            title: 'Are you sure?',
-            text: "To create this property!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Yes, create it!',
-            cancelButtonText: 'No, cancel!',
-            reverseButtons: true
-        }).then((result) => {
-            if (result.isConfirmed) {
-                $(".btn-property").html("Processing...").attr("disabled", !0);
-                let t = false;
-                var e = "";
-                if (
-                    ($("#property-form")
-                        .find("input")
-                        .each(function () {
-                            $(this).prop("required") && ($(this).val() || ((t = !0), (name = $(this).attr("name")), (e += name + ", ")));
-                        })
+    confirmPropertyUpdate.fire({
+        title: 'Are you sure?',
+        text: "To create this property!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, create it!',
+        cancelButtonText: 'No, cancel!',
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
 
-                    )
-                )
+            $(".btn-property").html("Processing...").attr("disabled", !0);
+            console.log(Number($("#allowSharing").val()));
+            console.log($("#types").val());
+            console.log($("#status").val());
+            let t = false;
+            var e = "";
+            if ($("#property-form")
+                .find("input")
+                .each(function () {
+                    $(this).prop("required") && ($(this).val() || ((t = !0), (name = $(this).attr("name")), (e += name + ", ")));
+                })
+            )
 
-                    if (t) message("Validation error the following field are required " + e.substring(0, e.length - 2), 'error'), window.scrollTo(0, 0), $(".btn-property").attr("disabled", !1).html("Submit");
-
-                if ((!Number($("#price").val())) && $("#price").val() != '') {
-                    $(".btn-property").html("Submit").attr("disabled", !1);
-                    message("Invalid price supply, kindly check and try again!", 'error');
-                    $('#price').focus();
+                if (t) {
+                    window.scrollTo(0, 0);
+                    Swal.fire(
+                        'Oops!',
+                        "Validation error the following field are required " + e.substring(0, e.length - 2),
+                        'error'
+                    );
+                    $(".btn-property").attr("disabled", !1).html("Submit");
                     return;
-                }
-
-                var params = {
-                    Name: $("#name").val().trim(),
-                    Location: $("#location").val(),
-                    Type: $("#types").val(),
-                    UnitPrice: Number($("#price").val()),
-                    Status: $("#status").val(),
-                    UnitAvailable: Number($("#unit").val()),
-                    Description: {
-                        Bathroom: Number($("#bathroom").val()),
-                        Toilet: Number($("#toilet").val()),
-                        FloorLevel: Number($("#floorLevel").val()),
-                        Bedroom: Number($("#bedRoom").val()),
-                        LandSize: $("#landSize").val(),
-                        AirConditioned: $("#airConditioned").is(":checked") ? 1 : 0,
-                        Refrigerator: $("#refrigerator").is(":checked") ? 1 : 0,
-                        Parking: $("#parking").is(":checked") ? 1 : 0,
-                        SwimmingPool: $("#swimmingPool").is(":checked") ? 1 : 0,
-                        Laundry: $("#laundry").is(":checked") ? 1 : 0,
-                        Gym: $("#gym").is(":checked") ? 1 : 0,
-                        SecurityGuard: $("#securityGuard").is(":checked") ? 1 : 0,
-                        Fireplace: $("#fireplace").is(":checked") ? 1 : 0,
-                        Basement: $("#basement").is(":checked") ? 1 : 0,
-                    },
-                    //InterestRate: Number($("#interest").val()),
-                    TargetYield: Number($("#targetYield").val()),
-                    Longitude: Number($("#logitude").val()),
-                    Latitude: Number($("#latitude").val()),
-                    Summary: $("#description").val(),
-                    Account: $("#account").val(),
-                    Bank: $("#bank").val(),
-                    VideoLink: $("#videoLink").val(),
-                    AllowSharing: Number($("#allowSharing").val()),
-                    MinimumSharing: $("#minimumSharing").val()
-
                 };
 
-                let xhr = new XMLHttpRequest();
-                let url = "/create-property";
-                xhr.open('POST', url, false);
-                xhr.setRequestHeader("content-type", "application/json");
-                xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
-                try {
-                    xhr.send(JSON.stringify(params));
-                    if (xhr.status != 200) {
-                        // alert('Something went wrong try again!');
-                        $(".btn-property").html("Submit").attr("disabled", !1);
-                    } else {
-                        var res = JSON.parse(xhr.responseText);
-                        var data = JSON.parse(res).data;
-                        var message = JSON.parse(res).message;
-                        if (JSON.parse(res).success) {
-                            window.scrollTo(0, 0);
-                            $('.form-control').val('');
-                            $(".btn-property").html("Submit").attr("disabled", !1);
-                            Swal.fire(
-                                'Good job!',
-                                message,
-                                'success'
-                            ).then(() => {
-                                location.reload();
-                            });
-                        } else {
-                            var err = JSON.parse(res).message;
-                            Swal.fire(
-                                'Oops!',
-                                err == "401" ? "You don't have permission to perform this action" : "Something went wrong, admin has been contacted",
-                                'error'
-                            );
-                            $(".btn-property").html("Submit").attr("disabled", !1);
-                            window.scrollTo(0, 0);
-                        }
-
-                    }
-                } catch (err) { // instead of onerror
-                    //alert("Request failed");
-                }
-            } else if (
-                /* Read more about handling dismissals below */
-                result.dismiss === Swal.DismissReason.cancel
-            ) {
-                confirmPropertyUpdate.fire(
-                    'Cancelled',
-                    'No changes was made :)',
-                    'error'
-                )
+            if ((!Number($("#price").val())) && $("#price").val() != '') {
+                $(".btn-property").html("Submit").attr("disabled", !1);
+                messageFunc("Invalid price supply, kindly check and try again!", 'error');
+                $('#price').focus();
+                return;
             }
-        });
+            if ($("#types").val() == "") {
+                Swal.fire(
+                    'Oops!',
+                    "Property type is required ",
+                    'error'
+                );
+                $(".btn-property").html("Submit").attr("disabled", !1);
+                return;
+            }
+
+            if ($("#status").val() == "") {
+                Swal.fire(
+                    'Oops!',
+                    "Property category is required ",
+                    'error'
+                );
+                $(".btn-property").html("Submit").attr("disabled", !1);
+                return;
+            }
+
+            if ($("#allowSharing").val() == ""){
+                Swal.fire(
+                    'Oops!',
+                    "Allow sharing is required ",
+                    'error'
+                );
+                $(".btn-property").html("Submit").attr("disabled", !1);
+                return;
+            }
+
+            if ($("#allowSharing").val() > 0  && $('#minimumSharing').val() == ""){
+                Swal.fire(
+                    'Oops!',
+                    "Minimum property sharing is required ",
+                    'error'
+                );
+                $(".btn-property").html("Submit").attr("disabled", !1);
+                return;
+            }
+
+            var params = {
+                Name: $("#name").val().trim(),
+                Location: $("#location").val(),
+                Type: $("#types").val(),
+                UnitPrice: Number($("#price").val()),
+                Status: $("#status").val(),
+                UnitAvailable: Number($("#unit").val()),
+                Description: {
+                    Bathroom: Number($("#bathroom").val()),
+                    Toilet: Number($("#toilet").val()),
+                    FloorLevel: Number($("#floorLevel").val()),
+                    Bedroom: Number($("#bedRoom").val()),
+                    LandSize: $("#landSize").val(),
+                    AirConditioned: $("#airConditioned").is(":checked") ? 1 : 0,
+                    Refrigerator: $("#refrigerator").is(":checked") ? 1 : 0,
+                    Parking: $("#parking").is(":checked") ? 1 : 0,
+                    SwimmingPool: $("#swimmingPool").is(":checked") ? 1 : 0,
+                    Laundry: $("#laundry").is(":checked") ? 1 : 0,
+                    Gym: $("#gym").is(":checked") ? 1 : 0,
+                    SecurityGuard: $("#securityGuard").is(":checked") ? 1 : 0,
+                    Fireplace: $("#fireplace").is(":checked") ? 1 : 0,
+                    Basement: $("#basement").is(":checked") ? 1 : 0,
+                },
+                //InterestRate: Number($("#interest").val()),
+                TargetYield: Number($("#targetYield").val()),
+                Longitude: Number($("#logitude").val()),
+                Latitude: Number($("#latitude").val()),
+                Summary: $("#description").val(),
+                Account: $("#account").val(),
+                Bank: $("#bank").val(),
+                VideoLink: $("#videoLink").val(),
+                AllowSharing: Number($("#allowSharing").val()),
+                MinimumSharing: Number($("#allowSharing").val()) < 1 ? 0 : Number($("#minimumSharing").val())
+            };
+
+            let xhr = new XMLHttpRequest();
+            let url = "/create-property";
+            xhr.open('POST', url, false);
+            xhr.setRequestHeader("content-type", "application/json");
+            xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+            try {
+                xhr.send(JSON.stringify(params));
+                if (xhr.status != 200) {
+                    // alert('Something went wrong try again!');
+                    $(".btn-property").html("Submit").attr("disabled", !1);
+                } else {
+                    var res = JSON.parse(xhr.responseText);
+                    var data = JSON.parse(res).data;
+                    var message = JSON.parse(res).message;
+                    if (JSON.parse(res).success) {
+                        window.scrollTo(0, 0);
+                        $('.form-control').val('');
+                        $(".btn-property").html("Submit").attr("disabled", !1);
+                        Swal.fire(
+                            'Good job!',
+                            message,
+                            'success'
+                        ).then(() => {
+                            location.reload();
+                        });
+                    } else {
+                        var err = JSON.parse(res).message;
+                        Swal.fire(
+                            'Oops!',
+                            err == "401" ? "You don't have permission to perform this action" : "Something went wrong, admin has been contacted",
+                            'error'
+                        );
+                        $(".btn-property").html("Submit").attr("disabled", !1);
+                        window.scrollTo(0, 0);
+                    }
+
+                }
+            } catch (err) { // instead of onerror
+                //alert("Request failed");
+            }
+        } else if (
+            /* Read more about handling dismissals below */
+            result.dismiss === Swal.DismissReason.cancel
+        ) {
+            confirmPropertyUpdate.fire(
+                'Cancelled',
+                'No changes was made :)',
+                'error'
+            )
+        }
     });
-})
+});
 
 
 $('.btn-update-property').click(() => {
@@ -1229,11 +1275,11 @@ $('.btn-update-property').click(() => {
                 )
             )
 
-                if (t) message("Validation error the following field are required " + e.substring(0, e.length - 2), 'error'), window.scrollTo(0, 0), $(".btn-update-property").attr("disabled", !1).html("Submit");
+                if (t) messageFunc("Validation error the following field are required " + e.substring(0, e.length - 2), 'error'), window.scrollTo(0, 0), $(".btn-update-property").attr("disabled", !1).html("Submit");
 
             if ((!Number($("#price").val())) && $("#price").val() != '') {
                 $(".btn-update-property").html("Submit").attr("disabled", !1);
-                message("Invalid price supply, kindly check and try again!", 'error');
+                messageFunc("Invalid price supply, kindly check and try again!", 'error');
                 $('#price').focus();
                 return;
             }
@@ -1414,7 +1460,7 @@ $('#btnUpload').on('click', function () {
     let urls = window.location.href.split("/");
     let id = urls[5];
     if ($('#uploadType').val() == "") {
-        $('.msg').html(message("Upload type must be selected", "error"));
+        $('.msg').html(messageFunc("Upload type must be selected", "error"));
         return;
     }
     $('.msg').html('');
@@ -1429,7 +1475,7 @@ $('#btnUpload').on('click', function () {
     var files = fileUpload.files;
    
     if (files.length == 0) {
-        $('.msg').html(message("Property image is required!", 'error'));
+        $('.msg').html(messageFunc("Property image is required!", 'error'));
         return;
     }
 
@@ -1438,7 +1484,7 @@ $('#btnUpload').on('click', function () {
         var extension = fname.substr(fname.lastIndexOf("."))
         var re = /(\.pdf)$/i;
         if (!re.exec(extension)) {
-            $('.msg').html(message("Only PDF file is supported!", "error"));
+            $('.msg').html(messageFunc("Only PDF file is supported!", "error"));
             return;
         }
     }
@@ -2226,7 +2272,7 @@ const GetPropertyTypes = () => {
             var data = JSON.parse(res).data;
 
             if (JSON.parse(res).success) {
-                $('#types').html(`<option lable="&nbsp">Select Type </option>`);
+                $('#types').html(`<option value="">Select Type </option>`);
                 data.forEach(x => {
                     $('#types').append(`<option value="${x.id}">${x.name.replace("_", " ")} </option>`);
                 });
@@ -2294,7 +2340,7 @@ $('.btn-activate').click(() => {
             } else {
                 $(".btn-activate").html("Activate").attr("disabled", !1);
                 window.scrollTo(0, 0);
-                message(messages, 'error');
+                messageFunc(messages, 'error');
             }
 
         }
@@ -2771,10 +2817,10 @@ $(".btn-change-password").on("submit", function () {
                         $(this).prop("required") && ($(this).val() || ((t = !0), (name = $(this).attr("name")), (e += name + ", ")));
                     }))
             )
-                if (t) message("Validation error the following field are required " + e.substring(0, e.length - 2), 'error'), window.scrollTo(0, 0), $(".btn-change-password").attr("disabled", !1).html("Reset Password");
+                if (t) messageFunc("Validation error the following field are required " + e.substring(0, e.length - 2), 'error'), window.scrollTo(0, 0), $(".btn-change-password").attr("disabled", !1).html("Reset Password");
                 else {
                     if ($("#password").val() != $("#confirm").val()) {
-                        message("Password mismatch, kindly check and try again", "error");
+                        messageFunc("Password mismatch, kindly check and try again", "error");
                         return;
                     }
 
@@ -2806,7 +2852,7 @@ $(".btn-change-password").on("submit", function () {
 
                             } else {
 
-                                message(res.data
+                                messageFunc(res.data
                                     , 'error');
                                 window.scrollTo(0, 0);
                                 $(".btn-change-password").html("Reset Password").attr("disabled", !1);
@@ -2867,7 +2913,7 @@ $(".btn-update-profile").on("click", function () {
                         $(this).prop("required") && ($(this).val() || ((t = !0), (name = $(this).attr("name")), (e += name + ", ")));
                     }))
             )
-                if (t) message("Validation error the following field are required " + e.substring(0, e.length - 2), 'error'), window.scrollTo(0, 0), $(".btn-update-profile").attr("disabled", !1).html("Edit");
+                if (t) messageFunc("Validation error the following field are required " + e.substring(0, e.length - 2), 'error'), window.scrollTo(0, 0), $(".btn-update-profile").attr("disabled", !1).html("Edit");
                 else {
                     var a = {
                         AccountNumber: $("#account").val(),
@@ -2894,7 +2940,7 @@ $(".btn-update-profile").on("click", function () {
                                 $(".btn-update-profile").html("Edit").attr("disabled", !1);
                                 a = {};
                             } else {
-                                message(res.data
+                                messageFunc(res.data
                                     , 'error'),
                                     window.scrollTo(0, 0),
                                     $(".btn-update-profile").html("Edit").attr("disabled", !1);
@@ -2973,7 +3019,7 @@ $('.logout').click(() => {
     });
 });
 
-const message = (msg, _class) => $('#msg').append(`<div class="alert alert-${_class == "error" ? 'danger' : 'success'} alert-dismissible fade show" role="alert">
+const messageFunc = (msg, _class) => $('#msg').append(`<div class="alert alert-${_class == "error" ? 'danger' : 'success'} alert-dismissible fade show" role="alert">
 							${msg}
 						</div>`);
 
@@ -3101,7 +3147,7 @@ $('.btn-request').click(() => {
                 $(".btn-request").html("Request Information").attr("disabled", !1);
                 a = {};
             } else {
-                message(res.data
+                messageFunc(res.data
                     , 'error'),
                     window.scrollTo(0, 0),
                     $(".btn-request").html("Request Information").attr("disabled", !1);
@@ -3576,7 +3622,7 @@ const resetPassword = () => {
     var password = $('#password').val();
     var confirm = $('#confirm_password').val();
     if (password != confirm) {
-        message(`Password doesn't match`, 'error');
+        messageFunc(`Password doesn't match`, 'error');
         //Swal.fire(
         //    'Oops!',
         //    "Password doesn't match",
@@ -3630,13 +3676,13 @@ const resetPassword = () => {
                 window.scrollTo(0, 0);
                 if (messages != undefined) {
                     for (const [key, value] of Object.entries(messages.errors)) {
-                        message(`<li>${key} </li> ${value.join("<br/>")}`, 'error');
+                        messageFunc(`<li>${key} </li> ${value.join("<br/>")}`, 'error');
                     }
                 }
 
                 if (data != undefined) {
                     $("#msg").html("");
-                    message(data, 'error');
+                    messageFunc(data, 'error');
                 }
                 
             }
@@ -3826,7 +3872,7 @@ $('.btn-createBlog').on('click', function () {
                     })
                 )
             )
-                if (t) return $('#msg').html(message("error", "Validation error:  the following field are required ( " +
+                if (t) return $('#msg').html(messageFunc("error", "Validation error:  the following field are required ( " +
                     e.substring(0, e.length - 2) + " )")), window.scrollTo(0, 0), $(".btn-createBlog").attr("disabled", !1).html(`<i data-acorn-icon="save"></i><span>Submit</span>`);
             var editor = CKEDITOR.instances.editor1.getData();
             var params = {
@@ -3841,7 +3887,7 @@ $('.btn-createBlog').on('click', function () {
             var files = fileUpload.files;
 
             if (files.length == 0) {
-                $('#msg').html(message("error", "Blog image is required!"));
+                $('#msg').html(messageFunc("error", "Blog image is required!"));
                 $(".btn-createBlog").attr("disabled", !1).html(`<i data-acorn-icon="save"></i><span>Submit</span>`);
                 return;
             }
@@ -3869,7 +3915,7 @@ $('.btn-createBlog').on('click', function () {
                     let messages = JSON.parse(res).message;
                     if (JSON.parse(res).success) {
                         $("#title").val(''), $("#editor").val(''), $("#blogImage").val('');
-                        $('#msg').html(message("success", data));
+                        $('#msg').html(messageFunc("success", data));
 
                         window.scrollTo(0, 0);
                         Swal.fire(
@@ -3890,7 +3936,7 @@ $('.btn-createBlog').on('click', function () {
                         params = {};
                     }
                 } else {
-                    $('#msg').html(message("error", "Error performing operation, contact admin or try again in few minutes"));
+                    $('#msg').html(messageFunc("error", "Error performing operation, contact admin or try again in few minutes"));
                     $(".btn-createBlog").attr("disabled", !1).html(`Submit`);
                 }
             };
@@ -3923,7 +3969,7 @@ function getBlogs() {
     try {
         xhr.send();
         if (xhr.status != 200) {
-            $('#msg').html(message("error", "Error performing operation, contact admin or try again in few minutes"));
+            $('#msg').html(messageFunc("error", "Error performing operation, contact admin or try again in few minutes"));
             /* alert('Something went wrong try again!');*/
         } else {
 
@@ -3963,7 +4009,7 @@ function Blogs() {
     try {
         xhr.send();
         if (xhr.status != 200) {
-            $('#msg').html(message("error", "Error performing operation, contact admin or try again in few minutes"));
+            $('#msg').html(messageFunc("error", "Error performing operation, contact admin or try again in few minutes"));
             /* alert('Something went wrong try again!');*/
         } else {
 
@@ -4030,7 +4076,7 @@ const viewBlog = (id) => {
     try {
         xhr.send();
         if (xhr.status != 200) {
-            $('#msg').html(message("error", "Error performing operation, contact admin or try again in few minutes"));
+            $('#msg').html(messageFunc("error", "Error performing operation, contact admin or try again in few minutes"));
             /* alert('Something went wrong try again!');*/
         } else {
 
@@ -4065,7 +4111,7 @@ const getBlogDetail = () => {
     try {
         xhr.send();
         if (xhr.status != 200) {
-            $('#msg').html(message("error", "Error performing operation, contact admin or try again in few minutes"));
+            $('#msg').html(messageFunc("error", "Error performing operation, contact admin or try again in few minutes"));
             /* alert('Something went wrong try again!');*/
         } else {
 
@@ -4101,7 +4147,7 @@ const editBlog = () => {
     try {
         xhr.send();
         if (xhr.status != 200) {
-            $('#msg').html(message("error", "Error performing operation, contact admin or try again in few minutes"));
+            $('#msg').html(messageFunc("error", "Error performing operation, contact admin or try again in few minutes"));
             /* alert('Something went wrong try again!');*/
         } else {
 
@@ -4168,7 +4214,7 @@ $('.btn-updateBlog').on('click', function () {
                     })
                 )
             )
-                if (t) return $('#msg').html(message("error", "Validation error:  the following field are required ( " +
+                if (t) return $('#msg').html(messageFunc("error", "Validation error:  the following field are required ( " +
                     e.substring(0, e.length - 2) + " )")), window.scrollTo(0, 0), $(".btn-updateBlog").attr("disabled", !1).html(`Update`);
             var editor = CKEDITOR.instances.editor1.getData();
             let urls = window.location.href.split("/");
@@ -4197,7 +4243,7 @@ $('.btn-updateBlog').on('click', function () {
                 var files = fileUpload.files;
 
                 if (files.length == 0) {
-                    $('#msg').html(message("error", "Blog image is required!"));
+                    $('#msg').html(messageFunc("error", "Blog image is required!"));
                     $(".btn-updateBlog").attr("disabled", !1).html(`Update`);
                     return;
                 }
@@ -4225,7 +4271,7 @@ $('.btn-updateBlog').on('click', function () {
                     if (JSON.parse(res).success) {
                         $("#title").val(''),
                             CKEDITOR.instances.editor1.setData(''), $("#blogImage").val('');
-                        $('#msg').html(message("success", data));
+                        $('#msg').html(messageFunc("success", data));
 
                         window.scrollTo(0, 0);
                         Swal.fire(
@@ -4245,7 +4291,7 @@ $('.btn-updateBlog').on('click', function () {
                         params = {};
                     }
                 } else {
-                    $('#msg').html(message("error", "Error performing operation, contact admin or try again in few minutes"));
+                    $('#msg').html(messageFunc("error", "Error performing operation, contact admin or try again in few minutes"));
                     $(".btn-updateBlog").attr("disabled", !1).html(`Update`);
                 }
             };
@@ -4299,7 +4345,7 @@ const deleteBlog = (id) => {
             try {
                 xhr.send();
                 if (xhr.status != 200) {
-                    $('#msg').html(message("error", "Error performing operation, contact admin or try again in few minutes"));
+                    $('#msg').html(messageFunc("error", "Error performing operation, contact admin or try again in few minutes"));
                     /* alert('Something went wrong try again!');*/
                 } else {
 
