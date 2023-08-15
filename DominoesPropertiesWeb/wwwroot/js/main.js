@@ -49,12 +49,24 @@
                         a = {};
 
                 } else {
-                    for (const [key, value] of Object.entries(res.message.errors)) {
-                        message(`<li>${key} </li> ${value.join("<br/>")}`, 'error');
+                    if (res.data != null)
+                    {
+                        Swal.fire(
+                            'Error!',
+                            res.data,
+                            'error'
+                        )
                     }
-                    window.scrollTo(0, 0);
-                        $(".btn-register").html("Register").attr("disabled", !1);
-                    a = {};
+                    else
+                    {
+                        for (const [key, value] of Object.entries(res.message.errors)) {
+                            message(`<li>${key} </li> ${value.join("<br/>")}`, 'error');
+                        }
+
+                        window.scrollTo(0, 0);
+                        a = {};
+                    }
+                    $(".btn-register").html("Register").attr("disabled", !1);
                 }
 
             },
