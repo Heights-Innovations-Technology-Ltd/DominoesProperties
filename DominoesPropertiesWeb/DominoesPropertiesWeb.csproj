@@ -33,8 +33,10 @@
     <None Remove="Services\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Remove="wwwroot\uploads\" />
-    <Content Remove="wwwroot\uploads\email\" />
-    <Content Remove="wwwroot\images\email\" />
+    <Content Remove="wwwroot\uploads\"/>
+    <Content Remove="wwwroot\uploads\email\"/>
+    <Content Remove="wwwroot\images\email\"/>
+    <Content Remove="Views\Home\Blog 2.cshtml"/>
+    <Content Remove="Views\Admin\CreateBlog 2.cshtml"/>
   </ItemGroup>
 </Project>

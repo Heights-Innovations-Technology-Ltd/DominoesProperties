@@ -25,7 +25,7 @@ namespace Repositories.Service
                 _context.Customers.Add(customer);
                 _context.SaveChanges();
 
-                Wallet customerWallet = new Wallet
+                var customerWallet = new Wallet
                 {
                     CustomerId = customer.Id,
                     WalletNo = CommonLogic.GetUniqueNumber("WA")

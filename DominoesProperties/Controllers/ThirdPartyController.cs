@@ -139,7 +139,7 @@ namespace DominoesProperties.Controllers
                     customer.FirstName, client.ClientId);
                 if (tt != null)
                 {
-                    var newCustomer = _customerController.RegisterAsync(customerReq, true);
+                    var newCustomer = _customerController.RegisterAsync(customerReq, true, false);
                     if (newCustomer.Success)
                     {
                         var cust = _customerRepository.GetCustomer(customer.Email);

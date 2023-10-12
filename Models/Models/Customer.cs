@@ -32,6 +32,7 @@ namespace Models.Models
         public bool? IsDeleted { get; set; } = false;
         public string PassportUrl { get; set; }
         public string BankName { get; set; }
+        public string CreatedBy { get; set; }
         public DateTime DateRegistered { get; set; } = DateTime.Now;
         public DateTime? NextSubscriptionDate { get; set; }
         public DateTime? PrevSubscriptionDate { get; set; }

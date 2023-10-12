@@ -61,7 +61,7 @@ namespace DominoesProperties.Controllers
 
         [HttpPost]
         [Route("register")]
-        public ApiResponse RegisterAsync([FromBody] CustomerReq customer, bool? isThirdParty)
+        public ApiResponse RegisterAsync([FromBody] CustomerReq customer, bool? isThirdParty, bool? sendNoMail)
         {
             if (customerRepository.GetCustomer(customer.Email) != null)
             {
@@ -92,7 +92,8 @@ namespace DominoesProperties.Controllers
 
             var setting = applicationSettingsRepository.GetApplicationSettingsByName("EmailNotification");
             if (customerReg == null) return response;
-            _ = ActivationLink(customer.Email, ValidationModule.ACTIVATE_ACCOUNT, setting);
+            if (sendNoMail == null || !sendNoMail.Value)
+                _ = ActivationLink(customer.Email, ValidationModule.ACTIVATE_ACCOUNT, setting);
 
             response.Success = true;
             response.Message = "Customer account successfully created!";
@@ -372,7 +373,8 @@ namespace DominoesProperties.Controllers
             return response;
         }
 
-        private async Task<bool> ActivationLink(string uniqueRef, ValidationModule validationModule,
+        [NonAction]
+        public async Task<bool> ActivationLink(string uniqueRef, ValidationModule validationModule,
             ApplicationSetting setting)
         {
             var customer = customerRepository.GetCustomer(uniqueRef);

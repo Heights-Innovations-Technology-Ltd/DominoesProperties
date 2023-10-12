@@ -156,7 +156,7 @@ namespace DominoesProperties.Controllers
 
         [HttpPost]
         [Authorize(Roles = "CUSTOMER")]
-        public ApiResponse Investments([FromBody] InvestmentNew investment)
+        public ApiResponse Investments([FromBody] InvestmentNew investment, string customerEmail)
         {
             var property = propertyRepository.GetProperty(investment.PropertyUniqueId);
             if (property == null)
@@ -165,7 +165,7 @@ namespace DominoesProperties.Controllers
                 return response;
             }
 
-            var customer = customerRepository.GetCustomer(HttpContext.User.Identity!.Name);
+            var customer = customerRepository.GetCustomer(customerEmail ?? HttpContext.User.Identity!.Name);
             if (investment.Units > property.UnitAvailable)
             {
                 response.Message =

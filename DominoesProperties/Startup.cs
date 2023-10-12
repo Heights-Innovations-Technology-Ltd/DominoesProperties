@@ -88,6 +88,8 @@ namespace DominoesProperties
             services.AddScoped<IConfigRepository, ConfigService>();
             services.AddScoped<IBlogPostRepository, BlogPostService>();
             services.AddScoped<CustomerController, CustomerController>();
+            services.AddScoped<InvestmentController, InvestmentController>();
+            services.AddScoped<UtilController, UtilController>();
             services.AddScoped<IThirdPartyClientRepository, ThirdPartyClientService>();
 
             services.AddMvc()

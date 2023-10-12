@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
@@ -31,20 +32,27 @@ namespace DominoesProperties.Controllers
         private readonly IInvestmentRepository _investmentRepository;
         private readonly IPropertyRepository _propertyRepository;
         private readonly ITransactionRepository _transactionRepository;
+        private readonly UtilController _utilController;
         private readonly IAdminRepository adminRepository;
+        private readonly IApplicationSettingsRepository applicationSettingsRepository;
         private readonly IConfiguration configuration;
+        private readonly CustomerController customerController;
         private readonly ICustomerRepository customerRepository;
         private readonly IDistributedCache distributedCache;
         private readonly IWebHostEnvironment environment;
         private readonly DistributedCacheEntryOptions expiryOptions;
+        private readonly InvestmentController investmentController;
         private readonly ILoggerManager logger;
         private readonly ApiResponse response = new(false, "Error performing request, contact admin");
+        private readonly IWalletRepository walletRepository;
 
         public AdminController(IAdminRepository _adminRepository, IConfiguration _configuration,
             IWebHostEnvironment _environment, IDistributedCache _distributedCache,
             ICustomerRepository _customerRepository, ILoggerManager _logger, IInvestmentRepository investmentRepository,
             IPropertyRepository propertyRepository,
-            ITransactionRepository transactionRepository, IEmailService emailService)
+            ITransactionRepository transactionRepository, IEmailService emailService,
+            CustomerController customerController, IWalletRepository walletRepository,
+            InvestmentController investmentController, UtilController utilController)
         {
             adminRepository = _adminRepository;
             configuration = _configuration;
@@ -56,6 +64,10 @@ namespace DominoesProperties.Controllers
             _propertyRepository = propertyRepository;
             _transactionRepository = transactionRepository;
             _emailService = emailService;
+            this.customerController = customerController;
+            this.walletRepository = walletRepository;
+            this.investmentController = investmentController;
+            _utilController = utilController;
             expiryOptions = new DistributedCacheEntryOptions
             {
                 AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(20),
@@ -369,6 +381,104 @@ namespace DominoesProperties.Controllers
                 response.Message = $"Offline investment record not found or already treated.";
 
             return response;
+        }
+
+        [HttpPost]
+        [Route("create-customer")]
+        [Authorize(Roles = "ADMIN, SUPER")]
+        public ApiResponse RegisterCustomerFromAdminAsync([FromBody] AdminCustomerCreate customerReq)
+        {
+            var pass = CommonLogic.GetTempPasswordForAgent();
+            var customer = new CustomerReq()
+            {
+                FirstName = customerReq.FirstName,
+                LastName = customerReq.LastName,
+                Password = pass,
+                ConfirmPassword = pass,
+                Email = customerReq.Email,
+                Phone = customerReq.Phone,
+                AccountNumber = customerReq.AccountNumber ?? string.Empty,
+                Address = customerReq.Address ?? string.Empty
+            };
+
+            var resp = customerController.RegisterAsync(customer, false, true);
+            var q = customerRepository.GetCustomer(customer.Email);
+            q.CreatedBy = HttpContext.User.Identity!.Name;
+            q.IsActive = true;
+            q.IsVerified = true;
+            q.IsSubscribed = true;
+            q.IsAccountVerified = true;
+            q.NextSubscriptionDate = customerReq.SubscriptionStartDate.AddYears(1);
+            customerRepository.UpdateCustomer(q);
+
+            var customersList = new List<NewCustomers>
+            {
+                new()
+                {
+                    Email = q.Email,
+                    Phone = q.Phone,
+                    FirstName = q.FirstName,
+                    LastName = q.LastName,
+                    IsActive = q.IsActive.Value,
+                    IsSubscribed = q.IsSubscribed.Value,
+                    NextSubDate = q.NextSubscriptionDate.ToString()
+                }
+            };
+            _utilController.OnboardCustomers(customersList);
+            return resp;
+        }
+
+        [HttpPost("create-investment")]
+        [Authorize(Roles = "ADMIN, SUPER")]
+        public ApiResponse Investments([FromBody] AdminInvestment investment)
+        {
+            var property = _propertyRepository.GetProperty(investment.PropertyUniqueId);
+            if (property == null)
+            {
+                response.Message =
+                    $"Invalid property {investment.PropertyUniqueId} selected";
+                return response;
+            }
+
+            var customer = customerRepository.GetCustomer(investment.CustomerEmail);
+            if (customer == null)
+            {
+                response.Message =
+                    $"Customer with email {investment.CustomerEmail} not found";
+                return response;
+            }
+
+            var price = property.UnitPrice * investment.Units;
+
+            var transaction = new Transaction
+            {
+                Amount = price,
+                Channel = "CASH",
+                CustomerId = customer.Id,
+                Module = "FUND_WALLET",
+                Status = "success",
+                TransactionRef = CommonLogic.GetUniqueRefNumber("ADI"),
+                TransactionType = TransactionType.CR.ToString(),
+                TransactionDate = DateTime.Now
+            };
+
+            _transactionRepository.NewTransaction(transaction);
+            logger.LogInfo("Transaction table updated successfully");
+
+            var wallet = walletRepository.GetCustomerWallet(customer.Id);
+            wallet.Balance += price;
+            wallet.LastTransactionAmount = price;
+            wallet.LastTransactionDate = DateTime.Now;
+            walletRepository.UpdateCustomerWallet(wallet);
+
+            var invest = new InvestmentNew
+            {
+                Channel = Channel.WALLET,
+                Units = investment.Units,
+                IsSharing = investment.IsSharing,
+                PropertyUniqueId = investment.PropertyUniqueId
+            };
+            return investmentController.Investments(invest, customer.Email);
         }
 
         private string GenerateJwtToken(string uniqueRef)

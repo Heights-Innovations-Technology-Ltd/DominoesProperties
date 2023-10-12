@@ -49,7 +49,8 @@
     public enum ValidationModule
     {
         RESET_PASSWORD,
-        ACTIVATE_ACCOUNT
+        ACTIVATE_ACCOUNT,
+        ADMIN_SETUP
     }
 
     public enum EnquiryStatus

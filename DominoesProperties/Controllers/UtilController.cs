@@ -260,7 +260,8 @@ namespace DominoesProperties.Controllers
             return response;
         }
 
-        private void OnboardCustomers(IReadOnlyCollection<NewCustomers> customers)
+        [NonAction]
+        public void OnboardCustomers(IReadOnlyCollection<NewCustomers> customers)
         {
             Task.Run(() => customers.ToList().ForEach(x =>
             {
@@ -304,16 +305,11 @@ namespace DominoesProperties.Controllers
 
         [HttpPost("test/encypt")]
         [Authorize(Roles = "SUPER, ADMIN")]
-        public ApiResponse TestEncryption([FromBody] Dictionary<string, string> keyValues)
+        public ApiResponse TestEncryption([FromBody] Dictionary<string, string> keyValues, [FromQuery] bool encrypt)
         {
-            Dictionary<string, string> result = new();
-            foreach (var keyValuePairs in keyValues)
-            {
-                result.Add(keyValuePairs.Key,
-                    "encrypt".Equals("encrypt")
-                        ? CommonLogic.Encrypt(keyValuePairs.Value)
-                        : CommonLogic.Decrypt(keyValuePairs.Value));
-            }
+            var result = keyValues.ToDictionary(keyValuePairs => keyValuePairs.Key, keyValuePairs => encrypt
+                ? CommonLogic.Encrypt(keyValuePairs.Value)
+                : CommonLogic.Decrypt(keyValuePairs.Value));
 
             response.Success = true;
             response.Message = "Success!";
