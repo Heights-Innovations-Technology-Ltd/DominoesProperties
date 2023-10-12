@@ -393,8 +393,8 @@ namespace DominoesProperties.Controllers
             {
                 FirstName = customerReq.FirstName,
                 LastName = customerReq.LastName,
-                Password = pass,
-                ConfirmPassword = pass,
+                Password = "Welcome@2022",
+                ConfirmPassword = "Welcome@2022",
                 Email = customerReq.Email,
                 Phone = customerReq.Phone,
                 AccountNumber = customerReq.AccountNumber ?? string.Empty,
