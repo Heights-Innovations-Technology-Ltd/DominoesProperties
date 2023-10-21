@@ -7,12 +7,18 @@ using Repositories.Repository;
 
 namespace Repositories.Service
 {
-    public class EmailRetryService : BaseRepository, IEmailRetryRepository
+    public class EmailRetryService : BaseRepository, IEmailRetryRepository, IDisposable
     {
         private readonly ILoggerManager logger;
+
         public EmailRetryService(dominoespropertiesContext context, ILoggerManager _logger) : base(context)
         {
             logger = _logger;
+        }
+
+        public void Dispose()
+        {
+            GC.SuppressFinalize(this);
         }
 
         public void AddRetry(EmailRetry email)
@@ -32,7 +38,9 @@ namespace Repositories.Service
         {
             try
             {
-                return _context.Emailretries.OrderBy(x => x.DateCreated).ToList();
+                return _context.Emailretries
+                    .Where(x => !x.StatusCode.Equals("200") && x.DateCreated.Date == DateTime.Today.Date &&
+                                x.RetryCount < 3).OrderBy(x => x.DateCreated).ToList();
             }
             catch (Exception e)
             {

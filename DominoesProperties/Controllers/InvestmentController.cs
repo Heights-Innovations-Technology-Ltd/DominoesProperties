@@ -225,7 +225,7 @@ namespace DominoesProperties.Controllers
                             TransactionRef = transaction.TransactionRef,
                             Status = Status.COMPLETED.ToString()
                         };
-                        if (investmentRepository.AddInvestment(newInvestment) != 0) return response;
+                        if (investmentRepository.AddInvestment(newInvestment) == 0) return response;
                         property.UnitAvailable -= investment.Units;
                         property.UnitSold += investment.Units;
                         if (property.UnitAvailable == 0)

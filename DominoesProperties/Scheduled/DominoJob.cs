@@ -10,7 +10,7 @@ using Repositories.Repository;
 
 namespace DominoesProperties.Scheduled
 {
-    public class DominoJob : IDominoJob
+    public class DominoJob : IDominoJob, IDisposable
     {
         private readonly EmailSettings _emailSettings;
         private readonly ICustomerRepository customerRepository;
@@ -34,6 +34,11 @@ namespace DominoesProperties.Scheduled
             logger = _logger;
             customerRepository = _customerRepository;
             _emailSettings = options.Value;
+        }
+
+        public void Dispose()
+        {
+            GC.SuppressFinalize(this);
         }
 
         public void PerformPairInvestment()
@@ -186,8 +191,7 @@ namespace DominoesProperties.Scheduled
                 var retries = emailRetryRepository.GetRetries();
                 retries.ForEach(x =>
                 {
-                    if (x.DateCreated.Day != DateTime.Now.Day || DateTime.Now > x.DateCreated.AddMinutes(5) ||
-                        x.RetryCount >= 3) return;
+                    if (DateTime.Now > x.DateCreated.AddMinutes(30)) return;
                     MimeMessage emailMessage = new();
 
                     MailboxAddress emailFrom = new(_emailSettings.Name, _emailSettings.EmailId);
@@ -214,6 +218,7 @@ namespace DominoesProperties.Scheduled
 
                 emailClient.Disconnect(true);
                 emailClient.Dispose();
+                Dispose();
             }
             catch (Exception ex)
             {
