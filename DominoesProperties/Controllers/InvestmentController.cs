@@ -116,8 +116,8 @@ namespace DominoesProperties.Controllers
                     Amount = (property.UnitPrice * investment.PercentageShare) / 100,
                     Module = PaymentType.PROPERTY_PAIRING_GROUP,
                     InvestmentId = shg.UniqueId,
-                    Callback = string.Format("{0}/{1}", $"{Request.Scheme}://{Request.Host}{Request.PathBase}",
-                        "api/payment/verify-payment")
+                    Callback =
+                        $"{Request.Scheme}://{Request.Host}{Request.PathBase}/api/payment/verify-payment"
                 };
                 return paymentController.DoInitPayment(pay, HttpContext.User.Identity.Name);
             }
@@ -170,6 +170,14 @@ namespace DominoesProperties.Controllers
             {
                 response.Message =
                     $"Not enough investment units available, only {property.UnitAvailable} units available for purchase";
+                return response;
+            }
+
+            if (!customer.IsSubscribed.Value || !customer.IsActive.Value || !customer.IsVerified.Value ||
+                customer.IsDeleted.Value)
+            {
+                response.Message =
+                    $"User does not meet the requirement to invest at this time, kind activate your account and subscribe to be able to invest.";
                 return response;
             }
 
@@ -382,6 +390,15 @@ namespace DominoesProperties.Controllers
         [Authorize(Roles = "ADMIN, CUSTOMER")]
         public ApiResponse OfflineInvestment(string customerUniqueId)
         {
+            var customer = customerRepository.GetCustomer(customerUniqueId ?? HttpContext.User.Identity!.Name);
+            if (!customer.IsSubscribed.Value || !customer.IsActive.Value || !customer.IsVerified.Value ||
+                customer.IsDeleted.Value)
+            {
+                response.Message =
+                    $"User does not meet the requirement to invest at this time, kind activate your account and subscribe to be able to invest.";
+                return response;
+            }
+
             var investments = investmentRepository
                 .GetOfflineInvestments(customerRepository.GetCustomer(customerUniqueId).Id)
                 .Where(x => x.Status.Equals(Status.PENDING.ToString())).ToList();
@@ -403,7 +420,7 @@ namespace DominoesProperties.Controllers
         [Authorize(Roles = "ADMIN, SUPER")]
         public ApiResponse PropertyInvestment(string propertyUniqueId)
         {
-            List<Investment> investments = investmentRepository
+            var investments = investmentRepository
                 .GetPropertyInvestments(propertyRepository.GetProperty(propertyUniqueId).Id)
                 .Where(x => x.Status.Equals("COMPLETED")).ToList();
             List<InvestmentView> investments1 = new();
