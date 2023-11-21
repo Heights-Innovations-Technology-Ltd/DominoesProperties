@@ -760,18 +760,18 @@ const LandingPagePropertyTmp = (data) => {
 
 const propertyDetails = (id) => {
 
-    if ($('#isSubcribed').val() == "False" && $('#refId').val() != "") {
-        Swal.fire({
-            icon: 'info',
-            title: 'Oops...',
-            text: 'Property details can only be view by subscribed users, kindly subscribe to get full access ',
-            footer: `<a href="javascript:void(0)" class="default-btn btn-subscribe" onclick="onSubscribe()">Subcribe Now</a>`
-        }).then(() => {
-            
-            //$('.btn-subscribe').trigger('click');
-        })
-        return;
-    }
+    // if ($('#isSubcribed').val() == "False" && $('#refId').val() != "") {
+    //     Swal.fire({
+    //         icon: 'info',
+    //         title: 'Oops...',
+    //         text: 'Property details can only be view by subscribed users, kindly subscribe to get full access ',
+    //         footer: `<a href="javascript:void(0)" class="default-btn btn-subscribe" onclick="onSubscribe()">Subcribe Now</a>`
+    //     }).then(() => {
+    //
+    //         //$('.btn-subscribe').trigger('click');
+    //     })
+    //     return;
+    // }
     window.location.replace('/Home/PropertyDetails/' + id);
 }
 
@@ -785,10 +785,10 @@ $('.edit-property').click(() => {
 let singleData;
 const getSingleProperty = () => {
 
-    if ($('#isSubcribed').val() == "False" && $('#refId').val() != "") {
-        location = '/Dashboard/Profile';
-        return;
-    }
+    // if ($('#isSubcribed').val() == "False" && $('#refId').val() != "") {
+    //     location = '/Dashboard/Profile';
+    //     return;
+    // }
     var userRef = $('#isLogIn').val();
     if (userRef == 'False') {
         Swal.fire({
@@ -985,6 +985,20 @@ const calUnit =  () => {
 };
 
 function openModal() {
+
+    if ($('#isSubcribed').val() == "False" && $('#refId').val() != "") {
+        Swal.fire({
+            icon: 'info',
+            title: 'Oops...',
+            text: 'Only subscribed users are allowed to create an investment.',
+            footer: `<a href="javascript:void(0)" class="default-btn btn-subscribe" onclick="onSubscribe()">Subcribe Now</a>`
+        }).then(() => {
+
+            //$('.btn-subscribe').trigger('click');
+        })
+        return;
+    }
+    
     Swal.fire({
         template: '#my-template',
         reverseButtons: true
