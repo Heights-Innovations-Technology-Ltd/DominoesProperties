@@ -1,391 +1,395 @@
-﻿
+﻿@using Microsoft.AspNetCore.Http
+
 <!doctype html>
 <html lang="eng">
 <head>
-		<!-- Required meta tags -->
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-		<meta name="description" content="We are a great agency for buying and selling your property with confidence. So you can easily buy and sell through our company" />
-		<meta property="og:locale" content="en_US" />
-		<meta property="og:type" content="website" />
-		<meta property="og:title" content="The Dominoes Society || Co-Investment Community for Real Estate" />
-		<meta property="og:description" content="We are Africa's foremost investment community that helps you invest safely and successfully in fractional real estate" />
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="We are a great agency for buying and selling your property with confidence. So you can easily buy and sell through our company"/>
+    <meta property="og:locale" content="en_US"/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:title" content="The Dominoes Society || Co-Investment Community for Real Estate"/>
+    <meta property="og:description" content="We are Africa's foremost investment community that helps you invest safely and successfully in fractional real estate"/>
 
-		<!-- Links Of CSS File -->
-		<link rel="stylesheet" href="~/css/bootstrap.min.css">
-		<link rel="stylesheet" href="~/css/owl.theme.default.min.css">
-		<link rel="stylesheet" href="~/css/owl.carousel.min.css">
-		<link rel="stylesheet" href="~/css/flaticon.css">
-		<link rel="stylesheet" href="~/css/remixicon.css">
-		<link rel="stylesheet" href="~/css/meanmenu.min.css">
-		<link rel="stylesheet" href="~/css/animate.min.css">
-		<link rel="stylesheet" href="~/css/magnific-popup.min.css">
-		<link rel="stylesheet" href="~/css/dark-mode.css">
-		<link rel="stylesheet" href="~/css/style.css">
-		<link rel="stylesheet" href="~/css/responsive.css">
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <!-- Links Of CSS File -->
+    <link rel="stylesheet" href="~/css/bootstrap.min.css">
+    <link rel="stylesheet" href="~/css/owl.theme.default.min.css">
+    <link rel="stylesheet" href="~/css/owl.carousel.min.css">
+    <link rel="stylesheet" href="~/css/flaticon.css">
+    <link rel="stylesheet" href="~/css/remixicon.css">
+    <link rel="stylesheet" href="~/css/meanmenu.min.css">
+    <link rel="stylesheet" href="~/css/animate.min.css">
+    <link rel="stylesheet" href="~/css/magnific-popup.min.css">
+    <link rel="stylesheet" href="~/css/dark-mode.css">
+    <link rel="stylesheet" href="~/css/style.css">
+    <link rel="stylesheet" href="~/css/responsive.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
 
-		<script src="~/js/jquery.min.js"></script>
-		<script src="~/js/sweetalert.min.js"></script>
-		<script src="~/js/moment.js"></script>
-		<script src="~/js/chart.min.js"></script>
-		@*<script src="~/js/ckeditor/styles.js"></script>*@
-		@*<script src="~/js/ckeditor/ckeditor.js"></script>*@
+    <script src="~/js/jquery.min.js"></script>
+    <script src="~/js/sweetalert.min.js"></script>
+    <script src="~/js/moment.js"></script>
+    <script src="~/js/chart.min.js"></script>
+    @*<script src="~/js/ckeditor/styles.js"></script>*@
+    @*<script src="~/js/ckeditor/ckeditor.js"></script>*@
 
-		<link href="//cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css" rel="stylesheet" type="text/css">
-		<script src="//cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
-		
-		<!-- Favicon -->
-		<link rel="icon" type="image/png" href="~/images/favicon.png">
-		<!-- Title -->
-        <title>@ViewData["Title"] - Co-Investment Community for Real Estate</title>
-																				
-    </head>
-		@using Microsoft.AspNetCore.Http;
-		@inject IHttpContextAccessor HttpContextAccessor
+    <link href="//cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css" rel="stylesheet" type="text/css">
+    <script src="//cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
 
-		@{
-            var Username = @HttpContextAccessor.HttpContext.Session.GetString("ReferenceId");
-            var IsSubscribed = @HttpContextAccessor.HttpContext.Session.GetString("IsSubscribed");
-            var WalletId = @HttpContextAccessor.HttpContext.Session.GetString("WalletId");
-            var Firstname = @HttpContextAccessor.HttpContext.Session.GetString("Firstname");
-            var Lastname = @HttpContextAccessor.HttpContext.Session.GetString("Lastname");
-            var isAdmin = @HttpContextAccessor.HttpContext.Session.GetString("RoleFK");
-            var passport = @HttpContextAccessor.HttpContext.Session.GetString("Passport");
-            var userFullName = string.Format("{0} {1}", Firstname, Lastname);
-			var userLogin = false;
-			if(Username != null || isAdmin != null){
-				userLogin = true;
-			}
-            if(isAdmin != null && isAdmin != ""){
-                userFullName = @HttpContextAccessor.HttpContext.Session.GetString("Email");
-            }
-		}
-		@Html.Hidden("refId", Username)
-		@Html.Hidden("isSubcribed", IsSubscribed)
-		@Html.Hidden("fullname", userFullName)
-		@Html.Hidden("isAdmin", isAdmin)
-		@Html.Hidden("createdBy", @HttpContextAccessor.HttpContext.Session.GetString("Email"))
-		@Html.Hidden("isLogIn", userLogin)
-    <body>
-		<script>
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="~/images/favicon.png">
+    <!-- Title -->
+    <title>@ViewData["Title"] - Co-Investment Community for Real Estate</title>
+
+</head>
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+    var Username = @HttpContextAccessor.HttpContext.Session.GetString("ReferenceId");
+    var IsSubscribed = @HttpContextAccessor.HttpContext.Session.GetString("IsSubscribed");
+    var WalletId = @HttpContextAccessor.HttpContext.Session.GetString("WalletId");
+    var Firstname = @HttpContextAccessor.HttpContext.Session.GetString("Firstname");
+    var Lastname = @HttpContextAccessor.HttpContext.Session.GetString("Lastname");
+    var isAdmin = @HttpContextAccessor.HttpContext.Session.GetString("RoleFK");
+    var passport = @HttpContextAccessor.HttpContext.Session.GetString("Passport");
+    var userFullName = string.Format("{0} {1}", Firstname, Lastname);
+    var userLogin = false;
+    if (Username != null || isAdmin != null)
+    {
+        userLogin = true;
+    }
+    if (isAdmin != null && isAdmin != "")
+    {
+        userFullName = @HttpContextAccessor.HttpContext.Session.GetString("Email");
+    }
+}
+@Html.Hidden("refId", Username)
+@Html.Hidden("isSubcribed", IsSubscribed)
+@Html.Hidden("fullname", userFullName)
+@Html.Hidden("isAdmin", isAdmin)
+@Html.Hidden("createdBy", @HttpContextAccessor.HttpContext.Session.GetString("Email"))
+@Html.Hidden("isLogIn", userLogin)
+<body>
+<script>
 			$(function(){
 				//if($('#refId').val() == "" || $('#refId').val() == null) return location = '/';
 			});
 		</script>
-		<!-- Start Preloader Area -->
-		<div class="preloader" id="loader-style">
-			<div class="preloader-wrap">
-				<span></span>
-				<span></span>
-				<span></span>
-				<span></span>
-			</div>
-		</div>
-		<!-- End Preloader Area -->
-		
-		<!-- Start Navbar Area --> 
-		<div class="navbar-area">
-			<div class="mobile-responsive-nav">
-				<div class="container">
-					<div class="mobile-responsive-menu">
-						<div class="logo">
-							<a href="/">
-								<img src="~/images/Logo-WHT.png" style="width:160px;" class="main-logo" alt="Dominoes logo">
-								<img src="~/images/Logo-WHT.png" style="width:160px;" class="white-logo" alt="Dominoes logo">
-							</a>
-						</div>
-					</div>
-				</div>
-			</div>
+<!-- Start Preloader Area -->
+<div class="preloader" id="loader-style">
+    <div class="preloader-wrap">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+</div>
+<!-- End Preloader Area -->
 
-			<div class="desktop-nav">
-				<div class="container-fluid">
-					<nav class="navbar navbar-expand-md navbar-light">
-						<a class="navbar-brand" href="/">
-							<img src="~/images/Logo-WHT.png" style="width:150px; height:52px;" class="main-logo" alt="Dominoes logo">
-								<img src="~/images/Logo-WHT.png" style="width:150px; height:52px;" class="white-logo" alt="Dominoes logo">
-						</a>
+<!-- Start Navbar Area -->
+<div class="navbar-area">
+    <div class="mobile-responsive-nav">
+        <div class="container">
+            <div class="mobile-responsive-menu">
+                <div class="logo">
+                    <a href="/">
+                        <img src="~/images/Logo-WHT.png" style="width:160px;" class="main-logo" alt="Dominoes logo">
+                        <img src="~/images/Logo-WHT.png" style="width:160px;" class="white-logo" alt="Dominoes logo">
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
 
-						<div class="collapse navbar-collapse mean-menu" id="navbarSupportedContent">
-							
-							<ul class="navbar-nav m-auto">
-								<li class="nav-item">
-									<a href="/" class="nav-link active">
-										Home            
-									</a>
-								</li>
+    <div class="desktop-nav">
+        <div class="container-fluid">
+            <nav class="navbar navbar-expand-md navbar-light">
+                <a class="navbar-brand" href="/">
+                    <img src="~/images/Logo-WHT.png" style="width:150px; height:52px;" class="main-logo" alt="Dominoes logo">
+                    <img src="~/images/Logo-WHT.png" style="width:150px; height:52px;" class="white-logo" alt="Dominoes logo">
+                </a>
 
-								@if(isAdmin == null){
-									<li class="nav-item">
-										<a asp-controller="Home" asp-action="properties" class="nav-link" id="property-links">
-											Investments
-										</a>
-									</li>
-								}
-								<li class="nav-item">
-									<a asp-controller="Home" asp-action="howitworks" class="nav-link">
-										How it works            
-									</a>
-								</li>
+                <div class="collapse navbar-collapse mean-menu" id="navbarSupportedContent">
 
-								@* <li class="nav-item">
+                    <ul class="navbar-nav m-auto">
+                        <li class="nav-item">
+                            <a href="/" class="nav-link active">
+                                Home
+                            </a>
+                        </li>
+
+                        @if (isAdmin == null)
+                        {
+                            <li class="nav-item">
+                                <a asp-controller="Home" asp-action="properties" class="nav-link" id="property-links">
+                                    Investments
+                                </a>
+                            </li>
+                        }
+                        <li class="nav-item">
+                            <a asp-controller="Home" asp-action="howitworks" class="nav-link">
+                                How it works
+                            </a>
+                        </li>
+
+                        @* <li class="nav-item">
 									<a href="#" class="nav-link">Contact Us</a>
 								</li> *@
-							</ul>
+                    </ul>
 
-							<div class="others-options style">
-								<ul>
-									@*<li>
+                    <div class="others-options style">
+                        <ul>
+                            @*<li>
 										<a href="my-listings.html" class="wishlist">
 											<i class="ri-heart-line"></i>
 											<span>0</span>
 										</a>
 									</li>*@
-									<li>
-										<div class="dropdown">
-											<button type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-												<img src="@passport" style="width:50px; height:50px" alt="Image">
-												<span>@userFullName</span>
-											</button>
-											<ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-												<li>
-													<a asp-controller="Dashboard" asp-action="Index">
-														<i class="ri-dashboard-line"></i>
-														Dashboard
-													</a>
-												</li>
-												@if(Username != null)
-												{
-													<li>
-														<a asp-controller="Dashboard" asp-action="Profile">
-															<i class="ri-user-line"></i>
-															My Profile
-														</a>
-													</li>
-												}
-												
-												<li>
-													<a href="javascript:void(0)" class="logout">
-														<i class="ri-logout-box-r-line"></i>
-														Sign out
-													</a>
-												</li>
-											</ul>
-										</div>
-									</li>
-									
-								@*<li>
+                            <li>
+                                <div class="dropdown">
+                                    <button type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <img src="@passport" style="width:50px; height:50px" alt="Image">
+                                        <span>@userFullName</span>
+                                    </button>
+                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                        <li>
+                                            <a asp-controller="Dashboard" asp-action="Index">
+                                                <i class="ri-dashboard-line"></i>
+                                                Dashboard
+                                            </a>
+                                        </li>
+                                        @if (Username != null)
+                                        {
+                                            <li>
+                                                <a asp-controller="Dashboard" asp-action="Profile">
+                                                    <i class="ri-user-line"></i>
+                                                    My Profile
+                                                </a>
+                                            </li>
+                                        }
+
+                                        <li>
+                                            <a href="javascript:void(0)" class="logout">
+                                                <i class="ri-logout-box-r-line"></i>
+                                                Sign out
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+
+                            @*<li>
 										<a asp-controller="Home" asp-action="SignIn" class="default-btn">
 											Sign In / Sign Up
 										</a>
 									</li>*@
-								</ul>
-							</div>
-						</div>
-					</nav>
-				</div>
-			</div>
-
-			<!-- Start Dark Mode Area -->
-			<div class="switch-wrapper">
-				<div class="container-fluid">
-					<div class="switch-btn">
-						
-					</div>
-				</div>
-			</div>
-			<!-- End Dark Mode Area -->
-
-			<div class="others-option-for-responsive">
-				<div class="container">
-					<div class="dot-menu">
-						<div class="inner">
-							<div class="circle circle-one"></div>
-							<div class="circle circle-two"></div>
-							<div class="circle circle-three"></div>
-						</div>
-					</div>
-					
-					<div class="container">
-						<div class="option-inner">
-							<div class="others-options justify-content-center d-flex align-items-center">
-								<ul>
-									<li>
-										<a asp-controller="Dashboard" asp-action="Index">
-											<i class="ri-dashboard-line"></i>
-											Dashboard
-										</a>
-									</li>
-									@if (Username != null)
-									{
-										<li>
-											<a asp-controller="Dashboard" asp-action="Profile">
-												<i class="ri-user-line"></i>
-												My Profile
-											</a>
-										</li>
-									}
-
-									<li>
-										<a href="javascript:void(0)" class="logout">
-											<i class="ri-logout-box-r-line"></i>
-											Sign out
-										</a>
-									</li>
-								</ul>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-		<!-- End Navbar Area -->
-		
-		<!-- Start Sidebar Area -->
-		<div class="dashboard-sidebar-menu">
-			<h3>Dominoes Society</h3>
-
-			<ul>
-				@if(isAdmin != null && isAdmin != ""){
-					<li>
-						<a href="/Dashboard" class="active" id="dashboard-link">
-							<i class="ri-dashboard-line"></i>
-							Dashboard
-						</a>
-					</li>
-					<li>
-						<a asp-controller="Admin" asp-action="Blogs" id="property-link">
-							<i class="ri-building-2-fill"></i>
-							Blogs
-						</a>
-					</li>
-					<li>
-						<a asp-controller="Property" asp-action="Index" id="property-link">
-							<i class="ri-building-2-fill"></i>
-							Properties
-						</a>
-					</li>
-					<li>
-						<a asp-controller="Investment" asp-action="Index" id="investments-link">
-							<i class="ri-building-line"></i>
-							Investments
-						</a>
-					</li>
-					<li>
-						<a asp-controller="Dashboard" asp-action="OfflinePayment" id="offline-link">
-							<i class="ri-building-line"></i>
-							Offline Payment
-						</a>
-					</li>
-					<li>
-						<a asp-controller="Dashboard" asp-action="NewsSubscribers">
-							<i class="ri-heart-line"></i>
-							Subscribers
-						</a>
-					</li>
-					<li>
-						<a asp-controller="Dashboard" asp-action="Enquiry">
-							<i class="ri-arrow-up-s-fill"></i>
-							Customer Enquiry
-						</a>
-					</li>
-					<li>
-						<a asp-controller="Dashboard" asp-action="Onboarding">
-							<i class="ri-user-line"></i>
-							Onboarding
-						</a>
-					</li>
-					<li>
-						<a asp-controller="Dashboard" asp-action="Setting">
-							<i class="ri-logout-box-r-line"></i>
-							Settings
-						</a>
-					</li>
-				}else{
-					<li>
-						<a href="/Dashboard" class="active" id="dashboard-link">
-							<i class="ri-dashboard-line"></i>
-							Dashboard
-						</a>
-					</li>
-					<li>
-						<a asp-controller="Dashboard" asp-action="Profile" id="profile-link">
-							<i class="ri-user-line"></i>
-							My Profile
-						</a>
-					</li>
-					<li>
-						<a asp-controller="Dashboard" asp-action="Investments" id="investments-link">
-							<i class="ri-building-2-line"></i>
-							Investments
-						</a>
-					</li>
-					<li>
-					<a asp-controller="Dashboard" asp-action="PendingInvestments" id="pending-investments-link">
-							<i class="ri-building-2-line"></i>
-							Pending Investments
-						</a>
-					</li>
-				}
-				
-			</ul>
-		</div>
-		<!-- End Sidebar Area -->
-	
-    <div class="">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+        </div>
     </div>
 
-	
+    <!-- Start Dark Mode Area -->
+    <div class="switch-wrapper">
+        <div class="container-fluid">
+            <div class="switch-btn">
+
+            </div>
+        </div>
+    </div>
+    <!-- End Dark Mode Area -->
+
+    <div class="others-option-for-responsive">
+        <div class="container">
+            <div class="dot-menu">
+                <div class="inner">
+                    <div class="circle circle-one"></div>
+                    <div class="circle circle-two"></div>
+                    <div class="circle circle-three"></div>
+                </div>
+            </div>
+
+            <div class="container">
+                <div class="option-inner">
+                    <div class="others-options justify-content-center d-flex align-items-center">
+                        <ul>
+                            <li>
+                                <a asp-controller="Dashboard" asp-action="Index">
+                                    <i class="ri-dashboard-line"></i>
+                                    Dashboard
+                                </a>
+                            </li>
+                            @if (Username != null)
+                            {
+                                <li>
+                                    <a asp-controller="Dashboard" asp-action="Profile">
+                                        <i class="ri-user-line"></i>
+                                        My Profile
+                                    </a>
+                                </li>
+                            }
+
+                            <li>
+                                <a href="javascript:void(0)" class="logout">
+                                    <i class="ri-logout-box-r-line"></i>
+                                    Sign out
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Navbar Area -->
+
+<!-- Start Sidebar Area -->
+<div class="dashboard-sidebar-menu">
+    <h3>Dominoes Society</h3>
+
+    <ul>
+        @if (isAdmin != null && isAdmin != "")
+        {
+            <li>
+                <a href="/Dashboard" class="active" id="dashboard-link">
+                    <i class="ri-dashboard-line"></i>
+                    Dashboard
+                </a>
+            </li>
+            <li>
+                <a asp-controller="Admin" asp-action="Blogs" id="property-link">
+                    <i class="ri-building-2-fill"></i>
+                    Blogs
+                </a>
+            </li>
+            <li>
+                <a asp-controller="Property" asp-action="Index" id="property-link">
+                    <i class="ri-building-2-fill"></i>
+                    Properties
+                </a>
+            </li>
+            <li>
+                <a asp-controller="Investment" asp-action="Index" id="investments-link">
+                    <i class="ri-building-line"></i>
+                    Investments
+                </a>
+            </li>
+            <li>
+                <a asp-controller="Dashboard" asp-action="OfflinePayment" id="offline-link">
+                    <i class="ri-building-line"></i>
+                    Offline Payment
+                </a>
+            </li>
+            <li>
+                <a asp-controller="Dashboard" asp-action="NewsSubscribers">
+                    <i class="ri-heart-line"></i>
+                    Subscribers
+                </a>
+            </li>
+            <li>
+                <a asp-controller="Dashboard" asp-action="Enquiry">
+                    <i class="ri-arrow-up-s-fill"></i>
+                    Customer Enquiry
+                </a>
+            </li>
+            <li>
+                <a asp-controller="Dashboard" asp-action="Onboarding">
+                    <i class="ri-user-line"></i>
+                    Onboarding
+                </a>
+            </li>
+            <li>
+                <a asp-controller="Dashboard" asp-action="Setting">
+                    <i class="ri-logout-box-r-line"></i>
+                    Settings
+                </a>
+            </li>
+        }
+        else
+        {
+            <li>
+                <a href="/Dashboard" class="active" id="dashboard-link">
+                    <i class="ri-dashboard-line"></i>
+                    Dashboard
+                </a>
+            </li>
+            <li>
+                <a asp-controller="Dashboard" asp-action="Profile" id="profile-link">
+                    <i class="ri-user-line"></i>
+                    My Profile
+                </a>
+            </li>
+            <li>
+                <a asp-controller="Dashboard" asp-action="Investments" id="investments-link">
+                    <i class="ri-building-2-line"></i>
+                    My Investments
+                </a>
+            </li>
+            <li>
+                <a asp-controller="Dashboard" asp-action="PendingInvestments" id="pending-investments-link">
+                    <i class="ri-building-2-line"></i>
+                    Pending Investments
+                </a>
+            </li>
+        }
+
+    </ul>
+</div>
+<!-- End Sidebar Area -->
+
+<div class="">
+    <main role="main" class="pb-3">
+        @RenderBody()
+    </main>
+</div>
 
 
-		<!-- Start Go Top Area -->
-		<div class="go-top">
-			<i class="ri-arrow-up-s-fill"></i>
-			<i class="ri-arrow-up-s-fill"></i>
-		</div>
-		<!-- End Go Top Area -->
+<!-- Start Go Top Area -->
+<div class="go-top">
+    <i class="ri-arrow-up-s-fill"></i>
+    <i class="ri-arrow-up-s-fill"></i>
+</div>
+<!-- End Go Top Area -->
 
-        <!-- Start signout modal-->
-		<div class="modal fade" id="signoutModal" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
-			<div class="modal-dialog modal-dialog-centered">
-				<div class="modal-content">
-					<div class="modal-header">
-						<h5 class="modal-title" id="exampleModalToggleLabel">Warning!!!</h5>
-						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-					</div>
-					<div class="modal-body">
-						Are you sure you want to logout?
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-						<button type="button" class="btn btn-primary" id="signout">Logout</button>
-					</div>
-				</div>
-			</div>
-		</div>
-		<!-- End Signout Modal-->
+<!-- Start signout modal-->
+<div class="modal fade" id="signoutModal" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalToggleLabel">Warning!!!</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to logout?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="signout">Logout</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Signout Modal-->
 
-        <!-- Links of JS File -->
-        @*<script data-cfasync="false" src="../../cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>*@
-		
-        <script src="~/js/bootstrap.bundle.min.js"></script>
-		<script src="~/js/meanmenu.min.js"></script>
-		<script src="~/js/owl.carousel.min.js"></script>
-		<script src="~/js/wow.js"></script>
-		<script src="~/js/mixitup.min.js"></script>
-		<script src="~/js/magnific-popup.min.js"></script>
-		<script src="~/js/dark-mode-switch.min.js"></script>
-		<script src="~/js/form-validator.min.js"></script>
-		<script src="~/js/contact-form-script.js"></script>
-		<script src="~/js/ajaxchimp.min.js"></script>
-		<script src="~/js/custom.js"></script>
-		<script src="~/js/main.js"></script>
-		<script>
+<!-- Links of JS File -->
+@*<script data-cfasync="false" src="../../cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>*@
+
+<script src="~/js/bootstrap.bundle.min.js"></script>
+<script src="~/js/meanmenu.min.js"></script>
+<script src="~/js/owl.carousel.min.js"></script>
+<script src="~/js/wow.js"></script>
+<script src="~/js/mixitup.min.js"></script>
+<script src="~/js/magnific-popup.min.js"></script>
+<script src="~/js/dark-mode-switch.min.js"></script>
+<script src="~/js/form-validator.min.js"></script>
+<script src="~/js/contact-form-script.js"></script>
+<script src="~/js/ajaxchimp.min.js"></script>
+<script src="~/js/custom.js"></script>
+<script src="~/js/main.js"></script>
+<script>
 			$(document).ready(function(){
 				var pathname = window.location.pathname;
 				
@@ -397,6 +401,6 @@
 				});
 			});
 		</script>
-		@await RenderSectionAsync("Scripts", required: false)
-    </body>
+@await RenderSectionAsync("Scripts", required: false)
+</body>
 </html>
