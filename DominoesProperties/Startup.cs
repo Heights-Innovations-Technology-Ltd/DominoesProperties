@@ -8,9 +8,6 @@ using DominoesProperties.Helper;
 using DominoesProperties.Models;
 using DominoesProperties.Scheduled;
 using DominoesProperties.Services;
-using Hangfire;
-using Hangfire.Dashboard;
-using Hangfire.MySql;
 using Helpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -25,7 +22,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Models.Context;
 using Newtonsoft.Json;
-using NLog;
+using Quartz;
 using Repositories.Repository;
 using Repositories.Service;
 using StackExchange.Redis;
@@ -37,10 +34,9 @@ namespace DominoesProperties
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
-            LogManager.LoadConfiguration(string.Concat(Directory.GetCurrentDirectory(), "/nlog.config"));
         }
 
-        public IConfiguration Configuration { get; }
+        private IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -164,7 +160,7 @@ namespace DominoesProperties
             var multiplexer = ConnectionMultiplexer.Connect(configurationOptions);
             services.AddSingleton<IConnectionMultiplexer>(multiplexer);
 
-            services.ConfigureNLogService();
+            // services.ConfigureNLogService();
 
             services.AddCors(options =>
             {
@@ -177,31 +173,88 @@ namespace DominoesProperties
                     });
             });
 
+            var hangfireConnectionString = Configuration.GetConnectionString("DominoProps_String");
+            services.AddRouting(options => options.LowercaseUrls = true);
+
+            //Add Quartz to replace hangfire
+            services.Configure<QuartzOptions>(Configuration.GetSection("Quartz"));
+            services.Configure<QuartzOptions>(options =>
+            {
+                options.SchedulerId = "DOMINOES_SCHEDULER";
+                options.Scheduling.IgnoreDuplicates = true;
+                options.Scheduling.OverWriteExistingData = true;
+            });
+
+            services.AddQuartz(q =>
+            {
+                q.UseDefaultThreadPool(tp => { tp.MaxConcurrency = 5; });
+                q.UsePersistentStore(s =>
+                {
+                    s.PerformSchemaValidation = true; // default
+                    s.UseProperties = true; // preferred, but not default
+                    s.RetryInterval = TimeSpan.FromMinutes(3);
+                    s.UseMySql(sqlServer =>
+                    {
+                        sqlServer.ConnectionString = hangfireConnectionString;
+                        sqlServer.TablePrefix = $"QRTZ_";
+                    });
+                    s.UseNewtonsoftJsonSerializer();
+                    s.UseClustering(c =>
+                    {
+                        c.CheckinMisfireThreshold = TimeSpan.FromSeconds(20);
+                        c.CheckinInterval = TimeSpan.FromSeconds(10);
+                    });
+                });
+
+                q.ScheduleJob<EmailJob>(trigger => trigger
+                    .WithIdentity("EmailJob")
+                    .WithSimpleSchedule(x => x.WithIntervalInMinutes(10))
+                    .StartAt(DateTimeOffset.Parse("00:45 AM"))
+                    .WithDescription("Email retry schedule")
+                );
+
+                q.ScheduleJob<PairingJob>(trigger => trigger
+                    .WithIdentity("PairingJob")
+                    .WithSimpleSchedule(x => x.WithIntervalInMinutes(30))
+                    .StartAt(DateTimeOffset.Parse("00:30 AM"))
+                    .WithDescription("Pairing job schedule")
+                );
+
+                q.ScheduleJob<SubscriptionJob>(trigger => trigger
+                    .WithIdentity("SubscriptionJob")
+                    .WithSimpleSchedule(x => x.WithIntervalInHours(12))
+                    .StartAt(DateTimeOffset.Parse("00:00 AM"))
+                    .WithDescription("WeeklyJob Account Statement")
+                );
+            });
+
+            services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
+
+
             // Add Hangfire services.
-            string hangfireConnectionString = Configuration.GetConnectionString("DominoProps_String");
-            services.AddHangfire(configuration => configuration
-                .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
-                .UseSimpleAssemblyNameTypeSerializer()
-                .UseRecommendedSerializerSettings()
-                .UseStorage(
-                    new MySqlStorage(
-                        hangfireConnectionString,
-                        new MySqlStorageOptions
-                        {
-                            QueuePollInterval = TimeSpan.FromSeconds(10),
-                            JobExpirationCheckInterval = TimeSpan.FromHours(1),
-                            CountersAggregateInterval = TimeSpan.FromMinutes(5),
-                            PrepareSchemaIfNecessary = true,
-                            DashboardJobListLimit = 25000,
-                            TransactionTimeout = TimeSpan.FromMinutes(1),
-                            TablesPrefix = "Hangfire",
-                        }
-                    )
-                ));
+            // services.AddHangfire(configuration => configuration
+            //     .UseSerilogLogProvider()
+            //     .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+            //     .UseSimpleAssemblyNameTypeSerializer()
+            //     .UseRecommendedSerializerSettings()
+            //     .UseStorage(
+            //         new MySqlStorage(
+            //             hangfireConnectionString,
+            //             new MySqlStorageOptions
+            //             {
+            //                 QueuePollInterval = TimeSpan.FromSeconds(10),
+            //                 JobExpirationCheckInterval = TimeSpan.FromHours(1),
+            //                 CountersAggregateInterval = TimeSpan.FromMinutes(5),
+            //                 PrepareSchemaIfNecessary = true,
+            //                 DashboardJobListLimit = 25000,
+            //                 TransactionTimeout = TimeSpan.FromMinutes(1),
+            //                 TablesPrefix = "Hangfire",
+            //             }
+            //         )
+            //     ));
 
             // Add the processing server as IHostedService
-            services.AddHangfireServer(options => options.WorkerCount = 1);
-            services.AddRouting(options => options.LowercaseUrls = true);
+            // services.AddHangfireServer(options => options.WorkerCount = 1);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -222,12 +275,18 @@ namespace DominoesProperties
                     { error = "Some technical error Occurred, please visit after sometime" });
                 context.Response.ContentType = "application/json";
                 CommonLogic.SendExceptionEmail("Exception Occurred",
-                    "Error On Method :  " + MethodBase.GetCurrentMethod().DeclaringType.Name + " and Message : " +
+                    "Error On Method :  " + MethodBase.GetCurrentMethod() + " and Message : " +
                     exception.Message + "<br> StackTrace : " + exception.StackTrace);
                 await context.Response.WriteAsync(result);
             }));
 
             app.UseStaticFiles();
+
+            app.Use(async (context, next) =>
+            {
+                context.Response.Headers.Add("X-Frame-Options", "DENY");
+                await next();
+            });
 
             app.UseCors("AllowAllHeaders");
 
@@ -244,12 +303,12 @@ namespace DominoesProperties
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-                endpoints.MapHangfireDashboard("/hangfire", new DashboardOptions
-                {
-                    Authorization = new[] { new HangFireAuth() },
-                    IsReadOnlyFunc = (DashboardContext context) => true,
-                    AppPath = Configuration.GetValue<string>("app_settings:WebEndpoint")
-                });
+                // endpoints.MapHangfireDashboard("/hangfire", new DashboardOptions
+                // {
+                //     Authorization = new[] { new HangFireAuth() },
+                //     IsReadOnlyFunc = _ => true,
+                //     AppPath = Configuration.GetValue<string>("app_settings:WebEndpoint")
+                // });
             });
         }
     }

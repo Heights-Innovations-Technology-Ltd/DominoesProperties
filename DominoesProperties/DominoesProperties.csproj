@@ -70,10 +70,30 @@
     <None Remove="EmailTemplates\newsletter %28copy%29.html" />
   </ItemGroup>
   <ItemGroup>
+      <PackageReference Include="FluentMigrator" Version="6.2.0"/>
+      <PackageReference Include="FluentMigrator.Console" Version="6.2.0"/>
+      <PackageReference Include="FluentMigrator.Generator" Version="1.0.5">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+      <PackageReference Include="FluentMigrator.Runner" Version="6.2.0"/>
+      <PackageReference Include="FluentMigrator.Runner.MySql" Version="6.2.0"/>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.16" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="5.0.16" />
     <PackageReference Include="MimeKit" Version="3.4.1" />
+      <PackageReference Include="Quartz" Version="3.13.1"/>
+      <PackageReference Include="Quartz.AspNetCore" Version="3.13.1"/>
+      <PackageReference Include="Quartz.Extensions.DependencyInjection" Version="3.13.1"/>
+      <PackageReference Include="Quartz.Extensions.Hosting" Version="3.13.1"/>
+      <PackageReference Include="Quartz.Serialization.Json" Version="3.13.1"/>
+      <PackageReference Include="Serilog" Version="4.2.0"/>
+      <PackageReference Include="Serilog.Extensions.Hosting" Version="9.0.0"/>
+      <PackageReference Include="Serilog.Extensions.Logging" Version="9.0.0"/>
+      <PackageReference Include="Serilog.Extensions.Logging.File" Version="3.0.0"/>
+      <PackageReference Include="Serilog.Settings.Configuration" Version="9.0.0"/>
+      <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0"/>
+      <PackageReference Include="Serilog.Sinks.File" Version="6.0.0"/>
     <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="6.4.0" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.4.0" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.4.0" />
@@ -96,11 +116,10 @@
     <PackageReference Include="Hangfire.Dashboard.Basic.Authentication" Version="5.0.0" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Helper\" />
     <Folder Include="Extensions\" />
     <Folder Include="Enums\" />
+      <Folder Include="logs\"/>
     <Folder Include="Services\" />
-    <Folder Include="Scheduled\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Models\Models.csproj">
@@ -120,6 +139,10 @@
   <ItemGroup>
     <EmbeddedResource Include="DominoesProperties.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+      <None Remove="Script\quartz.sql"/>
+      <EmbeddedResource Include="Script\quartz.sql">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

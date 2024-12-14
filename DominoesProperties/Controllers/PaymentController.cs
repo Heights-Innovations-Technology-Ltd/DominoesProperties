@@ -297,7 +297,6 @@ namespace DominoesProperties.Controllers
                         .Replace("{I-TOTAL}", paystack.Amount.ToString(CultureInfo.CurrentCulture))
                         .Replace("{I-DATE}", investment.PaymentDate.ToString(CultureInfo.CurrentCulture))
                         .Replace("{webroot}", configuration["app_settings:WebEndpoint"]);
-                    ;
 
                     emailData = new EmailData
                     {
